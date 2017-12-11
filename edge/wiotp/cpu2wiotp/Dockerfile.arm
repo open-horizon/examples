@@ -1,0 +1,6 @@
+FROM armhf/alpine:latest
+RUN apk --no-cache --update add curl mosquitto-clients
+COPY *.sh /
+COPY *.pem /
+WORKDIR /
+CMD /workload.sh
