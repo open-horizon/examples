@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Horizon workload to subscribe to the Watson IoT Platform MQTT
+# Horizon workload to query a Microservice and publish to Watson IoT Platform
 
 # This workload expects the CPU microservice to be running.  Run 'make' in the
 # sibling directory "../microservice" to start that microservice running.  You
@@ -29,8 +29,8 @@ checkrc() {
   fi
 }
 
-# Topic to which this program will subscribe
-WIOTP_MQTT_TOPIC="iot-2/evt/status/fmt/json"
+# Reporting interval in seconds
+REPORTING_INTERVAL_SEC=10
 
 # If Watson IoT Platform API credentials are not provided assume existence.
 if [ -z $(eval echo \$WIOTP_API_KEY) ] || [ -z $(eval echo \$WIOTP_API_AUTH_TOKEN) ]; then
@@ -75,10 +75,21 @@ else
   echo "Device \"$HZN_DEVICE_ID\" exists in Watson IoT Platform."
 fi
 
-echo "Subscribing to topic '$WIOTP_MQTT_TOPIC'..."
+echo 'Starting infinite "read-from-microservice-then-publish" loop...'
 msgHost="$WIOTP_ORG_ID.messaging.$WIOTP_DOMAIN"
-clientId="d:$WIOTP_ORG_ID:$WIOTP_DEVICE_TYPE:$HZN_DEVICE_ID"
-mosquitto_sub -h $msgHost -p 8883 -i $clientId -u "use-token-auth" -P $WIOTP_DEVICE_AUTH_TOKEN --cafile messaging.pem -q 2 -t $WIOTP_MQTT_TOPIC
+while true; do
 
+  # Get data from a local microservice
+  json=$(curl -s "http://cpu:8347/v1/cpu")
+  checkrc $?
+  #echo "Sending: $json"
+
+  # Pause before sending again
+  sleep $REPORTING_INTERVAL_SEC
+
+  # Send a "status" event to the Watson IoT Platform containing the data
+  clientId="d:$WIOTP_ORG_ID:$WIOTP_DEVICE_TYPE:$HZN_DEVICE_ID"
+  mosquitto_pub -h $msgHost -p 8883 -i $clientId -u "use-token-auth" -P $WIOTP_DEVICE_AUTH_TOKEN --cafile messaging.pem -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
+  checkrc $?
+done
 # Not reached
-checkrc $?
