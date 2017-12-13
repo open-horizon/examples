@@ -4,26 +4,14 @@ and then pass it to the 'hzn register -f' flag.
 (These comments are allowed in the file.)
 */
 {
-	/* Variables that are passed to all containers, or settings for Horizon (depending on the type). */
-	"global": [
-		{
-			"type": "LocationAttributes",   /* required to tell horizon where this node is */
-			"variables": {
-				"lat": 10.123,     /* this is passed to each container as HZN_LAT */
-				"lon": -10.123,    /* this is passed to each container as HZN_LON */
-				"use_gps": false,    /* true if you have, and want to use, an attached GPS sensor. Passed to each container as HZN_USE_GPS. */
-				"location_accuracy_km": 0.0   /* Make the node location inaccurate by this number of KM to protect privacy. */
-			}
-		}
-	],
-	/* You only need to list the workloads that need input from you the edge node owner */
+	/* You only need to list the workloads that need input from the edge node owner */
 	"workloads": [
 		{
 			"org": "IBM",
 			"url": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
 			"versionRange": "[0.0.0,INFINITY)",    /* this range applies to any version */
 			"variables": {
-				"WIOTP_ORG_ID": "abcdef",
+				"WIOTP_ORG_ID": "myorg",
 				"WIOTP_DEVICE_TYPE": "MyDeviceType",
 				"WIOTP_DEVICE_AUTH_TOKEN": "mysecrettoken"
 			}
