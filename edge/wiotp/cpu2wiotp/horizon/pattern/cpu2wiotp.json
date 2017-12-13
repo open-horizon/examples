@@ -9,7 +9,7 @@
       "workloadArch": "amd64",
       "workloadVersions": [
         {
-          "version": "1.1.2",
+          "version": "1.1.3",
           "deployment_overrides": "",
           "deployment_overrides_signature": "loBHRdvOPvtzi2yUzaubXT8TA4fCo/JZoxUXMjGBQ7x8MqUsopIkEwFOwoDtT22UV/NDARF0ZMJdicCMNnD6tIxYAE82ibiNv6f29DbH5F0xMZgzvcIxq2zOQ3VJAJfk0i7QwgbAuDZqJIZgJmOU7/+m+A9jhTmjTDkzyYEkxPGYKjMScSoOpOI32pTlNkXo4WJulnhyzZ8g47vb0uVLhuotQuZYNpM1IreIcUTLPJfTLEFevbrDMswl8OlpZ+baEy7cv0myFru14YfhzUBWaAwvIiAL24MwWSOARbFz/3wOYvVpUcSNQFWnX4mxNNEvtbqxXW0NXZWkAMUGfSLh2nWd35drjTJ0Hi9PdbqKl6Vg9mqHJa1FseCryVblhRzLeexjRUDdm6mVMyedEC/hi7eYprDccJrk+CKLn0EnHi4xp0Ps338GIDmblRMfIDupqzGmFKHGVCgBTBeO0oKGt4UF9SsYMnvvVYsY78XGsLbCzDMTZ7xzKe+VcvBAWy7Ct9OebqwWbPhWcWQrwwPOV89CVtWuYnG+x+iVNDCwkgCNiRrU6ao+Zi7WcIqgStIuPgkKujmlONOgZ6Tc+ZZpZa+sqRf8BGbUduqosGeIhofNE1pudFYwXaJbTg+32VZpN2d+hye573YTn31UGaWrhf0J2hT4Iqrl7M5dFnTvu84=",
           "priority": {},
@@ -27,7 +27,7 @@
       "workloadArch": "arm",
       "workloadVersions": [
         {
-          "version": "1.1.2",
+          "version": "1.1.3",
           "deployment_overrides": "",
           "deployment_overrides_signature": "j2nQdFH/pfIC4x1J8I36QJGx1hfEvS+KogmZcRcca7Sxf8Uv+YINSZO8HUV1ekwT5sAHfnGgaVFsubt9R6//vN7Z1ZDXgot6oMv8cPPNIUx46iyh3SQOCU4Q9y+r3VRHSxJvViVKoFiUXIcvEYQBEOMe0Fz5427ovLyP6l6aJkoMUea4ZNEo+mdkDqj3b9G+HjgR1Hf+asJ7Xe6CeEZqVuj7RVh8Gl7cL66h3q3rsbMuRjMd/SJ6DxttKhC0Kafh/pIijz++EQ0vF7yHVypDJxdvGl0FXZzwjGb95frKO59j/camGYzZP7jJChiU6ouHZ+l0sMx8bQY7ctP+bdULYXAYOA94lNKtuFtdEd2B0qWHS8GQqzXvgw7FJV3xVyZOjQ2uhuXWwfm+D7d4C1v/YBQnTPjJpJsPPfQJYjaYrEw3zcT4OxLhX5S/F84e9VfVergqwuXrF8IArr9dti4DLcmIyn3Daqrw3pQ/Vi8qfQm5xgwUUxucCNtufERx8jfh5/5qA9Fbz4Ow2P8knw2CqOIEgmrUMrY4Z9+qIMYgerDSk7Q2fGcxTKADNNeqo/d7TMTa22EfnnAw5XzTpij6l07VcIgM1BZnq3vf6ltgi+xcz03JeJh1zB2Jo2TC4JXJ0aSfdEM/6JBZxrS5ZsZ//ky9ND9Gs9wHukKsB2FiQC8=",
           "priority": {},
