@@ -12,6 +12,8 @@ checkRequiredEnvVar() {
   if [ -z $(eval echo \$$varname) ]; then
     echo "ERROR: Environment variable $varname must be set; exiting."
     exit 1
+  else
+    echo "$varname=" $(eval echo \$$varname)
   fi
 }
 checkRequiredEnvVar "WIOTP_DOMAIN"
@@ -47,6 +49,7 @@ else
   contentJson='Content-Type: application/json'
 
   # Verify the specified WIOTP_DEVICE_TYPE exists and if not, exit.
+  echo "Checking whether specified WIoTP Device Type exists..."
   httpCode=$(curl $copts -u "$wiotpApiAuth" -o /dev/null $apiUrl/device/types/$WIOTP_DEVICE_TYPE)
   checkrc $?
   if [[ "$httpCode" == "404" ]]; then
@@ -56,6 +59,7 @@ else
   echo "Device Type \"$WIOTP_DEVICE_TYPE\" exists in Watson IoT Platform."
 
   # Does the specified HZN_DEVICE_ID exist?  If not, create it.
+  echo "Checking whether specified WIoTP Device ID exists..."
   httpCode=$(curl $copts -u "$wiotpApiAuth" -o /dev/null $apiUrl/device/types/$WIOTP_DEVICE_TYPE/devices/$HZN_DEVICE_ID)
   checkrc $?
   if [[ "$httpCode" == "404" ]]; then
@@ -81,7 +85,9 @@ while true; do
 
   # Get data from a local microservice
   json=$(curl -s "http://cpu:8347/v1/cpu")
-  checkrc $?
+  if [[ $? -ne 0 ]]; then
+      "ERROR: Failed to get data from the local microservice."
+  fi
   #echo "Sending: $json"
 
   # Pause before sending again
