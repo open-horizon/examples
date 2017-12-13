@@ -1,0 +1,48 @@
+{
+  "label": "WIoTP CPU pattern for amd64",
+  "description": "Deployment pattern that sends CPU data to WIoTP.",
+  "public": true,
+  "workloads": [
+    {
+      "workloadUrl": "https://bluehorizon.network/workloads/cpu2wiotp",
+      "workloadOrgid": "IBM",
+      "workloadArch": "amd64",
+      "workloadVersions": [
+        {
+          "version": "1.1.2",
+          "deployment_overrides": "{\"services\":{\"cpu2wiotp\":{\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_ORG_ID=1a2bc\",\"WIOTP_DEVICE_TYPE=CpuPercentType\"]}}}",
+          "deployment_overrides_signature": "",
+          "priority": {
+            "priority_value": 50,
+            "retries": 20,
+            "retry_durations": 3600,
+            "verified_durations": 50
+          },
+          "upgradePolicy": {
+            "lifecycle": "immediate",
+            "time": "01:00AM"
+          }
+        }
+      ],
+      "nodeHealth": {},
+      "dataVerification": {
+        "enabled": false,
+        "URL": "",
+        "user": "",
+        "password": "",
+        "interval": 1,
+        "check_rate": 1,
+        "metering": {
+          "tokens": 1,
+          "per_time_unit": "min",
+          "notification_interval": 1
+        }
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    }
+  ]
+}
