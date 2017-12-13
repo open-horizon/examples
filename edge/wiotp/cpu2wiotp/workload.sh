@@ -86,7 +86,7 @@ while true; do
   # Get data from a local microservice
   json=$(curl -s "http://cpu:8347/v1/cpu")
   if [[ $? -ne 0 ]]; then
-    "ERROR: Failed to get data from the local microservice."
+    echo "ERROR: Failed to get data from the local microservice."
   else
     #echo "Sending: $json"
 
