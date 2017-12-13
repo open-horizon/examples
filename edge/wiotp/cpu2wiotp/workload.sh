@@ -86,16 +86,17 @@ while true; do
   # Get data from a local microservice
   json=$(curl -s "http://cpu:8347/v1/cpu")
   if [[ $? -ne 0 ]]; then
-      "ERROR: Failed to get data from the local microservice."
+    "ERROR: Failed to get data from the local microservice."
+  else
+    #echo "Sending: $json"
+
+    # Send a "status" event to the Watson IoT Platform containing the data
+    clientId="d:$WIOTP_ORG_ID:$WIOTP_DEVICE_TYPE:$HZN_DEVICE_ID"
+    mosquitto_pub -h $msgHost -p 8883 -i $clientId -u "use-token-auth" -P $WIOTP_DEVICE_AUTH_TOKEN --cafile messaging.pem -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
+    checkrc $?
   fi
-  #echo "Sending: $json"
 
-  # Pause before sending again
+  # Pause before looping again
   sleep $REPORTING_INTERVAL_SEC
-
-  # Send a "status" event to the Watson IoT Platform containing the data
-  clientId="d:$WIOTP_ORG_ID:$WIOTP_DEVICE_TYPE:$HZN_DEVICE_ID"
-  mosquitto_pub -h $msgHost -p 8883 -i $clientId -u "use-token-auth" -P $WIOTP_DEVICE_AUTH_TOKEN --cafile messaging.pem -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
-  checkrc $?
 done
 # Not reached
