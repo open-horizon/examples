@@ -1,0 +1,41 @@
+{
+  "label": "Cpu2wiotp for arm",
+  "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
+  "public": true,
+  "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
+  "version": "1.1.2",
+  "arch": "arm",
+  "downloadUrl": "not used yet",
+  "apiSpec": [
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
+      "org": "IBM",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "arm"
+    }
+  ],
+  "userInput": [
+    {
+      "name": "WIOTP_ORG_ID",
+      "label": "The WIoTP organization ID of your instance of the WIoTP service",
+      "type": "string"
+    },
+    {
+      "name": "WIOTP_DEVICE_TYPE",
+      "label": "The device or gateway type that you created in the WIoTP UI",
+      "type": "string"
+    },
+    {
+      "name": "WIOTP_DEVICE_AUTH_TOKEN",
+      "label": "The token you gave to the device or gateway you created in the WIoTP UI",
+      "type": "string"
+    }
+  ],
+  "workloads": [
+    {
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_arm_cpu2wiotp:1.1.2\",\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\"]}}}",
+      "deployment_signature": "ZytRjkPebtiqgmz5nfCQoI6VEDYVk+tXPA6mWO2xubsLeXtLMcVMJo8be+Md07Og80HAip1V1EvCeETz31HqQ7Nc3a2zOR3E0S0+okqcIFuREKgts0Zqw0Wo1XHwjBa2xe9NpTTslg2onvkq3ACaBwMTty9s9dpIgZ04xzSLeLu/6GwLkU7YLLt4SnqWkEUMx3ErQK2qu5z1YFJROfMkdKHH1XPQlTa9wDxYK7jcdhPNqBkMMud+AQksKWSrZyakYMwIU/qjwOnokRjygDJZ/wTlIMBTrwSAgXBSbLClA/icliTdBCtU/sDfo80hq8oJQuzR/I9uWzv79OOKyblc81DATBdrcCxuhXI6BKVvxhck2z/FcoTq4MnBJEEUsB9rw0W6z2YCgSZFpOYg0oV4jsVcV6wPT86h5hLlDd8c/DYHdBDN8s9K71AKbXr9frG2x/QXqHyL/Y0GkoMmIRBcYC4Rcp9s+SsqVxZScEyG3tygEX1jMR7LgSzNGuDmJhL/GYWxFHl2fl1ROTHN03x9oOdt+dR1usVHBTxPA2PDVa6+Bl+jySvahYQIRNL3dwVcfBAhSG5/RpDj1eod4SsUAH89EuHBESqGT53SSmSsHg3sDtLIMEy0Svm32xdyebypndoHSSlN5fV7ELe6kSJe/JVMAobMu1F+pk+BVFBQ4mI=",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}
