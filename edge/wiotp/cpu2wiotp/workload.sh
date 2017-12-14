@@ -32,7 +32,7 @@ checkrc() {
 }
 
 # Reporting interval in seconds
-REPORTING_INTERVAL_SEC=10
+REPORTING_INTERVAL_SEC="${REPORTING_INTERVAL_SEC:-10}"
 
 # If Watson IoT Platform API credentials are not provided assume existence.
 if [ -z $(eval echo \$WIOTP_API_KEY) ] || [ -z $(eval echo \$WIOTP_API_AUTH_TOKEN) ]; then
