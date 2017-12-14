@@ -12,7 +12,7 @@
   "workloads": [
     {
       "deployment": "{\"services\":{\"cpu\":{\"image\":\"openhorizon/example_ms_x86_cpu:1.2.2\"}}}",
-      "deployment_signature": "uEZP0EQuM+jNZew0Ukg4rTq4ov6Gp08y7fSZFdDqakhiMJBla0Ik6KrwAGeDW+ukigVDK9mIgRQcU5OuTCaQuUBqvtY9bTFllqLsh0rZGL+PAocyVFZ+TpuhntJFpzlRMDsBamk9mDGez4cxM+zzXoHMpkBAxmM6f4NIj4QtJWgVPCIzO3E93p6IC9b2zyz4/wNKZ0NDu9WA2YCu3nNI+H2qy2FfdpJXj2o6Q0nP3Z0J+Tv1DZDkSSa7mvkEid1tTy78JHoR4izM0EL+5tsTanBNuWK0GXC7tL6/fubcoKRq7s1UaCXhYA4qHCYpy28XCicmZqK1XzKzVRmXrbLWQQUAHJ7evMPzCUtYsk24EGMe2+Y2vc+CxZVJFLZgA31jtiKTcMZICJMGv9q7LRJMjgFvyZT6e3crupf2Ppv9O1AI6fWUmUs0M67zC2IcySeVrYjHPMoP+YPfREtX+4dueauPtE8xeXZ178HXB2DeN36CNf534YwNA1NDk2Qex6wT3x4pN3cgLD0dSNeg/xI9MZTU2AIEB2E+Sg9oO8UxrfR7wm0SZzDsefp0WmjT9kcvenQbBaNKSVyL7vPreCgG0iQhAGZ4N/PwLDCl9fxClnOTVmsTIUTtzoSfPElPKlgRZfP0SXsR0N2VWksVst5Dj5qxeUj4KUJmLIJATPGrF7A=",
+      "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
   ]
