@@ -34,7 +34,7 @@
   "workloads": [
     {
       "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_x86_cpu2wiotp:1.1.3\",\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\"]}}}",
-      "deployment_signature": "bvvwmqvVAZDhbEUF+08zdPVBVTUvclep8wFU6ZT9zHpK0sPmSx0ZIQgn5miICaKfX7wwFPhbvafPT9vAs95lIHUfUl1KBj1a7+nmh6i990x5wB/wIxHZCDp1VOJoLITqvRKm3mN2xEyBdXKBqaVo7KIMri/WEWW6+OOLeBtT8JzDUsjGSGoXHZ22F/UC8bcva8klyTqs0s5V9oAREDdEJpixZoNRWiqvolusqDzmEeJNKOasUFfm1nRrC2fwK2MQAG1+CihuukKuWyAe5yP4g5UYmNafxpQYmZ0NoU2os9O4FgAWsp1Nx3QvyxiXXDTry/xV1tPVJho32kQFAStdANKpPQHERKsvIADhNcinZTbvNylPBSY6SPMIa20uVyxUt8vQE+zx1nwNqABVhBIZfVozFKHHIwyLzgXHN2irHH+QNApfvip1rqzR7XzxPTdjKNHc+cH0mUc8ylwtLteQCELkuAjssBgsWaL2OR5EeHtYpq+MZ8bRZ6kq2E8uid4z2nYnARNt+bcSHGNv1xouJuR/cS4/ksWwgWP/vZPcybQDnNgx0AY0uQ+XgcYrUB76y+uOmujxKNtTSNxb0FLNTOSka1H/LtMNqwd7cS41gTmc0eEWXGmfNwH3fVchDQD4WJeIyOyhAL7FymOBWTDHNO6ngQWKeAAQJu9GBKQ/hZk=",
+      "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
   ]
