@@ -26,8 +26,8 @@ echo "Configuration credentials successfully received from process environment."
 # Check the exit status of the previously run command and exit if nonzero
 checkrc() {
   if [[ $1 -ne 0 ]]; then
-    echo "ERROR: Last command exited with rc $1."
-    exit 1
+    echo "ERROR: exit code $1 from $2"
+    exit $1
   fi
 }
 
@@ -51,7 +51,7 @@ else
   # Verify the specified WIOTP_DEVICE_TYPE exists and if not, exit.
   echo "Checking whether specified WIoTP Device Type exists..."
   httpCode=$(curl $copts -u "$wiotpApiAuth" -o /dev/null $apiUrl/device/types/$WIOTP_DEVICE_TYPE)
-  checkrc $?
+  checkrc $? "curl $apiUrl/device/types/$WIOTP_DEVICE_TYPE"
   if [[ "$httpCode" == "404" ]]; then
     echo "Watson IoT device Type \"$WIOTP_DEVICE_TYPE\" does not exist."
     exit 1
@@ -61,12 +61,12 @@ else
   # Does the specified HZN_DEVICE_ID exist?  If not, create it.
   echo "Checking whether specified WIoTP Device ID exists..."
   httpCode=$(curl $copts -u "$wiotpApiAuth" -o /dev/null $apiUrl/device/types/$WIOTP_DEVICE_TYPE/devices/$HZN_DEVICE_ID)
-  checkrc $?
+  checkrc $? "curl $apiUrl/device/types/$WIOTP_DEVICE_TYPE/devices/$HZN_DEVICE_ID"
   if [[ "$httpCode" == "404" ]]; then
     echo "Creating device \"$HZN_DEVICE_ID\" in Watson IoT Platform..."
     body='{"deviceId":"'$HZN_DEVICE_ID'", "authToken":"'$WIOTP_DEVICE_TOKEN'", "deviceInfo":{"description":"My edge device"}}, "metadata":{}}'
     output=$(curl $copts -u "$wiotpApiAuth" -X POST -H "$contentJson" -d "$body" $apiUrl/device/types/$WIOTP_DEVICE_TYPE/devices)
-    checkrc $?
+    checkrc $? "curl $apiUrl/device/types/$WIOTP_DEVICE_TYPE/devices"
     httpCode=${output:$((${#output}-3))} # last 3 chars are http status code
     if [[ "$httpCode" != "201" ]]; then
       echo "ERROR: Failed to create device $HZN_DEVICE_ID: $output"
@@ -84,16 +84,22 @@ msgHost="$WIOTP_ORG_ID.messaging.$WIOTP_DOMAIN"
 while true; do
 
   # Get data from a local microservice
-  json=$(curl -s "http://cpu:8347/v1/cpu")
-  if [[ $? -ne 0 ]]; then
-    echo "ERROR: Failed to get data from the local microservice."
+  output=$(curl -sS -w %{http_code} "http://cpu:8347/v1/cpu")
+  curlrc=$?     # save this before it gets overwritten
+  httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
+  json="${output%[0-9][0-9][0-9]}"   # for the output, get all but the last 3 digits
+
+  if [[ "$curlrc" != 0 ]]; then
+    echo "Warning: Curl command to the local cpu microservice returned exit code $curlrc, will try again next interval."
+  elif [[ "$httpcode" != 200 ]]; then
+    echo "Warning: HTTP code $httpcode from the local cpu microservice REST API, will try again next interval."
   else
-    #echo "Sending: $json"
+    if [[ "$VERBOSE" == 1 ]]; then printf "Publishing: $json"; fi
 
     # Send a "status" event to the Watson IoT Platform containing the data
     clientId="d:$WIOTP_ORG_ID:$WIOTP_DEVICE_TYPE:$HZN_DEVICE_ID"
-    mosquitto_pub -h $msgHost -p 8883 -i $clientId -u "use-token-auth" -P $WIOTP_DEVICE_AUTH_TOKEN --cafile messaging.pem -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
-    checkrc $?
+    mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile messaging.pem -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
+    checkrc $? "mosquitto_pub $msgHost"
   fi
 
   # Pause before looping again
