@@ -1,4 +1,5 @@
 FROM armhf/alpine:latest
+ENV ARCH=armhf
 RUN apk --no-cache --update add curl mosquitto-clients
 COPY *.sh /
 COPY *.pem /
