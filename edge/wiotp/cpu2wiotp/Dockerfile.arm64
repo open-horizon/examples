@@ -1,0 +1,7 @@
+FROM aarch64/alpine:latest
+ENV ARCH=arm64
+RUN apk --no-cache --update add curl mosquitto-clients
+COPY *.sh /
+COPY *.pem /
+WORKDIR /
+CMD /workload.sh

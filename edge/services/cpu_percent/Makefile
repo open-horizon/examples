@@ -3,24 +3,42 @@ all:
 	make build
 	make run
 
-# Get the 3-character prefix of the local host architecture ("arm" or "x86")
-SYSTEM_ARCH := $(shell uname -m | sed 's/\(...\).*/\1/')
-# To build for an arch different from the current system, set this env var to arm or x86 before running make
+# Get the prefix of the local host architecture and set accordingly ("arm", "arm64", or "x86")
+SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
+
+# To build for an arch different from the current system, set this env var to the preferred arch before running make
 ARCH ?= $(SYSTEM_ARCH)
+
+# Checks for existing containers and networks
+existing_ntwk := $(shell docker network ls | grep example | awk '{print $$2}')
+existing_cntr := $(shell docker ps -a --no-trunc | awk '{if (NR!=1) print $$2}' | grep -x cpu)
+existing_img := $(shell docker images --no-trunc | awk '{if (NR!=1) print $$1}' | grep -x cpu)
 
 build:
 	docker build -t cpu -f ./Dockerfile.$(ARCH) .
 
 dev:
+        ifeq ($(existing_ntwk), )
 	-docker network create example
+        endif
+
+        ifeq ($(existing_cntr), cpu)
 	-docker stop cpu
 	-docker rm cpu
+        endif
+
 	docker run -it --name cpu --publish=8347:8347 --net=example --net-alias=cpu --volume `pwd`:/outside cpu /bin/sh
 
 run:
+        ifeq ($(existing_ntwk), )
 	-docker network create example
+        endif
+
+        ifeq ($(existing_cntr), cpu)
 	-docker stop cpu
 	-docker rm cpu
+        endif
+
 	docker run -d --name cpu --publish=8347:8347 --net=example --net-alias=cpu --volume `pwd`:/outside cpu
 
 check:
@@ -36,9 +54,17 @@ publish:
 	docker push $(CPU_DOCKER_NAME):$(CPU_VERSION)
 
 clean:
+        ifeq ($(existing_cntr), cpu)
 	-docker stop cpu
 	-docker rm cpu
+        endif
+
+        ifeq ($(existing_img), cpu )
 	-docker rmi cpu
+        endif
+
+        ifeq ($(existing_ntwk), example )
 	-docker network rm example
+        endif
 
 .PHONY: all build dev run check publish clean
