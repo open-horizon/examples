@@ -1,0 +1,20 @@
+/*
+Sample input file for the netspeed2wiotp workload. On your edge node, fill in your own variable values in the "workloads" section
+and then pass it to the 'hzn register -f' flag.
+(These comments are allowed in the file.)
+*/
+{
+	/* You only need to list the workloads that need input from the edge node owner */
+	"workloads": [
+		{
+			"org": "IBM",
+			"url": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
+			"versionRange": "[0.0.0,INFINITY)",    /* this range applies to any version */
+			"variables": {
+				"WIOTP_ORG_ID": "myorg",
+				"WIOTP_DEVICE_TYPE": "MyDeviceType",
+				"WIOTP_DEVICE_AUTH_TOKEN": "mysecrettoken"
+			}
+		}
+	]
+}

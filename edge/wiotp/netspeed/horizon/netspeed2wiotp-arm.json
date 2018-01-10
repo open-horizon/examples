@@ -1,0 +1,41 @@
+{
+  "label": "Netspeed2wiotp for arm",
+  "description": "Sample Horizon workload that uses Horizon's netspeed microservice, which continuously tests network ping and, at lesser intervals: bandwidth.  Results are forwarded to WIoTP",
+  "public": true,
+  "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
+  "version": "2.5",
+  "arch": "arm",
+  "downloadUrl": "not used yet",
+  "apiSpec": [
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/microservices/network",
+      "org": "IBM",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "arm"
+    }
+  ],
+  "userInput": [
+    {
+      "name": "WIOTP_ORG_ID",
+      "label": "The WIoTP organization ID of your instance of the WIoTP service",
+      "type": "string"
+    },
+    {
+      "name": "WIOTP_DEVICE_TYPE",
+      "label": "The device or gateway type that you created in the WIoTP UI",
+      "type": "string"
+    },
+    {
+      "name": "WIOTP_DEVICE_AUTH_TOKEN",
+      "label": "The token you gave to the device or gateway you created in the WIoTP UI",
+      "type": "string"
+    }
+  ],
+  "workloads": [
+    {
+      "deployment": "{\"services\":{\"netspeed2wiotp\":{\"image\":\"openhorizon/example_wl_arm_netspeed2wiotp:2.5\",\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\"]}}}",
+      "deployment_signature": "",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}
