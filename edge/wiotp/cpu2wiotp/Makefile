@@ -25,7 +25,7 @@ check:
 	curl -s localhost:8347/v1/cpu | jq
 
 # These variables can be overridden from the environment
-CPU2WIOTP_VERSION ?= 1.1.4
+CPU2WIOTP_VERSION ?= 1.1.5
 CPU2WIOTP_DOCKER_NAME ?= openhorizon/example_wl_$(ARCH)_cpu2wiotp
 
 # To publish you must have write access to the docker hub openhorizon user

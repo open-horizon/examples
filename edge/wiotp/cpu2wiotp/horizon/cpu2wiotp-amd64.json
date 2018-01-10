@@ -9,7 +9,7 @@
   "apiSpec": [
     {
       "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
-      "org": "IBM",
+      "org": "public",
       "version": "[0.0.0,INFINITY)",
       "arch": "amd64"
     }

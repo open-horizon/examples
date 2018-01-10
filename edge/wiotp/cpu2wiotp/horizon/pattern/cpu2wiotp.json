@@ -5,7 +5,7 @@
   "workloads": [
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-      "workloadOrgid": "IBM",
+      "workloadOrgid": "public",
       "workloadArch": "amd64",
       "workloadVersions": [
         {
@@ -23,7 +23,7 @@
     },
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-      "workloadOrgid": "IBM",
+      "workloadOrgid": "public",
       "workloadArch": "arm",
       "workloadVersions": [
         {

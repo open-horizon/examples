@@ -21,21 +21,25 @@ checkRequiredEnvVar "WIOTP_ORG_ID"
 checkRequiredEnvVar "WIOTP_DEVICE_TYPE"
 checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"
 checkRequiredEnvVar "HZN_DEVICE_ID"
-echo "Configuration credentials successfully received from process environment."
+echo "Required configuration credentials successfully received from process environment."
 
 # Check the exit status of the previously run command and exit if nonzero
 checkrc() {
   if [[ $1 -ne 0 ]]; then
     echo "ERROR: exit code $1 from $2"
-    exit $1
+    if [[ "$3" != "continue" ]]; then
+      exit $1
+    fi
   fi
 }
 
-# Reporting interval in seconds
-REPORTING_INTERVAL_SEC="${REPORTING_INTERVAL_SEC:-10}"
+# Environment variables that can optionally be set, or default
+WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # the cert to verify the WIoTP MQTT cloud broker
+# Can also set WIOTP_EDGE_MQTT_IP to a local IP or hostname to send mqtt msgs via the WIoTP Edge Connector microservice (enables severability)
+REPORTING_INTERVAL_SEC="${REPORTING_INTERVAL_SEC:-10}"    # reporting interval in seconds
 
 # If Watson IoT Platform API credentials are not provided assume existence.
-if [ -z $(eval echo \$WIOTP_API_KEY) ] || [ -z $(eval echo \$WIOTP_API_AUTH_TOKEN) ]; then
+if [[ -z "$WIOTP_API_KEY" || -z "$WIOTP_API_AUTH_TOKEN" ]]; then
   echo "Watson IoT Platfrom REST API credentials were not provided:"
   echo "    WIOTP_API_KEY=\"$WIOTP_API_KEY\""
   echo "    WIOTP_API_AUTH_TOKEN=\"$WIOTP_API_AUTH_TOKEN\""
@@ -98,8 +102,13 @@ while true; do
 
     # Send a "status" event to the Watson IoT Platform containing the data
     clientId="d:$WIOTP_ORG_ID:$WIOTP_DEVICE_TYPE:$HZN_DEVICE_ID"
-    mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile messaging.pem -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
-    checkrc $? "mosquitto_pub $msgHost"
+    if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
+      mosquitto_pub -h $WIOTP_EDGE_MQTT_IP -p 8883 -i "$clientId" -u 'use-token-auth' -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
+      checkrc $? "mosquitto_pub $WIOTP_EDGE_MQTT_IP" "continue"
+    else
+      mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 2 -t iot-2/evt/status/fmt/json -m "$json" >/dev/null
+      checkrc $? "mosquitto_pub $msgHost" "continue"
+    fi
   fi
 
   # Pause before looping again

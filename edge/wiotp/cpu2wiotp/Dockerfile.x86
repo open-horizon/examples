@@ -3,5 +3,7 @@ ENV ARCH=x86
 RUN apk --no-cache --update add curl mosquitto-clients
 COPY *.sh /
 COPY *.pem /
+MKDIR dev
+COPY dev/*.pem /dev
 WORKDIR /
 CMD /workload.sh
