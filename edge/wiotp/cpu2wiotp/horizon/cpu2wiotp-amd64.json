@@ -16,6 +16,12 @@
   ],
   "userInput": [
     {
+      "name": "WIOTP_CLASS_ID",
+      "label": "'d' if it is a device or 'g' if it is a gateway. A value of '-' means get it from HZN_DEVICE_ID.",
+      "type": "string",
+      "defaultValue": "-"
+    },
+    {
       "name": "WIOTP_DEVICE_TYPE",
       "label": "The device or gateway type that you created in the WIoTP UI. A value of '-' means get it from HZN_DEVICE_ID.",
       "type": "string",

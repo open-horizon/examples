@@ -22,11 +22,13 @@ checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   # a userInput value, so must be 
 checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon
 
 # For device type and device id, there are 3 cases, checked for below:
-#  1) The workload is run in wiotp/horizon and will be sending mqtt as the gw: HZN_DEVICE_ID contains device type and id, and WIOTP_DEVICE_TYPE and WIOTP_DEVICE_ID are blank or '-'
-#  2) The workload is run in wiotp/horizon and will be sending mqtt as a device: WIOTP_DEVICE_TYPE and/or WIOTP_DEVICE_ID have real values
-#  3) The workload is run in a non-wiotp horizon instance: HZN_DEVICE_ID is the simple device id (use that), and WIOTP_DEVICE_TYPE has a value
-# The way we will handle this cases is if WIOTP_DEVICE_TYPE and/or WIOTP_DEVICE_ID are set, they will override what we can parse from HZN_DEVICE_ID
-CLASS_ID="${WIOTP_CLASS_ID:-d}"    # default if not set via HZN_DEVICE_ID
+#  1) The workload is run in wiotp/horizon and will be sending mqtt as the gw: HZN_DEVICE_ID contains class id, device type and id, and WIOTP_CLASS_ID, WIOTP_DEVICE_TYPE and WIOTP_DEVICE_ID are blank or '-'
+#  2) The workload is run in wiotp/horizon and will be sending mqtt as a device: WIOTP_CLASS_ID, WIOTP_DEVICE_TYPE and/or WIOTP_DEVICE_ID have real values
+#  3) The workload is run in a non-wiotp horizon instance: HZN_DEVICE_ID is the simple device id (use that), and WIOTP_CLASS_ID and WIOTP_DEVICE_TYPE have values
+# The way we will handle this cases is if WIOTP_CLASS_ID, WIOTP_DEVICE_TYPE and/or WIOTP_DEVICE_ID are set, they will override what we can parse from HZN_DEVICE_ID
+if [[ "$WIOTP_CLASS_ID" != "-" ]]; then
+  CLASS_ID="$WIOTP_CLASS_ID"
+fi
 if [[ "$WIOTP_DEVICE_TYPE" != "-" ]]; then
   DEVICE_TYPE="$WIOTP_DEVICE_TYPE"
 fi
@@ -36,10 +38,13 @@ fi
 if [[ "$HZN_DEVICE_ID" != "${HZN_DEVICE_ID#*@}" ]]; then
   # When this workload is deployed by WIoTP-Horizon, HZN_DEVICE_ID will have a value like 'g@mygwtype@mygw'. Parse it.
   id="$HZN_DEVICE_ID"
-  CLASS_ID=${id%%@*}
+  classId=${id%%@*}
   id=${id#*@}
   deviceType=${id%%@*}
   deviceId=${id#*@}
+  if [[ -z "$CLASS_ID" ]]; then
+    CLASS_ID="$classId"
+  fi
   if [[ -z "$DEVICE_TYPE" ]]; then
     DEVICE_TYPE="$deviceType"
   fi
@@ -52,6 +57,13 @@ else
     DEVICE_ID="$HZN_DEVICE_ID"
   fi
 fi
+if [[ -z "$CLASS_ID" ]]; then
+  echo "ERROR: class id not set in WIOTP_CLASS_ID or HZN_DEVICE_ID."
+  exit 1
+elif [[ "$CLASS_ID" != "d" && "$CLASS_ID" != "g" ]]; then
+  echo "ERROR: class id in WIOTP_CLASS_ID or HZN_DEVICE_ID can only have the value 'd' or 'g'."
+  exit 1
+fi
 if [[ -z "$DEVICE_TYPE" ]]; then
   echo "ERROR: device type not set in WIOTP_DEVICE_TYPE or HZN_DEVICE_ID."
   exit 1
@@ -60,6 +72,11 @@ if [[ -z "$DEVICE_ID" ]]; then
   echo "ERROR: device id not set in WIOTP_DEVICE_ID or HZN_DEVICE_ID."
   exit 1
 fi
+echo "Optional override environment variables:"
+echo "  WIOTP_CLASS_ID=$WIOTP_CLASS_ID"
+echo "  WIOTP_DEVICE_TYPE=$WIOTP_DEVICE_TYPE"
+echo "  WIOTP_DEVICE_ID=$WIOTP_DEVICE_ID"
+echo "Derived variables:"
 echo "  DEVICE_TYPE=$DEVICE_TYPE"
 echo "  DEVICE_ID=$DEVICE_ID"
 echo "  CLASS_ID=$CLASS_ID"
@@ -140,15 +157,14 @@ while true; do
 
   # Get data from a local microservice
   if [[ "$MOCK" == "true" ]]; then
+    output='{"cpu":1.2} 200'
     curlrc=0
-    httpcode=200
-    json='{"cpu":1.2}'
   else
     output=$(curl -sS -w %{http_code} "http://cpu:8347/v1/cpu")
     curlrc=$?     # save this before it gets overwritten
-    httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
-    json="${output%[0-9][0-9][0-9]}"   # for the output, get all but the last 3 digits
   fi
+  httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
+  json="${output%?[0-9][0-9][0-9]}"   # for the output, get all but the newline and 3 digits of http code
 
   if [[ "$curlrc" != 0 ]]; then
     echo "Warning: Curl command to the local cpu microservice returned exit code $curlrc, will try again next interval."
