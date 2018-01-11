@@ -1,5 +1,5 @@
 {
-  "label": "netspeed2wiotp for amd64, arm, and arm64",
+  "label": "netspeed2wiotp for x86/amd64, arm, and arm64",
   "description": "Horizon deployment pattern that runs the netspeed2wiotp workload",
   "public": true,
   "workloads": [

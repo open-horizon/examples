@@ -1,5 +1,5 @@
 {
-  "label": "Netspeed2wiotp for amd64",
+  "label": "Netspeed2wiotp for x86/amd64",
   "description": "Sample Horizon workload that uses Horizon's netspeed microservice, which continuously tests network ping and, at lesser intervals: bandwidth.  Results are forwarded to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
@@ -33,7 +33,7 @@
   ],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"netspeed2wiotp\":{\"image\":\"openhorizon/example_wl_amd64_netspeed2wiotp:2.5\",\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\"]}}}",
+      "deployment": "{\"services\":{\"netspeed2wiotp\":{\"image\":\"openhorizon/example_wl_x86_netspeed2wiotp:2.5\",\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\"]}}}",
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
