@@ -77,9 +77,9 @@ echo "  WIOTP_CLASS_ID=$WIOTP_CLASS_ID"
 echo "  WIOTP_DEVICE_TYPE=$WIOTP_DEVICE_TYPE"
 echo "  WIOTP_DEVICE_ID=$WIOTP_DEVICE_ID"
 echo "Derived variables:"
+echo "  CLASS_ID=$CLASS_ID"
 echo "  DEVICE_TYPE=$DEVICE_TYPE"
 echo "  DEVICE_ID=$DEVICE_ID"
-echo "  CLASS_ID=$CLASS_ID"
 
 # Environment variables that can optionally be set, or default
 WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
