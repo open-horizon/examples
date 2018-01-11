@@ -1,4 +1,4 @@
-FROM aarch64/alpine
+FROM armhf/alpine:latest
 MAINTAINER Chris Dye <dyec@us.ibm.com>
 
 ENV ARCH=armhf
