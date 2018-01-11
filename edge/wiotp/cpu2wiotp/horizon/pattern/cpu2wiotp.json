@@ -5,11 +5,11 @@
   "workloads": [
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-      "workloadOrgid": "IBM",
+      "workloadOrgid": "public",
       "workloadArch": "amd64",
       "workloadVersions": [
         {
-          "version": "1.1.4",
+          "version": "1.1.7",
           "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},
@@ -23,11 +23,11 @@
     },
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-      "workloadOrgid": "IBM",
+      "workloadOrgid": "public",
       "workloadArch": "arm",
       "workloadVersions": [
         {
-          "version": "1.1.4",
+          "version": "1.1.7",
           "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},

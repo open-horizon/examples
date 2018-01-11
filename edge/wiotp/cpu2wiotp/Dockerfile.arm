@@ -3,5 +3,7 @@ ENV ARCH=armhf
 RUN apk --no-cache --update add curl mosquitto-clients
 COPY *.sh /
 COPY *.pem /
+RUN mkdir -p devenv
+COPY devenv/*.pem /devenv/
 WORKDIR /
 CMD /workload.sh
