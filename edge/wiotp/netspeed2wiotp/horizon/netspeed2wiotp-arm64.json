@@ -8,7 +8,7 @@
   "downloadUrl": "not used yet",
   "apiSpec": [
     {
-      "specRef": "https://internetofthings.ibmcloud.com/microservices/network",
+      "specRef": "https://bluehorizon.network/microservices/network",
       "org": "IBM",
       "version": "[0.0.0,INFINITY)",
       "arch": "arm64"
