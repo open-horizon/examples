@@ -1,0 +1,13 @@
+{
+  "label": "Network for amd64",
+  "description": "Represents the network on the edge node",
+  "public": true,
+  "specRef": "https://bluehorizon.network/microservices/network",
+  "version": "1.0.0",
+  "arch": "amd64",
+  "sharable": "single",
+  "downloadUrl": "not used yet",
+  "matchHardware": {},
+  "userInput": [],
+  "workloads": []
+}
