@@ -1,5 +1,5 @@
 {
-  "label": "Cpu2wiotp for amd64 and arm, arm64",
+  "label": "Cpu2wiotp for x86, arm, and arm64",
   "description": "Horizon deployment pattern that runs the cpu2wiotp workload",
   "public": true,
   "workloads": [
@@ -9,8 +9,8 @@
       "workloadArch": "amd64",
       "workloadVersions": [
         {
-          "version": "1.1.7",
-          "deployment_overrides": "",
+          "version": "1.1.8",
+          "deployment_overrides": "{\"services\":{\"cpu2wiotp\":{\"environment\":[\"VERBOSE=1\"]}}}",
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
@@ -27,8 +27,8 @@
       "workloadArch": "arm",
       "workloadVersions": [
         {
-          "version": "1.1.7",
-          "deployment_overrides": "",
+          "version": "1.1.8",
+          "deployment_overrides": "{\"services\":{\"cpu2wiotp\":{\"environment\":[\"VERBOSE=1\"]}}}",
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
@@ -41,12 +41,12 @@
     },
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-      "workloadOrgid": "IBM",
+      "workloadOrgid": "public",
       "workloadArch": "arm64",
       "workloadVersions": [
         {
-          "version": "1.1.4",
-          "deployment_overrides": "",
+          "version": "1.1.8",
+          "deployment_overrides": "{\"services\":{\"cpu2wiotp\":{\"environment\":[\"VERBOSE=1\"]}}}",
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
