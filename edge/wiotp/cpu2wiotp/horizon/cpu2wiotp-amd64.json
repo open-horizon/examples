@@ -3,7 +3,7 @@
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-  "version": "1.1.5",
+  "version": "1.1.8",
   "arch": "amd64",
   "downloadUrl": "not used yet",
   "apiSpec": [
@@ -41,7 +41,7 @@
   ],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_x86_cpu2wiotp:1.1.4\",\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\"]}}}",
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_x86_cpu2wiotp:1.1.8\",\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"],\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=localhost\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"]}}}",
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }

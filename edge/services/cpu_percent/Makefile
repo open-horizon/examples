@@ -3,13 +3,11 @@ all:
 	make build
 	make run
 
-# Get the prefix of the local host architecture and set accordingly ("arm", "arm64", or "x86")
-SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
+# Transform the machine arch into some standard values: "arm", "arm64", or "x86"
+SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/x86/' -e 's/armv.*/arm/')
 
-# To build for an arch different from the current system, set this env var to the preferred arch before running make
+# To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 ARCH ?= $(SYSTEM_ARCH)
-
-# Checks for existing containers and networks
 
 build:
 	docker build -t cpu -f ./Dockerfile.$(ARCH) .
