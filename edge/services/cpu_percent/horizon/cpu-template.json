@@ -1,17 +1,17 @@
 {
-  "label": "CPU for arm",
+  "label": "CPU for $ARCH1",
   "description": "Provides a REST API to query the CPU load",
   "public": true,
   "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
-  "version": "1.2.2",
-  "arch": "arm",
+  "version": "$CPU_VERSION",
+  "arch": "$ARCH2",
   "sharable": "single",
   "downloadUrl": "not used yet",
   "matchHardware": {},
   "userInput": [],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu\":{\"image\":\"openhorizon/example_ms_arm_cpu:1.2.2\"}}}",
+      "deployment": "{\"services\":{\"cpu\":{\"image\":\"$DOCKER_HUB_ID/example_ms_${ARCH1}_cpu:$CPU_VERSION\"}}}",
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
