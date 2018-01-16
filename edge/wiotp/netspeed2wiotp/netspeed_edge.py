@@ -614,14 +614,15 @@ def version():
     raise SystemExit(__version__)
 
 # netspeed edge code starts here
-def post_networkdata_single_wiotp(jsonpayload, heart_beat=False):
+def post_networkdata_single_wiotp(jsonpayload, event_id, heart_beat=False):
     """Tries once to send network data in json format to WIoTP via mqtt. 
        Returns 1 if successful, 0 if not, -1 if failed because not registered.
     """
     auth = mqtt_auth
 
     try:
-        topic = 'iot-2/evt/status/fmt/json'
+        #topic = 'iot-2/evt/status/fmt/json'
+        topic = 'iot-2/evt/' + event_id + '/fmt/json'
         retain = True
         qos = 2   # since speed data is sent so infrequently we can afford to make sure it gets there exactly once
         if debug_flag: 
@@ -639,12 +640,12 @@ def post_networkdata_single_wiotp(jsonpayload, heart_beat=False):
             print_('Send to mqtt failed: %s' % e)
             return 0
 
-def post_networkdata(jsonpayload, heart_beat=False):
+def post_networkdata(jsonpayload, event_id, heart_beat=False):
     """Sends network data in json format to mqtt. Returns True if successful."""
     retries = 2
     if heart_beat:  retries = SEND_MAX_RETRIES
     for i in range(1,retries+1):
-        result = post_networkdata_single_wiotp(jsonpayload, heart_beat=heart_beat)
+        result = post_networkdata_single_wiotp(jsonpayload, event_id, heart_beat=heart_beat)
         if result == 1:  return True        # success
         if result == -1:
             # We were not registered
@@ -781,7 +782,7 @@ def myspeedtest():
     jsonpayload = json.dumps(networkdata)
 
     if (mqtt_flag):
-        post_networkdata(jsonpayload)
+        post_networkdata(jsonpayload, event_id='netspeed-speedtest')
     else:
         if debug_flag:
             print_(jsonpayload)
@@ -892,7 +893,7 @@ def pingstatus():
     jsonpayload = json.dumps(networkdata)
 
     if (mqtt_flag):
-        post_networkdata(jsonpayload)
+        post_networkdata(jsonpayload, event_id='netspeed-ping')
     
     if (file_flag):
         jsonfile = open(json_filename, 'w')

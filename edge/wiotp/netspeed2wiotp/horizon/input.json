@@ -13,7 +13,8 @@ and then pass it to the 'hzn register -f' flag.
 			"variables": {
 				"WIOTP_ORG_ID": "myorg",
 				"WIOTP_DEVICE_TYPE": "MyDeviceType",
-				"WIOTP_DEVICE_AUTH_TOKEN": "mysecrettoken"
+				"WIOTP_DEVICE_AUTH_TOKEN": "mysecrettoken",
+                                "PING_INTERVAL": "300"
 			}
 		}
 	]

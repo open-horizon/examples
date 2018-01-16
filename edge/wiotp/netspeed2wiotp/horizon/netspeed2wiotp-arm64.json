@@ -29,6 +29,11 @@
       "name": "WIOTP_DEVICE_AUTH_TOKEN",
       "label": "The token you gave to the device or gateway you created in the WIoTP UI",
       "type": "string"
+    },
+    {
+      "name": "PING_INTERVAL",
+      "label": "Interval in seconds to run and report a ping test and uptime from the device",
+      "type": "string"
     }
   ],
   "workloads": [
