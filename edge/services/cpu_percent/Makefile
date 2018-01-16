@@ -3,9 +3,10 @@ all:
 	make build
 	make run
 
-# Get the 3-character prefix of the local host architecture ("arm" or "x86")
-SYSTEM_ARCH := $(shell uname -m | sed 's/\(...\).*/\1/')
-# To build for an arch different from the current system, set this env var to arm or x86 before running make
+# Transform the machine arch into some standard values: "arm", "arm64", or "x86"
+SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/x86/' -e 's/armv.*/arm/')
+
+# To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 ARCH ?= $(SYSTEM_ARCH)
 
 build:

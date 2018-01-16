@@ -11,8 +11,8 @@ and then pass it to the 'hzn register -f' flag.
 			"url": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
 			"versionRange": "[0.0.0,INFINITY)",    /* this range applies to any version */
 			"variables": {
-				"WIOTP_ORG_ID": "myorg",
-				"WIOTP_DEVICE_TYPE": "MyDeviceType",
+				"WIOTP_DEVICE_TYPE": "MyDeviceType",	/* only needed if you want to override the type that is passed by WIoTP in HZN_DEVICE_ID */
+				"WIOTP_DEVICE_ID": "MyDevice",	/* only needed if you want to override the id that is passed by WIoTP in HZN_DEVICE_ID */
 				"WIOTP_DEVICE_AUTH_TOKEN": "mysecrettoken"
 			}
 		}
