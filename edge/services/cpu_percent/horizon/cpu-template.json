@@ -1,4 +1,5 @@
 {
+  "org": "$HZN_ORG_ID",
   "label": "CPU for $ARCH2",
   "description": "Provides a REST API to query the CPU load",
   "public": true,
@@ -11,7 +12,13 @@
   "userInput": [],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu\":{\"image\":\"$DOCKER_HUB_ID/example_ms_${ARCH2}_cpu:$CPU_VERSION\"}}}",
+      "deployment": {
+        "services": {
+          "cpu": {
+            "image": "$DOCKER_HUB_ID/example_ms_${ARCH2}_cpu:$CPU_VERSION"
+          }
+        }
+      },
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
