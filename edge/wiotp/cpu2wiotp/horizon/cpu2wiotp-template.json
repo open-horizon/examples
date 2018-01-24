@@ -12,6 +12,12 @@
       "org": "$WIOTP_ORG_ID",
       "version": "[0.0.0,INFINITY)",
       "arch": "$ARCH2"
+    },
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+      "org": "IBM",
+      "version": "[1.0.11,INFINITY)",
+      "arch": "$ARCH2"
     }
   ],
   "userInput": [
