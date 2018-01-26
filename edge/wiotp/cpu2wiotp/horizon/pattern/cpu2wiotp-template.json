@@ -1,5 +1,5 @@
 {
-  "label": "Cpu2wiotp for x86, arm, and arm64",
+  "label": "Cpu2wiotp for amd64, arm, and arm64",
   "description": "Horizon deployment pattern that runs the cpu2wiotp workload",
   "public": true,
   "workloads": [
