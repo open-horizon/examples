@@ -1,5 +1,5 @@
 {
-  "label": "Cpu2wiotp for $ARCH1",
+  "label": "Cpu2wiotp for $ARCH2",
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
@@ -11,6 +11,12 @@
       "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
       "org": "$WIOTP_ORG_ID",
       "version": "[0.0.0,INFINITY)",
+      "arch": "$ARCH2"
+    },
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+      "org": "IBM",
+      "version": "[1.0.11,INFINITY)",
       "arch": "$ARCH2"
     }
   ],
@@ -41,7 +47,7 @@
   ],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"$DOCKER_HUB_ID/example_wl_${ARCH1}_cpu2wiotp:$CPU2WIOTP_VERSION\",\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"],\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=localhost\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"]}}}",
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"$DOCKER_HUB_ID/example_wl_${ARCH2}_cpu2wiotp:$CPU2WIOTP_VERSION\",\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"],\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=localhost\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"]}}}",
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
