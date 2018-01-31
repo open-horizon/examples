@@ -40,9 +40,11 @@ import paho.mqtt.publish as publish
 import paho.mqtt.client as mqtt
 import ssl
 
-from netspeed_config import *    # read netspeed configuration
+from workload_config import *   # read netspeed configuration
+import mqtt_pub as mqttpub      # import mqtt pub supporting functions
+import utils                    # utilities file in this dir (utils.py)
 
-__version__ = '0.3.4'            # speedtest-cli version
+__version__ = '0.3.4'           # speedtest-cli version
 
 
 # netspeed global variables
@@ -59,8 +61,8 @@ scheme = 'http'
 # Used for bound_interface
 socket_socket = socket.socket
 
-# speedtest-cli code starts here
 
+# Speedtest-cli code starts here
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -116,7 +118,7 @@ try:
     from argparse import ArgumentParser as ArgParser
 except ImportError:
     from optparse import OptionParser as ArgParser
-
+'''
 try:
     import builtins
 except ImportError:
@@ -169,7 +171,7 @@ except ImportError:
 else:
     print_ = getattr(builtins, 'print')
     del builtins
-
+'''
 
 class SpeedtestCliServerListError(Exception):
     """Internal Exception class used to indicate to move on to the next
@@ -222,9 +224,9 @@ def build_user_agent():
     )
 
     if debug_flag:
-        print_('Platform information:')
-        print_(platform.platform())
-        print_(ua_tuple)
+        utils.print_('Platform information:')
+        utils.print_(platform.platform())
+        utils.print_(ua_tuple)
       
     user_agent = ' '.join(ua_tuple)
     return user_agent
@@ -330,9 +332,9 @@ def downloadSpeed(files, quiet=False):
         'time_s': time_s                                     # time in seconds
     }
     if debug_flag:
-        print_('\nData (Bytes): %d  Time (sec): %0.3f  Speed(Bytes/sec): %0.3f' 
+        utils.print_('\nData (Bytes): %d  Time (sec): %0.3f  Speed(Bytes/sec): %0.3f' 
                   % (data_B, time_s, download_speed) )
-        print_('Download Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
+        utils.print_('Download Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
                   % download_metrics)   
 
     return download_metrics
@@ -420,9 +422,9 @@ def uploadSpeed(url, sizes, quiet=False):
     }
 
     if debug_flag:
-        print_('\nData (Bytes): %d  Time(sec): %0.3f  Speed(Bytes/sec): %0.3f' 
+        utils.print_('\nData (Bytes): %d  Time(sec): %0.3f  Speed(Bytes/sec): %0.3f' 
                    % (data_B, time_s, upload_speed) )
-        print_('Upload Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
+        utils.print_('Upload Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
                    % upload_metrics)   
 
     return upload_metrics
@@ -445,7 +447,7 @@ def getConfig():
     request = build_request('://www.speedtest.net/speedtest-config.php')
     uh, e = catch_request(request)
     if e:
-        print_('Error: could not retrieve speedtest.net configuration: %s' % e)
+        utils.print_('Error: could not retrieve speedtest.net configuration: %s' % e)
         return None
     configxml = []
     while 1:
@@ -453,7 +455,7 @@ def getConfig():
         if len(configxml[-1]) == 0:
             break
     if int(uh.code) != 200:
-        print_('Error: got HTTP code %s when trying to retrieve speedtest.net configuration' % str(uh.code))
+        utils.print_('Error: got HTTP code %s when trying to retrieve speedtest.net configuration' % str(uh.code))
         return None
     uh.close()
     try:
@@ -472,7 +474,7 @@ def getConfig():
                 'download': getAttributesByTagName(root, 'download'),
                 'upload': getAttributesByTagName(root, 'upload')}
     except SyntaxError as e:
-        print_('Failed to parse speedtest.net configuration: %s' % str(e))
+        utils.print_('Failed to parse speedtest.net configuration: %s' % str(e))
         return None
     del root
     del configxml
@@ -542,7 +544,7 @@ def closestServers(client, all=False):
 
     if not servers:
         if debug_flag:
-            print_('Failed to retrieve list of speedtest.net servers:\n\n %s' %
+            utils.print_('Failed to retrieve list of speedtest.net servers:\n\n %s' %
                '\n'.join(errors))
         netpoc_error = 'netx0002' # cannot get list of closest servers
         sys.exit(1)
@@ -614,42 +616,16 @@ def version():
     raise SystemExit(__version__)
 
 # netspeed edge code starts here
-def post_networkdata_single_wiotp(jsonpayload, event_id, heart_beat=False):
-    """Tries once to send network data in json format to WIoTP via mqtt. 
-       Returns 1 if successful, 0 if not, -1 if failed because not registered.
-    """
-    auth = mqtt_auth
-
-    try:
-        #topic = 'iot-2/evt/status/fmt/json'
-        topic = 'iot-2/evt/' + event_id + '/fmt/json'
-        retain = True
-        qos = 2   # since speed data is sent so infrequently we can afford to make sure it gets there exactly once
-        if debug_flag: 
-            print_('Sending data to mqtt on topic '+topic+': '+jsonpayload)
-        publish.single(topic, payload=jsonpayload, qos=qos, hostname=mqtt_broker, protocol=mqtt.MQTTv311,
-            client_id=mqtt_client_id, port=8883, auth=auth, tls=mqtt_tls, retain=retain)
-        if debug_flag: print_('Send to mqtt successful')
-        return 1
-    except:
-        e = sys.exc_info()[1]
-        if 'not authori' in str(e).lower() or 'bad user name or password' in str(e).lower():
-            # The data send failed because we are not successfully registered
-            return -1
-        else:
-            print_('Send to mqtt failed: %s' % e)
-            return 0
-
 def post_networkdata(jsonpayload, event_id, heart_beat=False):
     """Sends network data in json format to mqtt. Returns True if successful."""
     retries = 2
     if heart_beat:  retries = SEND_MAX_RETRIES
     for i in range(1,retries+1):
-        result = post_networkdata_single_wiotp(jsonpayload, event_id, heart_beat=heart_beat)
+        result = mqttpub.post_networkdata_single_wiotp(jsonpayload, event_id, heart_beat=heart_beat)
         if result == 1:  return True        # success
         if result == -1:
             # We were not registered
-            print_('Send to mqtt failed due to lack of registration. Will send registration request again...')
+            utils.print_('Send to mqtt failed. Not registered.')
         else:
             # The send failed for some reason other than not be registered
             time.sleep(SEND_RETRY_DELAY)
@@ -664,7 +640,7 @@ def myspeedtest():
     global netpoc_error
 
     if debug_flag:
-        print_('Retrieving speedtest.net configuration...')  
+        utils.print_('Retrieving speedtest.net configuration...')  
     try:
         config = getConfig()
         if not config:
@@ -673,53 +649,53 @@ def myspeedtest():
     except URLError:
         # getConfig() catches this, but leaving it here for safety
         if debug_flag:
-            print_('Cannot retrieve speedtest configuration')
+            utils.print_('Cannot retrieve speedtest configuration')
         return None
 
     if debug_flag:
-        print_('Retrieving speedtest.net server list...')
+        utils.print_('Retrieving speedtest.net server list...')
 
     if  (target_server_criteria == 'closest') | (target_server_criteria == 'fastest'):   
         if debug_flag:
-            print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
+            utils.print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
 
         servers = closestServers(config['client'])    # get top 5 closest servers
 
         if (target_server_criteria == 'fastest'):
             if debug_flag:
-                print_('Selecting best server based on latency...')
+                utils.print_('Selecting best server based on latency...')
 
             best = getBestServer(servers)  # get server with lowest latency from 5 closest servers
 
         else:
             if debug_flag:
-                print_('Selecting best server based on distance...')
+                utils.print_('Selecting best server based on distance...')
 
             best = getBestServer(servers)  # looks like this is using same criteria as fastest??
 
     elif (target_server_criteria == 'random'):        # select random server
         if debug_flag:
-            print_('Selecting random server ...')
+            utils.print_('Selecting random server ...')
 
         servers = closestServers(config['client'], True)    # get full list of servers
         serverrange = len(servers)
         targetserver = randint(0, serverrange-1)
         serverid=servers[targetserver]['id']
         if debug_flag:
-            print_('server[%d] out of %d: %s %s \n' % (targetserver, serverrange,
+            utils.print_('server[%d] out of %d: %s %s \n' % (targetserver, serverrange,
                       serverid, servers[targetserver]['name']) )
-            print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
+            utils.print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
 
         try:
             best = getBestServer(filter(lambda x: x['id'] == serverid, servers))   
         except IndexError as e:
-            print_('Invalid server ID: %s' % str(e))
+            utils.print_('Invalid server ID: %s' % str(e))
             return None
     
     timestamp = datetime.datetime.now()   # get time of test
 
     if debug_flag:
-        print_(('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
+        utils.print_(('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
                '%(latency)s ms' % best).encode('utf-8', 'ignore'))
 
     # sizes = [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
@@ -731,7 +707,7 @@ def myspeedtest():
                         (os.path.dirname(best['url']), size, size))
 
     if debug_flag:
-        print_('Testing download speed', end='')
+        utils.print_('Testing download speed', end='')
 
     download_metrics = downloadSpeed(urls, not(debug_flag))   
     dlspeed = download_metrics['speed_Mbs']
@@ -743,8 +719,8 @@ def myspeedtest():
             sizes.append(size)
     
     if debug_flag:    
-        print_()
-        print_('Testing upload speed', end='')
+        utils.print_()
+        utils.print_('Testing upload speed', end='')
 
     upload_metrics = uploadSpeed(best['url'], sizes, not(debug_flag))   
     ulspeed = upload_metrics['speed_Mbs']
@@ -785,7 +761,7 @@ def myspeedtest():
         post_networkdata(jsonpayload, event_id='netspeed-speedtest')
     else:
         if debug_flag:
-            print_(jsonpayload)
+            utils.print_(jsonpayload)
 
     if (file_flag):
         jsonfile = open('./netspeedresults.json', 'w')
@@ -798,7 +774,7 @@ def myspeedtest():
     total_volume_MB_month += download_metrics['data_MB']
 
     if debug_flag:
-        print_('Total BW per month (MB): %0.3f MB \n'
+        utils.print_('Total BW per month (MB): %0.3f MB \n'
                ' ' % (total_volume_MB_month) )   
     return netspeedresults
 
@@ -809,7 +785,7 @@ def speedtest_with_retry():
         result = myspeedtest()
         if result:  return result
         if i < SPEEDTEST_MAX_RETRIES:
-            print_('Speed test was unsuccessful, sleeping %s seconds and then will try again...' % str(SPEEDTEST_RETRY_DELAY))
+            utils.print_('Speed test was unsuccessful, sleeping %s seconds and then will try again...' % str(SPEEDTEST_RETRY_DELAY))
             time.sleep(SPEEDTEST_RETRY_DELAY)
     return None
 
@@ -824,7 +800,7 @@ def clear_monthly_data():
 
 def pingstatus():
     """Gets ping latency info and schedules itself to run again at the next interval."""
-    global contract_id, device_id
+    global contract_id, device_id, json_filename
     
     threading.Timer(PING_INTERVAL,pingstatus).start ()
     timestamp = datetime.datetime.now()
@@ -902,7 +878,7 @@ def pingstatus():
         jsonfile.close()  
   
     if debug_flag:
-        print_(jsonpayload)
+        utils.print_(jsonpayload)
 
 def speedtestscheduler():
     """Gets speed data and schedules itself to run again at the next interval."""
@@ -916,20 +892,20 @@ def speedtestscheduler():
     current_date = datetime.datetime.now()     
 
     if debug_flag:
-        print_('\nCurrent date: ', current_date.strftime('%Y-%m-%d %H:%M:%S'))
-        print_('Last date: ', last_date.strftime('%Y-%m-%d %H:%M:%S'))
+        utils.print_('\nCurrent date: ', current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        utils.print_('Last date: ', last_date.strftime('%Y-%m-%d %H:%M:%S'))
 
     if not(policy_flag):            # do not check policy, perform netspeed test
         testresults = speedtest_with_retry()
         if not testresults:
-            print_('Error: speed test failed after maximum retries.')
+            utils.print_('Error: speed test failed after maximum retries.')
         return
  
     """ if new month, clear all cumulative values and policy exceeded flags """
     if (current_date.month != last_date.month):
         if (max_volume_exceeded | max_mbps_exceeded):
            if debug_flag:
-                print_('resuming network tests.') 
+                utils.print_('resuming network tests.') 
 
         """ Clear monthly data and perform first network test of the month """
         clear_monthly_data()
@@ -942,13 +918,13 @@ def speedtestscheduler():
     """ Perform netspeed test """
     testresults = speedtest_with_retry()
     if not testresults:
-        print_('Error: speed test failed after maximum retries.')
+        utils.print_('Error: speed test failed after maximum retries.')
         return
 
     """ Check data usage """
     if (total_volume_MB_month > max_volume_MB_month):
         if debug_flag:
-            print_('Send volume exceeded. Total upload %0.3f MB > %0.3f'
+            utils.print_('Send volume exceeded. Total upload %0.3f MB > %0.3f'
                      'Suspending network tests...'
                      % (total_volume_MB_month, max_volume_MB_month) )
         max_volume_exceeded = 1
@@ -970,34 +946,34 @@ def netpoc_init():
     last_date = datetime.datetime.now()
 
     # Log the settings we are running with
-    print_('Running with these settings:')
-    print_('  Target network speed test server: %s' % target_server_criteria)
-    print_('  Run interval: %d' % run_interval)
-    print_('  Monthly bandwidth cap: %d' % max_volume_MB_month)
-    print_('  Ping interval: %d' % PING_INTERVAL)
-    print_('  Latitude: %s' % latitude)
-    print_('  Longitude: %s' % longitude)
-    print_('  Horizon agreement id: %s' % contract_id)
-    print_('  Horizon hash: %s' % contract_nonce)
-    print_('  Horizon device id: %s' % device_id)
-    if 'HZN_EXCHANGE_URL' in os.environ: print_('  Horizon exchange URL: %s' % os.environ['HZN_EXCHANGE_URL'])
-    print_('  MQTT broker hostname: %s' % mqtt_broker)
-    print_('  MQTT broker port: %s' % mqtt_port)
-    print_('  MQTT broker PEM file: %s' % mqtt_ca_file)
-    print_('  REG_MAX_RETRIES: %d' % REG_MAX_RETRIES)
-    print_('  REG_RETRY_DELAY: %d' % REG_RETRY_DELAY)
-    print_('  REG_SUCCESS_SLEEP: %d' % REG_SUCCESS_SLEEP)
-    print_('  SEND_MAX_RETRIES: %d' % SEND_MAX_RETRIES)
-    print_('  SEND_RETRY_DELAY: %d' % SEND_RETRY_DELAY)
-    print_('  SPEEDTEST_MAX_RETRIES: %d' % SPEEDTEST_MAX_RETRIES)
-    print_('  SPEEDTEST_RETRY_DELAY: %d' % SPEEDTEST_RETRY_DELAY)
+    utils.print_('Running with these settings:')
+    utils.print_('  Target network speed test server: %s' % target_server_criteria)
+    utils.print_('  Run interval: %d' % run_interval)
+    utils.print_('  Monthly bandwidth cap: %d' % max_volume_MB_month)
+    utils.print_('  Ping interval: %d' % PING_INTERVAL)
+    utils.print_('  Latitude: %s' % latitude)
+    utils.print_('  Longitude: %s' % longitude)
+    utils.print_('  Horizon agreement id: %s' % contract_id)
+    utils.print_('  Horizon hash: %s' % contract_nonce)
+    utils.print_('  Horizon device id: %s' % device_id)
+    if 'HZN_EXCHANGE_URL' in os.environ: utils.print_('  Horizon exchange URL: %s' % os.environ['HZN_EXCHANGE_URL'])
+    utils.print_('  MQTT broker hostname: %s' % mqtt_broker)
+    utils.print_('  MQTT broker port: %s' % mqtt_port)
+    utils.print_('  MQTT broker PEM file: %s' % mqtt_ca_file)
+    utils.print_('  REG_MAX_RETRIES: %d' % REG_MAX_RETRIES)
+    utils.print_('  REG_RETRY_DELAY: %d' % REG_RETRY_DELAY)
+    utils.print_('  REG_SUCCESS_SLEEP: %d' % REG_SUCCESS_SLEEP)
+    utils.print_('  SEND_MAX_RETRIES: %d' % SEND_MAX_RETRIES)
+    utils.print_('  SEND_RETRY_DELAY: %d' % SEND_RETRY_DELAY)
+    utils.print_('  SPEEDTEST_MAX_RETRIES: %d' % SPEEDTEST_MAX_RETRIES)
+    utils.print_('  SPEEDTEST_RETRY_DELAY: %d' % SPEEDTEST_RETRY_DELAY)
 
 
 def main():
  
     global shutdown_event, target_server_criteria, run_interval
     global send_policy_MB_month, receive_policy_MB_month 
-    global policy_flag, mqtt_flag, debug_flag, file_flag, jsonfile
+    global policy_flag, mqtt_flag, debug_flag, file_flag, json_filename
     global netpoc_error
 
     description = (
@@ -1048,18 +1024,17 @@ def main():
     signal.signal(signal.SIGINT, ctrl_c)  
 
     netpoc_init()
-
-    #mqtt_register()
-
+    
     if args.file:
         """ values for testing purposes """
         file_flag = 1
         try:
+            json_filename = './netspeedresults.json'
             # Ensure that we can open the json dump file
-            jsonfile = open('./netspeedresults.json', 'w')
+            jsonfile = open(json_filename, 'w')
             jsonfile.close()
         except IOError:
-            print_('Could not open file... writing results to std output\n')
+            utils.print_('Could not open file... writing results to std output\n')
             file_flag = 0
             debug_flag = 1
 
@@ -1069,7 +1044,7 @@ def main():
         speedtestscheduler()
     except KeyboardInterrupt:
         if debug_flag:
-            print_('\nCancelling...')
+            utils.print_('\nCancelling...')
         netpoc_error = 'netx0005'  # unexpected interrupt
 
 if __name__ == '__main__':

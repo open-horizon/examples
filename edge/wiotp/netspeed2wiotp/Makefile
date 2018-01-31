@@ -1,44 +1,44 @@
-all:
-	make build
-	make run
+# Transform the machine arch into some standard values: "arm", "arm64", or "x86"
+SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 
-# Get the 3-character prefix of the local host architecture ("arm", "x86", "arm64")
-SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/x86/' -e 's/armv.*/arm/')
-
-# To build for an arch different from the current system, set this env var to arm or x86 before running make
+# To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 ARCH ?= $(SYSTEM_ARCH)
 
+# These variables can be overridden from the environment
+VERSION ?= 2.6
+WL_NAME ?= netspeed2wiotp
+DOCKER_NAME ?= example_wl_$(ARCH)_$(WL_NAME)
+DOCKER_HUB_ID ?= openhorizon
+
+default: build
+
+all: build run
+
 build:
-	docker build -t netspeed2wiotp -f ./Dockerfile.$(ARCH) .
+	docker build -t $(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
 
 dev:
-	-docker stop netspeed2wiotp
-	-docker rm netspeed2wiotp
-	docker network create example-netspeed
-	docker run -it -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e WIOTP_ORG_ID="$(WIOTP_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_AUTH_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_DEVICE_AUTH_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name netspeed2wiotp --net=example-netspeed --net-alias=netspeed2wiotp --volume `pwd`:/outside netspeed2wiotp /bin/sh
+	-docker network create example
+	-docker rm -f $(WL_NAME)
+	docker run -it -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(WIOTP_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_AUTH_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_DEVICE_AUTH_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name $(WL_NAME) --net=example --net-alias=$(WL_NAME) --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION) /bin/sh
 
 run:
-	-docker stop netspeed2wiotp
-	-docker rm netspeed2wiotp
-	docker network create example-netspeed
-	docker run -d -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e WIOTP_ORG_ID="$(WIOTP_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_AUTH_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_DEVICE_AUTH_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name netspeed2wiotp --net=example-netspeed --net-alias=netspeed2wiotp netspeed2wiotp
+	-docker network create example
+	-docker rm -f $(WL_NAME)
+	docker run -d -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(WIOTP_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_AUTH_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_DEVICE_AUTH_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name $(WL_NAME) --net=example --net-alias=$(WL_NAME) $(DOCKER_NAME):$(VERSION)
 
 #check:
-#	curl -s localhost:$(PORT)/v1/netspeed | jq
-
-# These variables can be overridden from the environment
-NETSPEED2WIOTP_VERSION ?= 2.5
-NETSPEED2WIOTP_DOCKER_NAME ?= openhorizon/example_wl_$(ARCH)_netspeed2wiotp
+#	curl -s localhost:8347/v1/cpu | jq
 
 # To publish you must have write access to the docker hub openhorizon user
 publish:
-	docker build -t $(NETSPEED2WIOTP_DOCKER_NAME):$(NETSPEED2WIOTP_VERSION) -f ./Dockerfile.$(ARCH) .
-	docker push $(NETSPEED2WIOTP_DOCKER_NAME):$(NETSPEED2WIOTP_VERSION)
+	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 clean:
-	-docker stop netspeed2wiotp
-	-docker rm netspeed2wiotp
-	-docker rmi netspeed2wiotp
-	-docker network rm example-netspeed
+	-docker network rm example
+	-docker stop $(WL_NAME) && docker rm $(WL_NAME)
+	-docker rmi $(WL_NAME)
+	-docker rm -f $(DOCKER_NAME):$(VERSION)
 
-.PHONY: all build dev run check publish clean
+.PHONY: default all build dev run check publish clean
