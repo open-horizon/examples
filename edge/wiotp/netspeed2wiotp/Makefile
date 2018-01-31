@@ -7,7 +7,7 @@ ARCH ?= $(SYSTEM_ARCH)
 # These variables can be overridden from the environment
 VERSION ?= 2.6
 WL_NAME ?= netspeed2wiotp
-DOCKER_NAME ?= example_wl_$(ARCH)_$(WL_NAME)
+DOCKER_NAME ?= $(ARCH)_example_wl_$(WL_NAME)
 DOCKER_HUB_ID ?= openhorizon
 
 default: build
