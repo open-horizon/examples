@@ -1,4 +1,4 @@
-This directory contains input file templates to create a Horizon Exchange pattern definitions and input files for the cpu2wiotp pattern.
+This directory contains input file templates to create a Horizon Exchange pattern definitions and input files for the netspeed2wiotp pattern.
 
 Fill in the values of the variables in the template with commands like:
 
@@ -14,8 +14,8 @@ export WIOTP_GW_TYPE=mygwtype
 export WIOTP_GW_ID=mygw
 export WIOTP_GW_TOKEN=mytok
 
-envsubst < cpu2wiotp-template.json > cpu2wiotp.json
-envsubst < cpu2wiotp-input-template.json > cpu2wiotp-input.json
-envsubst < insert-cpu2wiotp-template.json > insert-cpu2wiotp.json
+envsubst < netspeed2wiotp-template.json > netspeed2wiotp.json
+envsubst < netspeed2wiotp-input-template.json > netspeed2wiotp-input.json
+envsubst < insert-netspeed2wiotp-template.json > insert-netspeed2wiotp.json
 envsubst < hznEdgeCoreIoTInput.json.template > hznEdgeCoreIoTInput.json
 ```

@@ -1,6 +1,6 @@
 {
   "label": "Netspeed2wiotp for $ARCH2",
-  "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
+  "description": "Sample Horizon workload that repeatedly performs pings and speed tests and sends results to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
   "version": "$NETSPEED2WIOTP_VERSION",
