@@ -1,0 +1,36 @@
+{
+    "global": [
+        {
+            "type": "HTTPSBasicAuthAttributes",
+            "sensor_urls": [],
+            "publishable": false,
+            "host_only": true,
+            "variables": {
+               "username": "",
+               "password": ""
+            }
+        }
+    ],
+    "microservices": [
+        {
+            "org": "IBM",
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+            }
+        }
+    ],
+    "workloads": [
+        {
+            "org": "$WIOTP_ORG_ID",
+            "url": "https://internetofthings.ibmcloud.com/workloads/mic2wiotp",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "WIOTP_CLASS_ID": "$WIOTP_CLASS_ID",
+                "WIOTP_DEVICE_TYPE": "$WIOTP_GW_TYPE",
+                "WIOTP_DEVICE_ID": "$WIOTP_GW_ID",
+                "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN"
+            }
+        }
+    ]
+}

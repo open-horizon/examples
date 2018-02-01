@@ -1,0 +1,6 @@
+FROM aarch64/alpine:latest
+ENV ARCH=arm64
+RUN apk --no-cache --update add alsa-utils
+COPY microphone /bin/
+WORKDIR /
+CMD microphone

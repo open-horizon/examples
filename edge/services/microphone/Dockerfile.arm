@@ -1,0 +1,6 @@
+FROM armhf/alpine:latest
+ENV ARCH=armhf
+RUN apk --no-cache --update add alsa-utils
+COPY microphone /bin/
+WORKDIR /
+CMD microphone

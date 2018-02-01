@@ -1,0 +1,9 @@
+FROM alpine:latest
+ENV ARCH=x86
+RUN apk --no-cache --update add curl mosquitto-clients
+COPY workload /bin/
+COPY *.pem /
+RUN mkdir -p devenv
+COPY devenv/*.pem /devenv/
+WORKDIR /
+CMD workload
