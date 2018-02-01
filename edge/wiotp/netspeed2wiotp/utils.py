@@ -96,7 +96,7 @@ def getEnvInt(name, default):
         try:
             return int(strVal)
         except ValueError as e:
-            print_('workload_config.py: Error: invalid value for environment variable %s: %s. Using default value %d.' % (name, str(e), default) )
+            print_('utils.py: Error: invalid value for environment variable %s: %s. Using default value %d.' % (name, str(e), default) )
             return default
     else:
         return default

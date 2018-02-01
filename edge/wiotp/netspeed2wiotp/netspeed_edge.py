@@ -224,9 +224,9 @@ def build_user_agent():
     )
 
     if debug_flag:
-        utils.print_('Platform information:')
-        utils.print_(platform.platform())
-        utils.print_(ua_tuple)
+        utils.print_('netspeed_edge.py: Platform information:')
+        utils.print_('netspeed_edge.py:', platform.platform())
+        utils.print_('netspeed_edge.py: ', ua_tuple)
       
     user_agent = ' '.join(ua_tuple)
     return user_agent
@@ -332,9 +332,9 @@ def downloadSpeed(files, quiet=False):
         'time_s': time_s                                     # time in seconds
     }
     if debug_flag:
-        utils.print_('\nData (Bytes): %d  Time (sec): %0.3f  Speed(Bytes/sec): %0.3f' 
+        utils.print_('\nnetspeed_edge.py: Data (Bytes): %d  Time (sec): %0.3f  Speed(Bytes/sec): %0.3f' 
                   % (data_B, time_s, download_speed) )
-        utils.print_('Download Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
+        utils.print_('netspeed_edge.py: Download Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
                   % download_metrics)   
 
     return download_metrics
@@ -422,9 +422,9 @@ def uploadSpeed(url, sizes, quiet=False):
     }
 
     if debug_flag:
-        utils.print_('\nData (Bytes): %d  Time(sec): %0.3f  Speed(Bytes/sec): %0.3f' 
+        utils.print_('\nnetspeed_edge.py: Data (Bytes): %d  Time(sec): %0.3f  Speed(Bytes/sec): %0.3f' 
                    % (data_B, time_s, upload_speed) )
-        utils.print_('Upload Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
+        utils.print_('netspeed_edge.py: Upload Volume(MB): %(data_MB)0.3f Speed(Mbps): %(speed_Mbs)0.3f' 
                    % upload_metrics)   
 
     return upload_metrics
@@ -447,7 +447,7 @@ def getConfig():
     request = build_request('://www.speedtest.net/speedtest-config.php')
     uh, e = catch_request(request)
     if e:
-        utils.print_('Error: could not retrieve speedtest.net configuration: %s' % e)
+        utils.print_('netspeed_edge.py: Error: could not retrieve speedtest.net configuration: %s' % e)
         return None
     configxml = []
     while 1:
@@ -455,7 +455,7 @@ def getConfig():
         if len(configxml[-1]) == 0:
             break
     if int(uh.code) != 200:
-        utils.print_('Error: got HTTP code %s when trying to retrieve speedtest.net configuration' % str(uh.code))
+        utils.print_('netspeed_edge.py: Error: got HTTP code %s when trying to retrieve speedtest.net configuration' % str(uh.code))
         return None
     uh.close()
     try:
@@ -474,7 +474,7 @@ def getConfig():
                 'download': getAttributesByTagName(root, 'download'),
                 'upload': getAttributesByTagName(root, 'upload')}
     except SyntaxError as e:
-        utils.print_('Failed to parse speedtest.net configuration: %s' % str(e))
+        utils.print_('netspeed_edge.py: Failed to parse speedtest.net configuration: %s' % str(e))
         return None
     del root
     del configxml
@@ -544,7 +544,7 @@ def closestServers(client, all=False):
 
     if not servers:
         if debug_flag:
-            utils.print_('Failed to retrieve list of speedtest.net servers:\n\n %s' %
+            utils.print_('netspeed_edge.py: Failed to retrieve list of speedtest.net servers:\n\n %s' %
                '\n'.join(errors))
         netpoc_error = 'netx0002' # cannot get list of closest servers
         sys.exit(1)
@@ -625,7 +625,7 @@ def post_networkdata(jsonpayload, event_id, heart_beat=False):
         if result == 1:  return True        # success
         if result == -1:
             # We were not registered
-            utils.print_('Send to mqtt failed. Not registered.')
+            utils.print_('netspeed_edge.py: Send to mqtt failed. Not registered.')
         else:
             # The send failed for some reason other than not be registered
             time.sleep(SEND_RETRY_DELAY)
@@ -640,7 +640,7 @@ def myspeedtest():
     global netpoc_error
 
     if debug_flag:
-        utils.print_('Retrieving speedtest.net configuration...')  
+        utils.print_('netspeed_edge.py: Retrieving speedtest.net configuration...')  
     try:
         config = getConfig()
         if not config:
@@ -649,53 +649,53 @@ def myspeedtest():
     except URLError:
         # getConfig() catches this, but leaving it here for safety
         if debug_flag:
-            utils.print_('Cannot retrieve speedtest configuration')
+            utils.print_('netspeed_edge.py: Cannot retrieve speedtest configuration')
         return None
 
     if debug_flag:
-        utils.print_('Retrieving speedtest.net server list...')
+        utils.print_('netspeed_edge.py: Retrieving speedtest.net server list...')
 
     if  (target_server_criteria == 'closest') | (target_server_criteria == 'fastest'):   
         if debug_flag:
-            utils.print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
+            utils.print_('netspeed_edge.py: Testing from %(isp)s (%(ip)s)...' % config['client'])
 
         servers = closestServers(config['client'])    # get top 5 closest servers
 
         if (target_server_criteria == 'fastest'):
             if debug_flag:
-                utils.print_('Selecting best server based on latency...')
+                utils.print_('netspeed_edge.py: Selecting best server based on latency...')
 
             best = getBestServer(servers)  # get server with lowest latency from 5 closest servers
 
         else:
             if debug_flag:
-                utils.print_('Selecting best server based on distance...')
+                utils.print_('netspeed_edge.py: Selecting best server based on distance...')
 
             best = getBestServer(servers)  # looks like this is using same criteria as fastest??
 
     elif (target_server_criteria == 'random'):        # select random server
         if debug_flag:
-            utils.print_('Selecting random server ...')
+            utils.print_('netspeed_edge.py: Selecting random server ...')
 
         servers = closestServers(config['client'], True)    # get full list of servers
         serverrange = len(servers)
         targetserver = randint(0, serverrange-1)
         serverid=servers[targetserver]['id']
         if debug_flag:
-            utils.print_('server[%d] out of %d: %s %s \n' % (targetserver, serverrange,
+            utils.print_('netspeed_edge.py: server[%d] out of %d: %s %s \n' % (targetserver, serverrange,
                       serverid, servers[targetserver]['name']) )
-            utils.print_('Testing from %(isp)s (%(ip)s)...' % config['client'])
+            utils.print_('netspeed_edge.py: Testing from %(isp)s (%(ip)s)...' % config['client'])
 
         try:
             best = getBestServer(filter(lambda x: x['id'] == serverid, servers))   
         except IndexError as e:
-            utils.print_('Invalid server ID: %s' % str(e))
+            utils.print_('netspeed_edge.py: Invalid server ID: %s' % str(e))
             return None
     
     timestamp = datetime.datetime.now()   # get time of test
 
     if debug_flag:
-        utils.print_(('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
+        utils.print_(('netspeed_edge.py: Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
                '%(latency)s ms' % best).encode('utf-8', 'ignore'))
 
     # sizes = [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
@@ -707,7 +707,7 @@ def myspeedtest():
                         (os.path.dirname(best['url']), size, size))
 
     if debug_flag:
-        utils.print_('Testing download speed', end='')
+        utils.print_('netspeed_edge.py: Testing download speed', end='')
 
     download_metrics = downloadSpeed(urls, not(debug_flag))   
     dlspeed = download_metrics['speed_Mbs']
@@ -720,7 +720,7 @@ def myspeedtest():
     
     if debug_flag:    
         utils.print_()
-        utils.print_('Testing upload speed', end='')
+        utils.print_('netspeed_edge.py: Testing upload speed', end='')
 
     upload_metrics = uploadSpeed(best['url'], sizes, not(debug_flag))   
     ulspeed = upload_metrics['speed_Mbs']
@@ -761,7 +761,7 @@ def myspeedtest():
         post_networkdata(jsonpayload, event_id='netspeed-speedtest')
     else:
         if debug_flag:
-            utils.print_(jsonpayload)
+            utils.print_('netspeed_edge.py: ' + str(jsonpayload))
 
     if (file_flag):
         jsonfile = open('./netspeedresults.json', 'w')
@@ -774,8 +774,8 @@ def myspeedtest():
     total_volume_MB_month += download_metrics['data_MB']
 
     if debug_flag:
-        utils.print_('Total BW per month (MB): %0.3f MB \n'
-               ' ' % (total_volume_MB_month) )   
+        utils.print_('netspeed_edge.py: Total BW per month (MB): %0.3f MB \n'
+               'netspeed_edge.py: ' % (total_volume_MB_month) )   
     return netspeedresults
 
 
@@ -785,7 +785,7 @@ def speedtest_with_retry():
         result = myspeedtest()
         if result:  return result
         if i < SPEEDTEST_MAX_RETRIES:
-            utils.print_('Speed test was unsuccessful, sleeping %s seconds and then will try again...' % str(SPEEDTEST_RETRY_DELAY))
+            utils.print_('netspeed_edge.py: Speed test was unsuccessful, sleeping %s seconds and then will try again...' % str(SPEEDTEST_RETRY_DELAY))
             time.sleep(SPEEDTEST_RETRY_DELAY)
     return None
 
@@ -878,7 +878,7 @@ def pingstatus():
         jsonfile.close()  
   
     if debug_flag:
-        utils.print_(jsonpayload)
+        utils.print_('netspeed_edge.py: ', str(jsonpayload))
 
 def speedtestscheduler():
     """Gets speed data and schedules itself to run again at the next interval."""
@@ -892,20 +892,20 @@ def speedtestscheduler():
     current_date = datetime.datetime.now()     
 
     if debug_flag:
-        utils.print_('\nCurrent date: ', current_date.strftime('%Y-%m-%d %H:%M:%S'))
-        utils.print_('Last date: ', last_date.strftime('%Y-%m-%d %H:%M:%S'))
+        utils.print_('\nnetspeed_edge.py: Current date: ', current_date.strftime('%Y-%m-%d %H:%M:%S'))
+        utils.print_('netspeed_edge.py: Last date: ', last_date.strftime('%Y-%m-%d %H:%M:%S'))
 
     if not(policy_flag):            # do not check policy, perform netspeed test
         testresults = speedtest_with_retry()
         if not testresults:
-            utils.print_('Error: speed test failed after maximum retries.')
+            utils.print_('netspeed_edge.py: Error: speed test failed after maximum retries.')
         return
  
     """ if new month, clear all cumulative values and policy exceeded flags """
     if (current_date.month != last_date.month):
         if (max_volume_exceeded | max_mbps_exceeded):
            if debug_flag:
-                utils.print_('resuming network tests.') 
+                utils.print_('netspeed_edge.py: resuming network tests.') 
 
         """ Clear monthly data and perform first network test of the month """
         clear_monthly_data()
@@ -918,13 +918,13 @@ def speedtestscheduler():
     """ Perform netspeed test """
     testresults = speedtest_with_retry()
     if not testresults:
-        utils.print_('Error: speed test failed after maximum retries.')
+        utils.print_('netspeed_edge.py: Error: speed test failed after maximum retries.')
         return
 
     """ Check data usage """
     if (total_volume_MB_month > max_volume_MB_month):
         if debug_flag:
-            utils.print_('Send volume exceeded. Total upload %0.3f MB > %0.3f'
+            utils.print_('netspeed_edge.py: Send volume exceeded. Total upload %0.3f MB > %0.3f'
                      'Suspending network tests...'
                      % (total_volume_MB_month, max_volume_MB_month) )
         max_volume_exceeded = 1
@@ -946,27 +946,28 @@ def netpoc_init():
     last_date = datetime.datetime.now()
 
     # Log the settings we are running with
-    utils.print_('Running with these settings:')
-    utils.print_('  Target network speed test server: %s' % target_server_criteria)
-    utils.print_('  Run interval: %d' % run_interval)
-    utils.print_('  Monthly bandwidth cap: %d' % max_volume_MB_month)
-    utils.print_('  Ping interval: %d' % PING_INTERVAL)
-    utils.print_('  Latitude: %s' % latitude)
-    utils.print_('  Longitude: %s' % longitude)
-    utils.print_('  Horizon agreement id: %s' % contract_id)
-    utils.print_('  Horizon hash: %s' % contract_nonce)
-    utils.print_('  Horizon device id: %s' % device_id)
-    if 'HZN_EXCHANGE_URL' in os.environ: utils.print_('  Horizon exchange URL: %s' % os.environ['HZN_EXCHANGE_URL'])
-    utils.print_('  MQTT broker hostname: %s' % mqtt_broker)
-    utils.print_('  MQTT broker port: %s' % mqtt_port)
-    utils.print_('  MQTT broker PEM file: %s' % mqtt_ca_file)
-    utils.print_('  REG_MAX_RETRIES: %d' % REG_MAX_RETRIES)
-    utils.print_('  REG_RETRY_DELAY: %d' % REG_RETRY_DELAY)
-    utils.print_('  REG_SUCCESS_SLEEP: %d' % REG_SUCCESS_SLEEP)
-    utils.print_('  SEND_MAX_RETRIES: %d' % SEND_MAX_RETRIES)
-    utils.print_('  SEND_RETRY_DELAY: %d' % SEND_RETRY_DELAY)
-    utils.print_('  SPEEDTEST_MAX_RETRIES: %d' % SPEEDTEST_MAX_RETRIES)
-    utils.print_('  SPEEDTEST_RETRY_DELAY: %d' % SPEEDTEST_RETRY_DELAY)
+    utils.print_('netspeed_edge.py: Running with these settings:')
+    utils.print_('netspeed_edge.py:   Target network speed test server: %s' % target_server_criteria)
+    utils.print_('netspeed_edge.py:   Run interval: %d' % run_interval)
+    utils.print_('netspeed_edge.py:   Monthly bandwidth cap: %d' % max_volume_MB_month)
+    utils.print_('netspeed_edge.py:   Ping interval: %d' % PING_INTERVAL)
+    utils.print_('netspeed_edge.py:   Latitude: %s' % latitude)
+    utils.print_('netspeed_edge.py:   Longitude: %s' % longitude)
+    utils.print_('netspeed_edge.py:   Horizon agreement id: %s' % contract_id)
+    utils.print_('netspeed_edge.py:   Horizon hash: %s' % contract_nonce)
+    utils.print_('netspeed_edge.py:   Horizon device id: %s' % device_id)
+    if 'HZN_EXCHANGE_URL' in os.environ: 
+        utils.print_('netspeed_edge.py:   Horizon exchange URL: %s' % os.environ['HZN_EXCHANGE_URL'])
+    utils.print_('netspeed_edge.py:   MQTT broker hostname: %s' % mqtt_broker)
+    utils.print_('netspeed_edge.py:   MQTT broker port: %s' % mqtt_port)
+    utils.print_('netspeed_edge.py:   MQTT broker PEM file: %s' % mqtt_ca_file)
+    utils.print_('netspeed_edge.py:   REG_MAX_RETRIES: %d' % REG_MAX_RETRIES)
+    utils.print_('netspeed_edge.py:   REG_RETRY_DELAY: %d' % REG_RETRY_DELAY)
+    utils.print_('netspeed_edge.py:   REG_SUCCESS_SLEEP: %d' % REG_SUCCESS_SLEEP)
+    utils.print_('netspeed_edge.py:   SEND_MAX_RETRIES: %d' % SEND_MAX_RETRIES)
+    utils.print_('netspeed_edge.py:   SEND_RETRY_DELAY: %d' % SEND_RETRY_DELAY)
+    utils.print_('netspeed_edge.py:   SPEEDTEST_MAX_RETRIES: %d' % SPEEDTEST_MAX_RETRIES)
+    utils.print_('netspeed_edge.py:   SPEEDTEST_RETRY_DELAY: %d' % SPEEDTEST_RETRY_DELAY)
 
 
 def main():
@@ -1024,7 +1025,7 @@ def main():
     signal.signal(signal.SIGINT, ctrl_c)  
 
     netpoc_init()
-    
+
     if args.file:
         """ values for testing purposes """
         file_flag = 1
@@ -1034,17 +1035,18 @@ def main():
             jsonfile = open(json_filename, 'w')
             jsonfile.close()
         except IOError:
-            utils.print_('Could not open file... writing results to std output\n')
+            utils.print_('netspeed_edge.py: Could not open file... writing results to std output\n')
             file_flag = 0
             debug_flag = 1
 
     try:
         # Every time these run, they schedule a timer to run themselves again at the next interval
+        utils.print_("netspeed_edge.py: Netspeed running...")
         pingstatus()
         speedtestscheduler()
     except KeyboardInterrupt:
         if debug_flag:
-            utils.print_('\nCancelling...')
+            utils.print_('\nnetspeed_edge.py: Cancelling...')
         netpoc_error = 'netx0005'  # unexpected interrupt
 
 if __name__ == '__main__':

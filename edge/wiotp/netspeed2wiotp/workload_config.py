@@ -73,14 +73,14 @@ if device_id == '' or device_id == '-':
         HZN_DEVICE_ID.")
 #    return 1
 
-utils.print_("Optional override environment variables:")
-utils.print_("  WIOTP_CLASS_ID=" + utils.check_env_var('WIOTP_CLASS_ID', '', False))
-utils.print_("  WIOTP_DEVICE_TYPE=" + utils.check_env_var('WIOTP_DEVICE_TYPE', '', False))
-utils.print_("  WIOTP_DEVICE_ID=" + utils.check_env_var('WIOTP_DEVICE_ID', '', False))
-utils.print_("Derived variables:")
-utils.print_("  CLASS_ID=" + class_id)
-utils.print_("  DEVICE_TYPE=" + device_type)
-utils.print_("  DEVICE_ID=" + device_id)
+utils.print_("Workload config.py: Optional override environment variables:")
+utils.print_("Workload config.py:   WIOTP_CLASS_ID=" + utils.check_env_var('WIOTP_CLASS_ID', '', False))
+utils.print_("Workload config.py:   WIOTP_DEVICE_TYPE=" + utils.check_env_var('WIOTP_DEVICE_TYPE', '', False))
+utils.print_("Workload config.py:   WIOTP_DEVICE_ID=" + utils.check_env_var('WIOTP_DEVICE_ID', '', False))
+utils.print_("Workload config.py: Derived variables:")
+utils.print_("Workload config.py:   CLASS_ID=" + class_id)
+utils.print_("Workload config.py:   DEVICE_TYPE=" + device_type)
+utils.print_("Workload config.py:   DEVICE_ID=" + device_id)
 
 ## Environment variables that can optionally be set, or default
 # set in the pattern deployment_overrides field if you need to override
@@ -101,13 +101,13 @@ wiotp_edge_mqtt_ip = utils.check_env_var('WIOTP_EDGE_MQTT_IP', '')
 # by default publish via MQTT to WioTP every n seconds
 reporting_interval = utils.getEnvInt('REPORTING_INTERVAL', 10)                            
       
-utils.print_("Optional environment variables (or default values):")
-utils.print_("  WIOTP_DOMAIN=" + wiotp_domain)
-utils.print_("  WIOTP_API_KEY=" + wiotp_api_key)
-utils.print_("  WIOTP_API_AUTH_TOKEN=" + wiotp_api_auth_token)
-utils.print_("  WIOTP_PEM_FILE=" + wiotp_pem_file)
-utils.print_("  WIOTP_EDGE_MQTT_IP=" + wiotp_edge_mqtt_ip)
-utils.print_("  REPORTING_INTERVAL=" + str(reporting_interval))     
+utils.print_("Workload config.py: Optional environment variables (or default values):")
+utils.print_("Workload config.py:   WIOTP_DOMAIN=" + wiotp_domain)
+utils.print_("Workload config.py:   WIOTP_API_KEY=" + wiotp_api_key)
+utils.print_("Workload config.py:   WIOTP_API_AUTH_TOKEN=" + wiotp_api_auth_token)
+utils.print_("Workload config.py:   WIOTP_PEM_FILE=" + wiotp_pem_file)
+utils.print_("Workload config.py:   WIOTP_EDGE_MQTT_IP=" + wiotp_edge_mqtt_ip)
+utils.print_("Workload config.py:   REPORTING_INTERVAL=" + str(reporting_interval))     
 
 # If Watson IoT Platform API credentials are not provided, assume device exists in WIoTP
 if wiotp_api_key != '' or wiotp_api_auth_token != '':
@@ -125,7 +125,10 @@ contract_nonce = utils.check_env_var('HZN_HASH', '', False)
 
 # Derive MQTT parameters for direct send to WIoTP
 mqtt_port=8883
-mqtt_broker = '.'.join([hzn_organization, "messaging", wiotp_domain])
+if wiotp_edge_mqtt_ip != '':        # Case 1: Send via local broker
+    mqtt_broker = wiotp_edge_mqtt_ip
+else:                               # Case 2: Send directly to WIoTP
+    mqtt_broker = '.'.join([hzn_organization, "messaging", wiotp_domain])
 mqtt_client_id  = ':'.join(['g', hzn_organization, device_type, device_id])
 mqtt_ca_file = wiotp_pem_file
 mqtt_auth = {'username': 'use-token-auth', 'password': wiotp_device_auth_token}
