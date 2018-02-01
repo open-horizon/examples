@@ -1,5 +1,5 @@
 {
-  "label": "CPU for $ARCH1",
+  "label": "CPU for $ARCH2",
   "description": "Provides a REST API to query the CPU load",
   "public": true,
   "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
@@ -11,7 +11,7 @@
   "userInput": [],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu\":{\"image\":\"$DOCKER_HUB_ID/example_ms_${ARCH1}_cpu:$CPU_VERSION\"}}}",
+      "deployment": "{\"services\":{\"cpu\":{\"image\":\"$DOCKER_HUB_ID/example_ms_${ARCH2}_cpu:$CPU_VERSION\"}}}",
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
