@@ -1,0 +1,55 @@
+{
+  "label": "Cpu2wiotp for amd64",
+  "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
+  "public": true,
+  "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
+  "version": "1.1.8",
+  "arch": "amd64",
+  "downloadUrl": "not used yet",
+  "apiSpec": [
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
+      "org": "$WIOTP_ORG_ID",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "amd64"
+    },
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+      "org": "IBM",
+      "version": "[1.0.11,INFINITY)",
+      "arch": "amd64"
+    }
+  ],
+  "userInput": [
+    {
+      "name": "WIOTP_CLASS_ID",
+      "label": "'d' if it is a device or 'g' if it is a gateway. A value of '-' means get it from HZN_DEVICE_ID.",
+      "type": "string",
+      "defaultValue": "-"
+    },
+    {
+      "name": "WIOTP_DEVICE_TYPE",
+      "label": "The device or gateway type that you created in the WIoTP UI. A value of '-' means get it from HZN_DEVICE_ID.",
+      "type": "string",
+      "defaultValue": "-"
+    },
+    {
+      "name": "WIOTP_DEVICE_ID",
+      "label": "The device or gateway id that you created in the WIoTP UI. A value of '-' means get it from HZN_DEVICE_ID.",
+      "type": "string",
+      "defaultValue": "-"
+    },
+    {
+      "name": "WIOTP_DEVICE_AUTH_TOKEN",
+      "label": "The token you gave to the device or gateway you created in the WIoTP UI",
+      "type": "string"
+    }
+  ],
+  "workloads": [
+    {
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_amd64_cpu2wiotp:1.1.8\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
+      "deployment_signature": "HLhLtcbNuQlmkFYH/uRdSOOpq8LpBZQFUuxt7mP50aROtqz2cc+CPqVMcYOIHHipYyjqZ4o8N6rvU+Mwx+HzD/el5ynnPdMTdVPxgjLkHuJDMuG7OmH2F04kThKTuVP2vw1TSff9Y59QY2N3n0tq8dcTKmiMEPHpDhEnRazq1Jk2XmAWdIVruWifJeBJ7+wrYO2FOmFiY8SMws0djlMiYYW/twxGpfbLPJnr/pVJ4C7dIoZqPaeC3/wtL9uTivIO+rvRpNYm0zKHb4WfrAfNrTRgexuoBWmAucW9gsWqxU1eypTesc/f1TKYDW9c4BhvYK1I4Xim2HkJxhfzv/Hcs1tFfM5xN0S0AiyAyGYoOC/TEq1mxB651L70bHnkQlN5MPRj+r4v2YOkHV3vcWiQKu9dZV84wD2OwiDTsk3/C+wKtXzp+mCTYSyWOVfBImFErtRKDjU0ZaioJAS13ZYSnfMUDcgO0nxp+T9b8prs/A0wZ4yZpE9Gyxzkzpku8rZKuI/f3gGKj8thaIY6QrhbBaSV2wSngmyyY8IvX4j/JYiszi9FVw5EydK39UdTdguGfkEhd+I5uebtgk2Bx8CeC1zAsPcBBlFnQELuB3E9bNkoDs3gBV/VTJ1iCZ0kXb5ufDuTk1vrqBiN5G7BMXqQgF6Rq7QIuVTfNWiMKi7n1Gc=",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}
