@@ -1,0 +1,19 @@
+{
+  "label": "CPU for arm64",
+  "description": "Provides a REST API to query the CPU load",
+  "public": true,
+  "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
+  "version": "1.2.2",
+  "arch": "arm64",
+  "sharable": "single",
+  "downloadUrl": "not used yet",
+  "matchHardware": {},
+  "userInput": [],
+  "workloads": [
+    {
+      "deployment": "{\"services\":{\"cpu\":{\"image\":\"openhorizon/example_ms_arm_cpu:1.2.2\",\"privileged\":false}}}",
+      "deployment_signature": "Hs1VY1j+V4FtqjGskfYBa1XDTBiw+0gKKtRLalo3Bt8/N3HxnO4a4AfyW2M60Ago3GhOkBtOH2EiGJAcNh1q6fQp5IzIuqTnnQy0nB+X/mGGcCKvn5qbznMqryeZbM2DNB2JaA7bCmpFQNQcFWSH0FX35yrNBqfWpvLFSGQJdEGyUcfaizQOgcipup3kHjE8cMkWJSNoSqgd8I917Bjmzcj6uVLo1ZU1xNRyjYad9eLhHuVzQlR+EbPIPwBHYKdJYLQX0uQiHlmULcOlfh3OkXu3rDNK3909+1Ke9NLKdAZnTI+cCn+U+RQ9VDbG9LfkfcduOWf758Ori7lrsyrb0+QNlqz7BWFfi4JseWlUikXzOZ0IJoNwFgdbuBfGgncNEAfFcU/WTA53n4GZK5V003GRqLc/6RWqPWcPVdIUuyl4LdPk4nAoWufcWP1yc5i3vKS7iztvroSyVgC4ENCTab40lZ1DJ81a7sAXaNs9+8Fx8RgjsfsWy869Tt6uV3UA+aFLh4Q7+J7iC1nQuf4dWprZsf9RSl+zZtKHuRTIeYM4va4qDOEfViljxfhdA+YeJX3uZiTAR1avJL0BjS/b/Sd2AcsnRoTNjfcOcdcl4GbquhFsH34e3o3IsagtaPjbpcVfvS7zh5LUGfLv1pBV6ZJtvJoiVdMCMSIAbvQQLMo=",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "label": "Netspeed2wiotp for amd64, arm, and arm64",
+  "description": "Horizon deployment pattern that runs the netspeed2wiotp workload",
+  "public": true,
+  "workloads": [
+    {
+      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
+      "workloadOrgid": "$WIOTP_ORG_ID",
+      "workloadArch": "amd64",
+      "workloadVersions": [
+        {
+          "version": "$NETSPEED2WIOTP_VERSION",
+          "deployment_overrides": "{\"services\":{\"netspeed2wiotp\":{\"environment\":[\"WIOTP_DOMAIN=${WIOTP_TEST_ENV2}internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"VERBOSE=1\"]}}}",
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
+      "workloadOrgid": "$WIOTP_ORG_ID",
+      "workloadArch": "arm",
+      "workloadVersions": [
+        {
+          "version": "$NETSPEED2WIOTP_VERSION",
+          "deployment_overrides": "{\"services\":{\"netspeed2wiotp\":{\"environment\":[\"WIOTP_DOMAIN=${WIOTP_TEST_ENV2}internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"VERBOSE=1\"]}}}",
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/netspeed2wiotp",
+      "workloadOrgid": "$WIOTP_ORG_ID",
+      "workloadArch": "arm64",
+      "workloadVersions": [
+        {
+          "version": "$NETSPEED2WIOTP_VERSION",
+          "deployment_overrides": "{\"services\":{\"netspeed2wiotp\":{\"environment\":[\"WIOTP_DOMAIN=${WIOTP_TEST_ENV2}internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"VERBOSE=1\"]}}}",
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    },
+    {
+      "name": "Citizen Scientist"
+    }
+  ]
+}
