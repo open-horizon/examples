@@ -1,7 +1,7 @@
 {
   "workload_url": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
   "workload_version": "[0.0.0,INFINITY)",
-  "organization": "$WIOTP_ORG_ID",
+  "organization": "$HZN_ORG_ID",
   "attributes": [
     {
       "type": "UserInputAttributes",
@@ -9,9 +9,6 @@
       "host_only": false,
       "label": "User input variables",
       "mappings": {
-        "WIOTP_CLASS_ID": "$WIOTP_CLASS_ID",
-        "WIOTP_DEVICE_TYPE": "$WIOTP_GW_TYPE",
-        "WIOTP_DEVICE_ID": "$WIOTP_GW_ID",
         "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN"
       }
     }

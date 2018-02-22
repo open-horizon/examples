@@ -9,7 +9,7 @@
   "apiSpec": [
     {
       "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
-      "org": "$WIOTP_ORG_ID",
+      "org": "$HZN_ORG_ID",
       "version": "[0.0.0,INFINITY)",
       "arch": "arm64"
     },

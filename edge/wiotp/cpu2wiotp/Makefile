@@ -18,11 +18,11 @@ build:
 
 dev:
 	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -it -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(WIOTP_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_GW_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name cpu2wiotp --net=example --net-alias=cpu2wiotp --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION) /bin/sh
+	docker run -it -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_GW_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name cpu2wiotp --net=example --net-alias=cpu2wiotp --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION) /bin/sh
 
 run:
 	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -d -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(WIOTP_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_GW_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name cpu2wiotp --net=example --net-alias=cpu2wiotp $(DOCKER_NAME):$(VERSION)
+	docker run -d -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e WIOTP_API_KEY="$(WIOTP_API_KEY)" -e WIOTP_API_AUTH_TOKEN="$(WIOTP_API_TOKEN)" -e WIOTP_DEVICE_TYPE="$(WIOTP_DEVICE_TYPE)" -e WIOTP_DEVICE_AUTH_TOKEN="$(WIOTP_GW_TOKEN)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name cpu2wiotp --net=example --net-alias=cpu2wiotp $(DOCKER_NAME):$(VERSION)
 
 check:
 	curl -s localhost:8347/v1/cpu | jq

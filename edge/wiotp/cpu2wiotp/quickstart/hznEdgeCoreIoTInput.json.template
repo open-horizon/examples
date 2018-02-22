@@ -22,7 +22,7 @@
     ],
     "workloads": [
         {
-            "org": "$WIOTP_ORG_ID",
+            "org": "$HZN_ORG_ID",
             "url": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
