@@ -56,7 +56,7 @@
               "/var/wiotp-edge:/var/wiotp-edge"
             ],
             "environment": [
-              "WIOTP_DOMAIN=internetofthings.ibmcloud.com",
+              "WIOTP_DOMAIN=$WIOTP_DOMAIN",
               "WIOTP_EDGE_MQTT_IP=edge-connector",
               "WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem"
             ]
