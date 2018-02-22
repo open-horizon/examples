@@ -1,6 +1,6 @@
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-      "workloadOrgid": "$WIOTP_ORG_ID",
+      "workloadOrgid": "$HZN_ORG_ID",
       "workloadArch": "$ARCH2",
       "workloadVersions": [
         {
