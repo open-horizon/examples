@@ -9,7 +9,7 @@
             "services": {
               "cpu2wiotp": {
                 "environment": [
-                  "WIOTP_DOMAIN=${WIOTP_TEST_ENV2}internetofthings.ibmcloud.com",
+                  "WIOTP_DOMAIN=$WIOTP_DOMAIN",
                   "VERBOSE=1"
                 ]
               }
