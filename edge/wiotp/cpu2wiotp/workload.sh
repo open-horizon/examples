@@ -83,7 +83,7 @@ while true; do
     sum=$(echo $sum + $cpuusage | bc)
 
     if [[ "$samplecount" -eq "$samples" ]]; then
-      average=$(echo $sum/$samples | bc -l)
+      average=$(echo "scale=4; $sum/$samples" | bc -l)
 
       json='{"cpu":'$average'}'
       #echo "avg: $json"

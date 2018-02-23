@@ -1,6 +1,6 @@
 FROM aarch64/alpine:latest
 ENV ARCH=arm64
-RUN apk --no-cache --update add curl mosquitto-clients
+RUN apk --no-cache --update add curl mosquitto-clients jq bc
 COPY *.sh /
 COPY *.pem /
 RUN mkdir -p devenv
