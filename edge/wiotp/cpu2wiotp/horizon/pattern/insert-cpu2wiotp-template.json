@@ -9,8 +9,7 @@
             "services": {
               "cpu2wiotp": {
                 "environment": [
-                  "WIOTP_DOMAIN=$WIOTP_DOMAIN",
-                  "VERBOSE=1"
+                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
                 ]
               }
             }

@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# Horizon sample workload to query the cpu load from a sample microservice and publish it to Watson IoT Platform
-
+# Horizon sample workload to query the cpu load from a sample microservice, calculate a window average, and publish it to Watson IoT Platform
 # This workload expects the CPU microservice to be running, unless it is running in mock mode.
 
 # Verify required environment variables are set
@@ -16,8 +15,9 @@ checkRequiredEnvVar() {
 }
 echo "Checking for required environment variables are set:"
 checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
-checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   # a userInput value, so must be set in the input file passed to 'hzn register'
+checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   #todo: this can go away when the edge-connector app support hits prod. A userInput value, so must be set in the input file passed to 'hzn register'
 checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon. Wiotp automatically gives this a value of: g@mygwtype@mygw
+VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
 
 # Parse the class id, device type, and device id from HZN_DEVICE_ID. It will have a value like 'g@mygwtype@mygw'
 id="$HZN_DEVICE_ID"
@@ -36,10 +36,12 @@ if [[ "$VERBOSE" == 1 ]]; then echo "  CLASS_ID=$CLASS_ID, DEVICE_TYPE=$DEVICE_T
 WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
 WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # the cert to verify the WIoTP MQTT broker
 # WIOTP_EDGE_MQTT_IP: local IP or hostname of the WIoTP Edge Connector microservice (enables severability). Otherwise send straight to the wiotp cloud broker.
-REPORTING_INTERVAL_SEC="${REPORTING_INTERVAL_SEC:-10}"    # reporting interval in seconds
-# MOCK: if "true", just pretend to call the cpu microservice REST API
+SAMPLE_INTERVAL="${SAMPLE_INTERVAL:-5}"    # reporting interval in seconds
+SAMPLE_SIZE="${SAMPLE_SIZE:-10}"    # the number of samples to read before calculating/publishing the average
+PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to wiotp
+MOCK="${MOCK:-false}"     # if "true", just pretend to call the cpu microservice REST API
 
-echo "Optional environment variables (or default values): WIOTP_DOMAIN=$WIOTP_DOMAIN, WIOTP_PEM_FILE=$WIOTP_PEM_FILE, WIOTP_EDGE_MQTT_IP=$WIOTP_EDGE_MQTT_IP, REPORTING_INTERVAL_SEC=$REPORTING_INTERVAL_SEC"
+echo "Optional environment variables (or default values): WIOTP_DOMAIN=$WIOTP_DOMAIN, WIOTP_PEM_FILE=$WIOTP_PEM_FILE, WIOTP_EDGE_MQTT_IP=$WIOTP_EDGE_MQTT_IP, SAMPLE_INTERVAL=$SAMPLE_INTERVAL, SAMPLE_SIZE=$SAMPLE_SIZE, PUBLISH=$PUBLISH, MOCK=$MOCK"
 
 # Check the exit status of the previously run command and exit if nonzero (unless 'continue' is passed in)
 checkrc() {
@@ -53,11 +55,15 @@ checkrc() {
 }
 
 echo 'Starting infinite loop to read from microservice then publish...'
+sum=0
+samples="$SAMPLE_SIZE"
+samplecount=0
 while true; do
+  samplecount=$((samplecount + 1))
 
   # Get data from a local microservice
   if [[ "$MOCK" == "true" ]]; then
-    output='{"cpu":51.2} 200'
+    output='{"cpu":'$(date +%S)'} 200'
     curlrc=0
   else
     output=$(curl -sS -w %{http_code} "http://cpu:8347/v1/cpu")
@@ -71,27 +77,42 @@ while true; do
   elif [[ "$httpcode" != 200 ]]; then
     echo "Warning: HTTP code $httpcode from the local cpu microservice REST API, will try again next interval."
   else
-    # Send a "status" event to the Watson IoT Platform containing the data
-    clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
-    topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
-    #clientId="a:$HZN_ORGANIZATION:myappid"       # sending as an app
-    #topic="iot-2/evt/status/fmt/json"
-    if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
-      # Send to the local WIoTP Edge Connector microservice mqtt broker, so it can store and forward
-      msgHost="$WIOTP_EDGE_MQTT_IP"
-    else
-      # Send directly to the WIoTP cloud mqtt broker
-      msgHost="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
+    # Accumulate the CPU usage and calculate the average after obtaining all samples.
+    cpuusage=$(echo $json | jq '.cpu')
+    if [[ "$VERBOSE" == 1 ]]; then echo " Interval $samplecount cpu: $cpuusage"; fi
+    sum=$(echo $sum + $cpuusage | bc)
+
+    if [[ "$samplecount" -eq "$samples" ]]; then
+      average=$(echo $sum/$samples | bc -l)
+
+      json='{"cpu":'$average'}'
+      #echo "avg: $json"
+
+      if [[ "$PUBLISH" == "true" ]]; then
+        # Send a "status" event to the Watson IoT Platform containing the data
+        clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
+        topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
+        #clientId="a:$HZN_ORGANIZATION:myappid"       # sending as an app
+        #topic="iot-2/evt/status/fmt/json"
+        if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
+          # Send to the local WIoTP Edge Connector microservice mqtt broker, so it can store and forward
+          msgHost="$WIOTP_EDGE_MQTT_IP"
+        else
+          # Send directly to the WIoTP cloud mqtt broker
+          msgHost="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
+        fi
+
+        echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
+        mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
+        checkrc $? "mosquitto_pub $msgHost" "continue"
+      fi
+      sum=0
+      samplecount=0
     fi
 
-    if [[ "$VERBOSE" == 1 ]]; then
-      echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
-    fi
-    mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
-    checkrc $? "mosquitto_pub $msgHost" "continue"
   fi
 
   # Pause before looping again
-  sleep $REPORTING_INTERVAL_SEC
+  sleep $SAMPLE_INTERVAL
 done
 # Not reached

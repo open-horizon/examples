@@ -26,6 +26,36 @@
       "name": "WIOTP_DEVICE_AUTH_TOKEN",
       "label": "The token you gave to the device or gateway you created in the WIoTP UI",
       "type": "string"
+    },
+    {
+        "name": "SAMPLE_SIZE",
+        "label": "the number of samples to read before calculating the average",
+        "type": "int",
+        "defaultValue": "10"
+    },
+    {
+        "name": "SAMPLE_INTERVAL",
+        "label": "the number of seconds between samples",
+        "type": "int",
+        "defaultValue": "5"
+    },
+    {
+        "name": "MOCK",
+        "label": "mock the CPU sampling",
+        "type": "boolean",
+        "defaultValue": "false"
+    },
+    {
+        "name": "PUBLISH",
+        "label": "publish the CPU samples to WIoTP",
+        "type": "boolean",
+        "defaultValue": "true"
+    },
+    {
+        "name": "VERBOSE",
+        "label": "log everything that happens",
+        "type": "string",
+        "defaultValue": "0"
     }
   ],
   "workloads": [
