@@ -1,23 +1,22 @@
 {
-  "org": "$HZN_ORG_ID",
-  "label": "Cpu2wiotp for $ARCH2",
+  "label": "Cpu2wiotp for amd64",
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-  "version": "$CPU2WIOTP_VERSION",
-  "arch": "$ARCH2",
+  "version": "1.2.0",
+  "arch": "amd64",
   "apiSpec": [
     {
       "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
       "org": "$HZN_ORG_ID",
       "version": "[0.0.0,INFINITY)",
-      "arch": "$ARCH2"
+      "arch": "amd64"
     },
     {
       "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
       "org": "IBM",
       "version": "[1.0.11,INFINITY)",
-      "arch": "$ARCH2"
+      "arch": "amd64"
     }
   ],
   "userInput": [
@@ -59,22 +58,8 @@
   ],
   "workloads": [
     {
-      "deployment": {
-        "services": {
-          "cpu2wiotp": {
-            "image": "$DOCKER_HUB_ID/example_wl_${ARCH2}_cpu2wiotp:$CPU2WIOTP_VERSION",
-            "binds": [
-              "/var/wiotp-edge:/var/wiotp-edge"
-            ],
-            "environment": [
-              "WIOTP_DOMAIN=$WIOTP_DOMAIN",
-              "WIOTP_EDGE_MQTT_IP=edge-connector",
-              "WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem"
-            ]
-          }
-        }
-      },
-      "deployment_signature": "",
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_amd64_cpu2wiotp:1.2.0\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
+      "deployment_signature": "utfweuUIJQpZ2nWO92GTjxTaW+yA95i4sDOizR/zf/9z7KAZhJnWu9XwlD6wtb5CCqVIU0EwB2H1K3dQ+EbOCF/vG3NyUqe6Yh0pft19P7q5JfsbmcqX/91aqAjAnhvF5awWcGMWYya7E9OLa4rcXw8XAz/R9QG6ELn9m0leyHZAEwxszCUL/F0oT/IZYh1jg39po+5nLgsXwzoTBUBPSwgAe1fvKdha1WK/Xlf2b4zTND67C7TbiBaJqqsmyyBsnURpjiHDR5APniqOwDCclaIuBWVdaEZOQtJGocYyJjLtjUEKVMnRA3HDKSyrLG4lISBYG9B2RkCBWBjfab3NEySM3rh+WlsOqwBcmeUIAq7VeA/Q4hikOz8MuE8UsgKEJJSYbllmeUJRUGOLTTQ60l449g24eoLATMYR44S8dHYYyj5NIwtiMgE1+n+Gqmx9koyON1pfvPKpaULu8bc6poxfjDvnxd20XlnDBBlSJYw5clLhD4On06fpNUs/3jXjdVq3jKfPPcppYTjXyOol6+SgzfkGeLWholf40EFllNrDON/9sTBxjMuJWrGNcJcepq4HVdZ5Ayi7CEi+l2/gfNRwImJLLYqWxEQklGqUwItIO0ip1VJf/jyUPOsgnf6NpE9r4XV7+JTxsO+9z0duOGJ9yUb49kwhGQjgyCTPxR0=",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
   ]
