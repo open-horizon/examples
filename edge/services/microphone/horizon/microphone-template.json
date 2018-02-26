@@ -11,7 +11,7 @@
   "userInput": [],
   "workloads": [
     {
-      "deployment": "{\"microphone\":{\"services\":{\"image\":\"$DOCKER_HUB_ID/example_ms_${ARCH1}_microphone:$MIC_VERSION\",\"privileged\":true}}}",
+      "deployment": "{\"services\":{\"microphone\":{\"image\":\"$DOCKER_HUB_ID/example_ms_${ARCH2}_microphone:$MIC_VERSION\",\"privileged\":true}}}",
       "deployment_signature": "",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }

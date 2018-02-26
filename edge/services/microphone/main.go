@@ -41,14 +41,18 @@ func tryToConnect(hardwareNum string) (reader io.Reader, err error) {
 	return
 }
 
+var version string
+
 func main() {
+	fmt.Println("starting microphone ms version", version)
 	args := os.Args
 	var reader io.Reader
 	var err error
 	if len(args) == 2 {
 		reader, err = tryToConnect(args[1])
 	} else {
-		for i := range []int{0, 1, 2, 3, 4, 5} {
+		for _, i := range []int{5, 4, 3, 2, 1, 0} {
+			fmt.Println("reading data from device", i)
 			reader, err = tryToConnect(strconv.Itoa(i))
 			if err != nil {
 				fmt.Println("can't read from device", i, "trying next device")
@@ -84,10 +88,17 @@ func main() {
 		}
 	}()
 	listenAddr := "microphone:48926"
+	fmt.Println("attempting to listen on", listenAddr)
 	l, err := net.Listen("tcp", listenAddr)
+	fmt.Println("done trying to resolve addr")
 	if err != nil {
-		fmt.Println("Error listening:", err.Error())
-		os.Exit(1)
+		fmt.Println("Error listening on", listenAddr, err.Error(), ", trying localhost")
+		listenAddr = "localhost:48926"
+		l, err = net.Listen("tcp", listenAddr)
+		if err != nil {
+			fmt.Println("Error listening:", err.Error())
+			os.Exit(1)
+		}
 	}
 	// Close the listener when the application closes.
 	defer l.Close()

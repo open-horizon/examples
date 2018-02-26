@@ -1,6 +1,11 @@
+FROM golang:1.10.0-alpine as build
+COPY main.go /
+ARG version=0.0.1
+ENV MIC_VERSION $version
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo --ldflags "-X main.version=${MIC_VERSION}" -o /bin/microphone /main.go
+
 FROM alpine:latest
-ENV ARCH=x86
-RUN apk --no-cache --update add alsa-utils
-COPY microphone /bin/
+RUN apk --no-cache add alsa-utils
+COPY --from=build /bin/microphone /bin/microphone
 WORKDIR /
-CMD microphone
+CMD ["/bin/microphone"]
