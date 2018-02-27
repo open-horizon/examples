@@ -90,10 +90,10 @@ while true; do
 
       if [[ "$PUBLISH" == "true" ]]; then
         # Send a "status" event to the Watson IoT Platform containing the data
-        clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
-        topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
-        #clientId="a:$HZN_ORGANIZATION:myappid"       # sending as an app
-        #topic="iot-2/evt/status/fmt/json"
+        #clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
+        #topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
+        clientId="a:$HZN_ORGANIZATION:myappid"       # sending as an app
+        topic="iot-2/evt/status/fmt/json"
         if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
           # Send to the local WIoTP Edge Connector microservice mqtt broker, so it can store and forward
           msgHost="$WIOTP_EDGE_MQTT_IP"
@@ -102,8 +102,10 @@ while true; do
           msgHost="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
         fi
 
-        echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
-        mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
+        #echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
+        #mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
+        echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
+        mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
         checkrc $? "mosquitto_pub $msgHost" "continue"
       fi
       sum=0
