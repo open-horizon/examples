@@ -1,23 +1,22 @@
 {
-  "org": "$HZN_ORG_ID",
-  "label": "Cpu2wiotp for $ARCH2",
+  "label": "Cpu2wiotp for arm64",
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-  "version": "$CPU2WIOTP_VERSION",
-  "arch": "$ARCH2",
+  "version": "1.2.0",
+  "arch": "arm64",
   "apiSpec": [
     {
       "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
       "org": "$HZN_ORG_ID",
       "version": "[0.0.0,INFINITY)",
-      "arch": "$ARCH2"
+      "arch": "arm64"
     },
     {
       "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
       "org": "IBM",
       "version": "[1.0.11,INFINITY)",
-      "arch": "$ARCH2"
+      "arch": "arm64"
     }
   ],
   "userInput": [
@@ -30,7 +29,7 @@
         "name": "SAMPLE_SIZE",
         "label": "the number of samples to read before calculating the average",
         "type": "int",
-        "defaultValue": "6"
+        "defaultValue": "10"
     },
     {
         "name": "SAMPLE_INTERVAL",
@@ -59,22 +58,8 @@
   ],
   "workloads": [
     {
-      "deployment": {
-        "services": {
-          "cpu2wiotp": {
-            "image": "$DOCKER_HUB_ID/example_wl_${ARCH2}_cpu2wiotp:$CPU2WIOTP_VERSION",
-            "binds": [
-              "/var/wiotp-edge:/var/wiotp-edge"
-            ],
-            "environment": [
-              "WIOTP_DOMAIN=$WIOTP_DOMAIN",
-              "WIOTP_EDGE_MQTT_IP=edge-connector",
-              "WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem"
-            ]
-          }
-        }
-      },
-      "deployment_signature": "",
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_arm64_cpu2wiotp:1.2.0\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
+      "deployment_signature": "Up79haJn7Mz6cs7JrycKp2jeTmhgp349a+p2RF2AviQ1ajeS4lbQcqM841GedtstQ0OGGvSMYu/taDXTlYmO2fmxqARHeEW6JIraYLOVOPan8OCQvGKqwwbhKN5PXdjDfYGxIDYGi54sGcvuEB07PYFI/F3r1ewsLBJ/72Zx+XZeP439mvd5VAcoYWPPF13rD392FYhpk0pRo/vstH+sxuBi/q6m40OspceKju+ZT23XWRNdVMQKn2qSo62Sn/eVUsBBhgFce0hxx3QV2xG4C3e+562ttD23UGlAxgGU0rNiUzHAeiEaRY821etbeTXaOZUYuIdMGPZ7ZX05RlsuaOxJJsNxePUZA+8a1RTTFAYS3I/DjeI6tmAjdzkVrps4CvsoqLof7CUwWMLG0KmDnervYlwmReTd7MbXoq79/B7H/9Yhyf4I55TJVEPvxDkryExajA4XC/a8Ow2dzzQk+cd4b7W9wDnpNRnCd+4qEGbuPhuMVAwv/tb3mDnAGg2ZoxsWuO6GdN1gM5xt0l8DwUhQqq76atsycLGIci9WUrBjZiRavVx6T1Vv3z8e4/5WLv47nB5QKNbVXATEXfI2/EAmhcFkpg2aDEmfCFEoU8AjnUhZEvBxdDA5MqLGvwmjcZ9obE4qQCjQtK3Uy/xeyATT7bkR8IT3/QUmg+GZcaw=",
       "torrent": "{\"url\":\"\",\"signature\":\"\"}"
     }
   ]
