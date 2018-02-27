@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-VERSION ?= 1.2.0
+VERSION ?= 1.2.1
 DOCKER_NAME ?= example_wl_$(ARCH)_cpu2wiotp
 DOCKER_HUB_ID ?= openhorizon
 
