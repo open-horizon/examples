@@ -92,7 +92,7 @@ while true; do
         # Send a "status" event to the Watson IoT Platform containing the data
         #clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
         #topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
-        clientId="a:$HZN_ORGANIZATION:myappid"       # sending as an app
+        clientId="a:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"       # sending as an app
         topic="iot-2/evt/status/fmt/json"
         if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
           # Send to the local WIoTP Edge Connector microservice mqtt broker, so it can store and forward
