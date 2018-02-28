@@ -5,13 +5,9 @@ Fill in the values of the variables in the template with commands like:
 ```
 export DOCKER_HUB_ID=openhorizon   # or your own docker hub id
 export ARCH2=amd64    # or arm or arm64
-export CPU2WIOTP_VERSION=1.1.8
-export WIOTP_ORG_ID=abcdef
-export WIOTP_TEST_ENV2=''
-export WIOTP_EDGE_MQTT_IP=10.1.2.3   # the private IP of your edge node
-export WIOTP_CLASS_ID=g
-export WIOTP_GW_TYPE=mygwtype
-export WIOTP_GW_ID=mygw
+export CPU2WIOTP_VERSION=1.2.1
+export HZN_ORG_ID=abcdef
+export WIOTP_DOMAIN=internetofthings.ibmcloud.com
 export WIOTP_GW_TOKEN=mytok
 
 envsubst < cpu2wiotp-template.json > cpu2wiotp.json

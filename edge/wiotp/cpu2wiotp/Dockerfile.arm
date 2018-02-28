@@ -1,6 +1,6 @@
 FROM armhf/alpine:latest
 ENV ARCH=armhf
-RUN apk --no-cache --update add curl mosquitto-clients
+RUN apk --no-cache --update add curl mosquitto-clients jq bc
 COPY *.sh /
 COPY *.pem /
 RUN mkdir -p devenv

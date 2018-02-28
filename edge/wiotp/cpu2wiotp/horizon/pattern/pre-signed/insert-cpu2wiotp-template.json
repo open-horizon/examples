@@ -4,16 +4,8 @@
       "workloadArch": "$ARCH2",
       "workloadVersions": [
         {
-          "version": "$CPU2WIOTP_VERSION",
-          "deployment_overrides": {
-            "services": {
-              "cpu2wiotp": {
-                "environment": [
-                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
-                ]
-              }
-            }
-          },
+          "version": "1.2.1",
+          "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
