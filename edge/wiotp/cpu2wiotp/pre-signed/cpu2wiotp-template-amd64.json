@@ -15,7 +15,7 @@
     {
       "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
       "org": "IBM",
-      "version": "[1.0.11,INFINITY)",
+      "version": "[2.3.1,INFINITY)",
       "arch": "amd64"
     }
   ],
