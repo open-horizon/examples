@@ -21,11 +21,6 @@
   ],
   "userInput": [
     {
-      "name": "WIOTP_DEVICE_AUTH_TOKEN",
-      "label": "The token you gave to the device or gateway you created in the WIoTP UI",
-      "type": "string"
-    },
-    {
         "name": "SAMPLE_SIZE",
         "label": "the number of samples to read before calculating the average",
         "type": "int",

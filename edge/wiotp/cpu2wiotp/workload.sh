@@ -15,22 +15,22 @@ checkRequiredEnvVar() {
 }
 echo "Checking for required environment variables are set:"
 checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
-checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   #todo: this can go away when the edge-connector app support hits prod. A userInput value, so must be set in the input file passed to 'hzn register'
+#checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   #note: this is no longer needed because we can now send msgs an an app to edge-connector unauthenticated, as long as we are local.
 checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon. Wiotp automatically gives this a value of: g@mygwtype@mygw
 VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
 
 # Parse the class id, device type, and device id from HZN_DEVICE_ID. It will have a value like 'g@mygwtype@mygw'
 id="$HZN_DEVICE_ID"
-CLASS_ID=${id%%@*}
+CLASS_ID=${id%%@*}   # the class id is not actually used anymore
 id=${id#*@}
 DEVICE_TYPE=${id%%@*}
 DEVICE_ID=${id#*@}
-if [[ -z "$CLASS_ID" || -z "$DEVICE_TYPE" || -z "$DEVICE_ID" ]]; then
+if [[ -z "$DEVICE_TYPE" || -z "$DEVICE_ID" ]]; then
   echo 'Error: HZN_DEVICE_ID must have the format: g@mygwtype@mygw'
   exit 2
 fi
 
-if [[ "$VERBOSE" == 1 ]]; then echo "  CLASS_ID=$CLASS_ID, DEVICE_TYPE=$DEVICE_TYPE, DEVICE_ID=$DEVICE_ID"; fi
+if [[ "$VERBOSE" == 1 ]]; then echo "  DEVICE_TYPE=$DEVICE_TYPE, DEVICE_ID=$DEVICE_ID"; fi
 
 # Environment variables that can optionally be set, or default
 WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
@@ -92,7 +92,7 @@ while true; do
         # Send a "status" event to the Watson IoT Platform containing the data
         #clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
         #topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
-        clientId="a:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"       # sending as an app
+        clientId="a:$HZN_ORGANIZATION:$DEVICE_TYPE$DEVICE_ID"       # sending as an app
         topic="iot-2/evt/status/fmt/json"
         if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
           # Send to the local WIoTP Edge Connector microservice mqtt broker, so it can store and forward
