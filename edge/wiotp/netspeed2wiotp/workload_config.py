@@ -18,79 +18,29 @@ DEFAULT_CONTRACT_ADDR = '0x0000000000000000000000000000000000000000'
 
 ## Get edge device env var's for WIoTP publish
 # Check primary env vars first
-hzn_organization = utils.check_env_var('HZN_ORGANIZATION')
-wiotp_device_auth_token = utils.check_env_var('WIOTP_DEVICE_AUTH_TOKEN')
-hzn_device_id = utils.check_env_var('HZN_DEVICE_ID', utils.get_serial())
+hzn_organization = utils.check_env_var('HZN_ORGANIZATION')     # automatically passed in by Horizon
+#wiotp_device_auth_token = utils.check_env_var('WIOTP_DEVICE_AUTH_TOKEN')  # note: this is no longer needed because we can now send msgs an an app to edge-connector unauthenticated, as long as we are local.
+hzn_device_id = utils.check_env_var('HZN_DEVICE_ID', utils.get_serial())      # automatically passed in by Horizon. Wiotp automatically gives this a value of: g@mygwtype@mygw
 
-# For device type and device id, there are 3 cases, checked for below:
-#  1) The workload is run in wiotp/horizon and will be sending mqtt as the gw: 
-#     HZN_DEVICE_ID contains class id, device type and id, and WIOTP_CLASS_ID, 
-#     WIOTP_DEVICE_TYPE and WIOTP_DEVICE_ID are blank or '-'
-#  2) The workload is run in wiotp/horizon and will be sending mqtt as a 
-#     device: WIOTP_CLASS_ID, WIOTP_DEVICE_TYPE and/or WIOTP_DEVICE_ID have 
-#     real values
-#  3) The workload is run in a non-wiotp horizon instance: HZN_DEVICE_ID is 
-#     the simple device id (use that), and WIOTP_CLASS_ID and WIOTP_DEVICE_TYPE
-#     have values
-# The way we will handle this cases is if WIOTP_CLASS_ID, WIOTP_DEVICE_TYPE 
-#     and/or WIOTP_DEVICE_ID are set, they will override what we can parse from 
-#     HZN_DEVICE_ID
+# When the Workload is deployed by WIoTP-Horizon; HZN_DEVICE_ID ~= 'g@mygwtype@mygw'.
+ids = hzn_device_id.split('@')
+if len(ids) == 3:
+    class_id, device_type, device_id = ids     # the class id is not actually used anymore
+else:
+    utils.print_("Error: HZN_DEVICE_ID must have the format: g@mygwtype@mygw")
 
-# Case 2: WIOTP-specific variables (convenient to set first)
-class_id = utils.check_env_var('WIOTP_CLASS_ID')
-device_type = utils.check_env_var('WIOTP_DEVICE_TYPE')
-device_id = utils.check_env_var('WIOTP_DEVICE_ID')
-
-# Case 1: Workload deployed by WIoTP-Horizon; HZN_DEVICE_ID ~= 'g@mygwtype@mygw'.
-if hzn_device_id.find('@'):
-    ids = hzn_device_id.split('@')
-    if len(ids) == 3:
-        class_id, device_type, device_id = ids
-    else:
-        utils.print_("Workload config.py: class id, device_type, device_id could \
-         not be set from HZN_DEVICE_ID. Possibly malformed env var.")
-else: 
-    # Case 3: When this workload is run in a non-wiotp horizon instance, 
-    #  HZN_DEVICE_ID will be a simple device id
-    if device_id != '' and device_id != '-':
-        device_id = hzn_device_id
-
-# Checks
-if class_id == '' or class_id == '-':
-    utils.print_("Workload config.py: class id could not be set in WIOTP_CLASS_ID \
-     or HZN_DEVICE_ID.")
-#    return 1
-elif class_id != 'd' and class_id != 'g':
-    utils.print_("Workload config.py: class id could not be set. Class ID can only \
-        have value of 'g' or 'd'.")
-#    return 1
-if device_type == '' or class_id == '-':
-    utils.print_("Workload config.py: device type not set in WIOTP_DEVICE_TYPE or \
-        HZN_DEVICE_ID.")
-#    return 1
-if device_id == '' or device_id == '-':
-    utils.print_("Workload config.py: device ID not set in WIOTP_DEVICE_ID or \
-        HZN_DEVICE_ID.")
-#    return 1
-
-utils.print_("Workload config.py: Optional override environment variables:")
-utils.print_("Workload config.py:   WIOTP_CLASS_ID=" + utils.check_env_var('WIOTP_CLASS_ID', '', False))
-utils.print_("Workload config.py:   WIOTP_DEVICE_TYPE=" + utils.check_env_var('WIOTP_DEVICE_TYPE', '', False))
-utils.print_("Workload config.py:   WIOTP_DEVICE_ID=" + utils.check_env_var('WIOTP_DEVICE_ID', '', False))
+#utils.print_("Workload config.py: Optional override environment variables:")
+#utils.print_("Workload config.py:   WIOTP_CLASS_ID=" + utils.check_env_var('WIOTP_CLASS_ID', '', False))
+#utils.print_("Workload config.py:   WIOTP_DEVICE_TYPE=" + utils.check_env_var('WIOTP_DEVICE_TYPE', '', False))
+#utils.print_("Workload config.py:   WIOTP_DEVICE_ID=" + utils.check_env_var('WIOTP_DEVICE_ID', '', False))
 utils.print_("Workload config.py: Derived variables:")
-utils.print_("Workload config.py:   CLASS_ID=" + class_id)
+#utils.print_("Workload config.py:   CLASS_ID=" + class_id)
 utils.print_("Workload config.py:   DEVICE_TYPE=" + device_type)
 utils.print_("Workload config.py:   DEVICE_ID=" + device_id)
 
 ## Environment variables that can optionally be set, or default
 # set in the pattern deployment_overrides field if you need to override
 wiotp_domain = utils.check_env_var('WIOTP_DOMAIN', 'internetofthings.ibmcloud.com', False)    
-
-# api key to create WIOTP device if it doesn't exist
-wiotp_api_key = utils.check_env_var('WIOTP_API_KEY', '', False)                               
-
-# api token to create WIOTP device if it doesn't exist
-wiotp_api_auth_token = utils.check_env_var('WIOTP_API_AUTH_TOKEN', '', False)                 
 
 # the cert to verify the WIoTP MQTT cloud broker
 wiotp_pem_file = utils.check_env_var('WIOTP_PEM_FILE', '/messaging.pem', False)               
@@ -103,18 +53,9 @@ reporting_interval = utils.getEnvInt('REPORTING_INTERVAL', 10)
       
 utils.print_("Workload config.py: Optional environment variables (or default values):")
 utils.print_("Workload config.py:   WIOTP_DOMAIN=" + wiotp_domain)
-utils.print_("Workload config.py:   WIOTP_API_KEY=" + wiotp_api_key)
-utils.print_("Workload config.py:   WIOTP_API_AUTH_TOKEN=" + wiotp_api_auth_token)
 utils.print_("Workload config.py:   WIOTP_PEM_FILE=" + wiotp_pem_file)
 utils.print_("Workload config.py:   WIOTP_EDGE_MQTT_IP=" + wiotp_edge_mqtt_ip)
 utils.print_("Workload config.py:   REPORTING_INTERVAL=" + str(reporting_interval))     
-
-# If Watson IoT Platform API credentials are not provided, assume device exists in WIoTP
-if wiotp_api_key != '' or wiotp_api_auth_token != '':
-    utils.print_("Workload_config.py: Watson IoT Platform REST API credentials not provided.")
-    utils.print_(" assuming type %s with ID %s already exists in WIoTP." % (device_type, device_id))
-else:  # TODO: both creds provided; prep for Watson IoT Platform REST API Calls
-    pass
 
 ## Set up additional device metadata
 # Get edge device latitude, longitude, and contract address / nonce
@@ -129,10 +70,13 @@ if wiotp_edge_mqtt_ip != '':        # Case 1: Send via local broker
     mqtt_broker = wiotp_edge_mqtt_ip
 else:                               # Case 2: Send directly to WIoTP
     mqtt_broker = '.'.join([hzn_organization, "messaging", wiotp_domain])
-mqtt_client_id  = ':'.join(['g', hzn_organization, device_type, device_id])
+#mqtt_client_id  = ':'.join(['g', hzn_organization, device_type, device_id])
+mqtt_client_id  = ':'.join(['a', hzn_organization, device_type+device_id])
 mqtt_ca_file = wiotp_pem_file
-mqtt_auth = {'username': 'use-token-auth', 'password': wiotp_device_auth_token}
+#mqtt_auth = {'username': 'use-token-auth', 'password': wiotp_device_auth_token}
 mqtt_tls = {'ca_certs': mqtt_ca_file}#, 'tls_version': ssl.PROTOCOL_TLSv1} # Do not spec TLS w/ WIOTP  
+#mqtt_topic = '/'.join(['iot-2/type', device_type, 'id', device_id, 'evt', event_id, 'fmt/json'])
+mqtt_topic = 'iot-2/evt/status/fmt/json'
 
 # Optional Netspeed-specific settings. These define the run "policy", and may be set via env var's
 if 'HZN_TARGET_SERVER' in os.environ:
