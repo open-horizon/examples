@@ -13,24 +13,6 @@ checkRequiredEnvVar() {
     echo "  $varname=" $(eval echo \$$varname)
   fi
 }
-echo "Checking for required environment variables are set:"
-checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
-#checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   #note: this is no longer needed because we can now send msgs an an app to edge-connector unauthenticated, as long as we are local.
-checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon. Wiotp automatically gives this a value of: g@mygwtype@mygw
-VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
-
-# Parse the class id, device type, and device id from HZN_DEVICE_ID. It will have a value like 'g@mygwtype@mygw'
-id="$HZN_DEVICE_ID"
-CLASS_ID=${id%%@*}   # the class id is not actually used anymore
-id=${id#*@}
-DEVICE_TYPE=${id%%@*}
-DEVICE_ID=${id#*@}
-if [[ -z "$DEVICE_TYPE" || -z "$DEVICE_ID" ]]; then
-  echo 'Error: HZN_DEVICE_ID must have the format: g@mygwtype@mygw'
-  exit 2
-fi
-
-if [[ "$VERBOSE" == 1 ]]; then echo "  DEVICE_TYPE=$DEVICE_TYPE, DEVICE_ID=$DEVICE_ID"; fi
 
 # Environment variables that can optionally be set, or default
 WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
@@ -40,8 +22,32 @@ SAMPLE_INTERVAL="${SAMPLE_INTERVAL:-5}"    # reporting interval in seconds
 SAMPLE_SIZE="${SAMPLE_SIZE:-10}"    # the number of samples to read before calculating/publishing the average
 PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to wiotp
 MOCK="${MOCK:-false}"     # if "true", just pretend to call the cpu microservice REST API
+VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
 
 echo "Optional environment variables (or default values): WIOTP_DOMAIN=$WIOTP_DOMAIN, WIOTP_PEM_FILE=$WIOTP_PEM_FILE, WIOTP_EDGE_MQTT_IP=$WIOTP_EDGE_MQTT_IP, SAMPLE_INTERVAL=$SAMPLE_INTERVAL, SAMPLE_SIZE=$SAMPLE_SIZE, PUBLISH=$PUBLISH, MOCK=$MOCK"
+
+# When this workload is running in standalone mode, there are no required env vars.
+if [[ "$PUBLISH" == "true" ]]; then
+  echo "Checking for required environment variables are set:"
+  checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
+  #checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   #note: this is no longer needed because we can now send msgs an an app to edge-connector unauthenticated, as long as we are local.
+  checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon. Wiotp automatically gives this a value of: g@mygwtype@mygw
+fi
+
+# Parse the class id, device type, and device id from HZN_DEVICE_ID. It will have a value like 'g@mygwtype@mygw'
+if [[ ! -z "$HZN_DEVICE_ID" ]]; then
+  id="$HZN_DEVICE_ID"
+  CLASS_ID=${id%%@*}   # the class id is not actually used anymore
+  id=${id#*@}
+  DEVICE_TYPE=${id%%@*}
+  DEVICE_ID=${id#*@}
+  if [[ -z "$DEVICE_TYPE" || -z "$DEVICE_ID" ]]; then
+    echo 'Error: HZN_DEVICE_ID must have the format: g@mygwtype@mygw'
+    exit 2
+  fi
+
+  if [[ "$VERBOSE" == 1 ]]; then echo "  DEVICE_TYPE=$DEVICE_TYPE, DEVICE_ID=$DEVICE_ID"; fi
+fi
 
 # Check the exit status of the previously run command and exit if nonzero (unless 'continue' is passed in)
 checkrc() {

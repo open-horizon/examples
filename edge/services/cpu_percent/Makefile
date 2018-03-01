@@ -15,6 +15,7 @@ all: build run
 
 build:
 	docker build -t $(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
+	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 dev:
 	-docker network create example
@@ -29,14 +30,27 @@ run:
 check:
 	curl -s localhost:8347/v1/cpu | jq
 
+hznbuild: build
+	mkdir -p horizon_build
+	cp -r ./horizon/dependencies ./horizon_build/.
+	export ARCH=$(ARCH) && export VERSION=$(VERSION) && export DOCKER_HUB_ID=$(DOCKER_HUB_ID) && envsubst < ./horizon/microservice.definition.json > ./horizon_build/microservice.definition.json
+	envsubst < ./horizon/userinput.json > ./horizon_build/userinput.json
+
+hznstart: hznbuild
+	hzn dev microservice start -d ./horizon_build
+
+hznstop:
+	hzn dev microservice stop -d ./horizon_build
+
 # To publish you must have write access to the docker hub openhorizon user
 publish:
-	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 clean:
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	-docker rmi cpu
-	-docker network rm example
+	-hzn dev microservice stop -d ./horizon_build 2> /dev/null || :
+	-rm -fr horizon_build 2> /dev/null || :
+	-docker rm -f $(DOCKER_NAME):$(VERSION) 2> /dev/null || :
+	-docker rmi cpu 2> /dev/null || :
+	-docker network rm example 2> /dev/null || :
 
 .PHONY: default all build dev run check publish clean
