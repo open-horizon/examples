@@ -5,8 +5,9 @@ Fill in the values of the variables in the template with commands like:
 ```
 export DOCKER_HUB_ID=openhorizon   # or your own docker hub id
 export ARCH2=amd64    # or arm or arm64
-export NETSPEED2WIOTP_VERSION=2.6
-export WIOTP_ORG_ID=abcdef
+export NETSPEED2WIOTP_VERSION=2.6.1
+export HZN_ORG_ID=abcdef
+export WIOTP_DOMAIN=internetofthings.ibmcloud.com
 
 envsubst < netspeed2wiotp-template.json > netspeed2wiotp.json
 ```

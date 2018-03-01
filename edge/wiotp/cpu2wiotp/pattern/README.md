@@ -8,10 +8,7 @@ export ARCH2=amd64    # or arm or arm64
 export CPU2WIOTP_VERSION=1.2.1
 export HZN_ORG_ID=abcdef
 export WIOTP_DOMAIN=internetofthings.ibmcloud.com
-export WIOTP_GW_TOKEN=mytok
 
 envsubst < cpu2wiotp-template.json > cpu2wiotp.json
-envsubst < cpu2wiotp-input-template.json > cpu2wiotp-input.json
 envsubst < insert-cpu2wiotp-template.json > insert-cpu2wiotp.json
-envsubst < hznEdgeCoreIoTInput.json.template > hznEdgeCoreIoTInput.json
 ```
