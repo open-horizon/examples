@@ -7,20 +7,20 @@ RES="-x 640 -y 480"
 FPS="20"
 
 # Check settings (horiz/vertical flip, resolution)
-if [[ "$VERT_FLIP" == "1" ]]; then
+if [[ "$VERT_FLIP" == "true" ]]; then
   VF="-vf"
   echo "pi3streamer: start.sh: VERT_FLIP=1, setting flag: '${VF}'"
 fi
 
-if [[ "$HORZ_FLIP" == "1" ]]; then
+if [[ "$HORZ_FLIP" == "true" ]]; then
   HF="-hf"
   echo "pi3streamer: start.sh: HORZ_FLIP=1, setting flag: '${HF}'"
 fi
 
-# Dangerous - no value check
+# Semi-dangerous - no value check
 if [[ ! -z "$RESOLUTION" ]]; then
   RES="$RESOLUTION"
-  echo "pi3streamer: start.sh: RESOLUTION='${RESOLUTION}' (format: '-x <width> -y <height>')"
+  echo "pi3streamer: start.sh: RESOLUTION='${RES}' (format: '-x <width> -y <height>')"
 fi
 
 if [[ ! -z "$FRAMERATE" ]]; then
