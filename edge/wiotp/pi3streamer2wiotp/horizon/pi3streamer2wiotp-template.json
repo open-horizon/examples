@@ -1,0 +1,51 @@
+{
+  "label": "pi3streamer2wiotp for $ARCH2",
+  "description": "Horizon workload, runs alongside pi3streamer microservice, sends status messages to WIoTP",
+  "public": true,
+  "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/pi3streamer2wiotp",
+  "version": "$PI3STREAMER2WIOTP_VERSION",
+  "arch": "$ARCH2",
+  "apiSpec": [
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/microservices/pi3streamer",
+      "org": "$HZN_ORG_ID",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "$ARCH2"
+    },
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+      "org": "IBM",
+      "version": "[2.3.1,INFINITY)",
+      "arch": "$ARCH2"
+    }
+  ],
+  "userInput": [
+    {
+      "name": "PUBLISH_INTERVAL",
+      "label": "Publish a status via MQTT to WioTP every n seconds.",
+      "type": "integer",
+      "defaultValue": "10"
+    }
+  ],
+  "workloads": [
+    {
+      "deployment": {
+        "services": {
+          "pi3streamer2wiotp": {
+            "image": "$DOCKER_HUB_ID/${ARCH2}_example_wl_pi3streamer2wiotp:$PI3STREAMER2WIOTP_VERSION",
+            "binds": [
+              "/var/wiotp-edge:/var/wiotp-edge"
+            ],
+            "environment": [
+              "WIOTP_DOMAIN=$WIOTP_DOMAIN",
+              "WIOTP_EDGE_MQTT_IP=edge-connector",
+              "WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem"
+            ]
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": ""
+    }
+  ]
+}

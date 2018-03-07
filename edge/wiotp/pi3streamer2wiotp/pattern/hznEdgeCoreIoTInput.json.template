@@ -1,0 +1,34 @@
+{
+    "global": [
+        {
+            "type": "HTTPSBasicAuthAttributes",
+            "sensor_urls": [],
+            "publishable": false,
+            "host_only": true,
+            "variables": {
+               "username": "",
+               "password": ""
+            }
+        }
+    ],
+    "microservices": [
+        {
+            "org": "IBM",
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+            }
+        },
+        {
+            "org": "0ayswk",
+            "url": "https://internetofthings.ibmcloud.com/microservices/pi3streamer",
+            "version": "1.0.0",
+            "variables": {
+                "RESOLUTION": "-x 1280 -y 720",
+                "VERT_FLIP": 1,
+                "HORZ_FLIP": 0,
+                "FRAMERATE": 25
+            }
+        }
+    ]
+}
