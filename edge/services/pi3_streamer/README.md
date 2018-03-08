@@ -11,3 +11,5 @@ Originally packaged in docker as [cogwerx-mjpg-streamer-pi3](https://github.com/
 &nbsp;&nbsp; See ["Prepare Your Edge Node"](https://github.com/open-horizon/examples/wiki/Edge-Quick-Start-Guide#prepare-your-edge-node) in the Edge Quick Start Guide
 4. Define and publish this microservice to your org using the `.json` template files in `./horizon`  
 &nbsp;&nbsp; See the CPU example in [Define an Additional Microservice...](https://github.com/open-horizon/examples/wiki/Edge-Quick-Start-Guide#define-an-additional-microservice-and-workload-in-the-horizon-exchange) in the Edge Quick Start Guide
+
+Then move on to define the workload and pattern, using the code in `examples/edge/wiotp/pi3streamer2wiotp` and register your Pi3 to run the pattern. 
