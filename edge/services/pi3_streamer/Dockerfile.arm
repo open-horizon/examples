@@ -2,7 +2,7 @@
 #  Runs a streaming camera feed, accessible on LAN at <Rpi3 IP>:8080
 #  Ref: https://github.com/open-horizon/cogwerx-mjpg-streamer-pi3
 
-## Start from cogwerx's image    351MB
+## Start from cogwerx's image    ~200MB
 FROM openhorizon/mjpg-streamer-pi3:20180306
 
 ENV ARCH armhf
@@ -11,7 +11,7 @@ ENV ARCH armhf
 COPY start.sh start.sh
 CMD ["./start.sh", "&"]
 
-# For docker --squash (saves 100MB+)
+# For docker --squash
 RUN apt-get -y autoremove && apt-get clean
 
 # Manual start command: 
