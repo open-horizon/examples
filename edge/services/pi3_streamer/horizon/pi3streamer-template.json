@@ -11,9 +11,9 @@
   "userInput": [
     {
       "name": "RESOLUTION",
-      "label": "RPi Cam resolution (format: '-x <horiz_px> -y <vert_px>'",
+      "label": "RPi Cam resolution (format: '-x <horiz_px> -y <vert_px>')",
       "type": "string",
-      "defaultValue": "-x 640 -y 480"
+      "defaultValue": "-x 1280 -y 720"
     },
     {
       "name": "FRAMERATE",
@@ -24,14 +24,14 @@
     {
       "name": "HORZ_FLIP",
       "label": "RPi Cam horizontal flip (0=normal or 1=flipped (mirror))",
-      "type": "integer",
-      "defaultValue": "0"
+      "type": "string",
+      "defaultValue": "false"
     },
     {
       "name": "VERT_FLIP",
       "label": "RPi Cam vertical flip (0=normal or 1=flipped)",
-      "type": "integer",
-      "defaultValue": "0"
+      "type": "string",
+      "defaultValue": "false"
     }
   ],
   "workloads": [
