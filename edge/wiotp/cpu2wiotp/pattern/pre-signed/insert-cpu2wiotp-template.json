@@ -4,7 +4,7 @@
       "workloadArch": "$ARCH2",
       "workloadVersions": [
         {
-          "version": "1.2.1",
+          "version": "1.2.2",
           "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},
