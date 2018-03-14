@@ -3,7 +3,7 @@
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "arch": "amd64",
   "apiSpec": [
     {
@@ -53,9 +53,9 @@
   ],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_amd64_cpu2wiotp:1.2.1\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
-      "deployment_signature": "rSK9Hf6LjJgIRvtbyJo0zMaqBDAqSUcpqt+QVOnsdLNJ3qXG8hL4BwxViDkRZu6IFJh/m/dZBdjD3QA+7Lz63jlFf2iIXhwKKQKpKiHCCpSDqGRCg0MrA3PAdMNRC1EiGXdjGDDX+WU5LAyLNottsTsRIDiQ0jTGvJ3DaNiek6oHCpROpHRg/4iSu8QqPnCA0T4gxiBeJWL14WKm/Xn5QLqxNhnENgJMNP8QL4hjPWE5x/9yAo60zLUKMo6O2JVviH8dyAKgaHenrBfrJZittD1QYuANtVF6bD2MhTpkE3qqKMRU5ZIqXw1wKF4EYHZpE+DZOX+kIt8Gcwh5gkRShQ3s0NOP1OypH5Q2FXOXJsZwuBweYBydGHbC9wWtfSYmTOxpujNJQvkoXyV/hpgpHXH/2AW4IyIStN8PjZ2xLeTi3tz3n0pFCqTscGxSYkDLnvJ5qGupmgUGFIkXGia8cdnN/rJT9YoZ2Vk5vEWSUxXIE1JpbGeYcgbEEduXyDLpR7JEa6WhNIzt2dkT98lwPmkUmvuxG+rhLCyGVimAwt2vcOfyOKZ7khruTKfgN5skuQeNsI9Oiv94QEZizJjC9kBo8DaddnkoZOGddOaQaEuOWb4AD983gBYHdBmqRsNKr7kiFHKDYgQBRXfxEbPDxCbDZ85lqTvSnvEpnjkpZ+U=",
-      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_amd64_cpu2wiotp:1.2.2\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
+      "deployment_signature": "HnxDNl1wqs/rkD6xhKEsXInQyC4Z6EbP5eZo7mzQFnpBePgtv1y1qGZhkbiC9rtC1KWTaDmXDbkVYNTjlzrsA15coF8jPwD8cO5VItXze0M32n/hLBLf52KHVI/dBrOoZa84Gm1M0Ui3Yxdn8dVHhe2e0EUmLWLe6uGDS6YYwdRPIVZbyY/AfW8sFT4IaDJqzY5i8g9Lm47ET7Mez4noCL9y7x2ebKGME6H2aFgSBL1YrHSOTLdWqg8jmZMHb7OC0lm2zq/g5orlJxiGOw9mmwD/wk6Fliidpk49l1x1SGe992tlVeSZYR0kS5zGZMx68AFZNEGwC6MJ6qBW4mwHJaefK7Q5ZKTPN1AsV0GXMtHLtMabHa38TrnfzeS4/qBu6qdSkbyUVfAOrnkDP9r8zORNnX1sMJcLpuhGQe5ApAZLdY4tNp7n6yfIsdUYfgp+baJ2DYsq/LNALMWrZYI0Kkpq16qXApGhj+f4zI2yfQWRUdg77b0Zm1dXnZ/5AsXovcKepxZsbeFn0mC9iSqXuZL+Nq63ROGkowSm+MgfkbBZ58bCqVFTkhJNphdbGucg7VsBabp2EIe8/Xe53HrEu0UuDlJlPmC9Ia63J/PnMbOnkJOPttp2GrSGR/cqmJPUGnk7avYJQK/pntn1KiAmXDLQBgkMYza96/H4pWG6C/A=",
+      "torrent": ""
     }
   ]
 }

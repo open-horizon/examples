@@ -20,7 +20,7 @@
                 }
             },
             "deployment_signature": "",
-            "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+            "torrent": ""
         }
     ]
 }
