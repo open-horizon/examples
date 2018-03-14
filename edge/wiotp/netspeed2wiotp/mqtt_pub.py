@@ -15,17 +15,16 @@ def post_networkdata_single_wiotp(jsonpayload, event_id, heart_beat=False):
     """
 
     try:
-        topic = '/'.join(['iot-2/type', device_type, 'id', device_id, 'evt', event_id, 'fmt/json'])
         retain = True
         qos = 2   # since speed data is sent so infrequently we can afford to make sure it gets there exactly once
         
         if debug_flag:
             utils.print_("mqtt_pub.py: Sending data to mqtt... \
-                topic=%s, mqtt_broker=%s, client_id=%s" % (topic, mqtt_broker, mqtt_client_id))
+                mqtt_topic=%s, mqtt_broker=%s, client_id=%s" % (mqtt_topic, mqtt_broker, mqtt_client_id))
 
         # Publish to MQTT
-        publish.single(topic=topic, payload=jsonpayload, qos=qos, hostname=mqtt_broker,
-            protocol=mqtt.MQTTv311, client_id=mqtt_client_id, port=mqtt_port, auth=mqtt_auth,
+        publish.single(topic=mqtt_topic, payload=jsonpayload, qos=qos, hostname=mqtt_broker,
+            protocol=mqtt.MQTTv311, client_id=mqtt_client_id, port=mqtt_port, #auth=mqtt_auth,
             tls=mqtt_tls, retain=retain)
         if debug_flag: utils.print_('mqtt_pub.py: Send to mqtt successful')
         return 1

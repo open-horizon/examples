@@ -15,6 +15,7 @@ all: build run
 
 build:
 	docker build -t $(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
+	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 dev:
 	-docker rm -f $(DOCKER_NAME):$(VERSION)
@@ -27,13 +28,26 @@ run:
 check:
 	curl -s localhost:8347/v1/cpu | jq
 
+hznbuild: build
+	mkdir -p horizon_build/dependencies
+	set -x && export ARCH=$(ARCH) && cd ./horizon/dependencies && for filename in $$(find . -name "*.microservice.definition.json"); do envsubst < ./$$filename > ../../horizon_build/dependencies/$$filename; done && cd ../..
+	export ARCH=$(ARCH) && export VERSION=$(VERSION) && export DOCKER_HUB_ID=$(DOCKER_HUB_ID) && export WIOTP_DOMAIN=$(WIOTP_DOMAIN) && envsubst < ./horizon/workload.definition.json > ./horizon_build/workload.definition.json
+	export WIOTP_DOMAIN=$(WIOTP_DOMAIN) && envsubst < ./horizon/userinput.json > ./horizon_build/userinput.json
+
+hznstart: hznbuild
+	hzn dev workload start -d ./horizon_build
+
+hznstop:
+	hzn dev workload stop -d ./horizon_build
+
 # To publish you must have write access to the docker hub openhorizon user
 publish:
-	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 clean:
+	-hzn dev workload stop -d ./horizon_build 2> /dev/null || :
+	-rm -fr horizon_build 2> /dev/null || :
 	-docker rm -f $(DOCKER_NAME):$(VERSION) 2> /dev/null || :
-	-docker rmi cpu2wiotp
+	-docker rmi cpu2wiotp 2> /dev/null || :
 
 .PHONY: default all build dev run check publish clean

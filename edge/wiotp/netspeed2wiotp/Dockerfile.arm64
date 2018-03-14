@@ -4,8 +4,7 @@ MAINTAINER Chris Dye <dyec@us.ibm.com>
 ENV ARCH=aarch64
 
 # Need to do this on a single line so this docker image layer will have the pkgs removed
-#RUN apk add --no-cache build-base; apk del build-base
-RUN apk --no-cache update && apk --no-cache add python python-dev py-pip && pip install --upgrade pip paho-mqtt && apk del python-dev py-pip
+RUN apk --no-cache --update add python python-dev py-pip && pip install --upgrade pip paho-mqtt && apk del python-dev py-pip
 
 COPY *.py /
 COPY *.pem /
