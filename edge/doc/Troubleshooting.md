@@ -8,7 +8,7 @@ On the edge node you may also need to troubleshoot host issues, the underlying H
 
 The figure below shows the interfaces provided to expose state, and the recommended tools for accessing these interfaces.
 
-[[/images/Visibility.png|Visibility Interfaces]]
+![Visibility Interfaces](images/Visibility.png)
 Figure 1: Some of the interfaces available for exposing the state of the system. 
 
 Note that on Edge Nodes where Horizon is installed, the `hzn` command is probably the most useful tool you will have for debugging issues with the local Horizon Agent and the remote Horizon Exchange in the cloud.  The "hzn" command has built-in online help, so if you don't know what command to use, or details on how to use a particular command, try "hzn --help" or "hzn \<subcommand\> --help" to get detailed information.
@@ -31,7 +31,7 @@ The remainder of this document will ask questions about the state of your system
 
 The questions are grouped into two sections, could troubleshooting, and edge troubleshooting.  The nature of debugging in each of these environments is quite different since you have complete access to, and control over, your edge node.  The figure below shows some of the questions that are useful to answer on each side when trying to troubleshoot problems.
 
-[[/images/Troubleshooting.png|Troubleshooting Questions]]
+![Troubleshooting Questions](images/Troubleshooting.png)
 Figure 2: Questions the developer can use to diagnose problems in the system. 
 
 
