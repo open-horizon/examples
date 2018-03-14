@@ -3,7 +3,7 @@
 This Developer Quickstart Guide provides a simplified description of the process for developing, testing and deploying user-developed code in the Edge environment.
 The [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
 
-Note there is a concise [Quick Start Guide](https://github.com/open-horizon/examples/wiki/Edge-Quick-Start-Guide) available, that shows how to get an existing workload up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](https://github.com/open-horizon/examples/wiki/Edge-Quick-Start-Guide) is also a prerequisite for this guide.**
+Note there is a concise [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) available, that shows how to get an existing workload up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) is also a prerequisite for this guide.**
 
 Additional information is available, and questions may be asked, in our forum, at:
 * [https://discourse.bluehorizon.network/](https://discourse.bluehorizon.network/)
@@ -25,7 +25,7 @@ Along the way, you will be exposed to many concepts and capabilities that are do
 
 ## Before you begin
 
-To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](https://github.com/open-horizon/examples/wiki/Edge-Quick-Start-Guide). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](https://github.com/open-horizon/examples/wiki/Edge-Quick-Start-Guide#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (For now use the commented out line `aptrepo=testing` in the apt repo section.) That will have you accomplish the following necessary steps:
+To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (For now use the commented out line `aptrepo=testing` in the apt repo section.) That will have you accomplish the following necessary steps:
 
 - Create your WIoTP organization, gateway type and id, and API key.
 - Install docker, horizon, and some utilities.
