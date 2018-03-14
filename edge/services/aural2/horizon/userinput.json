@@ -1,0 +1,12 @@
+{
+    "global": [],
+    "microservices": [
+        {
+            "org": "4zfqaf",
+            "url": "http://is8ac.com/microservices/aural2",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
+}
+

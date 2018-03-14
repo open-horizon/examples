@@ -1,0 +1,5 @@
+FROM alpine:latest
+ENV ARCH=amd64
+COPY aural2_example /bin/
+WORKDIR /
+CMD aural2_example

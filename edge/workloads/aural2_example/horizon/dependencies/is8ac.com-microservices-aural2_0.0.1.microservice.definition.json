@@ -1,0 +1,39 @@
+{
+    "org": "4zfqaf",
+    "label": "",
+    "description": "",
+    "public": false,
+    "specRef": "http://is8ac.com/microservices/aural2",
+    "version": "0.0.1",
+    "arch": "arm64",
+    "sharable": "multiple",
+    "downloadUrl": "not used yet",
+    "matchHardware": {},
+    "userInput": [],
+    "workloads": [
+        {
+            "deployment": {
+                "services": {
+                    "aural2": {
+                        "binds": [
+                            "/var/aural2:/persist"
+                        ],
+                        "image": "is8ac/aural2_arm64:0.3.4",
+                        "specific_ports": [
+                            {
+                                "HostIP": "0.0.0.0",
+                                "HostPort": "48125/tcp"
+                            }
+                        ]
+                    },
+                    "microphone": {
+                        "image": "is8ac/example_ms_arm64_microphone:1.2.6",
+                        "privileged": true
+                    }
+                }
+            },
+            "deployment_signature": "",
+            "torrent": ""
+        }
+    ]
+}
