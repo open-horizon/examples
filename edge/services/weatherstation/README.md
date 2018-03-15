@@ -23,7 +23,7 @@
 #### IBM Watson IoT Platform / Horizon Setup  
 - Follow the setup steps in the open-horizon [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md)
   - [Setup Your Organization in the Watson IoT Platform](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#setup-your-organization-in-the-watson-iot-platform)  
-  - [Prepare Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#setup-your-organization-in-the-watson-iot-platform)  (install horizon packages and prereqs)  
+  - [Prepare Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#prepare-your-edge-node)  (install horizon packages and prereqs)  
   - [Verify Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)
  
 ### PWS Microservice and Workload Setup / Registration
