@@ -51,6 +51,7 @@ export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
 ```bash
 export PWSMS_VERSION=1.1.0
 export PWS2WIOTP_VERSION=1.1.0
+export DOCKER_HUB_ID=openhorizon
 ```
 
 #### Microservice  
