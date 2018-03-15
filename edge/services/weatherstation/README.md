@@ -138,8 +138,9 @@ watch -n 1 docker ps
 After a minute or so (depending on device architecture, internet connection), you should see data at your PWS page on Weather Underground:
 <img width="1127" alt="screen shot 2018-03-15 at 2 48 49 pm" src="https://user-images.githubusercontent.com/16260619/37492856-2326335c-2860-11e8-9248-1a50dba0bca4.png">
 
-and in WIoTP, under your device ID:
-<img width="1114" alt="screen shot 2018-03-15 at 2 51 46 pm" src="https://user-images.githubusercontent.com/16260619/37492939-74b79f8a-2860-11e8-8f91-a4c6199cf157.png">
+and in WIoTP, under your device ID:  
+
+<img width="747" alt="screen shot 2018-03-15 at 2 54 31 pm" src="https://user-images.githubusercontent.com/16260619/37493057-dbdbfbde-2860-11e8-8b94-7454e7bb7475.png">
 
 ### References  
 * pywws: http://pywws.readthedocs.org/en/latest/index.html
