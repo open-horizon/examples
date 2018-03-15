@@ -59,7 +59,7 @@ export DOCKER_HUB_ID=openhorizon
 ```bash
 hzn exchange microservice list | jq .
 cd ~/examples/edge/services/weatherstation/horizon
-envsubst < pwsmsstreamer-template.json > ms_def.json
+envsubst < pwsms-template.json > ms_def.json
 hzn exchange microservice publish -f ms_def.json -k <your_private_key_file>
 hzn exchange microservice list | jq .
 ```
