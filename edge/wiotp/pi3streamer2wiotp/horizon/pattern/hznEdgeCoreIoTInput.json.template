@@ -20,9 +20,9 @@
             }
         },
         {
-            "org": "53wl4i",
+            "org": "$HZN_ORG_ID",
             "url": "https://internetofthings.ibmcloud.com/microservices/pi3streamer",
-            "version": "1.0.0",
+            "version": "$PI3STREAMER_VERSION",
             "variables": {
                 "RESOLUTION": "-x 1280 -y 720",
                 "VERT_FLIP": "true",
