@@ -7,7 +7,7 @@
 - weewx/: Files for weewx, an open source python-based personal weather station (PWS) utility
 
 ### Setup Steps  
-Hardware Setup  
+#### Hardware Setup  
 - Setup your hardware:  
   - Linux desktop (amd64) or RPi 2/3 (armhf)  
   - Supported PWS such as one of [these](https://bluehorizon.network/documentation/weather)  
@@ -19,7 +19,8 @@ Hardware Setup
 - Install a linux distribution (ubuntu 16.04+ recommended)  
   - For RPi2/3: Download a raspbian image for your Pi (we tested this on a Pi3 using [Horizon]()'s raspbian image). Unzip and flash the image to your micro SD Card, (setup WiFi) and boot.  
   - For Desktop: Download and install ubuntu 16.04  
-IBM Watson IoT Platform / Horizon Setup  
+
+#### IBM Watson IoT Platform / Horizon Setup  
 - Follow the setup steps in the open-horizon [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md)
   - [Setup Your Organization in the Watson IoT Platform](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#setup-your-organization-in-the-watson-iot-platform)  
   - [Prepare Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#setup-your-organization-in-the-watson-iot-platform)  (install horizon packages and prereqs)  
