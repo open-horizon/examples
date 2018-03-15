@@ -1,7 +1,7 @@
 ## Personal Weather Station Microservice (PWSMS)
 
 ### Repo contents: Docker container build scripts and supporting files  
-- Makefile: 
+- Makefile: executes container build, dev, run, publish steps
 - Dockerfile.<ARCH>:  Docker container image build files for various architectures (amd64, RPi (armhf))
 - horizon/: Files for definition of microservice
 - weewx/: Files for weewx, an open source python-based personal weather station (PWS) utility
