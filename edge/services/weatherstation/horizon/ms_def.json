@@ -1,10 +1,10 @@
 {
-  "label": "PWS microservice for amd64",
+  "label": "PWS microservice for arm",
   "description": "Provides a REST API to query Personal Weather Station (PWS) results",
   "public": true,
   "specRef": "https://internetofthings.ibmcloud.com/microservices/pwsms",
   "version": "1.1.0",
-  "arch": "amd64",
+  "arch": "arm",
   "sharable": "single",
   "downloadUrl": "not used yet",
   "matchHardware": {},
@@ -37,7 +37,7 @@
       "name": "PWS_WU_RPDF",
       "label": "'Rapidfire' setting for WU data upload (True=up to every 2.5 seconds, station dependent)",
       "type": "string",
-      "defaultValue": "False"
+      "defaultValue": "True"
     }
   ],
   "workloads": [
@@ -45,7 +45,7 @@
       "deployment": {
         "services": {
            "pwsms": {
-             "image": "openhorizon/amd64_example_ms_pwsms:1.1.0",
+             "image": "openhorizon/arm_example_ms_pwsms:1.1.0",
              "privileged": true
            }
         }
