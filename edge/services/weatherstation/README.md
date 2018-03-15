@@ -10,7 +10,7 @@
 Hardware Setup  
 - Setup your hardware:  
   - Linux desktop (amd64) or RPi 2/3 (armhf)  
-  - PWS such as [these](https://bluehorizon.network/documentation/weather)  
+  - Supported PWS such as one of [these](https://bluehorizon.network/documentation/weather)  
   - Plug your PWS base station into your linux box via USB  
 - Register your PWS at [wunderground.com](https://www.wunderground.com/personal-weather-station/mypws)  
   - Note your `Station ID` and `Station Key` (you'll record these for device registration)  
