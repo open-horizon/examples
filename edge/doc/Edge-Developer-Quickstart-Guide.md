@@ -41,6 +41,12 @@ cd ~
 git clone https://github.com/open-horizon/examples.git
 ```
 
+You will be storing your docker images in Docker Hub. If you don't already have an id, [sign up](https://hub.docker.com/sso/start/?next=https://hub.docker.com/) for one, set this environment variable and login:
+```
+export DOCKER_HUB_ID=<mydockerhubid>
+docker login -u $DOCKER_HUB_ID
+```
+
 ## Create a microservice project
 
 A typical edge service has 2 parts to it: a service that accesses data that is available on this edge node (a microservice), and logic that does analysis/processing of the data and optionally sends consolidated data to the cloud (workload). 
@@ -225,7 +231,7 @@ Let's develop a minimal workload and explore more complex usages of the `hzn dev
 
 On your development machine, create a project directory:
 ```bash
-mkdir -p ~/hzn/workload/cpu2wiotp
+mkdir -p ~/hzn/workload/cpu2wiotp/horizon
 cd ~/hzn/workload/cpu2wiotp
 ```
 
@@ -239,6 +245,7 @@ To accelerate development, use these prebuilt files:
 ```bash
 cp ~/examples/edge/devguide/cpu2wiotp/* .
 cp ~/examples/edge/wiotp/cpu2wiotp/workload.sh .
+cp ~/examples/edge/wiotp/cpu2wiotp/pattern/insert-cpu2wiotp-template.json horizon
 ```
 
 The Makefile is setup to build the container, start it, and run a simple test to ensure that it works.
@@ -413,7 +420,7 @@ The network has nearly the same name as the workload container name (minus the s
 
 Finally, use
 ```
-docker inspect <instance_name> | jq '.[0].Config.Env'
+docker inspect <container_name> | jq '.[0].Config.Env'
 ```
 to inspect the environment variables that have been passed into the container.
 Variables prefixed with "HZN" are provided by the Horizon Edge node platform.
@@ -574,7 +581,10 @@ The next section describes how to use `hzn dev` to do that.
 When you are satisfied that the microservice and workload are working correctly, you can deploy them to the Edge so that any Edge node in your organization can run them.
 The first step is to create a key pair that will be used to sign the deployment configuration of your microservice and workload.
 ```bash
+cd ~/hzn
 hzn key create <x509-org> <x509-cn>
+export PRIVATE_KEY_FILE="~/hzn/*-private.key"
+export PUBLIC_KEY_FILE="~/hzn/*-public.pem"
 ```
 where `x509-org` is a company name or organization name that is suitable to be used as an x509 certificate organization name, and `x509-cn` is an x509 certificate common name (preferably an email address issued by the `x509-org` organization).
 
@@ -584,7 +594,7 @@ The private key will be used to sign the microservice and workload, the public i
 Now publish the microservice:
 ```bash
 cd ~/hzn/ms/cpu
-hzn dev microservice publish -k <private-key>
+hzn dev microservice publish -k $PRIVATE_KEY_FILE
 ```
 
 You can verify that the microservice was published:
@@ -600,7 +610,7 @@ make publish
 Publish the workload:
 ```bash
 cd ~/hzn/workload/cpu2wiotp
-hzn dev workload publish -k <private-key>
+hzn dev workload publish -k $PRIVATE_KEY_FILE
 ```
 
 You can verify that the workload was published:
@@ -613,15 +623,32 @@ When the workload is successfully published, upload your workload container to t
 make publish
 ```
 
-Add this workload to 1 or more gateway type deployment patterns by following [Augment the Edge Node Deployment Pattern](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#augment-the-edge-node-deployment-pattern).
+Add this workload to your gateway type deployment pattern:
 
-## Using your workload on other edge nodes
+* Replace environment variables in `horizon/insert-cpu2wiotp-template.json` with your values:
+```
+envsubst < horizon/insert-cpu2wiotp-template.json > horizon/insert-cpu2wiotp.json
+```
+
+* Replace these 2 lines in `horizon/insert-cpu2wiotp.json` with your values:
+```
+      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
+          "version": "",
+```
+
+* Add your workload to your gateway type deployment pattern and verify it is there:
+```
+hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f horizon/insert-cpu2wiotp.json $WIOTP_GW_TYPE
+hzn exchange pattern list $WIOTP_GW_TYPE | jq .
+```
+
+## Using your workload on edge nodes of this type
 
 You, or others in your organization, can now use this workload on many edge nodes. On each of those nodes:
 
-* Import the public key on each edge node:
+* Copy the public key to each edge node and import it to the Horizon agent:
 ```bash
-hzn key import -k <public-key>
+hzn key import -k $PUBLIC_KEY_FILE
 ```
 
 * Follow [Register Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#register-your-edge-node)
