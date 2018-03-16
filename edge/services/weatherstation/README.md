@@ -104,11 +104,11 @@ Finally, edit your `/etc/wiotp-edge/hznEdgeCoreIoTInput.json.template` file and 
 ```bash
 ...
       "variables": {
-        "PWS_ST_TYPE": "FineOffsetUSB   (<-- replace with your station driver++)",
-        "PWS_MODEL": "WS2080            (<-- replace with your station type++)",
-        "PWS_WU_ID": "KCAENCIN70        (<-- replace with your WU Station ID)",
-        "PWS_WU_KEY": "7HGR6HD3         (<-- replace with your WU Station Key)",
-        "PWS_WU_RPDF": "False           (True/False to use "rapidfire mode", sends data to WU more often)"
+        "PWS_ST_TYPE": "FineOffsetUSB",  (<-- replace with your station driver++)
+        "PWS_MODEL": "WS2080",           (<-- replace with your station type++)
+        "PWS_WU_ID": "KCAENCIN70",       (<-- replace with your WU Station ID)
+        "PWS_WU_KEY": "7HGR6HD3",        (<-- replace with your WU Station Key)
+        "PWS_WU_RPDF": "False"           (True/False to use "rapidfire mode", sends data to WU more often)
       }
 ...
 ```  
