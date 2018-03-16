@@ -111,7 +111,8 @@ Finally, edit your `/etc/wiotp-edge/hznEdgeCoreIoTInput.json.template` file and 
         "PWS_WU_RPDF": "False           (True/False to use "rapidfire mode", sends data to WU more often)"
       }
 ...
-```
+```  
+++Weewx Hardware guide: http://www.weewx.com/docs/hardware.htm
 
 #### Registration
 Now register your node with the Edge system and verify that it is connected properly before proceeding to develop and publish your code.
@@ -145,5 +146,4 @@ and in WIoTP, under your device ID:
 ### References  
 * pywws: http://pywws.readthedocs.org/en/latest/index.html
 * weewx: http://www.weewx.com/  (open source, many supported PWS's)
-  * ++Weewx Hardware guide: http://www.weewx.com/docs/hardware.htm
 * Weather Undergdound PWS Info: https://www.wunderground.com/weatherstation/overview.asp
