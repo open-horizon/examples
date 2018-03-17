@@ -26,16 +26,14 @@ Let's get started...
   * on the left, hover over the gear and click `SETTINGS`
   * click `Experimental Features`
   * enable `Activate Experimental Features`
-  * scroll all the way to the bottom, click the small gear icon on the far right
-  * enable `Edge Preview Mode`
 * Create a Gateway Type and instance:
   * on the left, hover over the device icon and click `DEVICES`
   * click the `Device Types` tab
   * click `Add Device Type`
   * click `Gateway`
-  * enable `Edge Capabilities` for this gateway type
   * enter a name for your new IoT Gateway Type
-  * click `Next` and then click `Done`
+  * enable `Edge Services` for this gateway type
+  * click `Next`, `Next`, and then click `Done`
   * click the `Browse` tab
   * click `Add Device`
   * select the gateway type you just created (it may be pre-selected)
@@ -46,9 +44,11 @@ Let's get started...
 * Create an API key so that the Edge node can access your Internet of Things Platform instance:
   * on the left, hover over the compass icon and click `APPS`
   * click `Generate API Key`
-  * select Standard Application (should be pre-selected)
+  * enter a Description
+  * click `Next`
+  * select Standard Application
+  * click `Generate Key`
   * record the API Key and Authentication Token somewhere
-  * click Generate
 * When finished, you should have the following information recorded:
   * An IBM cloud account name and password
   * Organization ID (6 characters).
