@@ -27,7 +27,7 @@ Along the way, you will be exposed to many concepts and capabilities that are do
 
 Currently this guide is intended to be used on an x86_64 machine. (This will be expanded in the future.)
 
-To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide.**) That guide will have you accomplish the following necessary steps:
+To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.16.2**) That guide will have you accomplish the following necessary steps:
 
 - Create your WIoTP organization, gateway type and id, and API key.
 - Install docker, horizon, and some utilities.
@@ -497,7 +497,20 @@ Let's review what has been accomplished so far:
 This section shows you how to publish the CPU usage average to your Watson IoT Platform.
 
 Modify your project as follows:
-* Configure HTTPS authentication in the global section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). Fill in your values for the environment variables:
+* Update `userinput.json` under the `workload` section to enable the workload to publish the CPU average by setting PUBLISH to `true`:
+```
+    "variables": {
+        "PUBLISH": true,
+        "SAMPLE_INTERVAL": 2,
+        "SAMPLE_SIZE": 5,
+        "VERBOSE": "1"
+    }
+```
+* Save off this version of `userinput.json`, because you'll need it later:
+```
+cp horizon/userinput.json horizon/userinput-without-core-iot.json
+```
+* Configure HTTPS authentication in the `global` section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). Fill in your values for the environment variables:
 ```
     {
         "type": "HTTPSBasicAuthAttributes",
@@ -522,15 +535,6 @@ Fill in the variable values like this (substitute for the env vars):
     "variables": {
         "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
         "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.internetofthings.ibmcloud.com"
-    }
-```
-* Update `userinput.json` under the `workload` section to enable the workload to publish the CPU average by setting PUBLISH to `true`:
-```
-    "variables": {
-        "PUBLISH": true,
-        "SAMPLE_INTERVAL": 2,
-        "SAMPLE_SIZE": 5,
-        "VERBOSE": "1"
     }
 ```
 * Update `workload.definition.json` with new deployment environment variables:
@@ -646,33 +650,36 @@ hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 
 You, or others in your organization, can now use this workload on many edge nodes. On each of those nodes:
 
-* Copy the public key to each edge node and import it to the Horizon agent:
+* Copy your public key, and `~/hzn/workload/cpu2wiotp/horizon/userinput.json` to it.
+
+* Import your to the Horizon agent:
 ```bash
 hzn key import -k $PUBLIC_KEY_FILE
 ```
 
-* Follow [Register Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#register-your-edge-node)
-
-## Expand the project to multiple hardware architectures
-
-The project metadata is hard wired to your WIoTP configuration (organization) and to the hardware architecture of your development machine.
-This information is burned into the Horizon metadata files.
-The final step in this guide is to enchance the project to make the metadata more reusable across different users and different hardware architectures.
-Accomplishing this is simple, if you simply capture this variability in environment variables and parameterize the metadata files with those environment variables.
-Using a tool like `envsubst` is ideal for creating concrete horizon metadata based on parameterized metadata files.
-Then add a few new recipes to your `Makefile` and you can automate the entire process of creating the metadata files needed by horizon.
-See the [Horizon examples project](https://github.com/open-horizon/examples) for an example of how to do this.
-
-Both the cpu_percent and the cpu2wiotp sub projects are setup in this way.
-Notice how the Makefile in each sub project creates the `horizon_build` directory and puts the conditioned metadata in there.
-This enables the use of `hzn dev microservice start` and `hzn dev worklaod start` to work correctly for these projects.
-This is the recommended approach when the project needs to be used by developers in more than 1 organization, or working with containers on more than 1 hardware architecture, etc.
-
-Earlier in this guide you cloned the examples project.
-You can see this approach in action by:
+* **If you have run thru this document before** on this edge node, do this to clean up:
 ```
-cd ~/examples/edge/wiotp/cpu2wiotp
-make hznstart
+hzn unregister -f
 ```
 
-The workload and all the dependent microservice containers have been started and are sending data to your WIoTP.
+* Register the node and start the Watson IoT Platform core-IoT service and the CPU workload:
+```
+wiotp_agent_setup --org $HZN_ORG_ID --deviceType $WIOTP_GW_TYPE --deviceId $WIOTP_GW_ID --deviceToken "$WIOTP_GW_TOKEN" -f ~/hzn/workload/cpu2wiotp/horizon/userinput-without-core-iot.json
+```
+
+After a short while, usually within just a minute or two, agreements will be made to run the WIoTP core-iot service and your workload. See [Register Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#register-your-edge-node) as a reminder for how to check for agreements and your workload, and how to verify that CPU values are being sent to the cloud.
+
+## Advanced topic - Expanding your project
+
+Your project metadata currently has hard-code values for architecture, gateway type, and workload version. You can easily make your project more flexible by parameterizing your project metadata files by using environment varibles in your files and processing your files with a tool like `envsubst`.
+If you then add a few new recipes to your `Makefile` you can automate the process of creating the metadata files needed by horizon.
+See `~/examples/edge/wiotp/cpu2wiotp/Makefile` for an example of how to do this (specifically the targets `hznbuild` and `hznstart`).
+
+Here are a few things to consider when expanding your project:
+* New versions of your microservice and workload:
+    * When you want to roll out a new version, build the new docker images (with a new tag for the version) and create new microservice/workload definitions with the new version number. Then replace the workload reference in your gateway type pattern.
+    * The edge nodes that are already using that pattern will automatically see the new workload within a few minutes and re-negotiate the agreement to run the new version. You can manually force this by canceling the current agreement using `hzn agreement cancel <agreement-id>`
+* Additional gateway types:
+    * If you want multiple gateway types to run your workload, you do not need to create the microservice/workload definitions multiple times. You only need to add your workload reference to each pattern.
+* Multiple architectures:
+    * Once you have built your docker images and created your microservice/workload definitions in the exchange for all of your architectures, you can add all the workload references to your gateway type pattern, because at runtime the Horizon agent will filter out the architectures that don't apply to the edge node.
