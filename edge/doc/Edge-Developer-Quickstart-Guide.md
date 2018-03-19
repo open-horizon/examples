@@ -133,7 +133,7 @@ Your `microservice.definition.json` should look something like this:
         "org": "<your_org>",
         "label": "",
         "description": "",
-        "public": false,
+        "public": true,
         "specRef": "http://my.company.com/microservices/cpu",
         "version": "0.0.1",
         "arch": "amd64",
@@ -308,7 +308,7 @@ Your `workload.definition.json` should look something like this:
         "org": "<your_org>",
         "label": "",
         "description": "",
-        "public": false,
+        "public": true,
         "workloadUrl": "http://my.company.com/workloads/cpu2wiotp",
         "version": "0.0.1",
         "arch": "amd64",
@@ -671,15 +671,14 @@ After a short while, usually within just a minute or two, agreements will be mad
 
 ## Advanced topic - Expanding your project
 
-Your project metadata currently has hard-code values for architecture, gateway type, and workload version. You can easily make your project more flexible by parameterizing your project metadata files by using environment varibles in your files and processing your files with a tool like `envsubst`.
+Your project metadata currently has hardcoded values for architecture, gateway type, and workload version. You can easily make your project more flexible by parameterizing your project metadata files by using environment varibles in your files and processing your files with a tool like `envsubst`.
 If you then add a few new recipes to your `Makefile` you can automate the process of creating the metadata files needed by horizon.
 See `~/examples/edge/wiotp/cpu2wiotp/Makefile` for an example of how to do this (specifically the targets `hznbuild` and `hznstart`).
 
 Here are a few things to consider when expanding your project:
 * New versions of your microservice and workload:
-    * When you want to roll out a new version, build the new docker images (with a new tag for the version) and create new microservice/workload definitions with the new version number. Then replace the workload reference in your gateway type pattern.
+    * When you want to roll out a new version, build the new docker images (with a new tag for the new version) and create new microservice/workload definitions with the new version number. Then replace the workload reference in your gateway type pattern.
     * The edge nodes that are already using that pattern will automatically see the new workload within a few minutes and re-negotiate the agreement to run the new version. You can manually force this by canceling the current agreement using `hzn agreement cancel <agreement-id>`
-* Additional gateway types:
-    * If you want multiple gateway types to run your workload, you do not need to create the microservice/workload definitions multiple times. You only need to add your workload reference to each pattern.
-* Multiple architectures:
-    * Once you have built your docker images and created your microservice/workload definitions in the exchange for all of your architectures, you can add all the workload references to your gateway type pattern, because at runtime the Horizon agent will filter out the architectures that don't apply to the edge node.
+* Additional gateway types and architectures:
+    * If you want multiple gateway types to run your workload, you do not need to create the microservice/workload definitions multiple times. You only need to add your workload reference to each gateway type pattern.
+    * With WIoTP gateway types with Edge Services enabled, each type can only be used for a single architecture. So create a different gateway type for each architecture you want to support.

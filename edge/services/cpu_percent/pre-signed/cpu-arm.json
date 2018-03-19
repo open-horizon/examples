@@ -13,7 +13,7 @@
     {
       "deployment": "{\"services\":{\"cpu\":{\"image\":\"openhorizon/example_ms_arm_cpu:1.2.2\",\"privileged\":false}}}",
       "deployment_signature": "pGPI/pdj4wet5Mj71T9dFBNREiBvoJLzV8ru+74U02m5vpU4eONRb3Fzy0JP1tj6FA1NhvsXvwDoP1Xw4AN6d8gYhQBJyNeSOjWprYCsQJlPfRrj7OopLSEalWPdqzJwCIVtHjOJ+WBmy4UY9v8TXLJydz0LrALo0OPV8UDcN0F51YKsPUbRJIIdernnuT3E4h261yfQUhps2mwYuQZfOC9hIy0gx4TdqdpBSR16FCMjtiZxLz6kfs1hemTytoO3eeT+WGl4Hq1Jljfe+fn8UUewQAs9AvtK2Jr5KdxdDwUhmN7aHndowHig+3dWdK6Fw/fHRrBzb1rXlFus5lkQnGhQ0Om8O03Kadxsvq42mX/RpgNB9vS0MNZmEA+LNrMwwOyhOnX1ZrIyw9aqe5pPjfBhoQfprA8EzXnDX82b/1liZ2giNBOhgvPFK9k9Nvj6uOd9gorSj3SdKQmWxOcq+Cu00eLw/4+s4MyUHN3Ic8wKePgvwKZO7WO9aR9sMPevh8tbHGphzcHNyGtvKfHo7uWcdv0lwnUPWCcFg+3o2ptu33FXR5me0qvs+CTHVszo6O7JzTVUofWCgaCDrGh1mopTggqdihfY2MaxAEv1mixoGhsgvDNtVBcJynrzkgF4o8AljdYxJN6X/u5EoKWP1aXDO7KmSPQbP/s25tfMTxU=",
-      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+      "torrent": ""
     }
   ]
 }
