@@ -1,0 +1,36 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "CAFFEDEMO for $ARCH2",
+  "description": "Provides a Deep Learning object recognition demo",
+  "public": true,
+  "specRef": "https://internetofthings.ibmcloud.com/microservices/caffedemo",
+  "version": "$CAFFEDEMO_VERSION",
+  "arch": "$ARCH2",
+  "sharable": "single",
+  "downloadUrl": "not used yet",
+  "matchHardware": {},
+  "userInput": [],
+  "workloads": [
+    {
+      "deployment": {
+        "services": { 
+          "caffedemo": { 
+            "image": "$DOCKER_HUB_ID/${ARCH2}_example_ms_caffedemo:${CAFFEDEMO_VERSION}",
+            "privileged": true,
+            "binds": [
+              "/dev:/dev:ro"
+            ],
+            "userinput": {
+              "name": "CAFFEDEMO_CAMERA_DEVICENUM",
+              "label": "preferred device number for local camera. (0=/dev/video0, 1=/dev/video1, etc)",
+              "type": "string",
+              "defaultValue": "0"
+            }
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}

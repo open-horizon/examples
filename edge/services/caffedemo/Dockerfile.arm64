@@ -1,0 +1,30 @@
+# Docker build of simple caffe based demos for x86, using nvidia/caffe
+# and python 2.7
+FROM openhorizon/arm64v8-opencv4tegra-caffe:JetPack3.2-RC
+ENV ARCH=arm64
+
+RUN apt-get update && apt-get install -y git python-matplotlib python-opencv vim wget
+ENV CAFFE_ROOT=/caffe
+RUN mkdir -p /src
+WORKDIR /src
+RUN git clone https://github.com/Banus/caffe-demo.git
+WORKDIR /src/caffe-demo/models
+RUN chmod +x download_models.sh && ./download_models.sh all
+WORKDIR /src/caffe-demo
+
+# Experimental-VNC
+RUN apt-get update && apt-get install -y --no-install-recommends \
+                                xvfb \
+                                xauth \
+                                x11vnc \
+                                x11-utils \
+                                x11-xserver-utils \
+                                x11-apps
+
+
+COPY *.py /src/caffe-demo/
+CMD python deep_classification_demo.py webcam googlenet
+
+## TODO: download Yolo models (and resolve blob mismatch, so they actually work)
+##  convert models: https://github.com/xingwangsfu/caffe-yolo
+#COPY demo/*.caffemodel /src/caffe-demo/models/yolo/

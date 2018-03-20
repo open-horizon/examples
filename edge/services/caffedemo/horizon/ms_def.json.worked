@@ -1,0 +1,30 @@
+{
+  "org": "0ayswk",
+  "label": "CAFFEDEMO for arm64",
+  "description": "Provides a Deep Learning object recognition demo",
+  "public": true,
+  "specRef": "https://internetofthings.ibmcloud.com/microservices/caffedemo",
+  "version": "1.0.0",
+  "arch": "arm64",
+  "sharable": "single",
+  "downloadUrl": "not used yet",
+  "matchHardware": {},
+  "userInput": [],
+  "workloads": [
+    {
+      "deployment": {
+        "services": { 
+          "caffedemo": { 
+            "image": "openhorizon/arm64_example_ms_caffedemo:1.0.0",
+            "binds": [
+              "/dev:/dev:ro"
+            ],
+            "privileged": true
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}

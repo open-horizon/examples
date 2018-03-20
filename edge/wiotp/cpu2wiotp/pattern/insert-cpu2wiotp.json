@@ -1,0 +1,28 @@
+    {
+      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
+      "workloadOrgid": "53wl4i",
+      "workloadArch": "arm64",
+      "workloadVersions": [
+        {
+          "version": "1.2.1",
+          "deployment_overrides": {
+            "services": {
+              "cpu2wiotp": {
+                "environment": [
+                  "WIOTP_DOMAIN=internetofthings.ibmcloud.com"
+                ]
+              }
+            }
+          },
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "dataVerification": {},
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+

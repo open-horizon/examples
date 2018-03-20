@@ -1,0 +1,6 @@
+FROM alpine:latest
+ENV ARCH=amd64
+RUN apk --no-cache --update add gawk bc socat
+COPY *.sh /
+WORKDIR /
+CMD /start.sh
