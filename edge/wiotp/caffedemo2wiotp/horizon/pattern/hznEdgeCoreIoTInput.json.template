@@ -1,0 +1,31 @@
+{
+    "global": [
+        {
+            "type": "HTTPSBasicAuthAttributes",
+            "sensor_urls": [],
+            "publishable": false,
+            "host_only": true,
+            "variables": {
+               "username": "",
+               "password": ""
+            }
+        }
+    ],
+    "microservices": [
+        {
+            "org": "IBM",
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+            }
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://internetofthings.ibmcloud.com/microservices/caffedemo",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "CAFFEDEMO_CAMERA_DEVICENUM": "$CAFFEDEMO_CAMERA_DEVICENUM"
+            }
+        }
+    ]
+}
