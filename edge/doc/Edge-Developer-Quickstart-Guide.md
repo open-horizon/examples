@@ -284,6 +284,7 @@ We will add a dependency later in this guide.
 ### Update workload project metadata
 
 Update the Horizon metadata files based on our example project. Modify the `workload.definition.json` file:
+1. Fill in a short phrase for the `label` field, and a sentence or 2 for the `description`.
 1. Update the value of `workloadUrl` with a URL that is unique to your organization, for example: `http://my.company.com/workloads/cpu2wiotp`.
 This URL will be used by other parts of the Edge system to refer to this workload.
 1. Update the value of `version` with a version number that complies with the [OSGI Version standard](https://www.osgi.org/wp-content/uploads/SemanticVersioning.pdf), e.g. 0.0.1 as your first version. It is simplest if you set this to the same version number used in the docker image tag.
