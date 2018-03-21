@@ -653,7 +653,7 @@ You, or others in your organization, can now use this workload on many edge node
 
 * Copy your public key, and `~/hzn/workload/cpu2wiotp/horizon/userinput.json` to it.
 
-* Import your to the Horizon agent:
+* Import your public key to the Horizon agent:
 ```bash
 hzn key import -k $PUBLIC_KEY_FILE
 ```
