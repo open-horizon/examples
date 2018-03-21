@@ -1,0 +1,13 @@
+{
+  "label": "PWS microservice for $ARCH",
+  "description": "Empty PWS microservice to be used with a mocked PWS workload",
+  "public": true,
+  "specRef": "https://bluehorizon.network/microservices/pwsms",
+  "version": "$VERSION",
+  "arch": "$ARCH",
+  "sharable": "exclusive",
+  "downloadUrl": "not used yet",
+  "matchHardware": {},
+  "userInput": [],
+  "workloads": []
+}

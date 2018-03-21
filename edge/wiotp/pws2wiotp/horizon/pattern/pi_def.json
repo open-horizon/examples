@@ -1,0 +1,29 @@
+    {
+      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/pws2wiotp",
+      "workloadOrgid": "0ayswk",
+      "workloadArch": "arm",
+      "workloadVersions": [
+        {
+          "version": "1.1.0",
+          "deployment_overrides": {
+            "services": {
+              "pi3streamer2wiotp": {
+                "environment": [
+                  "WIOTP_DOMAIN=internetofthings.ibmcloud.com",
+                  "VERBOSE=1"
+                ]
+              }
+            }
+          },
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "dataVerification": {},
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+
