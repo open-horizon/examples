@@ -1,0 +1,34 @@
+#
+# Blue Horizon Firmware Device API: gps
+#
+# This server provides REST access to gps receiver location and satellite data
+#
+# More precise documentation of the behavior of this container may be found
+# in the src/main.go source code.
+#
+# To build this server container, run the following command in this directory:
+#   $ make
+#
+# To run the firmware container as a daemon process (e.g., so you can test it):
+#   $ make daemon
+#
+# To run the firmware container in dev mode (normally used for development):
+#   $ make develop
+#
+# Written by Glen Darling, November 2016.
+#
+
+FROM arm32v6/alpine
+MAINTAINER glendarling@us.ibm.com
+
+# Install gpsd
+RUN apk --no-cache add gpsd
+
+# Instruct docker to make this port available to clients like the location container
+EXPOSE 31779
+
+# Copy over the ARM version of the server binary
+COPY bin/gps.arm /gps
+
+# Set the default command to be the go executable to start everything
+CMD /gps
