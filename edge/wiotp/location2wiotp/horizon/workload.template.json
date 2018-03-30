@@ -13,7 +13,14 @@
       "arch": "$ARCH"
     }
   ],
-  "userInput": [],
+  "userInput": [
+    {
+        "name": "WIOTP_GW_TOKEN",
+        "label": "The token of the WIoTP gateway needed to send directly to WIoTP cloud MQTT",
+        "type": "string",
+        "defaultValue": "-"
+    }
+  ],
   "workloads": [
     {
       "deployment": {

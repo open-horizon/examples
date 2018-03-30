@@ -1,5 +1,6 @@
 bin/
 pkg/
+horizon/microservice.definition.json
 src/github.com/
 src/gopkg.in/
 src/golang.org/

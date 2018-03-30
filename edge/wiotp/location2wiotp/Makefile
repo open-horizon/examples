@@ -53,9 +53,16 @@ docker-verify:
 
 .PHONY: exchange-publish
 exchange-publish: .$(IMAGE)-$(VERSION)-$(ARCH)
+	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${WIOTP_GW_TOKEN:?}   # this verifies these env vars are set
+	envsubst < horizon/workload.template.json > horizon/workload.definition.json
+	envsubst < horizon/userinput.template.json > horizon/userinput.json
+	hzn exchange workload publish -k $$PRIVATE_KEY_FILE -f horizon/workload.definition.json
+
+.PHONY: publish-pattern
+publish-pattern:
 	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?}   # this verifies these env vars are set
-	envsubst < horizon/$(IMAGE)-template.json > bin/$(IMAGE).json
-	hzn exchange workload publish -k $$PRIVATE_KEY_FILE -f bin/$(IMAGE).json
+	envsubst < horizon/pattern/$(IMAGE).template.json > horizon/pattern/$(IMAGE).json
+	hzn exchange pattern publish -k $$PRIVATE_KEY_FILE -f horizon/pattern/$(IMAGE).json
 
 # Create the docker network
 .PHONY: network

@@ -122,8 +122,8 @@ docker-verify:
 .PHONY: exchange-publish
 exchange-publish:
 	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?}   # this verifies these env vars are set
-	envsubst < horizon/$(IMAGE)-template.json > bin/$(IMAGE).json
-	hzn exchange microservice publish -k $$PRIVATE_KEY_FILE -f bin/$(IMAGE).json
+	envsubst < horizon/microservice.template.json > horizon/microservice.definition.json
+	hzn exchange microservice publish -k $$PRIVATE_KEY_FILE -f horizon/microservice.definition.json
 
 # Create the docker network
 .PHONY: network
