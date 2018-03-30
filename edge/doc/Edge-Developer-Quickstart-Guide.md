@@ -607,11 +607,6 @@ You can verify that the microservice was published:
 hzn exchange microservice list
 ```
 
-When the microservice is successfully published, upload your microservice image to the docker registry that you are using. The microservice project has this built into the makefile:
-```bash
-make publish
-```
-
 Publish the workload:
 ```bash
 cd ~/hzn/workload/cpu2wiotp
@@ -621,11 +616,6 @@ hzn dev workload publish -k $PRIVATE_KEY_FILE
 You can verify that the workload was published:
 ```bash
 hzn exchange workload list
-```
-
-When the workload is successfully published, upload your workload container to the docker registry that you are using. The workload project has this built into the makefile:
-```bash
-make publish
 ```
 
 Add this workload to your gateway type deployment pattern:
