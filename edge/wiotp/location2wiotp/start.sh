@@ -44,7 +44,7 @@ checkRequiredEnvVar "HZN_ORGANIZATION"
 checkRequiredEnvVar "HZN_DEVICE_ID"
 checkRequiredEnvVar "HZN_AGREEMENTID"
 
-# Optional environment variables (these have default values)
+# Optional common environment variables (these have default values)
 GPS_HOST_PORT="${GPS_HOST_PORT:-gps:31779}"     # The hostname and port number we should contact the gps rest api with
 MQTT_PORT="${MQTT_PORT:-8883}"
 # Configure how long to pause between successive publications to central MQTT
@@ -75,10 +75,10 @@ fi
 
 if [[ -n "$SEND_TO_WIOTP" ]]; then
     WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
-    WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # The cert to verify the WIoTP MQTT broker. If sending to the local core-iot broker, set this to its cert.
     if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
       # Send to the local WIoTP Edge Connector, for store and forward
       MQTT_HOST="$WIOTP_EDGE_MQTT_IP"
+      WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-/var/wiotp-edge/persist/dc/ca/ca.pem}"     # The cert to verify the WIoTP MQTT broker we are sending to
       CLIENT_ID="a:${HZN_AGREEMENTID:0:36}"      # sending as an app - wiotp limit for app id is 36
       TOPIC="iot-2/evt/status/fmt/json"
       #MQTT_AUTH=""    # no auth needed for edge-connector if you are on the same machine as it
@@ -89,6 +89,7 @@ if [[ -n "$SEND_TO_WIOTP" ]]; then
         exit 2
       fi
       MQTT_HOST="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
+      WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # The cert to verify the WIoTP MQTT broker we are sending to
       CLIENT_ID="$CLASS_ID:$HZN_ORGANIZATION:$GW_TYPE:$GW_ID"
       TOPIC="iot-2/type/$GW_TYPE/id/$GW_ID/evt/status/fmt/json"
       #MQTT_AUTH="-u use-token-auth -P $WIOTP_GW_TOKEN"  # <- cant do this because need to put "" around the token (special chars) when passing it to mosquitto_pub
