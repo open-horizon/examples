@@ -1,6 +1,6 @@
 {
   "label": "Location to WIoTP for $ARCH",
-  "description": "Gets the edge node GPS location from the gps microservice and sends it to WIoTP via the core-iot edge-connector",
+  "description": "Gets the edge node GPS location from the gps microservice and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/location2wiotp",
   "version": "$VERSION",
@@ -10,12 +10,6 @@
       "specRef": "https://internetofthings.ibmcloud.com/microservices/gps",
       "org": "$HZN_ORG_ID",
       "version": "[0.0.0,INFINITY)",
-      "arch": "$ARCH"
-    },
-    {
-      "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
-      "org": "IBM",
-      "version": "[2.4.0,INFINITY)",
       "arch": "$ARCH"
     }
   ],
@@ -32,13 +26,7 @@
       "deployment": {
         "services": {
           "location": {
-            "image": "openhorizon/${ARCH}_location2wiotp:$VERSION",
-            "binds": [
-              "/var/wiotp-edge:/var/wiotp-edge"
-            ],
-            "environment": [
-              "WIOTP_EDGE_MQTT_IP=edge-connector"
-            ]
+            "image": "openhorizon/${ARCH}_location2wiotp:$VERSION"
           }
         }
       },
