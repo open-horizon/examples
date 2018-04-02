@@ -26,9 +26,6 @@
   "agreementProtocols": [
     {
       "name": "Basic"
-    },
-    {
-      "name": "Citizen Scientist"
     }
   ]
 }
