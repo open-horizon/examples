@@ -495,7 +495,7 @@ Let's review what has been accomplished so far:
 
 ## Publish Data to Watson IoT Platform
 
-This section shows you how to publish the CPU usage average to your Watson IoT Platform.
+This section shows you how to publish the CPU usage average to your Watson IoT Platform, using WIoTP's core-iot microservice.
 
 Modify your project as follows:
 * Update `userinput.json` under the `workload` section to enable the workload to publish the CPU average by setting PUBLISH to `true`:
