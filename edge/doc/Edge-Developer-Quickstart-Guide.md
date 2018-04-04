@@ -117,12 +117,6 @@ In this case, there are none so you can remove the skeletal array element so it 
 3. Update the `deployment` field under the `workloads` section with the docker container configuration.
     * In this case, change the empty service name inside the services map to a meaningful service name, e.g. "cpu".
 This name will be used as the network domain name of the microservice container and will be used by workload containers when contacting it.
-```
-    "deployment": {
-        "services": {
-            "cpu": {
-```
-
     * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
 You can get the image name from the `docker images | grep cpu` command.
     * Set any environment variables in the `environment` array. These are variables and values that you want Horizon to pass into the container when it is started.
