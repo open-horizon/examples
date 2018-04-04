@@ -122,6 +122,7 @@ This name will be used as the network domain name of the microservice container 
         "services": {
             "cpu": {
 ```
+
     * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
 You can get the image name from the `docker images | grep cpu` command.
     * Set any environment variables in the `environment` array. These are variables and values that you want Horizon to pass into the container when it is started.
