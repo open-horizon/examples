@@ -36,6 +36,7 @@ To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Q
 
 After completing those steps in the [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) , continue here. Set this environment variable and get access to the examples repo:
 ```bash
+apt install -y git make
 export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.internetofthings.ibmcloud.com/api/v0002/edgenode/"
 cd ~
 git clone https://github.com/open-horizon/examples.git
@@ -114,16 +115,16 @@ This URL will be used by other parts of the Edge system to refer to this microse
 3. Update `userInput` with any runtime arguments that the Edge node owner can (or must, if no default) set in order for the service to work correctly.
 In this case, there are none so you can remove the skeletal array element so it is just `"userInput": [],`.
 3. Update the `deployment` field under the `workloads` section with the docker container configuration.
- * In this case, change the empty service name inside the services map to a meaningful service name, e.g. "cpu".
+    * In this case, change the empty service name inside the services map to a meaningful service name, e.g. "cpu".
 This name will be used as the network domain name of the microservice container and will be used by workload containers when contacting it.
 ```
     "deployment": {
         "services": {
             "cpu": {
 ```
- * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
+    * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
 You can get the image name from the `docker images | grep cpu` command.
- * Set any environment variables in the `environment` array. These are variables and values that you want Horizon to pass into the container when it is started.
+    * Set any environment variables in the `environment` array. These are variables and values that you want Horizon to pass into the container when it is started.
 The Edge node owner cannot override these variables.
 In this case, there are none so you can set the environment field to an empty array.
 
@@ -188,6 +189,7 @@ Your `userinput.json` file should look something like this:
 ### Verify microservice project metadata
 Now that you have defined and configured the Horizon microservice, verify that the project has no errors in it.
 ```
+cd ~/hzn/ms/cpu
 hzn dev microservice verify
 ```
 
@@ -291,15 +293,15 @@ This URL will be used by other parts of the Edge system to refer to this workloa
 1. Update `userInput` with with any runtime arguments that the Edge node owner can (or must, if no default) set in order for the workload to work correctly.
 In this example, there are 5 variables that condition the logic of the workload.
 Define these variables within the `userInput` section of the `workload.definition.json` file:
- * `SAMPLE_SIZE` - the number of samples to include in the average. Set the type to "int" and the default to "6".
- * `SAMPLE_INTERVAL` - the delay between samples. Set the type to "int" and the default to "5".
- * `MOCK` - used to provide mock samples. Set the type to "boolean" and the default to "false".
- * `PUBLISH` - used to control whether or not the CPU average is publish to Watson IoT Platform. Set the type to "boolean" and set the defauilt to "true".
- * `VERBOSE` - used to provide detailed logging of the workload logic. Set the type to "string" and the default to "0".
+    * `SAMPLE_SIZE` - the number of samples to include in the average. Set the type to "int" and the default to "6".
+    * `SAMPLE_INTERVAL` - the delay between samples. Set the type to "int" and the default to "5".
+    * `MOCK` - used to provide mock samples. Set the type to "boolean" and the default to "false".
+    * `PUBLISH` - used to control whether or not the CPU average is publish to Watson IoT Platform. Set the type to "boolean" and set the defauilt to "true".
+    * `VERBOSE` - used to provide detailed logging of the workload logic. Set the type to "string" and the default to "0".
 1. Update the `deployment` field under the `workloads` section with the docker container configuration.
- * In this case, change the empty service name inside the services map to a meaningful service name, e.g. "cpu2wiotp".
- * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
- * Set any environment variables in the `environment` array.
+    * In this case, change the empty service name inside the services map to a meaningful service name, e.g. "cpu2wiotp".
+    * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
+    * Set any environment variables in the `environment` array.
 These are variables and values that you want Horizon to pass into the container when it is started, but that the Edge node configuration cannot override.
 In this case, there are no environment variables that need to be set so you can set the environment field to an empty array.
 
@@ -398,6 +400,7 @@ Your `userinput.json` file should look something like this:
 
 Now that you have defined and configured the Horizon workload, verify that the project has no errors in it.
 ```
+cd ~/hzn/workload/cpu2wiotp
 hzn dev workload verify
 ```
 
@@ -433,7 +436,7 @@ The log output from the workload container can be found in syslog:
 tail -f /var/log/syslog | grep cpu2wiotp
 ```
 
-The workload container test environment can be stopped:
+Control-C to stop `tail`. Then the workload container test environment can be stopped:
 ```
 hzn dev workload stop
 ```
@@ -483,7 +486,7 @@ Notice that the workload is now picking up real CPU usage samples from the micro
 This is accomplished without any open ports on the host because the workload container has joined the docker network of the microservice.
 This is how the containers will be configured when running on an Edge node.
 
-The workload container and the microservice container test environment can be stopped:
+Control-C to stop `tail`. Then the workload container and the microservice container test environment can be stopped:
 ```
 hzn dev workload stop
 ```
@@ -511,31 +514,38 @@ Modify your project as follows:
 ```
 cp horizon/userinput.json horizon/userinput-without-core-iot.json
 ```
-* Configure HTTPS authentication in the `global` section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). Fill in your values for the environment variables:
+* Configure HTTPS authentication in the `global` section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). **Fill in your values for the environment variables**:
 ```
-    {
-        "type": "HTTPSBasicAuthAttributes",
-        "sensor_urls": [
-            "https://us.internetofthings.ibmcloud.com/api/v0002/horizon-image/common"
-        ],
-        "publishable": false,
-        "host_only": true,
-        "variables": {
-            "username": "$HZN_ORG_ID/$HZN_DEVICE_ID",
-            "password": "$WIOTP_GW_TOKEN"
+    "global": [
+        {
+            "type": "HTTPSBasicAuthAttributes",
+            "sensor_urls": [
+                "https://us.internetofthings.ibmcloud.com/api/v0002/horizon-image/common"
+            ],
+            "publishable": false,
+            "host_only": true,
+            "variables": {
+                "username": "$HZN_ORG_ID/$HZN_DEVICE_ID",
+                "password": "$WIOTP_GW_TOKEN"
+            }
         }
-    }
+    ],
 ```
 * Add the Wation IoT Platform core IoT microservice as a dependency of your workload project.
 ```
 hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver 2.4.0 -o IBM -a amd64 -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
 ```
 * The command above added a section to the `userinput.json` file under `microservices` for the edge-core-iot-microservice.
-Fill in the variable values like this (substitute for the env vars):
+Complete that section like this, **filling in your values for the environment variables**:
 ```
-    "variables": {
-        "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
-        "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.internetofthings.ibmcloud.com"
+    {
+        "org": "IBM",
+        "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+        "versionRange": "[0.0.0,INFINITY)",
+        "variables": {
+            "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
+            "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.internetofthings.ibmcloud.com"
+        }
     }
 ```
 * Update `workload.definition.json` with new deployment environment variables:
@@ -554,6 +564,12 @@ It is a peer to the `environment` field:
         "/var/wiotp-edge:/var/wiotp-edge"
     ],
 ```
+* Set up some things the core-iot microservice needs:
+```
+cp /etc/wiotp-edge/edge.conf.template /etc//wiotp-edge/edge.conf
+mkdir -p /var/wiotp-edge/persist
+wiotp_create_certificate -p $WIOTP_GW_TOKEN
+```
 * Start the workload and look for the CPU messages in your Watson IoT Platform instance:
 ```bash
 hzn dev workload start
@@ -569,7 +585,7 @@ mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIEN
 tail -f /var/log/syslog | grep cpu2wiotp
 ```
 
-* Stop the workload:
+* Control-C to stop `tail`. Then stop the workload:
 ```bash
 hzn dev workload stop
 ```
