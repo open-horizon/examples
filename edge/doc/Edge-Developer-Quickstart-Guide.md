@@ -561,7 +561,7 @@ It is a peer to the `environment` field:
 ```
 * Set up some things the core-iot microservice needs:
 ```
-cp /etc/wiotp-edge/edge.conf.template /etc//wiotp-edge/edge.conf
+cp /etc/wiotp-edge/edge.conf.template /etc/wiotp-edge/edge.conf
 mkdir -p /var/wiotp-edge/persist
 wiotp_create_certificate -p $WIOTP_GW_TOKEN
 ```
