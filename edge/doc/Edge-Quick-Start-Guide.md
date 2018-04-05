@@ -120,11 +120,11 @@ hzn wiotp device list $WIOTP_GW_TYPE $WIOTP_GW_ID | jq .
 Use the mosquitto-clients package to verify your credentials by opening two Linux shells and subscribing to the IBM Watson IoT Platform MQTT message broker in one shell, and publishing a message to that broker in the other (which you should see in the subscribed shell).
 * In the first shell, subscribe:
 ```
-mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_ID_APP" -u "$WIOTP_API_KEY" -P "$WIOTP_API_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json
+mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "${WIOTP_CLIENT_ID_APP:0:38}" -u "$WIOTP_API_KEY" -P "$WIOTP_API_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json
 ```
 * In the other shell, publish
 ```
-mosquitto_pub -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_ID_GW" -u "use-token-auth" -P "$WIOTP_GW_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json -m '{"message": "Hello, world."}'
+mosquitto_pub -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "${WIOTP_CLIENT_ID_GW:0:38}" -u "use-token-auth" -P "$WIOTP_GW_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json -m '{"message": "Hello, world."}'
 ```
 * You should see the "Hello, world." message appear in the output of the first shell
 
@@ -201,7 +201,7 @@ docker ps
   * Return to the Watson IoT Platform web pages: select Devices in the left panel, select your Gateway instance (it should have a blue dot next to it meaning it is "connected"), and click on the Recent Events. The default publish interval for the CPU example is 30 seconds, so you may have to wait that long before seeing the first message.
   * Or, use the mosquitto_sub command previously shown in this guide:
 ```
-mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_ID_APP" -u "$WIOTP_API_KEY" -P "$WIOTP_API_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json
+mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "${WIOTP_CLIENT_ID_APP:0:38}" -u "$WIOTP_API_KEY" -P "$WIOTP_API_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json
 ```
 * If you don't see MQTT messages coming from your edge node, look at the cpu2wiotp log messages for errors:
 ```
