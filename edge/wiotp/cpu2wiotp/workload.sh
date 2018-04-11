@@ -98,7 +98,7 @@ while true; do
         # Send a "status" event to the Watson IoT Platform containing the data
         #clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
         #topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
-        clientId="a:$HZN_ORGANIZATION:$DEVICE_TYPE$DEVICE_ID"       # sending as an app
+        clientId="a:${HZN_AGREEMENTID:0:36}"      # sending as an app - wiotp limit for app id is 36
         topic="iot-2/evt/status/fmt/json"
         if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
           # Send to the local WIoTP Edge Connector microservice mqtt broker, so it can store and forward
@@ -113,6 +113,8 @@ while true; do
         echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
         mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
         checkrc $? "mosquitto_pub $msgHost" "continue"
+      else
+        echo "Average cpu: $average"
       fi
       sum=0
       samplecount=0

@@ -1,0 +1,1 @@
+This directory contains an input file template to create a Horizon Exchange microservice definition. It must first be processed by envsubst to replace the variables with actual values by running. See make target `exchange-publish`.

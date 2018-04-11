@@ -1,0 +1,37 @@
+{
+  "label": "Location to WIoTP for $ARCH",
+  "description": "Gets the edge node GPS location from the gps microservice and sends it to WIoTP",
+  "public": true,
+  "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/location2wiotp",
+  "version": "$VERSION",
+  "arch": "$ARCH",
+  "apiSpec": [
+    {
+      "specRef": "https://internetofthings.ibmcloud.com/microservices/gps",
+      "org": "$HZN_ORG_ID",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "$ARCH"
+    }
+  ],
+  "userInput": [
+    {
+        "name": "WIOTP_GW_TOKEN",
+        "label": "The token of the WIoTP gateway needed to send directly to WIoTP cloud MQTT",
+        "type": "string",
+        "defaultValue": "-"
+    }
+  ],
+  "workloads": [
+    {
+      "deployment": {
+        "services": {
+          "location": {
+            "image": "openhorizon/${ARCH}_location2wiotp:$VERSION"
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": ""
+    }
+  ]
+}

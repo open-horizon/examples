@@ -1,12 +1,15 @@
-DOCKER_NAME = cpu_microservice
-DOCKER_TAG = 0.0.1
+DOCKER_NAME ?= cpu_microservice
+DOCKER_TAG ?= 0.0.1
+
+DOCKER_HUB_ID ?= yourDockerId
 
 default: all
 
 all: build run check
 
-build:
+build: clean
 	docker build -t $(DOCKER_NAME):$(DOCKER_TAG) .
+	docker tag $(DOCKER_NAME):$(DOCKER_TAG) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(DOCKER_TAG)
 
 run:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
@@ -18,7 +21,11 @@ check:
 stop:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 
+publish:
+	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(DOCKER_TAG)
+
 clean: stop
 	-docker rmi $(DOCKER_NAME):$(DOCKER_TAG)
+	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(DOCKER_TAG)
 
 .PHONY: default all build run check publish clean

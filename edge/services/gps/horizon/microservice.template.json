@@ -1,0 +1,27 @@
+{
+  "label": "GPS for $ARCH",
+  "description": "Provides the edge node location via a REST API from a GPS sensor, environment variables, or the IP address",
+  "public": true,
+  "specRef": "https://internetofthings.ibmcloud.com/microservices/gps",
+  "version": "$VERSION",
+  "arch": "$ARCH",
+  "sharable": "single",
+  "userInput": [],
+  "workloads": [
+    {
+      "deployment": {
+        "services": {
+          "gps": {
+            "image": "openhorizon/${ARCH}_gps:$VERSION",
+            "privileged": true,
+            "devices": [
+              "/dev/bus/usb/001/001:/dev/bus/usb/001/001"
+            ]
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": ""
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+FROM ppc64le/debian:latest
+
+MAINTAINER bp@us.ibm.com
+
+RUN apt-get update && apt-get -y install mosquitto-clients jq bc curl
+COPY *.sh /
+# The default shell on debian/ubuntu is dash which is stupid and can not do simple things like . or source
+RUN sed -i -e 's|/bin/sh|/bin/bash|' /start.sh
+COPY *.pem /
+WORKDIR /
+CMD /start.sh

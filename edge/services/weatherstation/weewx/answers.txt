@@ -1,0 +1,6 @@
+station_location
+52, foot
+37.8
+122.4
+us
+3

@@ -1,0 +1,60 @@
+{
+  "label": "PI3STREAMER for $ARCH2",
+  "description": "Provides a stream endpoint on LAN from a RPi3 camera feed (RPi Cam)",
+  "public": true,
+  "specRef": "https://internetofthings.ibmcloud.com/microservices/pi3streamer",
+  "version": "$PI3STREAMER_VERSION",
+  "arch": "$ARCH2",
+  "sharable": "single",
+  "downloadUrl": "not used yet",
+  "matchHardware": {},
+  "userInput": [
+    {
+      "name": "RESOLUTION",
+      "label": "RPi Cam resolution (format: '-x <horiz_px> -y <vert_px>')",
+      "type": "string",
+      "defaultValue": "-x 1280 -y 720"
+    },
+    {
+      "name": "FRAMERATE",
+      "label": "RPi Cam framerate (in frames per second)",
+      "type": "integer",
+      "defaultValue": "20"
+    },
+    {
+      "name": "HORZ_FLIP",
+      "label": "RPi Cam horizontal flip (0=normal or 1=flipped (mirror))",
+      "type": "string",
+      "defaultValue": "false"
+    },
+    {
+      "name": "VERT_FLIP",
+      "label": "RPi Cam vertical flip (0=normal or 1=flipped)",
+      "type": "string",
+      "defaultValue": "false"
+    }
+  ],
+  "workloads": [
+    {
+      "deployment": {
+        "services": {
+          "pi3streamer": {
+            "image": "${DOCKER_HUB_ID}/${ARCH2}_example_ms_pi3streamer:$PI3STREAMER_VERSION",
+            "privileged": true,
+            "binds": [
+              "/dev:/dev:ro"
+            ],
+	    "specific_ports": [ 
+               {
+                 "HostPort": "8080/tcp",
+                 "HostIP": "0.0.0.0"
+	       }
+	    ]
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+    }
+  ]
+}
