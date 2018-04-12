@@ -2,7 +2,7 @@
 
 This guide provides a concise description of the process for setting up WIoTP/Horizon edge nodes and deploying existing services to them.
 
-If you want to develop your own Horizon service, see the [Edge Developer Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md).
+If you want to develop your own Horizon service, see the [Edge Developer Quick Start Guide](Edge-Developer-Quickstart-Guide.md).
 
 Additional information is available, and questions may be asked, in our forum, at [https://discourse.bluehorizon.network/](https://discourse.bluehorizon.network/).
 
@@ -195,7 +195,7 @@ hzn agreement list | jq .
 docker ps
 ```
 
-* If an agreement is not formed, or if the containers are not started, see [Why aren't the expected docker containers running on my edge node?](https://github.com/open-horizon/examples/blob/master/edge/doc/Troubleshooting.md#why-arent-the-expected-docker-containers-running-on-my-edge-node) to troubleshoot.
+* If an agreement is not formed, or if the containers are not started, see [Why aren't the expected docker containers running on my edge node?](Troubleshooting.md#why-arent-the-expected-docker-containers-running-on-my-edge-node) to troubleshoot.
 
 * Once the containers are all running, you should be able to verify that your workload is sending short messages like `{"cpu":1.49}` to the Watson IoT Platform in one of two ways:
   * Return to the Watson IoT Platform web pages: select Devices in the left panel, select your Gateway instance (it should have a blue dot next to it meaning it is "connected"), and click on the Recent Events. The default publish interval for the CPU example is 30 seconds, so you may have to wait that long before seeing the first message.
@@ -223,7 +223,7 @@ To use this deployment pattern on other edge nodes you don't have to repeat ever
 1. Register the edge node and to use this pattern by running `wiotp_agent_setup`
 
 ## What To Do If Things Go Wrong
-Take a look at the [Edge Troubleshooting Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Troubleshooting.md).
+Take a look at the [Edge Troubleshooting Guide](Troubleshooting.md).
 
 You may also wish to explore the `hzn` command, a powerful tool for debugging this system:
 * Online help is available within hzn:
