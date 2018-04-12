@@ -1,6 +1,7 @@
 # Edge Developer Quickstart Guide
 
 This Developer Quickstart Guide provides a simplified description of the process for developing, testing and deploying user-developed code in the Edge environment.
+The [Edge Service Development Guidelines](Edge-Service-Development-Guidelines.md) provides guidance on how to best structure your service so it runs well in the WIoTP/Horizon Edge fabric.
 The [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
 
 Note there is a concise [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) available, that shows how to get an existing workload up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) is also a prerequisite for this guide.**
