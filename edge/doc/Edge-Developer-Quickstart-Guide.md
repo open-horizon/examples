@@ -4,7 +4,7 @@ This Developer Quickstart Guide provides a simplified description of the process
 The [Edge Service Development Guidelines](Edge-Service-Development-Guidelines.md) provides guidance on how to best structure your service so it runs well in the WIoTP/Horizon Edge fabric.
 The [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
 
-Note there is a concise [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) available, that shows how to get an existing workload up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) is also a prerequisite for this guide.**
+Note there is a concise [Quick Start Guide](Edge-Quick-Start-Guide.md) available, that shows how to get an existing workload up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](Edge-Quick-Start-Guide.md) is also a prerequisite for this guide.**
 
 Additional information is available, and questions may be asked, in our forum, at:
 * [https://discourse.bluehorizon.network/](https://discourse.bluehorizon.network/)
@@ -28,14 +28,14 @@ Along the way, you will be exposed to many concepts and capabilities that are do
 
 Currently this guide is intended to be used on an x86_64 machine. (This will be expanded in the future.)
 
-To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.16.4**) That guide will have you accomplish the following necessary steps:
+To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.16.4**) That guide will have you accomplish the following necessary steps:
 
 - Create your WIoTP organization, gateway type and id, and API key.
 - Install docker, horizon, and some utilities.
 - Set environment variables needed in the rest of this guide.
 - Verify your edge node's access to the WIoTP cloud services.
 
-After completing those steps in the [Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) , continue here. Set this environment variable and get access to the examples repo:
+After completing those steps in the [Quick Start Guide](Edge-Quick-Start-Guide.md) , continue here. Set this environment variable and get access to the examples repo:
 ```bash
 apt install -y git make
 export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.internetofthings.ibmcloud.com/api/v0002/edgenode/"
@@ -670,7 +670,7 @@ hzn unregister -f
 wiotp_agent_setup --org $HZN_ORG_ID --deviceType $WIOTP_GW_TYPE --deviceId $WIOTP_GW_ID --deviceToken "$WIOTP_GW_TOKEN" -f ~/hzn/workload/cpu2wiotp/horizon/userinput-without-core-iot.json
 ```
 
-After a short while, usually within just a minute or two, agreements will be made to run the WIoTP core-iot service and your workload. See [Register Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#register-your-edge-node) as a reminder for how to check for agreements and your workload, and how to verify that CPU values are being sent to the cloud.
+After a short while, usually within just a minute or two, agreements will be made to run the WIoTP core-iot service and your workload. See [Register Your Edge Node](Edge-Quick-Start-Guide.md#register-your-edge-node) as a reminder for how to check for agreements and your workload, and how to verify that CPU values are being sent to the cloud.
 
 ## Advanced topic - Expanding your project
 
