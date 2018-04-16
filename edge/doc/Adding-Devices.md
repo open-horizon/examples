@@ -225,99 +225,14 @@ Horizon is always extending the system to run on additional platforms. For more 
 
 Once you have installed the Horizon software (using the instructions above) it will take a few minutes to get up and running.  It will usually take less than 10 minutes.  Once Horizon is running you can register and add your machine onto the Horizon network.
 
-#### Using the CLI to Register on Horizon
+Now use one of these guides to get your machine registered:
 
-Optionally, it is recommended that you begin by verifying that Horizon has had time to come up and is "active" by running this command:
-
-```
-systemctl status horizon.service
-```
-
-The output of that command should contain lines similar to this:
-
-```
- * horizon.service - Service for Horizon control system (cf. https://bluehorizon.network)
-   Loaded: loaded (/etc/systemd/system/horizon.service; enabled)
-   Active: active (running) since Thu 2017-07-06 13:35:54 UTC; 36min ago
-```
-
-Optionally, you may also wish to verify the version of Horizon on your machine:
-
-```
-dpkg -l | grep horizon
-  ii  bluehorizon                     2.13.9~ppa~raspbian.jessie   armhf        Configuration for horizon package to use Blue Horizon backend
-  ii  bluehorizon-ui                  2.13.9~ppa~raspbian.jessie   armhf        Web UI content for Bluehorizon instance of the Horizon platform
-  ii  horizon                         2.13.9~ppa~raspbian.jessie   armhf        The open source version of the Horizon platform
-```
-
-The version should be 2.13.9 or later.
-
-First you need to register your edge machine as a "node" in the Horizon Exchange.  You need a user account in the Horizon Exchange to do this, but if you are just using the "public" organization, an account will be created for you automatically when you register your new node.  You can make up any node ID, any node token (i.e., a password for this node), any username, and any password, and you must provide an email address as well, then run the "hzn exchange node create ..." command as shown below:
-
-```
-export NODE_ID=_____
-export NODE_TOKEN=_____
-export USERNAME=_____
-export PASSWORD=_____
-export EMAIL="_____@____.com"
-hzn exchange node create -u $USERNAME:$PASSWORD -e $EMAIL -n $NODE_ID:$NODE_TOKEN -o public
-```
-
-To register your edge machine you will need to select the deployment pattern that you wish to run on this machine.  You can list the available patterns for the "public" organization by passing your Horizon Exchange credentials in the command shown below:
-
-```
-hzn exchange pattern list -o public -u $USERNAME:$PASSWORD
-```
-
-Select an appropriate pattern from this list based upon the variety of edge machine you will be registering, and the hardware peripherals it has attached.  Depending upon the pattern you select, you may also need to provide configuration details required by that pattern.  For example, to run the public pattern "netspeed-arm" (appropriate only for ARM architecture machines) you must provide the location information it requires.  To do this you would create a file, say ./input.json containing something  like the following.  This example registers a machine near San Jose, California, USA (at GPS coordinates 37.0, -121.0) and specifies that the location of the machine should always be obfuscated somewhere within a radius of 5.0 km from the actual location before being shared:
-
-```
-{
-  "global": [
-    {
-      "type": "LocationAttributes",
-      "variables": {
-        "lat": 37.0,
-        "lon": -121.0,
-        "use_gps": false,
-        "location_accuracy_km": 5.0
-      }
-    }
-  ]
-}
-```
-
-In the current directory, create the input.json file shown above (but with the values shown in bold above changed to reflect your own location).  This input file is specific to the netspeed-arm pattern.  When that file is ready, use the command shown below to deploy this pattern onto your edge machine
-
-```
-export PATTERN=netspeed-arm
-hzn register -n $NODE_ID:$NODE_TOKEN -f ./input.json public $PATTERN
-```
-Once the hzn register command succeeds without error, then the Horizon AgBots will be able to find it, and will begin trying to establish agreements with it.  You can check the configuration and current status of Horizon on your edge machine with the commands shown below and very soon you should see an agreement showing up, then shortly after that the docker containers for that agreement should start running:
-
-```
-hzn agreement list
-hzn service list
-hzn workload list
-```
-Note that you can get more detailed instructions for the hzn command by passing "--help", e.g.:
-
-```
-hzn --help
-```
-You can also get detailed instructions for hzn subcommands (like "register") by passing "--help", e.g.:
-
-```
-hzn register --help
-```
-
-Your machine Is now registered on Horizon!
+* [Edge-Quick-Start-Guide.md](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md)
+* [Edge-Developer-Quickstart-Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md)
 
 ### Welcome to Horizon!
 
-Once your machine registration and pattern assignment is completes, the Horizon AgBots discover your edge machine, propose agreements, and monitor their progress once your machine accepts them.  You should never again need to connect directly to the machine to insteall or update its software.  The "Horizon Insights" (in the pattern you selected) will now begin contracting with your device through the Horizon Exchange.  Once your device is in agreement, Horizon Microservices and Workloads (running in Docker containers) will be downloaded and will begin to run. Your device will soon be running the Horizon Insights you specified.
-
-Soon your machine will be visible on the Horizon Unified Map.  Once you see your "dot" appear on that map, tap on it, and then select any of the Horizon Insight icons that appear (one for each of the Horizon Insights in your pattern).  When you select a Horizon Insight icon you will be taken to a page for that Horizon Insight where you can, for example, see visualizations of the data being sent from your machine, or interact directly with the hardware on your edge machine (depending upon the particular Horizon Insights you have selected).
+Once your machine registration is complete, the Horizon AgBots will discover your edge machine, propose agreements, and monitor their progress once your machine accepts them.  You should never again need to connect directly to the machine to install or update its software.
 
 ### Questions, Troubleshooting
 
