@@ -6,10 +6,11 @@ Currently **ARM (32bit and 64bit)**, **x86**, and **IBM Power8** architectures a
 
 Instructions below will guide you through installation of Horizon based on your variety of machine.  The links below will jump ahead to the instructions for that machine type:
 
-* [Raspberry Pi3 or Pi2]()
-* [NVIDIA Jetson TX2 or TX1]()
-* [x86 machines (or VMs)]()
-* [IBM Power8 machines]()
+* [Raspberry Pi3 or Pi2](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#arm-32-bit-raspberry-pi)
+* [NVIDIA Jetson TX2 or TX1](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#arm-64-bit-nvidia-jetson)
+* [x86 machines (or VMs)](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#x86-machines)
+* [IBM Power8 machines](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#ibm-power8-machines)
+* [Additional Platforms](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#additional-platforms)
 
 If you wish to bring any other device not listed here onto Horizon, please contact the Horizon community by clicking the Forum tab at the top of this page.
 
@@ -84,7 +85,7 @@ Install the latest Horizon software:
 apt-get install -y horizon bluehorizon bluehorizon-ui
 ```
 
-**Now continue to the "Registering Your Horizon Machine" section below.**
+[Now continue to the "Registering Your Horizon Machine" section below.](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#registering-your-horizon-machine)
 
 ### ARM 64 bit, NVIDIA Jetson:
 
@@ -151,7 +152,7 @@ passwd: password updated successfully
 $ 
 ```
 
-**Now continue to the "Registering Your Horizon Machine" section below.**
+[Now continue to the "Registering Your Horizon Machine" section below.](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#registering-your-horizon-machine)
 
 ### x86 Machines:
 
@@ -206,15 +207,15 @@ service rsyslog restart
 systemctl start horizon.service
 ```
 
-**Now continue to the "Registering Your Horizon Machine" section below.**
+[Now continue to the "Registering Your Horizon Machine" section below.](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#registering-your-horizon-machine)
 
 ### IBM Power8 Machines:
 
 Horizon is moving toward support for cognitive and deep learning supercomputing platforms including the IBM Power8 Architecture with NVIDIA's PASCAL GPU.  Horizon has been tested and is running on a Power S814, 8 core machine, with 1TB RAM.
 
-Begin by following **these setup instructions for IBM Power8**, then...
+Begin by following [these setup instructions for IBM Power8](https://staging.bluehorizon.network/documentation/adding-your-power-device), then...
 
-**Now continue to the "Registering Your Horizon Machine" section below.**
+[Now continue to the "Registering Your Horizon Machine" section below.](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md#registering-your-horizon-machine)
 
 ### Additional Platforms
 
@@ -322,8 +323,8 @@ Soon your machine will be visible on the Horizon Unified Map.  Once you see your
 
 If you have any difficulties with any of these steps, you may find these other Horizon douments useful:
 
-* [Edge-Developer-Quickstart-Guide]()
-* [Edge-Quick-Start-Guide.md]()
-* [Edge-Service-Development-Guidelines]()
-* [Frequently-Asked-Questions]()
-* [Troubleshooting]()
+* [Edge-Developer-Quickstart-Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md)
+* [Edge-Quick-Start-Guide.md](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md)
+* [Edge-Service-Development-Guidelines](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Service-Development-Guidelines.md)
+* [Frequently-Asked-Questions](https://github.com/open-horizon/examples/blob/master/edge/doc/Frequently-Asked-Questions.md)
+* [Troubleshooting](https://github.com/open-horizon/examples/blob/master/edge/doc/Troubleshooting.md)
