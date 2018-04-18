@@ -2,55 +2,38 @@
 SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
-ARCH ?= $(SYSTEM_ARCH)
+export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-VERSION ?= 1.2.2
-DOCKER_NAME ?= example_ms_$(ARCH)_cpu
+export VERSION ?= 1.2.2
+#DOCKER_NAME ?= example_ms_$(ARCH)_cpu
+DOCKER_NAME ?= $(ARCH)_cpu
 DOCKER_HUB_ID ?= openhorizon
+PORT_NUM ?= 8347
 
-default: build
+default: all
 
-all: build run
+all: build run check
 
 build:
-	docker build -t $(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
-	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
-
-dev:
-	-docker network create example
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -it --name cpu --publish=8347:8347 --net=example --net-alias=cpu --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION) /bin/sh
+	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
 
 run:
-	-docker network create example
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -d --name cpu --publish=8347:8347 --net=example --net-alias=cpu --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION)
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+	docker run -d --name $(DOCKER_NAME) --publish=$(PORT_NUM):$(PORT_NUM) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 check:
-	curl -s localhost:8347/v1/cpu | jq
+	curl -sSL http://localhost:$(PORT_NUM)/v1/cpu | jq .
 
-hznbuild: build
-	mkdir -p horizon_build
-	cp -r ./horizon/dependencies ./horizon_build/.
-	export ARCH=$(ARCH) && export VERSION=$(VERSION) && export DOCKER_HUB_ID=$(DOCKER_HUB_ID) && envsubst < ./horizon/microservice.definition.json > ./horizon_build/microservice.definition.json
-	envsubst < ./horizon/userinput.json > ./horizon_build/userinput.json
+stop:
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 
-hznstart: hznbuild
-	hzn dev microservice start -d ./horizon_build
-
-hznstop:
-	hzn dev microservice stop -d ./horizon_build
-
-# To publish you must have write access to the docker hub openhorizon user
+# To publish you must have write access to the docker hub DOCKER_HUB_ID user
 publish:
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 clean:
-	-hzn dev microservice stop -d ./horizon_build 2> /dev/null || :
-	-rm -fr horizon_build 2> /dev/null || :
-	-docker rm -f $(DOCKER_NAME):$(VERSION) 2> /dev/null || :
-	-docker rmi cpu 2> /dev/null || :
-	-docker network rm example 2> /dev/null || :
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION) 2> /dev/null || :
 
-.PHONY: default all build dev run check publish clean
+.PHONY: default all build run check stop publish clean
