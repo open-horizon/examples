@@ -10,7 +10,7 @@ checkRequiredEnvVar() {
     echo "Error: Environment variable $varname must be set; exiting."
     exit 2
   else
-    echo "  $varname=" $(eval echo \$$varname)
+    echo "  $varname="$(eval echo \$$varname)
   fi
 }
 

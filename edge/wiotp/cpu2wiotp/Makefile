@@ -2,52 +2,47 @@
 SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
-ARCH ?= $(SYSTEM_ARCH)
+export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-VERSION ?= 1.2.2
-DOCKER_NAME ?= example_wl_$(ARCH)_cpu2wiotp
+export CPU2WIOTP_VERSION ?= 1.2.2
+DOCKER_NAME ?= $(ARCH)_cpu2wiotp
 DOCKER_HUB_ID ?= openhorizon
+CORE_IOT_VERSION ?= 2.4.0
 
-default: build
+default: all
 
-all: build run
+all: build run check
 
 build:
-	docker build -t $(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
-	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
-
-dev:
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -it -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name cpu2wiotp --net=example --net-alias=cpu2wiotp --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION) /bin/sh
+	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2WIOTP_VERSION) -f ./Dockerfile.$(ARCH) .
 
 run:
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -d -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name cpu2wiotp --net=example --net-alias=cpu2wiotp $(DOCKER_NAME):$(VERSION)
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+	docker run -d --name $(DOCKER_NAME) -e SAMPLE_SIZE=5 -e SAMPLE_INTERVAL=1 -e MOCK=true -e VERBOSE=1 -e PUBLISH=false --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2WIOTP_VERSION)
 
 check:
-	curl -s localhost:8347/v1/cpu | jq
+	docker logs -f $(DOCKER_NAME)
+
+stop:
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 
 hznbuild: build
-	mkdir -p horizon_build/dependencies
-	set -x && export ARCH=$(ARCH) && cd ./horizon/dependencies && for filename in $$(find . -name "*.microservice.definition.json"); do envsubst < ./$$filename > ../../horizon_build/dependencies/$$filename; done && cd ../..
-	export ARCH=$(ARCH) && export VERSION=$(VERSION) && export DOCKER_HUB_ID=$(DOCKER_HUB_ID) && export WIOTP_DOMAIN=$(WIOTP_DOMAIN) && envsubst < ./horizon/workload.definition.json > ./horizon_build/workload.definition.json
-	export WIOTP_DOMAIN=$(WIOTP_DOMAIN) && envsubst < ./horizon/userinput.json > ./horizon_build/userinput.json
+	hzn dev dependency fetch -p ../../services/cpu_percent/horizon
+	hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver $(CORE_IOT_VERSION) -o IBM -a $ARCH -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
 
 hznstart: hznbuild
-	hzn dev workload start -d ./horizon_build
+	hzn dev workload start
 
 hznstop:
-	hzn dev workload stop -d ./horizon_build
+	hzn dev workload stop
 
 # To publish you must have write access to the docker hub openhorizon user
 publish:
-	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2WIOTP_VERSION)
 
 clean:
-	-hzn dev workload stop -d ./horizon_build 2> /dev/null || :
-	-rm -fr horizon_build 2> /dev/null || :
-	-docker rm -f $(DOCKER_NAME):$(VERSION) 2> /dev/null || :
-	-docker rmi cpu2wiotp 2> /dev/null || :
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2WIOTP_VERSION) 2> /dev/null || :
 
-.PHONY: default all build dev run check publish clean
+.PHONY: default all build run check stop publish clean

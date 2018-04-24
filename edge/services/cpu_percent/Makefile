@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-export VERSION ?= 1.2.2
+export CPU_VERSION ?= 1.2.2
 #DOCKER_NAME ?= example_ms_$(ARCH)_cpu
 DOCKER_NAME ?= $(ARCH)_cpu
 DOCKER_HUB_ID ?= openhorizon
@@ -16,11 +16,11 @@ default: all
 all: build run check
 
 build:
-	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION) -f ./Dockerfile.$(ARCH) .
 
 run:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
-	docker run -d --name $(DOCKER_NAME) --publish=$(PORT_NUM):$(PORT_NUM) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+	docker run -d --name $(DOCKER_NAME) --publish=$(PORT_NUM):$(PORT_NUM) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION)
 
 check:
 	curl -sSL http://localhost:$(PORT_NUM)/v1/cpu | jq .
@@ -30,10 +30,10 @@ stop:
 
 # To publish you must have write access to the docker hub DOCKER_HUB_ID user
 publish:
-	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION)
 
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
-	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION) 2> /dev/null || :
+	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION) 2> /dev/null || :
 
 .PHONY: default all build run check stop publish clean

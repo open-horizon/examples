@@ -7,10 +7,14 @@ export WIOTP_API_KEY='a-myapikeyrandomchars'
 export WIOTP_API_TOKEN='myapikeytoken'
 
 # This variable must be set appropriately for your specific Edge Node
-export ARCH=amd64   # or arm for Raspberry Pi, or arm64 for TX2
-export VERSION=1.2.2   # used as the tag for the docker image
+export ARCH=amd64   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
+export CPU2WIOTP_VERSION=1.2.2   # the workload version, and also used as the tag for the docker image. Must be in OSGI version format.
+export CPU_VERSION=1.2.2   # the microservice version, and also used as the tag for the docker image. Must be in OSGI version format.
+
+export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, , sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
 
 # There is normally no need for you to edit these variables
+export HZN_ORGANIZATION=$HZN_ORG_ID
 export WIOTP_DOMAIN=internetofthings.ibmcloud.com
 export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
 export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"

@@ -67,7 +67,7 @@ But the easiest method is to copy an existing microservice that you want to star
 cp -a ~/examples/edge/services/cpu_percent/* .
 ```
 
-The Makefile and several of the horizon files contain environment variables that will be replaced by their values when you use the files. Edit `horizon/envvars.sh` to set the environment variables with your own values, then:
+The Makefile and several of the horizon files contain environment variables that will be replaced by their values when the files are used. Edit `horizon/envvars.sh` to set the environment variables to your own values (including getting a docker hub id, if you don't already have one). Then source the file so its values will be available to the rest of the commands:
 ```bash
 source horizon/envvars.sh
 ```
@@ -77,7 +77,7 @@ The Makefile is setup to build the container, start it and run a simple test to 
 ```
 make
 ```
-1. Verify that the container was built and started successfully by looking for the output of the curl test at the end of the console output:
+1. Verify that the container was built and started successfully by looking for the output of the curl test at the end of the output:
 ```
     curl -s http://localhost:8347/v1/cpu | jq .
     {
@@ -89,10 +89,10 @@ make
 make stop
 ```
 
-### Create microservice project metadata
+### Microservice project metadata
 
 Now that the microservice container implementation is working correctly, you can use the Horizon project metadata to enable Horizon to run it now, and ultimately deploy it to Edge nodes. The examples project you copied is "Horizon ready", so it already contains the Horizon metadata files. Note the files in the `horizon` sub-directory:
-* `microservice.definition.json` - the Horizon metadata of this microservice. Note a few of the json fields:
+* `microservice.definition.json` - the Horizon metadata of this microservice. Note a few of the significant json fields:
     * `specRef`: along with the `version` and `arch` this is the unique identifier for this microservice, and ideally a URL to a web site that documents the microservice for potential users of it.
     * `deployment`: contains the docker image(s) that make up this microservice, and how the Horizon agent should run them on each edge node:
         * `image` - the full docker image name (including the registry, if not in docker hub)
@@ -100,10 +100,7 @@ Now that the microservice container implementation is working correctly, you can
 * `userinput.json` - the runtime input values specified by the edge node owner for the microservice or the Horizon agent. Microservices should require as little input from the edge node owners as possible, ideally none, which is the case here. Note within the file:
     * `url`: this must match the `specRef` in `microservice.definition.json`
 
-### Verify microservice project metadata
-The Horizon CLI contains a set of sub-commands of `hzn dev` that are useful for running your microservices and workloads in a development environment.
-
-Now that you have defined and configured the Horizon microservice, verify that the project metadata has no errors in it.
+The Horizon CLI contains a set of sub-commands of `hzn dev` that are useful for running your microservices and workloads in a development environment. Verify that the project metadata has no errors in it.
 ```
 cd ~/hzn/ms/cpu
 hzn dev microservice verify
@@ -128,7 +125,7 @@ This can be overriddent, but in general is the desired and expected behavior.
 
 Finally, look at the environment variables that have been passed into the container:
 ```
-docker inspect `docker ps -q` | jq ".[0].Config.Env"
+docker inspect `docker ps -q` | jq '.[0].Config.Env'
 ```
 The variables prefixed with "HZN" are provided by the Horizon Edge node platform.
 A microservice container can exploit these environment variables.
@@ -155,13 +152,17 @@ Create a docker container that computes averages for a set of CPU usage samples.
 cp -a ~/examples/edge/wiotp/cpu2wiotp/* .
 ```
 
+The Makefile and several of the horizon files contain environment variables that will be replaced by their values when the files are used. Edit `horizon/envvars.sh` to set the environment variables to your own values, then:
+```bash
+source horizon/envvars.sh
+```
+
 The Makefile is setup to build the container, start it, and run a simple test to ensure that it works.
 1. Make the workload container and run it locally:
 ```
 make
 ```
-1. Verify that the container was built and started successfully by looking at the docker logs output at the bottom of the console.
-It will look something like this:
+1. Verify that the container was built and started successfully, and look for output like this at the bottom:
 ```
 Starting infinite loop to read from microservice then publish...
  Interval 1 cpu: 53
@@ -172,122 +173,28 @@ Starting infinite loop to read from microservice then publish...
 make stop
 ```
 
-Now that the workload container implementation is working correctly, we will introduce the Horizon project metadata in order to make this project testable in the Horizon test environment and to make it deployable to an Edge node.
+### Workload project metadata
 
-### Create workload project metadata
+Now that the workload container implementation is working correctly, we will introduce the Horizon project metadata in order to make this project testable in the Horizon test environment and to ultimately make it deployable to Edge nodes. The examples project you copied is "Horizon ready", so it already contains the Horizon metadata files. Note the files in the `horizon` sub-directory:
 
-Create the workload project metadata.
-This command will create the skeletal metadata files you will need to configure, test, and eventually deploy the workload.
+* `workload.definition.json` - the Horizon metadata of this workload. Note a few of the significant json fields:
+    * `workloadUrl`: along with the `version` and `arch` this is the unique identifier for this workload, and ideally a URL to a web site that documents the workload for potential users of it.
+    * `specRef`: a microservice that this workload uses/depends on. This must match the `specRef` value in its microservice.definition.json file.
+    * `userInput`: this section defines the input values that can be specified to this workload by the edge node owner. The `userinput.json` file must include a value for each variable that doesn't have a default value.
+    * `deployment`: contains the docker image(s) that make up this workload, and how the Horizon agent should run them on each edge node:
+        * `image` - the full docker image name (including the registry, if not in docker hub)
+        * `cpu2wiotp` - this field name is also used as the docker defined DNS name that workloads can use to contact it.
+        * `environment` - environment variables that should be passed to the containers (in addition to the variables Horizon automatically passes)
+* `userinput.json` - the runtime input values specified by the edge node owner for the workload or the Horizon agent. Microservices should require as little input from the edge node owners as possible, ideally none, which is the case here. Note within the file:
+    * `url`: this must match the `workloadUrl` in `workload.definition.json`
+* `horizon/dependencies` - This directory will be populated later by `hzn dev dependency fetch` to contain metadata describing other projects (microservices) that this project depends on.
+
+The default `userinput.json` configures cpu2wiotp to get data from the cpu microservice and publish data to WIoTP. We will get there eventually, but first we want to run cpu2wiotp in "stand-alone" mode in which it makes up its own cpu data and just prints it instead of sending it to WIoTP. To accomplish that, update the `workloads` section of `userinput.json` to look like this:
 ```
-hzn dev workload new
-```
-
-As with the microservice, a new directory called `horizon` was created in your project and it holds several files and a directory:
-* `workload.definition.json` - This file holds the Horizon metadata of the workload, the container it runs, the user inputs that have to be configured, etc.
-* `userinput.json` - The input values specified by the edge node owner for the workload or the Horizon agent.
-* `horizon/dependencies` - This directory holds metadata describing other projects that this project depends on.
-We will add a dependency later in this guide.
-
-### Update workload project metadata
-
-Update the Horizon metadata files based on our example project. Modify the `workload.definition.json` file:
-1. Fill in a short phrase for the `label` field, and a sentence or 2 for the `description`.
-1. Update the value of `workloadUrl` with a URL that is unique to your organization, for example: `http://my.company.com/workloads/cpu2wiotp`.
-This URL will be used by other parts of the Edge system to refer to this workload.
-1. Update the value of `version` with a version number that complies with the [OSGI Version standard](https://www.osgi.org/wp-content/uploads/SemanticVersioning.pdf), e.g. 0.0.1 as your first version. It is simplest if you set this to the same version number used in the docker image tag.
-1. Update `userInput` with with any runtime arguments that the Edge node owner can (or must, if no default) set in order for the workload to work correctly.
-In this example, there are 5 variables that condition the logic of the workload.
-Define these variables within the `userInput` section of the `workload.definition.json` file:
-    * `SAMPLE_SIZE` - the number of samples to include in the average. Set the type to "int" and the default to "6".
-    * `SAMPLE_INTERVAL` - the delay between samples. Set the type to "int" and the default to "5".
-    * `MOCK` - used to provide mock samples. Set the type to "boolean" and the default to "false".
-    * `PUBLISH` - used to control whether or not the CPU average is publish to Watson IoT Platform. Set the type to "boolean" and set the defauilt to "true".
-    * `VERBOSE` - used to provide detailed logging of the workload logic. Set the type to "string" and the default to "0".
-1. Update the `deployment` field under the `workloads` section with the docker container configuration.
-    * In this case, change the empty service name inside the services map to a meaningful service name, e.g. "cpu2wiotp".
-    * Also change the value of `image` to the docker image path (with tag) of the container that you built previously.
-    * Set any environment variables in the `environment` array.
-These are variables and values that you want Horizon to pass into the container when it is started, but that the Edge node configuration cannot override.
-In this case, there are no environment variables that need to be set so you can set the environment field to an empty array.
-
-Your `workload.definition.json` should look something like this:
-```
-    {
-        "org": "<your_org>",
-        "label": "",
-        "description": "",
-        "public": true,
-        "workloadUrl": "http://my.company.com/workloads/cpu2wiotp",
-        "version": "0.0.1",
-        "arch": "amd64",
-        "downloadUrl": "not used yet",
-        "apiSpec": [],
-        "userInput": [
-            {
-                "name": "SAMPLE_SIZE",
-                "label": "the number of samples before calculating the average",
-                "type": "int",
-                "defaultValue": "6"
-            },
-            {
-                "name": "SAMPLE_INTERVAL",
-                "label": "the number of seconds between samples",
-                "type": "int",
-                "defaultValue": "5"
-            },
-            {
-                "name": "MOCK",
-                "label": "mock the CPU sampling",
-                "type": "boolean",
-                "defaultValue": "false"
-            },
-            {
-                "name": "PUBLISH",
-                "label": "publish the CPU samples to WIoTP",
-                "type": "boolean",
-                "defaultValue": "true"
-            },
-            {
-                "name": "VERBOSE",
-                "label": "log everything that happens",
-                "type": "string",
-                "defaultValue": "0"
-            }
-        ],
         "workloads": [
             {
-                "deployment": {
-                    "services": {
-                        "cpu2wiotp": {
-                            "image": "cpu2wiotp_workload:0.0.1",
-                            "privileged": false,
-                            "environment": []
-                        }
-                    }
-                },
-                "deployment_signature": "",
-                "torrent": ""
-            }
-        ]
-    }
-```
-
-Modify the `userinput.json` file for our example project.
-1. We again do not have any Horizon agent attributes to set, so remove the skeletal array element from the `global` section.
-1. Update the `url` in the `workloads` section with the same value you set in `workloadUrl` in the `workload.definition.json` file.
-In this case, we have only 1 workload in our project.
-1. Update the `variables` in the `workloads` section with values for user input variables that are defined in the `workload.definition.json` file.
-In this case, there are five.
-Even though these variables have default values, we need to override them with values suitable for testing, because the defaults are not what we want at this stage of the project.
-
-Your `userinput.json` file should look something like this:
-```
-    {
-        "global": [],
-        "workloads": [
-            {
-                "org": "<your_org>",
-                "url": "http://my.company.com/workloads/cpu2wiotp",
+                "org": "$HZN_ORG_ID",
+                "url": "http://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
                 "versionRange": "[0.0.0,INFINITY)",
                 "variables": {
                     "SAMPLE_SIZE": 5,
@@ -298,12 +205,9 @@ Your `userinput.json` file should look something like this:
                 }
             }
         ]
-    }
 ```
 
-### Verify workload project metadata
-
-Now that you have defined and configured the Horizon workload, verify that the project has no errors in it.
+Verify that the project has no errors in it.
 ```
 cd ~/hzn/workload/cpu2wiotp
 hzn dev workload verify
@@ -314,27 +218,24 @@ If the verify sub-command finds any inconsistencies or errors it will report the
 ### Test the workload project
 
 Test your workload in the Horizon test environment.
-The test environment closely simulates the Edge node environment in which your workload will run when deployed to an Edge node.
+The test environment closely simulates the Edge node environment in which your workload will run when deployed to Edge nodes.
 ```
 hzn dev workload start
 ```
-After a few seconds, the workload will be started.
-The `docker ps` command will display the running container.
+After a few seconds, the workload will be started. The `docker ps` command will display the running container.
 Notice that the workload docker container name is derived from the hexadecimal agreement id and the service name.
 An agreement id is a hexadecimal string that uniquely identifies the agreement.
-When your workload is eventually deployed by an agbot, an agreement id will be assigned and it will appear similarly to how you see it now.
+When your workload is eventually deployed by a Horizon agbot, an agreement id will be assigned and it will appear similarly to how you see it now.
 
-The workload is attached to a docker network. See it via `docker network ls`.
-The network has nearly the same name as the workload container name (minus the service name).
+The workload is attached to a docker network. See it via `docker network ls`. The network has nearly the same name as the workload container name (minus the service name).
 
-Finally, use
+Finally, look at the environment variables that have been passed into the container:
 ```
-docker inspect <container_name> | jq '.[0].Config.Env'
+docker inspect `docker ps -q` | jq '.[0].Config.Env'
 ```
-to inspect the environment variables that have been passed into the container.
 Variables prefixed with "HZN" are provided by the Horizon Edge node platform.
-A workload container can exploit the "HZN" environment variables.
 See the [Environment Variable Documentation](https://github.com/open-horizon/anax/blob/master/doc/managed_workloads.md) for a complete description of Horizon Edge node variables.
+The rest of the variables came either from `userinput.json` or from the `environment` section of `workload.definition.json`.
 
 The log output from the workload container can be found in syslog:
 ```
@@ -349,25 +250,20 @@ hzn dev workload stop
 ## Add a workload dependency
 
 So far, the workload is executing with mocked CPU usage data, not very interesting.
-Now let's update the workload project to use the CPU usage microservice as a dependency.
-We are going to use the local microservice project we created earlier as the source of the dependency.
-Notice that the -p flag in the following command points to the `horizon` directory where the microservice project's metadata resides.
+Update the workload project to use the CPU usage microservice project we created earlier:
 ```bash
 hzn dev dependency fetch -p ~/hzn/ms/cpu/horizon
 ```
 
-The addition of the new dependency has updated several pieces of metadata in your workload project.
-Notice that:
+The addition of the new dependency has updated several pieces of metadata in your workload project. Notice that:
 * `horizon/dependencies` now contains a copy of the dependency's microservice definition.
-* the dependency was added to the `apiSpec` array in the `workload.definition.json` file.
-This array holds references to microservice dependencies.
-* the `userinput.json` file was updated to include the new dependency for the test environment.
+* The dependency was added to the `apiSpec` array in the `workload.definition.json` file. (In our case it was already there, but would have been added if it wasn't.)
+* The `userinput.json` file was updated to include variable values for the new dependency. (In our case it was already there, but would have been added if it wasn't.)
 
-In general, if the Horizon metadata of a dependent project changes, the dependency must be recreated with the `hzn dev dependency` command used above.
+If the Horizon metadata of a dependent project changes, the dependency must be recreated with the `hzn dev dependency fetch` command used above.
 
-Remember that the workload is currently configured to mock the CPU usage microservice.
-Obviously we don't want to do that any longer since the real service is available to the workload project.
-Remove the "MOCK" variable from the `userinput.json` file so that the default value of "false" will be used.
+Remember that the workload is currently configured to mock the CPU usage microservice. Now we want to use the real data from the cpu microservice, so
+remove the "MOCK" variable from the `userinput.json` file so that the default value of "false" will be used:
 ```
     "variables": {
         "PUBLISH": false,
@@ -389,7 +285,7 @@ tail -f /var/log/syslog | grep cpu2wiotp
 
 Notice that the workload is now picking up real CPU usage samples from the microservice and computing an average.
 This is accomplished without any open ports on the host because the workload container has joined the docker network of the microservice.
-This is how the containers will be configured when running on an Edge node.
+This is how the containers will be configured when running on Edge nodes.
 
 Control-C to stop `tail`. Then the workload container and the microservice container test environment can be stopped:
 ```
@@ -419,56 +315,13 @@ Modify your project as follows:
 ```
 cp horizon/userinput.json horizon/userinput-without-core-iot.json
 ```
-* Configure HTTPS authentication in the `global` section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). **Fill in your values for the environment variables**:
-```
-    "global": [
-        {
-            "type": "HTTPSBasicAuthAttributes",
-            "sensor_urls": [
-                "https://us.internetofthings.ibmcloud.com/api/v0002/horizon-image/common"
-            ],
-            "publishable": false,
-            "host_only": true,
-            "variables": {
-                "username": "$HZN_ORG_ID/$HZN_DEVICE_ID",
-                "password": "$WIOTP_GW_TOKEN"
-            }
-        }
-    ],
-```
+* Normally you would have to configure HTTPS authentication in the `global` section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). But this is already in the `userinput.json` file from the cpu2wiotp project that we copied.
 * Add the Wation IoT Platform core IoT microservice as a dependency of your workload project.
 ```
 hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver 2.4.0 -o IBM -a amd64 -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
 ```
-* The command above added a section to the `userinput.json` file under `microservices` for the edge-core-iot-microservice.
-Complete that section like this, **filling in your values for the environment variables**:
-```
-    {
-        "org": "IBM",
-        "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
-        "versionRange": "[0.0.0,INFINITY)",
-        "variables": {
-            "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
-            "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.internetofthings.ibmcloud.com"
-        }
-    }
-```
-* Update `workload.definition.json` with new deployment environment variables:
-```
-    "environment": [
-        "WIOTP_EDGE_MQTT_IP=edge-connector",
-        "WIOTP_DOMAIN=internetofthings.ibmcloud.com",
-        "WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem"
-    ],
-```
-* Update `workload.definition.json` with a file binding to get access to the WIoTP MQTT Broker certificate.
-Add a new field called `binds` under `workloads.deployment.services.cpu2wiotp`.
-It is a peer to the `environment` field:
-```
-    "binds": [
-        "/var/wiotp-edge:/var/wiotp-edge"
-    ],
-```
+* The command above would normally have added a section to the `userinput.json` file under `microservices` for the edge-core-iot-microservice, but it recognized that we already had that section.
+* Note that the `deployment` section of `workload.definition.json` already contains `environment` and `binds` settings appropriate for using the core-iot microservice, because we inherited that when we copied from `~/examples/edge/wiotp/cpu2wiotp`.
 * Set up some things the core-iot microservice needs:
 ```
 cp /etc/wiotp-edge/edge.conf.template /etc/wiotp-edge/edge.conf
@@ -502,10 +355,9 @@ In order to make these projects available for other Edge nodes to run them, you 
 The next section describes how to use `hzn dev` to do that.
 
 ## Deploying the projects to WIoTP/Horizon
-**Note: this section is still under development. It should work as-is, but we are still testing and refining it.**
 
-When you are satisfied that the microservice and workload are working correctly, you can deploy them to the Edge so that any Edge node in your organization can run them.
-The first step is to create a key pair that will be used to sign the deployment configuration of your microservice and workload.
+When you are satisfied that the microservice and workload are working correctly, you can deploy them to the WIoTP so that any Edge node in your organization can run them.
+The first step is to create a key pair that will be used to sign your docker images and the deployment configuration of your microservice and workload.
 ```bash
 cd ~/hzn
 hzn key create <x509-org> <x509-cn>
@@ -514,10 +366,9 @@ export PUBLIC_KEY_FILE="~/hzn/*-public.pem"
 ```
 where `x509-org` is a company name or organization name that is suitable to be used as an x509 certificate organization name, and `x509-cn` is an x509 certificate common name (preferably an email address issued by the `x509-org` organization).
 
-This command will generate a private key and a public key.
-The private key will be used to sign the microservice and workload, the public is needed by any Edge node that wants to run the microservice and workload, so that it can verify their signatures.
+The private key will be used to sign the microservice and workload, the public is needed by any Edge node that wants to run the microservice and workload, so that it can verify their signatures. (Horizon can take care of distributing the public key to the edge nodes that need it.)
 
-You will be storing your docker images in Docker Hub. If you don't already have an id, [sign up](https://hub.docker.com/sso/start/?next=https://hub.docker.com/) for one, set this environment variable and login:
+You will be storing your docker images in Docker Hub, so login now:
 ```
 docker login -u $DOCKER_HUB_ID
 ```
@@ -525,7 +376,7 @@ docker login -u $DOCKER_HUB_ID
 Now publish the microservice:
 ```bash
 cd ~/hzn/ms/cpu
-hzn dev microservice publish -k $PRIVATE_KEY_FILE
+hzn dev microservice publish -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE
 ```
 
 You can verify that the microservice was published:
@@ -536,7 +387,7 @@ hzn exchange microservice list
 Publish the workload:
 ```bash
 cd ~/hzn/workload/cpu2wiotp
-hzn dev workload publish -k $PRIVATE_KEY_FILE
+hzn dev workload publish -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE
 ```
 
 You can verify that the workload was published:
@@ -546,11 +397,6 @@ hzn exchange workload list
 
 Add this workload to your gateway type deployment pattern:
 
-* Replace environment variables in `horizon/insert-cpu2wiotp-template.json` with your values:
-```
-envsubst < horizon/insert-cpu2wiotp-template.json > horizon/insert-cpu2wiotp.json
-```
-
 * Replace these 2 lines in `horizon/insert-cpu2wiotp.json` with your values:
 ```
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
@@ -559,7 +405,7 @@ envsubst < horizon/insert-cpu2wiotp-template.json > horizon/insert-cpu2wiotp.jso
 
 * Add your workload to your gateway type deployment pattern and verify it is there:
 ```
-hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f horizon/insert-cpu2wiotp.json $WIOTP_GW_TYPE
+hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE -f horizon/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 ```
 
@@ -567,12 +413,7 @@ hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 
 You, or others in your organization, can now use this workload on many edge nodes. On each of those nodes:
 
-* Copy your public key, and `~/hzn/workload/cpu2wiotp/horizon/userinput.json` to it.
-
-* Import your public key to the Horizon agent:
-```bash
-hzn key import -k $PUBLIC_KEY_FILE
-```
+* Copy `~/hzn/workload/cpu2wiotp/horizon/userinput-without-core-iot.json` to it.
 
 * **If you have run thru this document before** on this edge node, do this to clean up:
 ```
@@ -588,9 +429,7 @@ After a short while, usually within just a minute or two, agreements will be mad
 
 ## Advanced topic - Expanding your project
 
-Your project metadata currently has hardcoded values for architecture, gateway type, and workload version. You can easily make your project more flexible by parameterizing your project metadata files by using environment varibles in your files and processing your files with a tool like `envsubst`.
-If you then add a few new recipes to your `Makefile` you can automate the process of creating the metadata files needed by horizon.
-See `~/examples/edge/wiotp/cpu2wiotp/Makefile` for an example of how to do this (specifically the targets `hznbuild` and `hznstart`).
+Since your project Makefile and metadata files have environment variables in them for architecture, version, etc., you can easily test your services for different architectures, publish them for other gateway types, etc.
 
 Here are a few things to consider when expanding your project:
 * New versions of your microservice and workload:

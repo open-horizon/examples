@@ -4,7 +4,7 @@
   "description": "Provides a REST API to query the CPU load",
   "public": true,
   "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
-  "version": "$VERSION",
+  "version": "$CPU_VERSION",
   "arch": "$ARCH",
   "sharable": "single",
   "userInput": [],
@@ -13,7 +13,7 @@
       "deployment": {
         "services": {
           "cpu": {
-            "image": "$DOCKER_HUB_ID/${ARCH}_cpu:$VERSION"
+            "image": "$DOCKER_HUB_ID/${ARCH}_cpu:$CPU_VERSION"
           }
         }
       },

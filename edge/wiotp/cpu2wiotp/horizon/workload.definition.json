@@ -4,7 +4,7 @@
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-  "version": "$VERSION",
+  "version": "$CPU2WIOTP_VERSION",
   "arch": "$ARCH",
   "apiSpec": [
     {
@@ -16,7 +16,7 @@
     {
       "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
       "org": "IBM",
-      "version": "[2.3.1,INFINITY)",
+      "version": "[2.4.0,INFINITY)",
       "arch": "$ARCH"
     }
   ],
@@ -57,7 +57,7 @@
       "deployment": {
         "services": {
           "cpu2wiotp": {
-            "image": "$DOCKER_HUB_ID/example_wl_${ARCH}_cpu2wiotp:$VERSION",
+            "image": "$DOCKER_HUB_ID/${ARCH}_cpu2wiotp:$CPU2WIOTP_VERSION",
             "binds": [
               "/var/wiotp-edge:/var/wiotp-edge"
             ],
