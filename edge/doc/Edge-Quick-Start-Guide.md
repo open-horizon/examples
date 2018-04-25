@@ -101,7 +101,7 @@ export WIOTP_API_KEY='a-myapikeyrandomchars'
 export WIOTP_API_TOKEN='myapikeytoken'
 
 # This variable must be set appropriately for your specific Edge Node
-export ARCH2=amd64   # or arm for Raspberry Pi, or arm64 for TX2
+export ARCH=amd64   # or arm for Raspberry Pi, or arm64 for TX2
 
 # There is no need for you to edit these variables
 export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"
@@ -143,15 +143,15 @@ export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
 ```
 * Add the "cpu" microservice to your WIoTP organization and see that it was added:
 ```bash
-hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/pre-signed/cpu-$ARCH2.json
+hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/pre-signed/cpu-$ARCH.json
 hzn exchange microservice list | jq .
 ```
 
 * Configure the CPU usage workload definition file using your environment variables, add it to your WIoTP organization, and see that it was added:
 ```bash
 mkdir -p ~/hzn
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-template-$ARCH2.json > ~/hzn/cpu2wiotp-definition.json
-hzn exchange workload publish -f ~/hzn/cpu2wiotp-definition.json
+envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-$ARCH.json > ~/hzn/cpu2wiotp.json
+hzn exchange workload publish -f ~/hzn/cpu2wiotp.json
 hzn exchange workload list | jq .
 ```
 
@@ -161,7 +161,7 @@ The Edge system deploys Patterns of code onto WIoTP Edge Node gateways. The depl
 
 * Configure the CPU usage pattern json file using your environment variables and add it to your pattern:
 ```bash
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp-template.json > ~/hzn/insert-cpu2wiotp.json
+envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp.json > ~/hzn/insert-cpu2wiotp.json
 hzn exchange pattern insertworkload -f ~/hzn/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 ```
 * Verify that the CPU usage Workload was inserted into the Pattern for your Gateway Type:

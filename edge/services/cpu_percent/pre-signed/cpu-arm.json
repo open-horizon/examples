@@ -11,8 +11,8 @@
   "userInput": [],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu\":{\"image\":\"openhorizon/example_ms_arm_cpu:1.2.2\",\"privileged\":false}}}",
-      "deployment_signature": "pGPI/pdj4wet5Mj71T9dFBNREiBvoJLzV8ru+74U02m5vpU4eONRb3Fzy0JP1tj6FA1NhvsXvwDoP1Xw4AN6d8gYhQBJyNeSOjWprYCsQJlPfRrj7OopLSEalWPdqzJwCIVtHjOJ+WBmy4UY9v8TXLJydz0LrALo0OPV8UDcN0F51YKsPUbRJIIdernnuT3E4h261yfQUhps2mwYuQZfOC9hIy0gx4TdqdpBSR16FCMjtiZxLz6kfs1hemTytoO3eeT+WGl4Hq1Jljfe+fn8UUewQAs9AvtK2Jr5KdxdDwUhmN7aHndowHig+3dWdK6Fw/fHRrBzb1rXlFus5lkQnGhQ0Om8O03Kadxsvq42mX/RpgNB9vS0MNZmEA+LNrMwwOyhOnX1ZrIyw9aqe5pPjfBhoQfprA8EzXnDX82b/1liZ2giNBOhgvPFK9k9Nvj6uOd9gorSj3SdKQmWxOcq+Cu00eLw/4+s4MyUHN3Ic8wKePgvwKZO7WO9aR9sMPevh8tbHGphzcHNyGtvKfHo7uWcdv0lwnUPWCcFg+3o2ptu33FXR5me0qvs+CTHVszo6O7JzTVUofWCgaCDrGh1mopTggqdihfY2MaxAEv1mixoGhsgvDNtVBcJynrzkgF4o8AljdYxJN6X/u5EoKWP1aXDO7KmSPQbP/s25tfMTxU=",
+      "deployment": "{\"services\":{\"cpu\":{\"image\":\"openhorizon/arm_cpu:1.2.2\",\"privileged\":false}}}",
+      "deployment_signature": "UZNrVxpU3EE0fulazkEvZoo9HUB2MIo29zzvmE8TSqj028E0vZ4et3X3O9SYP/sliQ0Jj4BE56/d9bp24BXuXT7PSTR3L8v8JMYqm6GNe6bs9AAdECVQFbtUS4HQlB3TZrxwgabfuA6AIDZMSVZf44wnJfxXHJR4I2ym/aA8kkuknhBj40WfXpNsljjfuc7+MbTV7FoC1Tj0fJcdqsueY13KV1qKlc9LM376PsYVLnmMh7JUThlws7ATqwdvQA2JACAS/9B1k8Da+YLIzWztGnFcYMFWqvqDnL235CCWzXNqRnWpyowI3VJiBw02DPvkATZYFnivMbwE1wZdCj2BhOk2ppS5B8zep+F7Qjosr0DY8mARKzpeC/Q5L6+xX3/fZYfSCC/0Qy8q68eOsLeOCnQsH05/ouIHgTEOSg/NaTRpUjKKHu6QiMzHVxYGAwZ1FKdxaGMWT4kGLB04UrxaV+yEzoCl8ihREXT1PE7Yz7uT4YSVxpuA60Ib8IRdCZ0UPyJK60Y7E+BVis4I1hl+bWXtREAgl8YmvhuYBBWcv8VzTEffi/eiz70f5oA3Ymv7fTMltUDY+3zHry/6W9zk5vBHUiIbolvArRYGbX4jtaMNm/1yqQtQKBR7Pnz6cnCquwgHvULbTefoYlh5orwypinOVgbBo2x0DHBd9Edvb30=",
       "torrent": ""
     }
   ]
