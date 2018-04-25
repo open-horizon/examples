@@ -191,20 +191,20 @@ Now that the workload container implementation is working correctly, we will int
 
 The default `userinput.json` configures cpu2wiotp to get data from the cpu microservice and publish data to WIoTP. We will get there eventually, but first we want to run cpu2wiotp in "stand-alone" mode in which it makes up its own cpu data and just prints it instead of sending it to WIoTP. To accomplish that, update the `workloads` section of `userinput.json` to look like this:
 ```
-        "workloads": [
-            {
-                "org": "$HZN_ORG_ID",
-                "url": "http://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-                "versionRange": "[0.0.0,INFINITY)",
-                "variables": {
-                    "SAMPLE_SIZE": 5,
-                    "SAMPLE_INTERVAL": 2,
-                    "MOCK": true,
-                    "PUBLISH": false,
-                    "VERBOSE": "1"
-                }
+    "workloads": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "http://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "SAMPLE_SIZE": 5,
+                "SAMPLE_INTERVAL": 2,
+                "MOCK": true,
+                "PUBLISH": false,
+                "VERBOSE": "1"
             }
-        ]
+        }
+    ]
 ```
 
 Verify that the project has no errors in it.
@@ -311,11 +311,6 @@ Modify your project as follows:
         "VERBOSE": "1"
     }
 ```
-* Save off this version of `userinput.json`, because you'll need it later:
-```
-cp horizon/userinput.json horizon/userinput-without-core-iot.json
-```
-* Normally you would have to configure HTTPS authentication in the `global` section of the `userinput.json` file (so that the WIoTP containers can be fetched and loaded). But this is already in the `userinput.json` file from the cpu2wiotp project that we copied.
 * Add the Wation IoT Platform core IoT microservice as a dependency of your workload project.
 ```
 hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver 2.4.0 -o IBM -a amd64 -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
@@ -361,12 +356,12 @@ The first step is to create a key pair that will be used to sign your docker ima
 ```bash
 cd ~/hzn
 hzn key create <x509-org> <x509-cn>
-export PRIVATE_KEY_FILE="~/hzn/*-private.key"
-export PUBLIC_KEY_FILE="~/hzn/*-public.pem"
+export PRIVATE_KEY_FILE=~/hzn/*-private.key
+export PUBLIC_KEY_FILE=~/hzn/*-public.pem
 ```
 where `x509-org` is a company name or organization name that is suitable to be used as an x509 certificate organization name, and `x509-cn` is an x509 certificate common name (preferably an email address issued by the `x509-org` organization).
 
-The private key will be used to sign the microservice and workload, the public is needed by any Edge node that wants to run the microservice and workload, so that it can verify their signatures. (Horizon can take care of distributing the public key to the edge nodes that need it.)
+The private key will be used to sign the microservice and workload, the public key is needed by any Edge node that wants to run the microservice and workload, so that it can verify their signatures. (Horizon can take care of distributing the public key to the edge nodes that need it.)
 
 You will be storing your docker images in Docker Hub, so login now:
 ```
@@ -376,7 +371,7 @@ docker login -u $DOCKER_HUB_ID
 Now publish the microservice:
 ```bash
 cd ~/hzn/ms/cpu
-hzn dev microservice publish -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE
+hzn dev microservice publish -k $PRIVATE_KEY_FILE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
 ```
 
 You can verify that the microservice was published:
@@ -387,7 +382,7 @@ hzn exchange microservice list
 Publish the workload:
 ```bash
 cd ~/hzn/workload/cpu2wiotp
-hzn dev workload publish -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE
+hzn dev workload publish -k $PRIVATE_KEY_FILE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
 ```
 
 You can verify that the workload was published:
@@ -395,17 +390,9 @@ You can verify that the workload was published:
 hzn exchange workload list
 ```
 
-Add this workload to your gateway type deployment pattern:
-
-* Replace these 2 lines in `horizon/insert-cpu2wiotp.json` with your values:
+Add this workload to your gateway type deployment pattern and verify it is there:
 ```
-      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
-          "version": "",
-```
-
-* Add your workload to your gateway type deployment pattern and verify it is there:
-```
-hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE -f horizon/insert-cpu2wiotp.json $WIOTP_GW_TYPE
+hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
 hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 ```
 
@@ -413,17 +400,22 @@ hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 
 You, or others in your organization, can now use this workload on many edge nodes. On each of those nodes:
 
-* Copy `~/hzn/workload/cpu2wiotp/horizon/userinput-without-core-iot.json` to it.
-
 * **If you have run thru this document before** on this edge node, do this to clean up:
 ```
 hzn unregister -f
 ```
 
+* Import your signing public key (soon you won't need to do this):
+```
+hzn key import -k $PUBLIC_KEY_FILE
+```
+
 * Register the node and start the Watson IoT Platform core-IoT service and the CPU workload:
 ```
-wiotp_agent_setup --org $HZN_ORG_ID --deviceType $WIOTP_GW_TYPE --deviceId $WIOTP_GW_ID --deviceToken "$WIOTP_GW_TOKEN" -f ~/hzn/workload/cpu2wiotp/horizon/userinput-without-core-iot.json
+wiotp_agent_setup --org $HZN_ORG_ID --deviceType $WIOTP_GW_TYPE --deviceId $WIOTP_GW_ID --deviceToken "$WIOTP_GW_TOKEN"
 ```
+
+Note: in the command above, we did not specify an input file with user input for your workload, so all of the workload's `userInput` variables are set to their default values. This is the preferred way to run your workload, so it can easily be run on many edge nodes.
 
 After a short while, usually within just a minute or two, agreements will be made to run the WIoTP core-iot service and your workload. See [Register Your Edge Node](Edge-Quick-Start-Guide.md#register-your-edge-node) as a reminder for how to check for agreements and your workload, and how to verify that CPU values are being sent to the cloud.
 

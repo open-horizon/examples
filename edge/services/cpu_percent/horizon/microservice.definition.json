@@ -1,9 +1,9 @@
 {
   "org": "$HZN_ORG_ID",
-  "label": "CPU for $ARCH",
+  "label": "$CPU_NAME for $ARCH",
   "description": "Provides a REST API to query the CPU load",
   "public": true,
-  "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
+  "specRef": "https://$MYDOMAIN/microservices/$CPU_NAME",
   "version": "$CPU_VERSION",
   "arch": "$ARCH",
   "sharable": "single",
@@ -13,7 +13,7 @@
       "deployment": {
         "services": {
           "cpu": {
-            "image": "$DOCKER_HUB_ID/${ARCH}_cpu:$CPU_VERSION"
+            "image": "$DOCKER_HUB_ID/${ARCH}_$CPU_NAME:$CPU_VERSION"
           }
         }
       },

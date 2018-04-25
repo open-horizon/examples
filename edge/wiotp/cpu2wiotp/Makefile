@@ -5,9 +5,11 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
+export CPU2WIOTP_NAME ?= cpu2wiotp
 export CPU2WIOTP_VERSION ?= 1.2.2
-DOCKER_NAME ?= $(ARCH)_cpu2wiotp
+DOCKER_NAME ?= $(ARCH)_$(CPU2WIOTP_NAME)
 DOCKER_HUB_ID ?= openhorizon
+export MYDOMAIN ?= internetofthings.ibmcloud.com
 CORE_IOT_VERSION ?= 2.4.0
 
 default: all
@@ -27,6 +29,7 @@ check:
 stop:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 
+# Targets for using the hzn dev environment
 hznbuild: build
 	hzn dev dependency fetch -p ../../services/cpu_percent/horizon
 	hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver $(CORE_IOT_VERSION) -o IBM -a $ARCH -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
@@ -37,12 +40,16 @@ hznstart: hznbuild
 hznstop:
 	hzn dev workload stop
 
-# To publish you must have write access to the docker hub openhorizon user
-publish:
+# Push the docker image to the registry. You must have write access to the docker hub openhorizon user
+publish: build
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2WIOTP_VERSION)
+
+# Create/update the metadata in the exchange for this workload
+exchange-publish: build
+	hzn exchange workload publish -k $$PRIVATE_KEY_FILE -f horizon/workload.definition.json
 
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2WIOTP_VERSION) 2> /dev/null || :
 
-.PHONY: default all build run check stop publish clean
+.PHONY: default all build run check stop publish exchange-publish clean

@@ -16,7 +16,7 @@
     "microservices": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://internetofthings.ibmcloud.com/microservices/cpu",
+            "url": "https://$MYDOMAIN/microservices/$CPU_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         },
@@ -35,7 +35,7 @@
     "workloads": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
+            "url": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
                 "VERBOSE": "1"
