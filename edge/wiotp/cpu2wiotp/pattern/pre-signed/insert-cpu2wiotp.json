@@ -4,7 +4,7 @@
       "workloadArch": "$ARCH",
       "workloadVersions": [
         {
-          "version": "$CPU2WIOTP_VERSION",
+          "version": "1.2.2",
           "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},

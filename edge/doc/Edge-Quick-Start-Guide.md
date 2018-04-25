@@ -150,7 +150,7 @@ hzn exchange microservice list | jq .
 * Configure the CPU usage workload definition file using your environment variables, add it to your WIoTP organization, and see that it was added:
 ```bash
 mkdir -p ~/hzn
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-template-$ARCH.json > ~/hzn/cpu2wiotp-definition.json
+envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-$ARCH.json > ~/hzn/cpu2wiotp-definition.json
 hzn exchange workload publish -f ~/hzn/cpu2wiotp-definition.json
 hzn exchange workload list | jq .
 ```
@@ -161,7 +161,7 @@ The Edge system deploys Patterns of code onto WIoTP Edge Node gateways. The depl
 
 * Configure the CPU usage pattern json file using your environment variables and add it to your pattern:
 ```bash
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp-template.json > ~/hzn/insert-cpu2wiotp.json
+envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp.json > ~/hzn/insert-cpu2wiotp.json
 hzn exchange pattern insertworkload -f ~/hzn/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 ```
 * Verify that the CPU usage Workload was inserted into the Pattern for your Gateway Type:
