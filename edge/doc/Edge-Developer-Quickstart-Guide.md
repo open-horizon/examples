@@ -390,6 +390,11 @@ You can verify that the workload was published:
 hzn exchange workload list
 ```
 
+**If you previously went through the entrie [Quick Start Guide](Edge-Quick-Start-Guide.md) using this same gateway type, remove the workload you added to that pattern:**
+```
+hzn exchange pattern removeworkload $WIOTP_GW_TYPE $HZN_ORG_ID https://internetofthings.ibmcloud.com/workloads/cpu2wiotp $ARCH
+```
+
 Add this workload to your gateway type deployment pattern and verify it is there:
 ```
 hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
