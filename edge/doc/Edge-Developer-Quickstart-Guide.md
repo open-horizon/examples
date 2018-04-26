@@ -317,7 +317,7 @@ Modify your project as follows:
 ```
 * Add the Wation IoT Platform core IoT microservice as a dependency of your workload project.
 ```
-hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver 2.4.0 -o IBM -a amd64 -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
+hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver 2.4.0 -o IBM -a $ARCH -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
 ```
 * The command above would normally have added a section to the `userinput.json` file under `microservices` for the edge-core-iot-microservice, but it recognized that we already had that section.
 * Note that the `deployment` section of `workload.definition.json` already contains `environment` and `binds` settings appropriate for using the core-iot microservice, because we inherited that when we copied from `~/examples/edge/wiotp/cpu2wiotp`.
