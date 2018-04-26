@@ -67,8 +67,10 @@ But the easiest method is to copy an existing microservice that you want to star
 cp -a ~/examples/edge/services/cpu_percent/* .
 ```
 
-The Makefile and several of the horizon files contain environment variables that will be replaced by their values when the files are used. Edit `horizon/envvars.sh` to set the environment variables to your own values (including getting a docker hub id, if you don't already have one). Then source the file so its values will be available to the rest of the commands:
+The Makefile and several of the horizon files contain environment variables that will be replaced by their values when the files are used. Copy `horizon/envvars.sh.sample` to `horizon/envvars.sh`, edit it to set the environment variables to your own values (including getting a docker hub id, if you don't already have one), then source the file so its values will be available to the rest of the commands:
 ```bash
+cp horizon/envvars.sh.sample horizon/envvars.sh
+# put your values in horizon/envvars.sh (there is a .gitignore file for that)
 source horizon/envvars.sh
 ```
 
@@ -152,8 +154,10 @@ Create a docker container that computes averages for a set of CPU usage samples.
 cp -a ~/examples/edge/wiotp/cpu2wiotp/* .
 ```
 
-The Makefile and several of the horizon files contain environment variables that will be replaced by their values when the files are used. Edit `horizon/envvars.sh` to set the environment variables to your own values, then:
+The Makefile and several of the horizon files contain environment variables that will be replaced by their values when the files are used. Edit `horizon/envvars.sh` to set the environment variables to your own values and source it:
 ```bash
+cp horizon/envvars.sh.sample horizon/envvars.sh
+# put your values in horizon/envvars.sh (there is a .gitignore file for that)
 source horizon/envvars.sh
 ```
 
