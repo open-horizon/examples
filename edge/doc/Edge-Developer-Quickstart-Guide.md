@@ -179,7 +179,7 @@ make stop
 
 ### Workload project metadata
 
-Now that the workload container implementation is working correctly, we will introduce the Horizon project metadata in order to make this project testable in the Horizon test environment and to ultimately make it deployable to Edge nodes. The examples project you copied is "Horizon ready", so it already contains the Horizon metadata files. Note the files in the `horizon` sub-directory:
+Now that the workload container implementation is working correctly, let's take a look at the Horizon project metadata in order to make this project testable in the Horizon test environment and to ultimately make it deployable to Edge nodes. The examples project you copied is "Horizon ready", so it already contains the Horizon metadata files. Note the files in the `horizon` sub-directory:
 
 * `workload.definition.json` - the Horizon metadata of this workload. Note a few of the significant json fields:
     * `workloadUrl`: along with the `version` and `arch` this is the unique identifier for this workload, and ideally a URL to a web site that documents the workload for potential users of it.
@@ -198,7 +198,7 @@ The default `userinput.json` configures cpu2wiotp to get data from the cpu micro
     "workloads": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "http://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
+            "url": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
                 "SAMPLE_SIZE": 5,
@@ -288,7 +288,7 @@ tail -f /var/log/syslog | grep cpu2wiotp
 ```
 
 Notice that the workload is now picking up real CPU usage samples from the microservice and computing an average.
-This is accomplished without any open ports on the host because the workload container has joined the docker network of the microservice.
+This is accomplished without any open ports on the host because the workload container has joined the docker network of the microservice. (This can be seen using the commands `docker ps`, `docker network ls`, and `docker inspect <id>`.)
 This is how the containers will be configured when running on Edge nodes.
 
 Control-C to stop `tail`. Then the workload container and the microservice container test environment can be stopped:
@@ -331,6 +331,8 @@ wiotp_create_certificate -p $WIOTP_GW_TOKEN
 ```bash
 hzn dev workload start
 ```
+
+* Run `docker ps` and notice the additional core-iot containers that are running. (The core-iot service provides many other functions in addition to the one we are using: sending MQTT messages to WIoTP cloud.)
 
 * Subscribe to the WIoTP cloud MQTT topic that the workload is publishing to to see the cpu values:
 ```
