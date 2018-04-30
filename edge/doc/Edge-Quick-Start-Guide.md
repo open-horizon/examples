@@ -2,7 +2,7 @@
 
 This guide provides a concise description of the process for setting up WIoTP/Horizon edge nodes and deploying existing services to them.
 
-If you want to develop your own Horizon service, see the [Edge Developer Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md).
+If you want to develop your own Horizon service, see the [Edge Developer Quick Start Guide](Edge-Developer-Quickstart-Guide.md).
 
 Additional information is available, and questions may be asked, in our forum, at [https://discourse.bluehorizon.network/](https://discourse.bluehorizon.network/).
 
@@ -101,7 +101,7 @@ export WIOTP_API_KEY='a-myapikeyrandomchars'
 export WIOTP_API_TOKEN='myapikeytoken'
 
 # This variable must be set appropriately for your specific Edge Node
-export ARCH2=amd64   # or arm for Raspberry Pi, or arm64 for TX2
+export ARCH=amd64   # or arm for Raspberry Pi, or arm64 for TX2
 
 # There is no need for you to edit these variables
 export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"
@@ -143,15 +143,15 @@ export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
 ```
 * Add the "cpu" microservice to your WIoTP organization and see that it was added:
 ```bash
-hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/pre-signed/cpu-$ARCH2.json
+hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/pre-signed/cpu-$ARCH.json
 hzn exchange microservice list | jq .
 ```
 
 * Configure the CPU usage workload definition file using your environment variables, add it to your WIoTP organization, and see that it was added:
 ```bash
 mkdir -p ~/hzn
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-template-$ARCH2.json > ~/hzn/cpu2wiotp-definition.json
-hzn exchange workload publish -f ~/hzn/cpu2wiotp-definition.json
+envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-$ARCH.json > ~/hzn/cpu2wiotp.json
+hzn exchange workload publish -f ~/hzn/cpu2wiotp.json
 hzn exchange workload list | jq .
 ```
 
@@ -161,7 +161,7 @@ The Edge system deploys Patterns of code onto WIoTP Edge Node gateways. The depl
 
 * Configure the CPU usage pattern json file using your environment variables and add it to your pattern:
 ```bash
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp-template.json > ~/hzn/insert-cpu2wiotp.json
+envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp.json > ~/hzn/insert-cpu2wiotp.json
 hzn exchange pattern insertworkload -f ~/hzn/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 ```
 * Verify that the CPU usage Workload was inserted into the Pattern for your Gateway Type:
@@ -195,7 +195,7 @@ hzn agreement list | jq .
 docker ps
 ```
 
-* If an agreement is not formed, or if the containers are not started, see [Why aren't the expected docker containers running on my edge node?](https://github.com/open-horizon/examples/blob/master/edge/doc/Troubleshooting.md#why-arent-the-expected-docker-containers-running-on-my-edge-node) to troubleshoot.
+* If an agreement is not formed, or if the containers are not started, see [Why aren't the expected docker containers running on my edge node?](Troubleshooting.md#why-arent-the-expected-docker-containers-running-on-my-edge-node) to troubleshoot.
 
 * Once the containers are all running, you should be able to verify that your workload is sending short messages like `{"cpu":1.49}` to the Watson IoT Platform in one of two ways:
   * Return to the Watson IoT Platform web pages: select Devices in the left panel, select your Gateway instance (it should have a blue dot next to it meaning it is "connected"), and click on the Recent Events. The default publish interval for the CPU example is 30 seconds, so you may have to wait that long before seeing the first message.
@@ -223,7 +223,7 @@ To use this deployment pattern on other edge nodes you don't have to repeat ever
 1. Register the edge node and to use this pattern by running `wiotp_agent_setup`
 
 ## What To Do If Things Go Wrong
-Take a look at the [Edge Troubleshooting Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Troubleshooting.md).
+Take a look at the [Edge Troubleshooting Guide](Troubleshooting.md).
 
 You may also wish to explore the `hzn` command, a powerful tool for debugging this system:
 * Online help is available within hzn:

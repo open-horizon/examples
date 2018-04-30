@@ -1,22 +1,22 @@
 {
-  "label": "Cpu2wiotp for amd64",
+  "label": "Cpu2wiotp for arm",
   "description": "Sample Horizon workload that repeatedly reads the CPU load and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/cpu2wiotp",
   "version": "1.2.2",
-  "arch": "amd64",
+  "arch": "arm",
   "apiSpec": [
     {
       "specRef": "https://internetofthings.ibmcloud.com/microservices/cpu",
       "org": "$HZN_ORG_ID",
       "version": "[0.0.0,INFINITY)",
-      "arch": "amd64"
+      "arch": "arm"
     },
     {
       "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
       "org": "IBM",
-      "version": "[2.3.1,INFINITY)",
-      "arch": "amd64"
+      "version": "[2.4.0,INFINITY)",
+      "arch": "arm"
     }
   ],
   "userInput": [
@@ -24,7 +24,7 @@
         "name": "SAMPLE_SIZE",
         "label": "the number of samples to read before calculating the average",
         "type": "int",
-        "defaultValue": "6"
+        "defaultValue": "10"
     },
     {
         "name": "SAMPLE_INTERVAL",
@@ -53,8 +53,8 @@
   ],
   "workloads": [
     {
-      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/example_wl_amd64_cpu2wiotp:1.2.2\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
-      "deployment_signature": "HnxDNl1wqs/rkD6xhKEsXInQyC4Z6EbP5eZo7mzQFnpBePgtv1y1qGZhkbiC9rtC1KWTaDmXDbkVYNTjlzrsA15coF8jPwD8cO5VItXze0M32n/hLBLf52KHVI/dBrOoZa84Gm1M0Ui3Yxdn8dVHhe2e0EUmLWLe6uGDS6YYwdRPIVZbyY/AfW8sFT4IaDJqzY5i8g9Lm47ET7Mez4noCL9y7x2ebKGME6H2aFgSBL1YrHSOTLdWqg8jmZMHb7OC0lm2zq/g5orlJxiGOw9mmwD/wk6Fliidpk49l1x1SGe992tlVeSZYR0kS5zGZMx68AFZNEGwC6MJ6qBW4mwHJaefK7Q5ZKTPN1AsV0GXMtHLtMabHa38TrnfzeS4/qBu6qdSkbyUVfAOrnkDP9r8zORNnX1sMJcLpuhGQe5ApAZLdY4tNp7n6yfIsdUYfgp+baJ2DYsq/LNALMWrZYI0Kkpq16qXApGhj+f4zI2yfQWRUdg77b0Zm1dXnZ/5AsXovcKepxZsbeFn0mC9iSqXuZL+Nq63ROGkowSm+MgfkbBZ58bCqVFTkhJNphdbGucg7VsBabp2EIe8/Xe53HrEu0UuDlJlPmC9Ia63J/PnMbOnkJOPttp2GrSGR/cqmJPUGnk7avYJQK/pntn1KiAmXDLQBgkMYza96/H4pWG6C/A=",
+      "deployment": "{\"services\":{\"cpu2wiotp\":{\"image\":\"openhorizon/arm_cpu2wiotp:1.2.2\",\"privileged\":false,\"environment\":[\"WIOTP_DOMAIN=internetofthings.ibmcloud.com\",\"WIOTP_EDGE_MQTT_IP=edge-connector\",\"WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem\"],\"binds\":[\"/var/wiotp-edge:/var/wiotp-edge\"]}}}",
+      "deployment_signature": "CdKR+YaksOmxpv5wUk2rV6vcz2tGe5fyttik+iQKCyCXPXt6KdK6rpFb9WTjh+14nnMqPSfcb+N4IBckxvtznYcYsAjGaGou0KApEear3dYyt5hAK4bRAtLWWfokbBwRhvoWubOfz3yrOtyuTtEYl7OB4OnL8Dn+ecbrF4Dzn6jlEVwCTsGwA1O34lRxy4MxgmIVIjkXQJrXAV344Vgj7XJ0rWPoCdAEnHyYoHoTBYB9DYyykq5cFMGrl+Ct97PGqC0WJrW9msg9hK7Vmf3XA1DghDTnxIK/gCT77wl6Pesli8YJkkXnzL+W2wqD3qvQFQLVbygL+R8DNXsFF4rLMEyCD54P5b60mx0ryUqNhvGSMH0dJmaTxiuBU2kqkm/QBaAfnArWU2hffOZ8/880Jv3Gmliiw8UMlBpzU1PZbQ9XRcglEaI9lkd03jAWFWmXN0X8ahrPEBHKBx93RQbKW14HU/6vtqfkdLLNJPgQxoFJD7CPBCgYoTI6IAdSU5K8Z8aC8rfScqKOLBvcSWyJEzzsuYH1UR0kEGBak2XpVvhp9P+62Dum9P1a3zINC756jDOzZfHzsKnwSH3Dkj6zGQjYnNyIYzazU8SYGhdrZXshh+cA3SxfuI0RoEHcLjNZqKZGFcWM/SBZdgUV2FcsjS5X6MCl6XqLv3WsJXtIxO4=",
       "torrent": ""
     }
   ]
