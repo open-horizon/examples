@@ -1,18 +1,4 @@
 {
-    "global": [
-        {
-            "type": "HTTPSBasicAuthAttributes",
-            "sensor_urls": [
-                "https://us.internetofthings.ibmcloud.com/api/v0002/horizon-image/common"
-            ],
-            "publishable": false,
-            "host_only": true,
-            "variables": {
-                "username": "$HZN_ORG_ID/$HZN_DEVICE_ID",
-                "password": "$WIOTP_GW_TOKEN"
-            }
-        }
-    ],
     "microservices": [
         {
             "org": "$HZN_ORG_ID",
@@ -27,8 +13,7 @@
             "variables": {
                 "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
                 "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN",
-                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID",
-                "WIOTP_LOCAL_BROKER_PORT": "2883"
+                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
             }
         }
     ],

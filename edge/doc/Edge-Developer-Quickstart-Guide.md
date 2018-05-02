@@ -28,7 +28,7 @@ Along the way, you will be exposed to many concepts and capabilities that are do
 
 Currently this guide is intended to be used on an x86_64 machine. (This will be expanded in the future.)
 
-To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.17.1**) That guide will have you accomplish the following necessary steps:
+To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.17.2**) That guide will have you accomplish the following necessary steps:
 
 - Create your WIoTP organization, gateway type and id, and API key.
 - Install docker, horizon, and some utilities.
