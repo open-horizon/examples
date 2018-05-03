@@ -6,18 +6,19 @@
     "workloadUrl": "https://$MYDOMAIN/workloads/$YOLO2WIOTP_NAME",
     "version": "$YOLO2WIOTP_VERSION",
     "arch": "$ARCH",
+    "downloadUrl": "",
     "apiSpec": [
         {
             "specRef": "https://$MYDOMAIN/microservices/$YOLO_NAME",
             "org": "$HZN_ORG_ID",
-            "version": "[0.0.0,INFINITY)",
+            "version": "$YOLO_VERSION",
             "arch": "$ARCH"
         },
         {
             "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
             "org": "IBM",
-            "version": "[2.4.0,INFINITY)",
-            "arch": "$ARCH"
+            "version": "2.4.0",
+            "arch": "amd64"
         }
     ],
     "userInput": [

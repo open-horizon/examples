@@ -8,14 +8,16 @@ FROM openhorizon/amd64_darknet_nvidia:8.0-cudnn7-devel-ubuntu16.04
 MAINTAINER nuculur@gmail.com
 
 # Install SOCAT, CURL, and VNC libs
-RUN apt-get update && apt-get install -y --no-install-recommends \
-                                curl socat \
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+                                apt-transport-https curl socat \
                                 xvfb \
                                 xauth \
                                 x11vnc \
                                 x11-utils \
                                 x11-xserver-utils \
                                 x11-apps
+# Install additional packages for camera control reliability
+RUN apt-get install -y mtp-tools uvcdynctrl
 
 # start x11vnc (VNC port exposed in docker run cmd)
 ENV DISPLAY :0.0
@@ -28,7 +30,6 @@ RUN mkdir /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix && chown root /tmp/.X11-un
 
 # VNC prep and exec script args (this will run the existing start.sh script, and check for 
 # existence of the DARKNET_CAMERA environment variable to set camera number
-#CMD ["/entrypoint.sh", "/start.sh"]
 CMD ["/bin/bash", "/start.sh"]
 
 ## For docker --squash build

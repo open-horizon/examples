@@ -6,7 +6,7 @@ export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
 export YOLO_NAME ?= yolov3vnc
-export YOLO_VERSION ?= 8.7.0
+export YOLO_VERSION ?= 8.7.1
 export VNC_PASSWORD ?= vncpass
 DOCKER_NAME ?= $(ARCH)_$(YOLO_NAME)
 DOCKER_HUB_ID ?= openhorizon
