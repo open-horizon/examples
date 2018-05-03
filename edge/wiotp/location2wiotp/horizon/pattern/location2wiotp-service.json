@@ -1,0 +1,50 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "Location2wiotp service pattern for $ARCH",
+  "description": "Horizon deployment pattern that runs the location2wiotp service to send the edge node GPS info",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
+      "serviceOrgid": "IBM",
+      "serviceArch": "$ARCH",
+      "agreementLess": true,
+      "serviceVersions": [
+        {
+          "version": "2.4.0",
+          "deployment_overrides": null,
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "serviceUrl": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
+        {
+          "version": "$VERSION",
+          "deployment_overrides": null,
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    }
+  ]
+}

@@ -1,17 +1,17 @@
 {
   "org": "$HZN_ORG_ID",
-  "label": "Location2wiotp for amd64, arm, and arm64",
+  "label": "Location2wiotp for $ARCH",
   "description": "Horizon deployment pattern that runs the location2wiotp workload to send the edge node GPS info",
   "public": true,
   "workloads": [
     {
-      "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/location2wiotp",
-      "workloadOrgid": "$HZN_ORG_ID",
-      "workloadArch": "amd64",
+      "workloadUrl": "https://internetofthings.ibmcloud.com/wiotp-edge/workloads/edge-core-iot-workload",
+      "workloadOrgid": "IBM",
+      "workloadArch": "$ARCH",
       "workloadVersions": [
         {
-          "version": "$VERSION",
-          "deployment_overrides": null,
+          "version": "2.4.0",
+          "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
@@ -25,7 +25,7 @@
     {
       "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/location2wiotp",
       "workloadOrgid": "$HZN_ORG_ID",
-      "workloadArch": "arm",
+      "workloadArch": "$ARCH",
       "workloadVersions": [
         {
           "version": "$VERSION",
