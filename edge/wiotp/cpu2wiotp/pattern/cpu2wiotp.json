@@ -1,25 +1,17 @@
 {
   "org": "$HZN_ORG_ID",
-  "label": "$CPU2WIOTP_NAME for amd64, arm, and arm64",
-  "description": "Horizon deployment pattern that runs the cpu2wiotp workload",
+  "label": "$CPU2WIOTP_NAME for $ARCH",
+  "description": "Horizon deployment pattern for $ARCH that runs the cpu2wiotp workload",
   "public": true,
   "workloads": [
     {
-      "workloadUrl": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
-      "workloadOrgid": "$HZN_ORG_ID",
-      "workloadArch": "amd64",
+      "workloadUrl": "https://internetofthings.ibmcloud.com/wiotp-edge/workloads/edge-core-iot-workload",
+      "workloadOrgid": "IBM",
+      "workloadArch": "$ARCH",
       "workloadVersions": [
         {
-          "version": "$CPU2WIOTP_VERSION",
-          "deployment_overrides": {
-            "services": {
-              "cpu2wiotp": {
-                "environment": [
-                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
-                ]
-              }
-            }
-          },
+          "version": "2.4.0",
+          "deployment_overrides": "",
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
@@ -33,33 +25,7 @@
     {
       "workloadUrl": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
       "workloadOrgid": "$HZN_ORG_ID",
-      "workloadArch": "arm",
-      "workloadVersions": [
-        {
-          "version": "$CPU2WIOTP_VERSION",
-          "deployment_overrides": {
-            "services": {
-              "cpu2wiotp": {
-                "environment": [
-                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
-                ]
-              }
-            }
-          },
-          "deployment_overrides_signature": "",
-          "priority": {},
-          "upgradePolicy": {}
-        }
-      ],
-      "nodeHealth": {
-        "missing_heartbeat_interval": 600,
-        "check_agreement_status": 120
-      }
-    },
-    {
-      "workloadUrl": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
-      "workloadOrgid": "$HZN_ORG_ID",
-      "workloadArch": "arm64",
+      "workloadArch": "$ARCH",
       "workloadVersions": [
         {
           "version": "$CPU2WIOTP_VERSION",
@@ -86,9 +52,6 @@
   "agreementProtocols": [
     {
       "name": "Basic"
-    },
-    {
-      "name": "Citizen Scientist"
     }
   ]
 }

@@ -1,0 +1,30 @@
+{
+    "microservices": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/microservices/$CPU_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "IBM",
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
+            "versionRange": "2.4.0",
+            "variables": {
+                "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
+                "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN",
+                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
+            }
+        }
+    ],
+    "workloads": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "VERBOSE": "1"
+            }
+        }
+    ]
+}

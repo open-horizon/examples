@@ -15,9 +15,12 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # Construct our Docker registry path from the architecture
-REGISTRY ?= openhorizon
-REG_PATH := $(REGISTRY)/$(ARCH)
-IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
+#REGISTRY ?= openhorizon
+#REG_PATH := $(REGISTRY)/$(ARCH)
+#IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
+REGISTRY ?= registry.ng.bluemix.net
+REG_PATH := $(REGISTRY)/bmpotter/$(ARCH)
+IMAGE_PATH = $(REG_PATH)/$(IMAGE):$(VERSION)
 
 # Make will search these two relative paths for input and target files
 VPATH=bin
@@ -51,18 +54,19 @@ docker-verify:
 	docker version --format '{{.Server.Version}}'
 	docker pull $(IMAGE_PATH) | grep '^Digest: '
 
+# Note: this has been changed to service, because that supports adding the bx container registry auth into the exchange.
+# 		You must 1st docker login into the registry.
 .PHONY: exchange-publish
 exchange-publish: .$(IMAGE)-$(VERSION)-$(ARCH)
-	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${WIOTP_GW_TOKEN:?}   # this verifies these env vars are set
-	envsubst < horizon/workload.template.json > horizon/workload.definition.json
-	envsubst < horizon/userinput.template.json > horizon/userinput.json
-	hzn exchange workload publish -k $$PRIVATE_KEY_FILE -f horizon/workload.definition.json
+	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?}   # this verifies these env vars are set
+	hzn exchange service publish -k $$PRIVATE_KEY_FILE -r "$(REGISTRY):$$DOCKER_REG_READ_TOKEN" -f horizon/service.definition.json
 
+# Note: to use this with wiotp, it must have the name of your gw type, so we copy it before publishing it
 .PHONY: publish-pattern
 publish-pattern:
-	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?}   # this verifies these env vars are set
-	envsubst < horizon/pattern/$(IMAGE).template.json > horizon/pattern/$(IMAGE).json
-	hzn exchange pattern publish -k $$PRIVATE_KEY_FILE -f horizon/pattern/$(IMAGE).json
+	: $${HZN_ORG_ID:?} $${WIOTP_GW_TYPE:?} $${HZN_EXCHANGE_USER_AUTH:?}   # this verifies these env vars are set
+	cp horizon/pattern/$(IMAGE)-service.json /tmp/$$WIOTP_GW_TYPE.json
+	hzn exchange pattern publish -f /tmp/$$WIOTP_GW_TYPE.json
 
 # Create the docker network
 .PHONY: network

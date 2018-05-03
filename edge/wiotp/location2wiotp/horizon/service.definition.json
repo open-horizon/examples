@@ -1,0 +1,48 @@
+{
+  "label": "Location to WIoTP for $ARCH",
+  "description": "Gets the edge node GPS location from the gps service and sends it to WIoTP via the core-iot edge-connector",
+  "public": true,
+  "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
+  "version": "$VERSION",
+  "arch": "$ARCH",
+  "sharable": "multiple",
+  "requiredServices": [
+    {
+      "url": "https://github.com/open-horizon/examples/wiki/service-gps",
+      "org": "$HZN_ORG_ID",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "$ARCH"
+    },
+    {
+      "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
+      "org": "IBM",
+      "version": "[2.4.0,INFINITY)",
+      "arch": "$ARCH"
+    }
+  ],
+  "userInput": [
+    {
+        "name": "WIOTP_GW_TOKEN",
+        "label": "The token of the WIoTP gateway needed to send directly to WIoTP cloud MQTT",
+        "type": "string",
+        "defaultValue": "-"
+    }
+  ],
+  "deployment": {
+    "services": {
+      "location": {
+        "image": "registry.ng.bluemix.net/bmpotter/$ARCH/location2wiotp:$VERSION",
+        "binds": [
+          "/var/wiotp-edge:/var/wiotp-edge"
+        ],
+        "environment": [
+          "WIOTP_EDGE_MQTT_IP=edge-connector"
+        ]
+      }
+    }
+  },
+  "deploymentSignature": "",
+  "imageStore": {
+    "storeType": "dockerRegistry"
+  }
+}
