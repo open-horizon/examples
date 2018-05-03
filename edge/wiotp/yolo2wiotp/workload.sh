@@ -59,7 +59,7 @@ checkrc() {
 }
 
 echo 'Starting infinite loop to read from microservice then publish...'
-sleep 20
+
 while true; do
   # Get data from a local microservice
   if [[ "$MOCK" == "true" ]]; then
@@ -72,7 +72,7 @@ while true; do
 
   httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
   json="${output%?[0-9][0-9][0-9]}"   # for the output, get all but the newline and 3 digits of http code
-  echo "output=$output, json=$json, httpcode=$httpcode, curlrc=$curlrc"
+  #echo "output=$output, json=$json, httpcode=$httpcode, curlrc=$curlrc"
   if [[ "$curlrc" != 0 ]]; then
     echo "Warning: Curl command to the local yolo microservice returned exit code $curlrc, will try again next interval."
   elif [[ "$httpcode" != 200 ]]; then
