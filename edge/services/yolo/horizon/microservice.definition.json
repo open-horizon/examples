@@ -1,0 +1,41 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "$YOLO_NAME for $ARCH",
+  "description": "Runs Darket/Yolov3 as a microservice, provides REST API to query what Yolo sees",
+  "public": true,
+  "specRef": "https://$MYDOMAIN/microservices/$YOLO_NAME",
+  "version": "$YOLO_VERSION",
+  "arch": "$ARCH",
+  "sharable": "single",
+  "userInput": [
+      {
+          "name": "YOLO_CAMERA",
+          "label": "Capture camera device number corresponding to /dev/video<n>",
+          "type": "int",
+          "defaultValue": "0"
+      },
+      {
+          "name": "VNC_PASSWORD",
+          "label": "password for VNC server",
+          "type": "string",
+          "defaultValue": "vncpass"
+      }
+  ],
+  "workloads": [
+    {
+      "deployment": {
+        "services": {
+          "$YOLO_NAME": {
+            "image": "$DOCKER_HUB_ID/${ARCH}_$YOLO_NAME:$YOLO_VERSION",
+            "privileged": true,
+            "devices": [
+              "/dev:/dev:ro"
+            ]
+          }
+        }
+      },
+      "deployment_signature": "",
+      "torrent": ""
+    }
+  ]
+}

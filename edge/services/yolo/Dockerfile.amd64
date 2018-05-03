@@ -1,0 +1,36 @@
+# Build from base openhorizon/darknet image for NVIDIA drivers
+# Uses CUDA8.0 / CUDNN7
+# Expects to be run with docker --runtime=nvidia (set as default, as documented in:
+#  https://github.com/nvidia/nvidia-container-runtime#docker-engine-setup)
+FROM openhorizon/amd64_darknet_nvidia:8.0-cudnn7-devel-ubuntu16.04
+
+# AUTHORS michaeldye (VNC), chrod (integration)
+MAINTAINER nuculur@gmail.com
+
+# Install SOCAT, CURL, and VNC libs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+                                curl socat \
+                                xvfb \
+                                xauth \
+                                x11vnc \
+                                x11-utils \
+                                x11-xserver-utils \
+                                x11-apps
+
+# start x11vnc (VNC port exposed in docker run cmd)
+ENV DISPLAY :0.0
+COPY vnc/entrypoint-x11.sh /entrypoint.sh
+COPY *.sh /
+RUN chmod +x /entrypoint.sh && chmod +x /start.sh && chmod +x /service.sh
+
+# Prep volumes for VNC
+RUN mkdir /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix && chown root /tmp/.X11-unix
+
+# VNC prep and exec script args (this will run the existing start.sh script, and check for 
+# existence of the DARKNET_CAMERA environment variable to set camera number
+#CMD ["/entrypoint.sh", "/start.sh"]
+CMD ["/bin/bash", "/start.sh"]
+
+## For docker --squash build
+RUN apt-get clean -y
+

@@ -1,0 +1,68 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "$YOLO2WIOTP_NAME for amd64, arm, and arm64",
+  "description": "Horizon deployment pattern that runs the yolo2wiotp workload",
+  "public": true,
+  "workloads": [
+    {
+      "workloadUrl": "https://$MYDOMAIN/workloads/$YOLO2WIOTP_NAME",
+      "workloadOrgid": "$HZN_ORG_ID",
+      "workloadArch": "amd64",
+      "workloadVersions": [
+        {
+          "version": "$YOLO2WIOTP_VERSION",
+          "deployment_overrides": {
+            "services": {
+              "yolo2wiotp": {
+                "environment": [
+                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
+                ]
+              }
+            }
+          },
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "workloadUrl": "https://$MYDOMAIN/workloads/$YOLO2WIOTP_NAME",
+      "workloadOrgid": "$HZN_ORG_ID",
+      "workloadArch": "arm64",
+      "workloadVersions": [
+        {
+          "version": "$YOLO2WIOTP_VERSION",
+          "deployment_overrides": {
+            "services": {
+              "yolo2wiotp": {
+                "environment": [
+                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
+                ]
+              }
+            }
+          },
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    },
+    {
+      "name": "Citizen Scientist"
+    }
+  ]
+}

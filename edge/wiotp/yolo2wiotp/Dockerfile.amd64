@@ -1,0 +1,5 @@
+FROM alpine:latest
+RUN apk --no-cache --update add curl mosquitto-clients jq bc
+COPY *.sh /
+WORKDIR /
+CMD /workload.sh

@@ -1,0 +1,14 @@
+{
+    "global": [],
+    "microservices": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/microservices/$YOLO_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "YOLO_CAMERA": 0,
+                "VNC_PASSWORD": "vncpass" 
+            }
+        }
+    ]
+}
