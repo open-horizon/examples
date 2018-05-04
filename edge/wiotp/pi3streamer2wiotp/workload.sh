@@ -17,9 +17,7 @@ checkRequiredEnvVar() {
 # Environment variables that can optionally be set, or default
 WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
 WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # the cert to verify the WIoTP MQTT broker
-# WIOTP_EDGE_MQTT_IP: local IP or hostname of the WIoTP Edge Connector microservice (enables severability). Otherwise send straight to the wiotp cloud broker.
 PUBLISH_INTERVAL="${PUBLISH_INTERVAL:-5}"    # reporting interval in seconds
-#SAMPLE_SIZE="${SAMPLE_SIZE:-10}"    # the number of samples to read before calculating/publishing the average
 PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to wiotp
 MOCK="${MOCK:-false}"     # if "true", just pretend to call the microservice
 VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
@@ -30,7 +28,6 @@ echo "Optional environment variables (or default values): WIOTP_DOMAIN=$WIOTP_DO
 if [[ "$PUBLISH" == "true" ]]; then
   echo "Checking for required environment variables are set:"
   checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
-  #checkRequiredEnvVar "WIOTP_DEVICE_AUTH_TOKEN"   #note: this is no longer needed because we can now send msgs an an app to edge-connector unauthenticated, as long as we are local.
   checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon. Wiotp automatically gives this a value of: g@mygwtype@mygw
 fi
 
@@ -76,10 +73,8 @@ while true; do
 
   httpcode=$(echo "$output" | tail -c 4) # last 3 characters (digits)
   json=$(echo "$output" | grep MJPG)     # for the output, get the string referencing the streamer 
-  # ^^ not actually json
 
-  echo "httpcode = $httpcode...."
-  echo "$json"
+  echo "httpcode = $httpcode... payload = $json"
 
   if [[ "$curlrc" != 0 ]]; then
     echo "Warning: Curl command to the local microservice returned exit code $curlrc, will try again next interval."
@@ -94,8 +89,6 @@ while true; do
 
     if [[ "$PUBLISH" == "true" ]]; then
       # Send a "status" event to the Watson IoT Platform containing the data
-      #clientId="$CLASS_ID:$HZN_ORGANIZATION:$DEVICE_TYPE:$DEVICE_ID"     # sending as the gateway
-      #topic="iot-2/type/$DEVICE_TYPE/id/$DEVICE_ID/evt/status/fmt/json"
       clientId="a:$HZN_ORGANIZATION:$DEVICE_TYPE$DEVICE_ID"       # sending as an app
       topic="iot-2/evt/status/fmt/json"
       if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
@@ -106,8 +99,7 @@ while true; do
         msgHost="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
       fi
 
-      #echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
-      #mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" -u "use-token-auth" -P "$WIOTP_DEVICE_AUTH_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
+      # Send as App, to local edge-connector
       echo mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json"
       mosquitto_pub -h "$msgHost" -p 8883 -i "$clientId" --cafile $WIOTP_PEM_FILE -q 1 -t "$topic" -m "$json" >/dev/null
       checkrc $? "mosquitto_pub $msgHost" "continue"
