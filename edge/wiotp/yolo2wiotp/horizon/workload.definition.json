@@ -13,12 +13,6 @@
             "org": "$HZN_ORG_ID",
             "version": "$YOLO_VERSION",
             "arch": "$ARCH"
-        },
-        {
-            "specRef": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
-            "org": "IBM",
-            "version": "2.4.0",
-            "arch": "amd64"
         }
     ],
     "userInput": [

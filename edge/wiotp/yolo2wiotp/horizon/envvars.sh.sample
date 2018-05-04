@@ -7,11 +7,11 @@ export WIOTP_API_KEY='a-myapikeyrandomchars'
 export WIOTP_API_TOKEN='myapikeytoken'
 
 # This variable must be set appropriately for your specific Edge Node
-export ARCH=amd64   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
+export ARCH=amd64   # arch of your edge node: amd64, or arm64 for TX2
 export YOLO2WIOTP_NAME=yolo2wiotp   # the name of the workload, used in the docker image path and in the workload url
 export YOLO2WIOTP_VERSION=1.0.0   # the workload version, and also used as the tag for the docker image. Must be in OSGI version format.
 export YOLO_NAME=yolov3vnc   # the name of the microservice, used in the docker image path and in the microservice url
-export YOLO_VERSION=8.7.0   # the microservice version, and also used as the tag for the docker image. Must be in OSGI version format.
+export YOLO_VERSION=8.7.1   # the microservice version, and also used as the tag for the docker image. Must be in OSGI version format.
 
 export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
 export MYDOMAIN=mydomain.com	# used in the workload url
