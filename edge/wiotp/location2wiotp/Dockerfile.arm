@@ -5,6 +5,5 @@ MAINTAINER bp@us.ibm.com
 RUN apk --no-cache --update add jq bc curl mosquitto-clients
 COPY *.sh /
 COPY *.pem /
-COPY bluehorizon/*.pem /
 WORKDIR /
 CMD /start.sh

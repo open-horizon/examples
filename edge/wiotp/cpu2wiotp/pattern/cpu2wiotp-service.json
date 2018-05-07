@@ -1,17 +1,17 @@
 {
-  "org": "$HZN_ORG_ID",
-  "label": "$CPU2WIOTP_NAME for $ARCH",
-  "description": "Horizon deployment pattern for $ARCH that runs the cpu2wiotp workload",
+  "label": "Edge $CPU2WIOTP_NAME and Core IoT Service Pattern for $ARCH",
+  "description": "Pattern for the service version of $CPU2WIOTP_NAME and Core IoT for $ARCH",
   "public": true,
-  "workloads": [
+  "services": [
     {
-      "workloadUrl": "https://internetofthings.ibmcloud.com/wiotp-edge/workloads/edge-core-iot-workload",
-      "workloadOrgid": "IBM",
-      "workloadArch": "$ARCH",
-      "workloadVersions": [
+      "serviceUrl": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
+      "serviceOrgid": "IBM",
+      "serviceArch": "$ARCH",
+      "agreementLess": true,
+      "serviceVersions": [
         {
           "version": "2.4.0",
-          "deployment_overrides": "",
+          "deployment_overrides": null,
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}
@@ -23,12 +23,14 @@
       }
     },
     {
-      "workloadUrl": "https://$MYDOMAIN/workloads/$CPU2WIOTP_NAME",
-      "workloadOrgid": "$HZN_ORG_ID",
-      "workloadArch": "$ARCH",
-      "workloadVersions": [
+      "serviceUrl": "https://$MYDOMAIN/services/$CPU2WIOTP_NAME",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
         {
           "version": "$CPU2WIOTP_VERSION",
+          "priority": {},
+          "upgradePolicy": {},
           "deployment_overrides": {
             "services": {
               "cpu2wiotp": {
@@ -38,11 +40,12 @@
               }
             }
           },
-          "deployment_overrides_signature": "",
-          "priority": {},
-          "upgradePolicy": {}
+          "deployment_overrides_signature": ""
         }
       ],
+      "dataVerification": {
+        "metering": {}
+      },
       "nodeHealth": {
         "missing_heartbeat_interval": 600,
         "check_agreement_status": 120

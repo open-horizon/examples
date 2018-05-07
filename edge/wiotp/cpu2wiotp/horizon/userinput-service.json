@@ -8,7 +8,7 @@
         },
         {
             "org": "IBM",
-            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
             "versionRange": "2.4.0",
             "variables": {
                 "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
