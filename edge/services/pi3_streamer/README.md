@@ -20,7 +20,7 @@ Reboot
 You're done with pre-setup steps.
 
 ## Automatic Deployment on IBM Edge with Watson IoT Platform
-Follow the steps in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) 
+Follow the steps in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md). 
 The Quick Start Guide will instruct you to define a device name and a device type. As an example, your information may look something like:  
 
     Device Type: arm32-PI3STRMR    (a general name for all devices of this type)  
@@ -226,15 +226,3 @@ That's it! You should be able to see a simple web page with a static image from 
 
 &nbsp; &nbsp; &nbsp; <img src="https://user-images.githubusercontent.com/16260619/37161339-3ccba3aa-22a7-11e8-8938-516ce59d5f2d.png" width="640" />
 
--------------------
-### Steps:
-1. Setup your hardware.  
-&nbsp;&nbsp; See ["Initial Setup"](https://github.com/open-horizon/cogwerx-mjpg-streamer-pi3/blob/master/README.md)
-2. Setup your IBM Cloud account and Watson IoT Platform org.  
-&nbsp;&nbsp; See [Setup Your Organization in the Watson IoT Platform](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#setup-your-organization-in-the-watson-iot-platform) in the Edge Quick Start Guide
-3. Prepare your Pi3.  
-&nbsp;&nbsp; See ["Prepare Your Edge Node"](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#prepare-your-edge-node) in the Edge Quick Start Guide
-4. Define and publish this microservice to your org using the `.json` template files in `./horizon`  
-&nbsp;&nbsp; See the CPU example in [Define an Additional Microservice...](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#define-an-additional-microservice-and-workload-in-the-horizon-exchange) in the Edge Quick Start Guide
-
-Then move on to define the workload and pattern, using the code in `examples/edge/wiotp/pi3streamer2wiotp` and register your Pi3 to run the pattern. 
