@@ -22,13 +22,13 @@ You're done with pre-setup steps.
 ## Automatic Deployment on IBM Edge with Watson IoT Platform
 Follow the steps in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md), up until "Define an Additional Microservice and Workload in the Horizon Exchange".  
 At that point: stop, return here and continue with this guide.  
-The Quick Start Guide will instruct you to define a device name and a device type. As an example, your information may look something like:
+The Quick Start Guide will instruct you to define a device name and a device type. As an example, your information may look something like:  
 
-   Device Type: arm32-PI3STRMR    (a general name for all devices of this type)
-   Device Name: PI3-Home          (a specific name for this device)
-   Device Token: jkdas9dusadkna   (some secure string, specific to this device)
-   API Key: 'generated-chars'
-   API Token: 'generated-chars'
+    Device Type: arm32-PI3STRMR    (a general name for all devices of this type)  
+    Device Name: PI3-Home          (a specific name for this device)  
+    Device Token: jkdas9dusadkna   (some secure string, specific to this device)  
+    API Key: 'generated-chars'  
+    API Token: 'generated-chars'  
 
 These values aren't visible outside of your IBM Cloud organization. The token is not retrievable after definition.  API keys may be used for all devices you define, or per device at your discretion.
 
