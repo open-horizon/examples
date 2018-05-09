@@ -20,8 +20,7 @@ Reboot
 You're done with pre-setup steps.
 
 ## Automatic Deployment on IBM Edge with Watson IoT Platform
-Follow the steps in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md), up until "Define an Additional Microservice and Workload in the Horizon Exchange".  
-At that point: stop, return here and continue with this guide.  
+Follow the steps in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) 
 The Quick Start Guide will instruct you to define a device name and a device type. As an example, your information may look something like:  
 
     Device Type: arm32-PI3STRMR    (a general name for all devices of this type)  
@@ -31,6 +30,8 @@ The Quick Start Guide will instruct you to define a device name and a device typ
     API Token: 'generated-chars'  
 
 These values aren't visible outside of your IBM Cloud organization. The token is not retrievable after definition.  API keys may be used for all devices you define, or per device at your discretion.
+
+Continue the Quick Start Guide, up until "Define an Additional Microservice and Workload in the Horizon Exchange". At that point: stop, return here and continue with this guide.  
 
 ### Start Using IBM Edge to Define and Deploy your Pi 3 LAN Streamer
 At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Some additional definition is needed to deploy the Pi3 Streamer microservice and workload to your edge node.  
