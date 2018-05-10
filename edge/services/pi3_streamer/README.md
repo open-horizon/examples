@@ -42,7 +42,7 @@ apt-get update && apt-get purge -y horizon* && rm -rf /var/horizon
 
 * Install some utilities:
 ```
-apt update && apt install -y curl wget gettext
+apt update && apt install -y curl git wget gettext
 ```
 * Ensure that you have the current docker version installed (since many distros are set up to run much older docker versions):
 ```
