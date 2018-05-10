@@ -17,6 +17,11 @@ Reboot
 
 &nbsp; &nbsp; &nbsp; <img src="https://user-images.githubusercontent.com/16260619/37161848-a253e6be-22a8-11e8-9e1b-73509ae8c4dd.png" width="480" />
 
+Now prep your Pi 3 to accept the latest version of horizon.
+
+```bash
+apt-get update && apt-get purge -y horizon* && rm -rf /var/horizon
+```
 You're done with pre-setup steps.
 
 ## Automatic Deployment on IBM Edge with Watson IoT Platform
