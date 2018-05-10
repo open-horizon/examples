@@ -118,8 +118,8 @@ We'll generate a signing key for this Pi to use in defining microservices that w
 ```bash
 mkdir -p ~/hzn/keys && cd ~/hzn/keys
 hzn key create <x509 org> <x509 cn>   # example: hzn key create ibm thomas@ibm.com
-export PRIVATE_KEY_FILE=~/hzn/*-private.key
-export PUBLIC_KEY_FILE=~/hzn/*-public.pem
+export PRIVATE_KEY_FILE=$(ls ~/hzn/keys/*-private.key)
+export PUBLIC_KEY_FILE=$(ls ~/hzn/keys/*-public.pem)
 hzn key import --public-key-file=$PUBLIC_KEY_FILE
 hzn key list   # You should see your key listed in the output
 ```
