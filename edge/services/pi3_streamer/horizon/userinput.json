@@ -1,0 +1,16 @@
+{
+    "global": [],
+    "microservices": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/microservices/$PI3STREAMER_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+              "RESOLUTION": "-x 1280 -y 720",
+              "FRAMERATE": 20,
+              "HORZ_FLIP": "false",
+              "VERT_FLIP": "false"
+            }
+        }
+    ]
+}
