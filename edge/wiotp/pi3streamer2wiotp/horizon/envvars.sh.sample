@@ -12,7 +12,7 @@ export PI3STREAMER2WIOTP_NAME=pi3streamer2wiotp   # the name of the workload, us
 export PI3STREAMER2WIOTP_VERSION=1.0.0   # the workload version, and also used as the tag for the docker image. Must be in OSGI version format.
 
 # Uncomment these if you haven't yet exported variables from a pi3streamer microservice
-export PI3STREAMER_NAME=pi2streamer   # the name of the microservice, used in the docker image path and in the microservice url
+export PI3STREAMER_NAME=pi3streamer   # the name of the microservice, used in the docker image path and in the microservice url
 export PI3STREAMER_VERSION=1.0.0   # the microservice version, and also used as the tag for the docker image. Must be in OSGI version format.
 #export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
 #export MYDOMAIN=mydomain.com	# used in the workload url
