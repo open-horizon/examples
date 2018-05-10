@@ -116,9 +116,11 @@ We'll generate a signing key for this Pi to use in defining microservices that w
 
  * Generate a signing key for horizon to use in publishing microservices and workloads. This can take a few minutes on the Pi. Once generated, import your key into horizon with `hzn key import`. Verify with `hzn key list`.
 ```bash
-mkdir ~/keys && cd ~/keys
+mkdir -p ~/hzn/keys && cd ~/hzn/keys
 hzn key create <x509 org> <x509 cn>   # example: hzn key create ibm thomas@ibm.com
-hzn key import --public-key-file=<key file name>
+export PRIVATE_KEY_FILE=$(ls ~/hzn/keys/*-private.key)
+export PUBLIC_KEY_FILE=$(ls ~/hzn/keys/*-public.pem)
+hzn key import --public-key-file=$PUBLIC_KEY_FILE
 hzn key list   # You should see your key listed in the output
 ```
 
@@ -159,7 +161,25 @@ cd ~/examples/edge/services/pi3_streamer
 cp horizon/envvars.sh.sample  horizon/envvars.sh
 vim horizon/envvars.sh.sample  # or use your favorite text editor
 ```
-Change the `HZN_ORG_ID` to your own WIoTP organization; provide your Docker Hub ID, and a name for your domain. (You can use a fictitious one if you like.)  Save the file and export the environment var's with the `source` command.
+
+This is a view of that file:
+```
+# Set this to the organization you created in the Watson IoT Platform
+export HZN_ORG_ID=myorg
+
+export ARCH=arm   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
+export PI3STREAMER_NAME=pi3streamer   # the name of the microservice, used in the docker image path and in the microservice url
+export PI3STREAMER_VERSION=1.0.0   # the microservice version, and also used as the tag for the docker image. Must be in OSGI version format.
+
+export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
+export MYDOMAIN=mydomain.com    # used in the micorservice url
+
+# There is normally no need for you to edit these variables
+export WIOTP_DOMAIN=internetofthings.ibmcloud.com
+export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
+```
+
+Change the `HZN_ORG_ID` to your own WIoTP organization; provide your `DOCKER_HUB_ID`, and a name for `MYDOMAIN`. (You can use a fictitious one if you like.)  Save the file and export the environment var's with the `source` command.
 ```bash
 source horizon/envvars.sh
 ```
@@ -169,6 +189,7 @@ Next, list the microservices already in your org. Then take a look at the files 
 hzn exchange microservice list | jq .   # Your microservice won't appear yet
 make build                              # This will build your pi3streamer Docker container image
 hzn dev microservice verify             # This will verify the definition in horizon/userinput.json and horizon/microservice.definition.json before publishing it to the exchange
+docker login                            # Login to Docker Hub with your name/pwd prior to publishing your container image
 hzn dev microservice publish -k $PRIVATE_KEY_FILE       # This will publish the ms definition to the exchange, and push your Docker image to your registry
 hzn exchange microservice list | jq .   # Your microservice should now be listed in the exchange
 ```
@@ -192,7 +213,7 @@ cd ~/examples/edge/wiotp/pi3streamer2wiotp
 cp horizon/envvars.sh.sample  horizon/envvars.sh
 vim horizon/envvars.sh.sample  # or use your favorite text editor
 ```
-Change the `HZN_ORG_ID` to your own WIoTP organization; provide your Docker Hub ID, and a name for your domain. (You can use a fictitious one if you like.)  Also provide your Device-specific "WIOTP_*" credentials that you created in Watson IoT Platform.
+Change the `HZN_ORG_ID` to your own WIoTP organization; If you haven't already, provide your Docker Hub ID, and a name for your domain. (You can use a fictitious one if you like.)  Also provide your Device-specific "WIOTP_" credentials that you created in Watson IoT Platform, if you haven't already done so.
 Save the file and export the environment var's with the `source` command.
 ```bash
 source horizon/envvars.sh
