@@ -76,7 +76,7 @@ export WIOTP_API_KEY='a-myapikeyrandomchars'
 export WIOTP_API_TOKEN='myapikeytoken'
 
 # This variable must be set appropriately for your specific Edge Node
-export ARCH=amd64   # or arm for Raspberry Pi, or arm64 for TX2
+export ARCH=arm   # arm for Raspberry Pi
 
 # There is no need for you to edit these variables
 export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"
