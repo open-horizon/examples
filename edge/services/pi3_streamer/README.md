@@ -120,6 +120,8 @@ mkdir ~/keys && cd ~/keys
 hzn key create <x509 org> <x509 cn>   # example: hzn key create ibm thomas@ibm.com
 hzn key import --public-key-file=<key file name>
 hzn key list   # You should see your key listed in the output
+export PRIVATE_KEY_FILE=~/hzn/*-private.key
+export PUBLIC_KEY_FILE=~/hzn/*-public.pem
 ```
 
 Your key should show in the output list, similar to the following:  
