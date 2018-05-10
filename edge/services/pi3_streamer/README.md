@@ -17,16 +17,11 @@ Reboot
 
 &nbsp; &nbsp; &nbsp; <img src="https://user-images.githubusercontent.com/16260619/37161848-a253e6be-22a8-11e8-9e1b-73509ae8c4dd.png" width="480" />
 
-Now prep your Pi 3 to accept the latest version of horizon.
-
-```bash
-apt-get update && apt-get purge -y horizon* && rm -rf /var/horizon
-```
 You're done with pre-setup steps.
 
 ## Automatic Deployment on IBM Edge with Watson IoT Platform
-Follow the steps in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md). 
-The Quick Start Guide will instruct you to define a device name and a device type. As an example, your information may look something like:  
+Follow the Watson IoT Platform Setup step in this [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#setup-your-organization-in-the-watson-iot-platform). 
+You will define a device name and a device type. As an example, your information may look something like:  
 
     Device Type: arm32-PI3STRMR    (a general name for all devices of this type)  
     Device Name: PI3-Home          (a specific name for this device)  
@@ -36,7 +31,79 @@ The Quick Start Guide will instruct you to define a device name and a device typ
 
 These values aren't visible outside of your IBM Cloud organization. The token is not retrievable after definition.  API keys may be used for all devices you define, or per device at your discretion.
 
-Continue the Quick Start Guide, up until "Define an Additional Microservice and Workload in the Horizon Exchange". At that point: stop, return here and continue with this guide.  
+Continue the Quick Start Guide, up until "Prepare Your Edge Node". At that point: stop, return here and continue with this guide, specific to the Raspberry Pi 3.  
+
+## Prepare Your Edge Node
+* If you are not already running as root, do a `sudo -s` to enter root shell.
+* Ensure any previous versions of horizon are removed:
+```bash
+apt-get update && apt-get purge -y horizon* && rm -rf /var/horizon
+```
+
+* Install some utilities:
+```
+apt update && apt install -y curl wget gettext
+```
+* Ensure that you have the current docker version installed (since many distros are set up to run much older docker versions):
+```
+curl -fsSL get.docker.com | sh
+```
+* Configure the *apt* manager by adding the bluehorizon repo to /etc/apt/sources.list.d:
+```
+wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
+aptrepo=testing    # or use this for the latest, development version
+cat <<EOF > /etc/apt/sources.list.d/bluehorizon.list
+deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
+deb-src [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
+EOF
+```
+* Install the horizon packages and MQTT client:
+```
+apt update && apt install -y horizon-wiotp mosquitto-clients
+```
+* Make sure the horizon package version shown at the bottom of the above step is "2.17.2" or later
+
+For the rest of the guide you will not require root privileges, so you may optionally exit now from the root privileged shell you created above.
+
+* The remaining commands shown in this document expect you to have the following environment variables set in your Linux shell environment.  Put these into a file, replacing the values that have "my" in them with your own values you recorded in the first section of the document.  Then source this file in your shell.
+
+```
+# These values contain the credentials you created earlier in the Watson IoT Platform web GUI
+export HZN_ORG_ID=myorg
+export WIOTP_DOMAIN=internetofthings.ibmcloud.com
+export WIOTP_GW_TYPE=mygwtype
+export WIOTP_GW_ID=mygwinstance
+export WIOTP_GW_TOKEN='mygwinstancetoken'
+export WIOTP_API_KEY='a-myapikeyrandomchars'
+export WIOTP_API_TOKEN='myapikeytoken'
+
+# This variable must be set appropriately for your specific Edge Node
+export ARCH=amd64   # or arm for Raspberry Pi, or arm64 for TX2
+
+# There is no need for you to edit these variables
+export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"
+export WIOTP_CLIENT_ID_APP="a:$HZN_ORG_ID:$WIOTP_GW_TYPE$WIOTP_GW_ID"
+export WIOTP_CLIENT_ID_GW="g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
+export HZN_EXCHANGE_USER_AUTH="$WIOTP_API_KEY:$WIOTP_API_TOKEN"
+export HZN_EXCHANGE_API_AUTH="$WIOTP_API_KEY:$WIOTP_API_TOKEN"
+```
+## Verify Your Gateway Credentials and Access
+
+List your gateway instance from the WIoTP cloud:
+```
+hzn wiotp device list $WIOTP_GW_TYPE $WIOTP_GW_ID | jq .
+``` 
+
+Use the mosquitto-clients package to verify your credentials by opening two Linux shells and subscribing to the IBM Watson IoT Platform MQTT message broker in one shell, and publishing a message to that broker in the other (which you should see in the subscribed shell).
+* In the first shell, subscribe:
+```
+mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "${WIOTP_CLIENT_ID_APP:0:38}" -u "$WIOTP_API_KEY" -P "$WIOTP_API_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json
+```
+* In the other shell, publish
+```
+mosquitto_pub -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_ID_GW" -u "use-token-auth" -P "$WIOTP_GW_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json -m '{"message": "Hello, world."}'
+```
+* You should see the "Hello, world." message appear in the output of the first shell
 
 ### Start Using IBM Edge to Define and Deploy your Pi 3 LAN Streamer
 At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Some additional definition is needed to deploy the Pi3 Streamer microservice and workload to your edge node.  
