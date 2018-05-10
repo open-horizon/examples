@@ -116,7 +116,7 @@ We'll generate a signing key for this Pi to use in defining microservices that w
 
  * Generate a signing key for horizon to use in publishing microservices and workloads. This can take a few minutes on the Pi. Once generated, import your key into horizon with `hzn key import`. Verify with `hzn key list`.
 ```bash
-mkdir ~/keys && cd ~/keys
+mkdir -p ~/hzn/keys && cd ~/hzn/keys
 hzn key create <x509 org> <x509 cn>   # example: hzn key create ibm thomas@ibm.com
 export PRIVATE_KEY_FILE=~/hzn/*-private.key
 export PUBLIC_KEY_FILE=~/hzn/*-public.pem
