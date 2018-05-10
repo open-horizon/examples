@@ -1,5 +1,5 @@
 {
-    "microservices": [
+    "services": [
         {
             "org": "IBM",
             "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
