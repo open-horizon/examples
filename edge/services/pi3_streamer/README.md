@@ -5,7 +5,8 @@ Originally packaged in docker as [cogwerx-mjpg-streamer-pi3](https://github.com/
 ## Setup Steps
 
 ### Manual Pre-Setup Steps: 
-[Download](https://bluehorizon.network/documentation/disclaimer) a Raspbian image for your Pi 3 (we tested this using [Horizon](https://bluehorizon.network/)'s Raspbian image). Unzip and flash the image to your micro SD Card, (setup WiFi) and boot. Full setup instructions for that can be found [here](https://bluehorizon.network/documentation/adding-your-device).
+[Download](https://www.raspberrypi.org/downloads/raspbian/) a Raspbian image for your Pi 3 (we tested this using Raspbian image). Unzip and flash the image to your micro SD Card, (setup WiFi) and boot.  
+
 Run raspi-config as root and set GPU memory and enable the Pi Cam:
 
     raspi-config
@@ -16,6 +17,24 @@ Run raspi-config as root and set GPU memory and enable the Pi Cam:
 Reboot  
 
 &nbsp; &nbsp; &nbsp; <img src="https://user-images.githubusercontent.com/16260619/37161848-a253e6be-22a8-11e8-9e1b-73509ae8c4dd.png" width="480" />
+
+### Setup WiFi on your Pi
+In a terminal window on the Pi, edit the wpa_supplicant config file and provide your WiFi credentials. More info can be found [here](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).   
+
+    sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+
+    # Add these lines to the bottom of the file, with your WiFI creds:
+    network={
+      ssid="testing"
+      psk="testingPassword"
+    }
+
+
+### Enable ssh on your Pi (to connect remotely)  
+More information on SSH can be found [here](https://www.raspberrypi.org/documentation/remote-access/ssh/).  
+
+    sudo systemctl enable ssh
+    sudo systemctl start ssh
 
 You're done with pre-setup steps.
 
@@ -35,10 +54,6 @@ Continue the Quick Start Guide, up until "Prepare Your Edge Node". At that point
 
 ## Prepare Your Edge Node
 * If you are not already running as root, do a `sudo -s` to enter root shell.
-* Ensure any previous versions of horizon are removed:
-```bash
-apt-get update && apt-get purge -y horizon* && rm -rf /var/horizon
-```
 
 * Install some utilities:
 ```
@@ -106,10 +121,6 @@ mosquitto_pub -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_I
 ### Start Using IBM Edge to Define and Deploy your Pi 3 LAN Streamer
 At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Some additional definition is needed to deploy the Pi3 Streamer microservice and workload to your edge node.  
 
-First, clone the openhorizon examples project which contains files that you will need during the following steps:
-
-    cd ~
-    git clone https://github.com/open-horizon/examples.git
 
 ### Signing Keys
 We'll generate a signing key for this Pi to use in defining microservices that will be authorized to run on your devices.  This key will be used to sign the deployment definitions, and to verify the microservices when they begin to run on the Pi. This can take a few minutes to generate on a Pi 3.
@@ -211,7 +222,7 @@ First, set environment variables for your workload. You'll use the Device Type, 
 ```bash
 cd ~/examples/edge/wiotp/pi3streamer2wiotp
 cp horizon/envvars.sh.sample  horizon/envvars.sh
-vim horizon/envvars.sh.sample  # or use your favorite text editor
+vim horizon/envvars.sh  # or use your favorite text editor
 ```
 Change the `HZN_ORG_ID` to your own WIoTP organization; If you haven't already, provide your Docker Hub ID, and a name for your domain. (You can use a fictitious one if you like.)  Also provide your Device-specific "WIOTP_" credentials that you created in Watson IoT Platform, if you haven't already done so.
 Save the file and export the environment var's with the `source` command.
