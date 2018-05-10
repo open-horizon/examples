@@ -51,7 +51,7 @@ curl -fsSL get.docker.com | sh
 * Configure the *apt* manager by adding the bluehorizon repo to /etc/apt/sources.list.d:
 ```
 wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
-aptrepo=testing    # or use this for the latest, development version
+aptrepo=testing    # use this for the latest, development version
 cat <<EOF > /etc/apt/sources.list.d/bluehorizon.list
 deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
 deb-src [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
@@ -62,8 +62,6 @@ EOF
 apt update && apt install -y horizon-wiotp mosquitto-clients
 ```
 * Make sure the horizon package version shown at the bottom of the above step is "2.17.2" or later
-
-For the rest of the guide you will not require root privileges, so you may optionally exit now from the root privileged shell you created above.
 
 * The remaining commands shown in this document expect you to have the following environment variables set in your Linux shell environment.  Put these into a file, replacing the values that have "my" in them with your own values you recorded in the first section of the document.  Then source this file in your shell.
 
