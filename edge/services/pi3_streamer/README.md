@@ -170,7 +170,7 @@ First, set environment variables for your microservice.
 ```bash
 cd ~/examples/edge/services/pi3_streamer
 cp horizon/envvars.sh.sample  horizon/envvars.sh
-vim horizon/envvars.sh.sample  # or use your favorite text editor
+vim horizon/envvars.sh  # or use your favorite text editor
 ```
 
 This is a view of that file:
