@@ -27,7 +27,7 @@
   - [Verify Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)
  
 ### PWS Microservice and Workload Setup / Registration
-At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Now we'll also define the Pi3-Streamer microservice and workload in your WIoTP org, such that registration of your device will cause your Edge to pull those containers, run them, and publish status to your Watson IoT Platform org.
+At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Now we'll also define the PWS microservice and workload in your WIoTP org, such that registration of your device will cause your Edge to pull those containers, run them, and publish status to your Watson IoT Platform org.
 
 * Generate a signing key for horizon to use in publishing microservices and workloads. This can take a few minutes on the Pi. Once generated, import your key into horizon with `hzn key import`. Verify with `hzn key list`.
 ```bash
@@ -131,7 +131,7 @@ After a short while, usually within just a minute or two (but rarely it could ta
 hzn agreement list | jq . 
 ```
 
-* Eventually the 6 docker containers should be running: 4 for the core-IoT service and 2 for the Pi3streamer example.  Verify this with:
+* Eventually the 6 docker containers should be running: 4 for the core-IoT service and 2 for the PWS example.  Verify this with:
 ```
 watch -n 1 docker ps
 ```
