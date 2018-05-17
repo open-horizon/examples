@@ -211,6 +211,13 @@ The default `userinput.json` configures cpu2wiotp to get data from the cpu micro
     ]
 ```
 
+Likewise, `workload.definition.json` has 2 dependencies listed in the `apiSpec` array. Remove both of them:
+```
+"apiSpec": [],
+```
+
+They will be added back automatically later on in this guide.
+
 Verify that the project has no errors in it.
 ```
 cd ~/hzn/workload/cpu2wiotp
