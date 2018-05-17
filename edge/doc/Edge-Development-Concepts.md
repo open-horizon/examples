@@ -74,7 +74,7 @@ The example code provides a template Horizon Service definition files.  These fi
 
 It is recommended that you follow through the [Edge Developer Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md) to build, test, containerize, sign, publish and deploy this example code.
 
-!Connections](https://github.com/open-horizon/examples/blob/master/edge/doc/images/Connections.png)
+![Connections](https://github.com/open-horizon/examples/blob/master/edge/doc/images/Connections.png)
 
 Note that this example code can be run directly in a host shell on your edge machine (if you manually set the required environment variables).  However, appropriate (very small) Dockerfiles are also provided here for various hardware architectures.  These enable you to instead build and run docker containers (which will ultimately be required for the production Horizon Edge environment).  Tools are also provided that enable the Horizon Agent to orchestrate a local deployment of your containers (closely imitating the production environment).  If you require more information about Docker containerization, or Docker registries, there are many excellent resources available on the Internet to help you with that.
 
