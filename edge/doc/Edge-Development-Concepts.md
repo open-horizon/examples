@@ -29,12 +29,11 @@ Software design for edge machines must consider factors such as supporting multi
 
 This document will walk through the concepts underlying the Horizon Edge technologies and processes, as follows:
 
- * Creating, Testing, and Containerizing Your Code
- * Signing, Publishing, and Deploying With Horizon Edge
- * Registering Horizon Edge Machines
- * Continuous Deployment
- * How Horizon Works
- * Edge Software Design Principles
+ * [Creating, Testing, and Containerizing Your Code](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#creating-testing-and-containerizing-your-code)
+ * [Signing, Publishing, and Deploying With Horizon Edge](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#signing-publishing-and-deploying-with-horizon-edge)
+ * [Registering Horizon Edge Machines](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#registering-horizon-edge-machines)
+ * [How Horizon Works](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#how-horizon-works)
+ * [Edge Software Design Principles](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#edge-software-design-principles)
   
 ## Creating, Testing, and Containerizing Your Code
 
