@@ -84,7 +84,6 @@ A typical development workflow for Horizon Services is to begin by developing an
 
 As noted previously, all Docker images that will be deployed via Horizon must be cryptographically signed before they are uploaded to the Horizon Exchange (and their signatures must be verified before any Horizon Agent will run them).  Your software Deployment Pattern will tell Horizon which Services (and therefore which containers) should be run on which Edge machines, and it will reference the container hash, and the public key for your signature to enable subsequent verification.  By checking the hash and verifying the signatures of your docker images, the Horizon Agent on your Edge machines can verify every container it downloads and be confident that it has not been tampered with.  Similarly, the configuration data (i.e., environment variable values) embedded in your Deployment Pattern for your Services must be signed to also safeguard it from tampering.  The tools Horizon provides for signing are covered in the next section.
 
-[[/images/Typical_Workflow.png|Typical Workflow]]
 Figure 1: Development Workflow in Edge with Watson IoT
 
 ## Signing, Publishing, and Deploying With Horizon Edge
