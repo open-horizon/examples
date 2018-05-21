@@ -1,13 +1,12 @@
 {
-  "label": "PI3STREAMER for $ARCH2",
+  "org": "$HZN_ORG_ID",
+  "label": "$PI3STREAMER_NAME for $ARCH",
   "description": "Provides a stream endpoint on LAN from a RPi3 camera feed (RPi Cam)",
   "public": true,
-  "specRef": "https://internetofthings.ibmcloud.com/microservices/pi3streamer",
+  "specRef": "https://$MYDOMAIN/microservices/$PI3STREAMER_NAME",
   "version": "$PI3STREAMER_VERSION",
-  "arch": "$ARCH2",
+  "arch": "$ARCH",
   "sharable": "single",
-  "downloadUrl": "not used yet",
-  "matchHardware": {},
   "userInput": [
     {
       "name": "RESOLUTION",
@@ -18,7 +17,7 @@
     {
       "name": "FRAMERATE",
       "label": "RPi Cam framerate (in frames per second)",
-      "type": "integer",
+      "type": "int",
       "defaultValue": "20"
     },
     {
@@ -39,7 +38,7 @@
       "deployment": {
         "services": {
           "pi3streamer": {
-            "image": "${DOCKER_HUB_ID}/${ARCH2}_example_ms_pi3streamer:$PI3STREAMER_VERSION",
+            "image": "$DOCKER_HUB_ID/${ARCH}_$PI3STREAMER_NAME:$PI3STREAMER_VERSION",
             "privileged": true,
             "binds": [
               "/dev:/dev:ro"
@@ -54,7 +53,7 @@
         }
       },
       "deployment_signature": "",
-      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+      "torrent": ""
     }
   ]
 }

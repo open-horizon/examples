@@ -1,8 +1,8 @@
 {
-    "workloads": [
+    "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://internetofthings.ibmcloud.com/workloads/location2wiotp",
+            "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp-no-core-iot",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
                 "WIOTP_GW_TOKEN": "$WIOTP_GW_TOKEN"

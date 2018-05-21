@@ -105,6 +105,7 @@ export ARCH=amd64   # or arm for Raspberry Pi, or arm64 for TX2
 
 # There is no need for you to edit these variables
 export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"
+export HZN_DEVICE_TOKEN="$WIOTP_GW_TOKEN"
 export WIOTP_CLIENT_ID_APP="a:$HZN_ORG_ID:$WIOTP_GW_TYPE$WIOTP_GW_ID"
 export WIOTP_CLIENT_ID_GW="g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
 export HZN_EXCHANGE_USER_AUTH="$WIOTP_API_KEY:$WIOTP_API_TOKEN"

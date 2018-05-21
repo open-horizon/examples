@@ -2,52 +2,55 @@
 SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
-ARCH ?= $(SYSTEM_ARCH)
+export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-VERSION ?= 1.0.0
-DOCKER_NAME ?= example_wl_$(ARCH)_pi3streamer2wiotp
+export PI3STREAMER2WIOTP_NAME ?= pi3streamer2wiotp
+export PI3STREAMER2WIOTP_VERSION ?= 1.0.0
+DOCKER_NAME ?= $(ARCH)_$(PI3STREAMER2WIOTP_NAME)
 DOCKER_HUB_ID ?= openhorizon
+export MYDOMAIN ?= internetofthings.ibmcloud.com
+CORE_IOT_VERSION ?= 2.4.0
 
-default: build
+default: all
 
-all: build run
+all: build run check
 
 build:
-	docker build -t $(DOCKER_NAME):$(VERSION) -f ./Dockerfile.$(ARCH) .
-	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
-
-dev:
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -it -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name pi3streamer2wiotp --net=example --net-alias=pi3streamer2wiotp --volume `pwd`:/outside $(DOCKER_NAME):$(VERSION) /bin/sh
+	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(PI3STREAMER2WIOTP_VERSION) -f ./Dockerfile.$(ARCH) .
 
 run:
-	-docker rm -f $(DOCKER_NAME):$(VERSION)
-	docker run -d -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" --name pi3streamer2wiotp --net=example --net-alias=pi3streamer2wiotp $(DOCKER_NAME):$(VERSION)
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+	docker run -d --name $(DOCKER_NAME) -e PUBLISH_INTERVAL=5 -e MOCK=true -e PUBLISH=false --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(PI3STREAMER2WIOTP_VERSION)
 
 check:
+	#docker logs -f $(DOCKER_NAME)
 	curl -Is http://localhost:8080/static_simple.html | grep MJPG
 
+stop:
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+
+# Targets for using the hzn dev environment
 hznbuild: build
-	mkdir -p horizon_build/dependencies
-	set -x && export ARCH=$(ARCH) && cd ./horizon/dependencies && for filename in $$(find . -name "*.microservice.definition.json"); do envsubst < ./$$filename > ../../horizon_build/dependencies/$$filename; done && cd ../..
-	export ARCH=$(ARCH) && export VERSION=$(VERSION) && export DOCKER_HUB_ID=$(DOCKER_HUB_ID) && export WIOTP_DOMAIN=$(WIOTP_DOMAIN) && envsubst < ./horizon/workload.definition.json > ./horizon_build/workload.definition.json
-	export WIOTP_DOMAIN=$(WIOTP_DOMAIN) && envsubst < ./horizon/userinput.json > ./horizon_build/userinput.json
+	hzn dev dependency fetch -p ../../services/pi3streamer/horizon
+	hzn dev dependency fetch -s https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice --ver $(CORE_IOT_VERSION) -o IBM -a $ARCH -k /etc/horizon/trust/publicWIoTPEdgeComponentsKey.pem
 
 hznstart: hznbuild
-	hzn dev workload start -d ./horizon_build
+	hzn dev workload start
 
 hznstop:
-	hzn dev workload stop -d ./horizon_build
+	hzn dev workload stop
 
-# To publish you must have write access to the docker hub openhorizon user
-publish:
-	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+# Push the docker image to the registry. You must have write access to the docker hub openhorizon user
+publish: build
+	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(PI3STREAMER2WIOTP_VERSION)
+
+# Create/update the metadata in the exchange for this workload
+exchange-publish: build
+	hzn exchange workload publish -k $$PRIVATE_KEY_FILE -f horizon/workload.definition.json
 
 clean:
-	-hzn dev workload stop -d ./horizon_build 2> /dev/null || :
-	-rm -fr horizon_build 2> /dev/null || :
-	-docker rm -f $(DOCKER_NAME):$(VERSION) 2> /dev/null || :
-	-docker rmi pi3streamer2wiotp 2> /dev/null || :
+	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(PI3STREAMER2WIOTP_VERSION) 2> /dev/null || :
 
-.PHONY: default all build dev run check publish clean
+.PHONY: default all build run check stop publish exchange-publish clean

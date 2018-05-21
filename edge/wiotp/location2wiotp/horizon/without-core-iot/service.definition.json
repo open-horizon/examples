@@ -1,0 +1,36 @@
+{
+  "label": "Location Directly to WIoTP for $ARCH",
+  "description": "Gets the edge node GPS location from the gps service and sends it directly to WIoTP",
+  "public": true,
+  "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp-no-core-iot",
+  "version": "$VERSION",
+  "arch": "$ARCH",
+  "sharable": "multiple",
+  "requiredServices": [
+    {
+      "url": "https://github.com/open-horizon/examples/wiki/service-gps",
+      "org": "$HZN_ORG_ID",
+      "version": "[0.0.0,INFINITY)",
+      "arch": "$ARCH"
+    }
+  ],
+  "userInput": [
+    {
+        "name": "WIOTP_GW_TOKEN",
+        "label": "The token of the WIoTP gateway needed to send directly to WIoTP cloud MQTT",
+        "type": "string",
+        "defaultValue": "-"
+    }
+  ],
+  "deployment": {
+    "services": {
+      "location": {
+        "image": "registry.ng.bluemix.net/bmpotter/$ARCH/location2wiotp:$VERSION"
+      }
+    }
+  },
+  "deploymentSignature": "",
+  "imageStore": {
+    "storeType": "dockerRegistry"
+  }
+}
