@@ -410,7 +410,7 @@ hzn exchange pattern removeworkload $WIOTP_GW_TYPE $HZN_ORG_ID https://interneto
 
 Add this workload to your gateway type deployment pattern and verify it is there:
 ```
-hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE -K $PUBLIC_KEY_FILE
+hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE -f pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 ```
 
