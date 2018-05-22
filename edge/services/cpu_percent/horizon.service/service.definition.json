@@ -1,0 +1,23 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "$CPU_NAME for $ARCH",
+  "description": "Provides a REST API to query the CPU load",
+  "public": true,
+  "url": "https://$MYDOMAIN/services/$CPU_NAME",
+  "version": "$CPU_VERSION",
+  "arch": "$ARCH",
+  "sharable": "single",
+  "requiredServices": [],
+  "userInput": [],
+  "deployment": {
+    "services": {
+      "cpu": {
+        "image": "$DOCKER_HUB_ID/${ARCH}_$CPU_NAME:$CPU_VERSION"
+      }
+    }
+  },
+  "deploymentSignature": "",
+  "imageStore": {
+    "storeType": "dockerRegistry"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "label": "Edge $CPU2WIOTP_NAME Service Pattern for $ARCH",
+  "description": "Pattern for the service version of $CPU2WIOTP_NAME sending directly to WIoTP for $ARCH",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "https://$MYDOMAIN/services/$CPU2WIOTP_NAME-no-core-iot",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
+        {
+          "version": "$CPU2WIOTP_VERSION",
+          "priority": {},
+          "upgradePolicy": {},
+          "deployment_overrides": null,
+          "deployment_overrides_signature": ""
+        }
+      ],
+      "dataVerification": {
+        "metering": {}
+      },
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    }
+  ]
+}
