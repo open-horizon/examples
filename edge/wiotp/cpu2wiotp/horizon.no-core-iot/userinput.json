@@ -1,0 +1,23 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/services/$CPU_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/services/$CPU2WIOTP_NAME-no-core-iot",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "MOCK": false,
+                "PUBLISH": true,
+                "SAMPLE_INTERVAL": 2,
+                "SAMPLE_SIZE": 5,
+                "VERBOSE": "1",
+                "WIOTP_GW_TOKEN": "$WIOTP_GW_TOKEN"
+            }
+        }
+    ]
+}

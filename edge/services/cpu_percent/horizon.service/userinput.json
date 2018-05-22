@@ -1,0 +1,11 @@
+{
+    "global": [],
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/services/$CPU_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
+}
