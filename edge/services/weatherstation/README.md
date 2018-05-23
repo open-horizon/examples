@@ -30,14 +30,82 @@ You will define a device name and a device type. As an example, your information
     Device Token: jkdas9dusadkna   (some secure string, specific to this device)  
     API Key: 'generated-chars'  
     API Token: 'generated-chars'  
-  - [Prepare Your Edge Node](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#prepare-your-edge-node)  (install horizon packages and prereqs)  
-  - [Verify Gateway Credentials and Access](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)
- 
-### PWS Microservice and Workload Setup / Registration
-At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Now we'll also define the PWS microservice and workload in your WIoTP org, such that registration of your device will cause your Edge to pull those containers, run them, and publish status to your Watson IoT Platform org.
+
+These values aren't visible outside of your IBM Cloud organization. The token is not retrievable after definition. API keys may be used for all devices you define, or per device at your discretion.
+
+Continue the Quick Start Guide, up until "Prepare Your Edge Node". At that point: stop, return here and continue with this guide, specific to the PWS Microservice.
+
+## Prepare Your Edge Node
+* If you are not already running as root, do a `sudo -s` to enter root shell.
+
+* Install some utilities:
+```
+apt update && apt install -y curl git wget gettext
+```
+* Ensure that you have the current docker version installed (since many distros are set up to run much older docker versions):
+```
+curl -fsSL get.docker.com | sh
+```
+* Configure the *apt* manager by adding the bluehorizon repo to /etc/apt/sources.list.d:
+```
+wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
+aptrepo=testing    # use this for the latest, development version
+cat <<EOF > /etc/apt/sources.list.d/bluehorizon.list
+deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
+deb-src [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
+EOF
+```
+* Install the horizon packages and MQTT client:
+```
+apt update && apt install -y horizon-wiotp mosquitto-clients
+```
+* Make sure the horizon package version shown at the bottom of the above step is "2.17.2" or later
+
+* The remaining commands shown in this document expect you to have the following environment variables set in your Linux shell environment.  Put these into a file, replacing the values that have "my" in them with your own values you recorded in the first section of the document.  Then source this file in your shell.
+
+```
+# These values contain the credentials you created earlier in the Watson IoT Platform web GUI
+export HZN_ORG_ID=myorg
+export WIOTP_DOMAIN=internetofthings.ibmcloud.com
+export WIOTP_GW_TYPE=mygwtype
+export WIOTP_GW_ID=mygwinstance
+export WIOTP_GW_TOKEN='mygwinstancetoken'
+export WIOTP_API_KEY='a-myapikeyrandomchars'
+export WIOTP_API_TOKEN='myapikeytoken'
+
+# This variable must be set appropriately for your specific Edge Node
+export ARCH=amd64   # arm for Raspberry Pi, arm64 for x86 (64-bit), arm64 for aarch64 (NVIDIA TX2 or ODroid C2)
+
+# There is no need for you to edit these variables
+export HZN_DEVICE_ID="g@${WIOTP_GW_TYPE}@$WIOTP_GW_ID"
+export WIOTP_CLIENT_ID_APP="a:$HZN_ORG_ID:$WIOTP_GW_TYPE$WIOTP_GW_ID"
+export WIOTP_CLIENT_ID_GW="g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
+export HZN_EXCHANGE_USER_AUTH="$WIOTP_API_KEY:$WIOTP_API_TOKEN"
+export HZN_EXCHANGE_API_AUTH="$WIOTP_API_KEY:$WIOTP_API_TOKEN"
+```
+## Verify Your Gateway Credentials and Access
+
+List your gateway instance from the WIoTP cloud:
+```
+hzn wiotp device list $WIOTP_GW_TYPE $WIOTP_GW_ID | jq .
+``` 
+
+Use the mosquitto-clients package to verify your credentials by opening two Linux shells and subscribing to the IBM Watson IoT Platform MQTT message broker in one shell, and publishing a message to that broker in the other (which you should see in the subscribed shell).
+* In the first shell, subscribe:
+```
+mosquitto_sub -v -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "${WIOTP_CLIENT_ID_APP:0:38}" -u "$WIOTP_API_KEY" -P "$WIOTP_API_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json
+```
+* In the other shell, publish
+```
+mosquitto_pub -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_ID_GW" -u "use-token-auth" -P "$WIOTP_GW_TOKEN" --capath /etc/ssl/certs -t iot-2/type/$WIOTP_GW_TYPE/id/$WIOTP_GW_ID/evt/status/fmt/json -m '{"message": "Hello, world."}'
+```
+* You should see the "Hello, world." message appear in the output of the first shell
+
+### Start Using IBM Edge to Define and Deploy your PWS Microservice and Workload
+At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. Some additional definition is needed to deploy the PWS microservice and workload to your edge node.  
 
 ### Signing Keys
-We'll generate a signing key for this Pi to use in defining microservices that will be authorized to run on your devices.  This key will be used to sign the deployment definitions, and to verify the microservices when they begin to run. (This can take a few minutes to generate on a Pi 3.)
+We'll generate a signing key for this machine to use in defining microservices that will be authorized to run on your devices.  This key will be used to sign the deployment definitions, and to verify the microservices when they begin to run. (This can take a few minutes to generate on arm32.)
 
  * Generate a signing key for horizon to use in publishing microservices and workloads. Once generated, import your key into horizon with `hzn key import`. Verify with `hzn key list`.
 ```bash
@@ -63,7 +131,6 @@ root@horizon-0000000079b68342:~# hzn key list
   }
 ]
 ```
-
 
 * Clone the openhorizon examples project which contains files that you will need during the following steps:
 ```bash
@@ -106,7 +173,7 @@ source horizon/envvars.sh
 Next, list the microservices already in your org. Then take a look at the files in the directory.  You'll build your version of the microservice using `make`, you'll add the "pwsms" microservice to your WIoTP organization, and push the docker image up to your Docker Hub registry, and verify that the microservice was added to the exchange.  
 ```bash
 hzn exchange microservice list | jq .   # Your microservice won't appear yet
-make build                              # This will build your pi3streamer Docker container image
+make build                              # This will build your pwsms Docker container image
 hzn dev microservice verify             # This will verify the definition in horizon/userinput.json and horizon/microservice.definition.json before publishing it to the exchange
 docker login                            # Login to Docker Hub with your name/pwd prior to publishing your container image
 hzn dev microservice publish -k $PRIVATE_KEY_FILE       # This will publish the ms definition to the exchange, and push your Docker image to your registry
@@ -138,7 +205,7 @@ Save the file and export the environment var's with the `source` command.
 source horizon/envvars.sh
 ```
 
-Next, list the workloads already in your org. Then take a look at the files in the directory. You'll build your version of the workload using `make`, you'll add the "pi3streamer2wiotp" workload to your WIoTP organization, and push the docker image up to your Docker Hub registry, and verify that the workload was added to the exchange.  
+Next, list the workloads already in your org. Then take a look at the files in the directory. You'll build your version of the workload using `make`, you'll add the "pws2wiotp" workload to your WIoTP organization, and push the docker image up to your Docker Hub registry, and verify that the workload was added to the exchange.  
 
 ```bash
 hzn exchange workload list | jq .       # Your workload won't appear yet
@@ -154,14 +221,14 @@ hzn exchange workload list | jq .       # Your workload should now be listed in 
 Next, add your workload definition to the Pattern. The Pattern defines the list of multiple containers that a WIoTP device type will run, for one or more architectures (x86, ARM, etc).  By default, every Pattern first requires IBM's Core IoT workload. You'll add your own workload here.
 
 ```bash
-hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f pattern/insert-pi3streamer2wiotp.json $WIOTP_GW_TYPE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
+hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f pattern/insert-pws2wiotp.json $WIOTP_GW_TYPE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
 hzn exchange pattern list $WIOTP_GW_TYPE | jq .   # Your workload should be listed in the pattern
 ```
 
 Now you're set to register your Edge node as a PWS data producer.
 
 #### Set your PWS Device Settings
-To register your Pi3 to run the pattern with your PWS config values (Station ID, Station Key, etc), you'll need to provide those values in horizon's template file, located in `/etc/wiotp-edge/`.  Backup the existing file and use the template file to fill in your values. 
+To register your device to run the pattern with your PWS config values (Station ID, Station Key, etc), you'll need to provide those values in horizon's template file, located in `/etc/wiotp-edge/`.  Backup the existing file and use the template file to fill in your values. 
 
 ```bash
 mv /etc/wiotp-edge/hznEdgeCoreIoTInput.json.template /etc/wiotp-edge/hznEdgeCoreIoTInput.json.template.orig # Backup the original
