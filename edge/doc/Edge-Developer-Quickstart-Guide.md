@@ -2,7 +2,7 @@
 
 This Developer Quickstart Guide provides a simplified description of the process for developing, testing and deploying user-developed code in the Edge environment.
 The [Edge Service Development Guidelines](Edge-Service-Development-Guidelines.md) provides guidance on how to best structure your service so it runs well in the WIoTP/Horizon Edge fabric.
-The [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
+[Edge Developer Concepts](Edge-Development-Concepts.md) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
 
 Note there is a concise [Quick Start Guide](Edge-Quick-Start-Guide.md) available, that shows how to get an existing workload up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](Edge-Quick-Start-Guide.md) is also a prerequisite for this guide.**
 
@@ -22,13 +22,13 @@ In this guide you will learn how to create Horizon microservices and workloads, 
 
 As you progress through this guide, you will first build a simple microservice that extracts CPU usage information from the underlying edge node.
 Then you will build a workload that samples CPU usage information from the microservice, computes an average and then publishes the average to Waton IoT Platform.
-Along the way, you will be exposed to many concepts and capabilities that are documented in complete detail in the [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide).
+Along the way, you will be exposed to many concepts and capabilities that are documented in complete detail in [Edge Developer Concepts](Edge-Development-Concepts.md).
 
 ## Before you begin
 
 Currently this guide is intended to be used on an x86_64 machine. (This will be expanded in the future.)
 
-To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.17.5**) That guide will have you accomplish the following necessary steps:
+To familiarize yourself with WIoTP Edge, we suggest you go through the entire [Quick Start Guide](Edge-Quick-Start-Guide.md). But even if you do not go through that entire guide, **you must at least do the first sections of it, up to and including [Verify Your Gateway Credentials and Access](Edge-Quick-Start-Guide.md#verify-your-gateway-credentials-and-access)**, on the same edge node that you are using for this guide. (**For now, use the commented out line `aptrepo=testing` in the apt repo section, so you get the latest Horizon debian packages. They are currently required for this guide. You should have at least version 2.17.6**) That guide will have you accomplish the following necessary steps:
 
 - Create your WIoTP organization, gateway type and id, and API key.
 - Install docker, horizon, and some utilities.
@@ -384,7 +384,7 @@ docker login -u $DOCKER_HUB_ID
 Now publish the microservice:
 ```bash
 cd ~/hzn/ms/cpu
-hzn dev microservice publish -k $PRIVATE_KEY_FILE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
+hzn dev microservice publish -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE
 ```
 
 You can verify that the microservice was published:
@@ -395,7 +395,7 @@ hzn exchange microservice list
 Publish the workload:
 ```bash
 cd ~/hzn/workload/cpu2wiotp
-hzn dev workload publish -k $PRIVATE_KEY_FILE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
+hzn dev workload publish -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE
 ```
 
 You can verify that the workload was published:
@@ -410,7 +410,7 @@ hzn exchange pattern removeworkload $WIOTP_GW_TYPE $HZN_ORG_ID https://interneto
 
 Add this workload to your gateway type deployment pattern and verify it is there:
 ```
-hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -f pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE  # soon you can use -K $PUBLIC_KEY_FILE and then will not have to import it
+hzn exchange pattern insertworkload -k $PRIVATE_KEY_FILE -K $PUBLIC_KEY_FILE -f pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 ```
 
@@ -421,11 +421,6 @@ You, or others in your organization, can now use this workload on many edge node
 * **If you have run thru this document before** on this edge node, do this to clean up:
 ```
 hzn unregister -f
-```
-
-* Import your signing public key (soon you won't need to do this):
-```
-hzn key import -k $PUBLIC_KEY_FILE
 ```
 
 * Register the node and start the Watson IoT Platform core-IoT service and the CPU workload:
