@@ -1,13 +1,12 @@
 {
-  "label": "PWS microservice for $ARCH2",
-  "description": "Provides a REST API to query Personal Weather Station (PWS) results",
+  "org": "$HZN_ORG_ID",
+  "label": "$PWSMS_NAME for $ARCH",
+  "description": "",
   "public": true,
-  "specRef": "https://internetofthings.ibmcloud.com/microservices/pwsms",
+  "specRef": "https://$MYDOMAIN/microservices/$PWSMS_NAME",
   "version": "$PWSMS_VERSION",
-  "arch": "$ARCH2",
+  "arch": "$ARCH",
   "sharable": "single",
-  "downloadUrl": "not used yet",
-  "matchHardware": {},
   "userInput": [
     {
       "name": "PWS_ST_TYPE",
@@ -44,14 +43,16 @@
     {
       "deployment": {
         "services": {
-           "pwsms": {
-             "image": "$DOCKER_HUB_ID/${ARCH2}_example_ms_pwsms:$PWSMS_VERSION",
-             "privileged": true
-           }
+          "pwsms": {
+            "image": "$DOCKER_HUB_ID/${ARCH}_$PWSMS_NAME:$PWSMS_VERSION",
+            "privileged": true,
+            "binds": [],
+	    "specific_ports": []
+          }
         }
       },
       "deployment_signature": "",
-      "torrent": "{\"url\":\"\",\"signature\":\"\"}"
+      "torrent": ""
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+    "global": [],
+    "microservices": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/microservices/$PWSMS_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "PWS_ST_TYPE": "YourPWSStationType",
+                "PWS_MODEL": "YourPWSModel",
+                "PWS_WU_ID": "YourWUPWSID",
+                "PWS_WU_KEY": "YourWUStationKey",
+                "PWS_WU_RPDF": "True"
+            }
+        }
+    ]
+}
