@@ -2,7 +2,7 @@
 
 This Developer Quickstart Guide provides a simplified description of the process for developing, testing and deploying user-developed code in the Edge environment.
 The [Edge Service Development Guidelines](Edge-Service-Development-Guidelines.md) provides guidance on how to best structure your service so it runs well in the WIoTP/Horizon Edge fabric.
-The [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
+[Edge Developer Concepts](Edge-Development-Concepts.md) is a more detailed description of the Edge environment and the concerns that an Edge developer has to be aware of.
 
 Note there is a concise [Quick Start Guide](Edge-Quick-Start-Guide.md) available, that shows how to get an existing service up and running on your edge nodes very quickly without having to develop any code. **That [Quick Start Guide](Edge-Quick-Start-Guide.md) is also a prerequisite for this guide.**
 
@@ -22,7 +22,7 @@ In this guide you will learn how to create Horizon services, how to test them an
 
 As you progress through this guide, you will first build a simple service that extracts CPU usage information from the underlying edge node.
 Then you will build a another service that samples CPU usage information from the service, computes an average and then publishes the average to Waton IoT Platform.
-Along the way, you will be exposed to many concepts and capabilities that are documented in complete detail in the [Edge Developer Guide](https://github.com/open-horizon/examples/wiki/Edge-Developer-Guide).
+Along the way, you will be exposed to many concepts and capabilities that are documented in complete detail in [Edge Developer Concepts](Edge-Development-Concepts.md).
 
 ## Before you begin
 
