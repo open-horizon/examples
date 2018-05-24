@@ -70,59 +70,39 @@ if [[ "$HZN_DEVICE_ID" != "${HZN_DEVICE_ID#?*@?*@?}" ]]; then
     GW_TYPE=${id%%@*}
     GW_ID=${id#*@}
     if [[ "$VERBOSE" == 1 ]]; then echo "[VERBOSE] Parsed values: GW_TYPE='$GW_TYPE', GW_ID='$GW_ID'"; fi
-    SEND_TO_WIOTP=1
-fi
-
-if [[ -n "$SEND_TO_WIOTP" ]]; then
-    WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
-    if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
-      # Send to the local WIoTP Edge Connector, for store and forward
-      MQTT_HOST="$WIOTP_EDGE_MQTT_IP"
-      WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-/var/wiotp-edge/persist/dc/ca/ca.pem}"     # The cert to verify the WIoTP MQTT broker we are sending to
-      CLIENT_ID="a:${HZN_AGREEMENTID:0:36}"      # sending as an app - wiotp limit for app id is 36
-      TOPIC="iot-2/evt/status/fmt/json"
-      #MQTT_AUTH=""    # no auth needed for edge-connector if you are on the same machine as it
-    else
-      # Send directly to the WIoTP cloud mqtt broker. The gw token is required to authenticate this send.
-      if [[ -z "$WIOTP_GW_TOKEN" || "$WIOTP_GW_TOKEN" == "-" ]]; then
-        echo "Error: WIOTP_GW_TOKEN must be set to send messages directly to the WIoTP cloud MQTT broker. Exiting."
-        exit 2
-      fi
-      MQTT_HOST="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
-      WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # The cert to verify the WIoTP MQTT broker we are sending to
-      CLIENT_ID="$CLASS_ID:$HZN_ORGANIZATION:$GW_TYPE:$GW_ID"
-      TOPIC="iot-2/type/$GW_TYPE/id/$GW_ID/evt/status/fmt/json"
-      #MQTT_AUTH="-u use-token-auth -P $WIOTP_GW_TOKEN"  # <- cant do this because need to put "" around the token (special chars) when passing it to mosquitto_pub
-    fi
-    echo "Environment variables (or default values) for sending to WIoTP:" 
-    echo "  WIOTP_DOMAIN=$WIOTP_DOMAIN"
-    echo "  WIOTP_PEM_FILE=$WIOTP_PEM_FILE"
-    echo "  WIOTP_EDGE_MQTT_IP='$WIOTP_EDGE_MQTT_IP' (optional, with no default)"
-    echo "  MQTT_HOST=$MQTT_HOST"
-    echo "  CLIENT_ID=$CLIENT_ID"
-    echo "  TOPIC=$TOPIC"
-    echo "  WIOTP_GW_TOKEN=$WIOTP_GW_TOKEN"
 else
-  # Only do this if using Blue Horizon Verne - this will go away soon
-  # Get variables and functions for sending to bluehorizon
-  . globals.sh
-  . mqtt.sh
-  checkRequiredEnvVar "HZN_HASH"
-
-  # The registration message consists of the Blue Horizon contract ID and
-  # the Blue Horizon configuration nonce (both of which are expected in the
-  # process environment when launched (because they are set by Anax).
-  REGISTRATION_MESSAGE="$HZN_AGREEMENTID $HZN_HASH"
-
-  # Configure the MQTT topic paths for satellite and location data
-  export LOC_TOPIC="/applications/in/$HZN_AGREEMENTID/public/h/$HZN_DEVICE_ID/0/"
-  export SAT_TOPIC="/applications/in/$HZN_AGREEMENTID/public/h/$HZN_DEVICE_ID/6/"
-
-  echo "Blue Horizon values:"
-  echo "  REGISTRATION_MESSAGE=\"$REGISTRATION_MESSAGE\""
-  echo "  LOC_TOPIC=\"$LOC_TOPIC\""
-  echo "  SAT_TOPIC=\"$SAT_TOPIC\""
+    echo 'Error: HZN_DEVICE_ID must have the format: g@mygwtype@mygw'
+    exit 2
 fi
+
+WIOTP_DOMAIN="${WIOTP_DOMAIN:-internetofthings.ibmcloud.com}"     # set in the pattern deployment_overrides field if you need to override
+if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
+  # Send to the local WIoTP Edge Connector, for store and forward
+  MQTT_HOST="$WIOTP_EDGE_MQTT_IP"
+  WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-/var/wiotp-edge/persist/dc/ca/ca.pem}"     # The cert to verify the WIoTP MQTT broker we are sending to
+  CLIENT_ID="a:${HZN_AGREEMENTID:0:36}"      # sending as an app - wiotp limit for app id is 36
+  TOPIC="iot-2/evt/status/fmt/json"
+  #MQTT_AUTH=""    # no auth needed for edge-connector if you are on the same machine as it
+else
+  # Send directly to the WIoTP cloud mqtt broker. The gw token is required to authenticate this send.
+  if [[ -z "$WIOTP_GW_TOKEN" || "$WIOTP_GW_TOKEN" == "-" ]]; then
+    echo "Error: WIOTP_GW_TOKEN must be set to send messages directly to the WIoTP cloud MQTT broker. Exiting."
+    exit 2
+  fi
+  MQTT_HOST="$HZN_ORGANIZATION.messaging.$WIOTP_DOMAIN"
+  WIOTP_PEM_FILE="${WIOTP_PEM_FILE:-messaging.pem}"     # The cert to verify the WIoTP MQTT broker we are sending to
+  CLIENT_ID="$CLASS_ID:$HZN_ORGANIZATION:$GW_TYPE:$GW_ID"
+  TOPIC="iot-2/type/$GW_TYPE/id/$GW_ID/evt/status/fmt/json"
+  #MQTT_AUTH="-u use-token-auth -P $WIOTP_GW_TOKEN"  # <- cant do this because need to put "" around the token (special chars) when passing it to mosquitto_pub
+fi
+echo "Environment variables (or default values) for sending to WIoTP:" 
+echo "  WIOTP_DOMAIN=$WIOTP_DOMAIN"
+echo "  WIOTP_PEM_FILE=$WIOTP_PEM_FILE"
+echo "  WIOTP_EDGE_MQTT_IP='$WIOTP_EDGE_MQTT_IP' (optional, with no default)"
+echo "  MQTT_HOST=$MQTT_HOST"
+echo "  CLIENT_ID=$CLIENT_ID"
+echo "  TOPIC=$TOPIC"
+echo "  WIOTP_GW_TOKEN=$WIOTP_GW_TOKEN"
 
 # Invoke the curl cmd
 docurl() {
@@ -133,12 +113,7 @@ docurl() {
     return $rc
 }
 
-if [[ -z "$SEND_TO_WIOTP" ]]; then
-  # Attempt registration (with silent automatic retries). Register will output any relevant error msgs.
-  register
-else
-  echo "Sending data to Watson IoT Platform..."
-fi
+echo "Sending data to Watson IoT Platform..."
 
 # Configure for the Blue Horizon "gps" microservice
 GPS_MICROSERVICE_BASE_URI="http://$GPS_HOST_PORT/v1/gps"
@@ -194,24 +169,21 @@ do
         else
             # This is a different location or we have waited long enough to report
             location="{\"t\":$ts,\"r\":$loc}"
-            if [[ -z "$SEND_TO_WIOTP" ]]; then
-                # Send to bluehorizon
-                send $HZN_AGREEMENTID $HZN_HASH $LOC_TOPIC $location 1 -r
+
+            # Send to WIoTP
+            if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
+                # Sending via the local core-iot edge-connector, as an app
+                echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location"
+                mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location" >/dev/null
+                checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
             else
-                # Send to WIoTP
-                if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
-                    # Sending via the local core-iot edge-connector, as an app
-                    echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location"
-                    mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location" >/dev/null
-                    checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
-                else
-                    # Sending straight to the wiotp cloud broker, as the gw 
-                    echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location"
-                    mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location" >/dev/null
-                    checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
-                fi
-                #wiotp_pub $MQTT_HOST "$clientId" "$topic" $location 1 -r
+                # Sending straight to the wiotp cloud broker, as the gw 
+                echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location"
+                mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$location" >/dev/null
+                checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
             fi
+            #wiotp_pub $MQTT_HOST "$clientId" "$topic" $location 1 -r
+
             # NOTE: Sending is best effort only, if there is a problem send will display the error, but then we continue
             if [[ -z "$error" ]]; then
                 # The send was successful, so reset the repeat variables
@@ -247,23 +219,21 @@ do
                 num_repeat_sat_readings=$(($num_repeat_sat_readings+1))
             else
                 satellites="{\"t\":$ts,\"d\":$sats}"
-                if [[ -z "$SEND_TO_WIOTP" ]]; then
-                    send $HZN_AGREEMENTID $HZN_HASH $SAT_TOPIC $satellites 0
+
+                # Send to WIoTP
+                if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
+                    # Sending via the local core-iot edge-connector, as an app
+                    echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites"
+                    mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites" >/dev/null
+                    checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
                 else
-                    # Send to WIoTP
-                    if [[ -n "$WIOTP_EDGE_MQTT_IP" ]]; then
-                        # Sending via the local core-iot edge-connector, as an app
-                        echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites"
-                        mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites" >/dev/null
-                        checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
-                    else
-                        # Sending straight to the wiotp cloud broker, as the gw 
-                        echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites"
-                        mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites" >/dev/null
-                        checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
-                    fi
-                    #wiotp_pub $MQTT_HOST $HZN_DEVICE_ID "iot-2/evt/status/fmt/json" $satellites 0
+                    # Sending straight to the wiotp cloud broker, as the gw 
+                    echo mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites"
+                    mosquitto_pub -h "$MQTT_HOST" -p $MQTT_PORT -i "$CLIENT_ID" -u 'use-token-auth' -P "$WIOTP_GW_TOKEN" --cafile $WIOTP_PEM_FILE -q 1 -t "$TOPIC" -m "$satellites" >/dev/null
+                    checkrc $? "mosquitto_pub $MQTT_HOST" "continue"
                 fi
+                #wiotp_pub $MQTT_HOST $HZN_DEVICE_ID "iot-2/evt/status/fmt/json" $satellites 0
+
                 # NOTE: Sending is best effort only, if there is a problem send will display the error, but then we continue
                 if [[ -z "$error" ]]; then
                     # The send was successful, so reset the repeat variables

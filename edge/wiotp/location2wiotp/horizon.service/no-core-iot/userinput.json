@@ -1,0 +1,18 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp-no-core-iot",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "WIOTP_GW_TOKEN": "$WIOTP_GW_TOKEN"
+            }
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://github.com/open-horizon/examples/wiki/service-gps",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
+}

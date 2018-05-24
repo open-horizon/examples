@@ -28,7 +28,7 @@
       "workloadArch": "$ARCH",
       "workloadVersions": [
         {
-          "version": "$VERSION",
+          "version": "$LOCATION_VERSION",
           "deployment_overrides": null,
           "deployment_overrides_signature": "",
           "priority": {},

@@ -1,9 +1,10 @@
 {
+  "org": "$HZN_ORG_ID",
   "label": "Location to WIoTP for $ARCH",
   "description": "Gets the edge node GPS location from the gps microservice and sends it to WIoTP",
   "public": true,
   "workloadUrl": "https://internetofthings.ibmcloud.com/workloads/location2wiotp",
-  "version": "$VERSION",
+  "version": "$LOCATION_VERSION",
   "arch": "$ARCH",
   "apiSpec": [
     {
@@ -26,7 +27,7 @@
       "deployment": {
         "services": {
           "location": {
-            "image": "openhorizon/${ARCH}_location2wiotp:$VERSION"
+            "image": "openhorizon/${ARCH}_location2wiotp:$LOCATION_VERSION"
           }
         }
       },

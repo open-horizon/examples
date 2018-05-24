@@ -1,7 +1,7 @@
 {
   "org": "$HZN_ORG_ID",
   "label": "Location2wiotp direct service pattern for $ARCH",
-  "description": "Horizon deployment pattern that runs the location2wiotp service to send the edge node GPS info",
+  "description": "Horizon deployment pattern that runs the location2wiotp service to send the edge node GPS info without core-iot",
   "public": true,
   "services": [
     {
@@ -10,7 +10,7 @@
       "serviceArch": "$ARCH",
       "serviceVersions": [
         {
-          "version": "$VERSION",
+          "version": "$LOCATION_VERSION",
           "deployment_overrides": null,
           "deployment_overrides_signature": "",
           "priority": {},

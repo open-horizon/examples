@@ -1,0 +1,10 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://github.com/open-horizon/examples/wiki/service-gps",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
+}

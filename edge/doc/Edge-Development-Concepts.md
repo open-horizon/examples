@@ -3,7 +3,7 @@
 This document provides a description of the Horizon Edge technology with more conceptual detail than the Quickstart guides.  Here you will learn about the reasoning behind the software development paradigm provided by the Horizon Edge.  You will see how Horizon very carefully safeguards anonymity and privacy until participants explicitly choose to share more (like their IP address, physical location, or other personally identifiable information).  You will see how the Horizon Edge works beneath the covers.  You will come to understand the major software components of the Horizon, their responsibilities, and how they interact to create Horizon Edge.  This document also details the interfaces provided by the major components that enable you to expose their internal state. It concludes with a discussion of software design considerations that are applicable in this environment. This document is recommended reading for all developers writing code for Horizon Edge machines.
 
 Please note that if you are in a hurry, a more concise step-by-step Horizon "Edge Developer Quickstart Guide" to the development process is available here:
-* [https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md)
+* [https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md](Edge-Developer-Quickstart-Guide.md)
 
 To discuss the Horizon Edge development process, or to pose questions to the team, visit us at:
 * [https://developer.ibm.com/answers/smart-spaces/17/internet-of-things.html](https://developer.ibm.com/answers/smart-spaces/17/internet-of-things.html)
@@ -33,11 +33,11 @@ Software design for edge machines must consider factors such as supporting multi
 
 This document will walk through the concepts underlying the Horizon Edge technologies and processes, as follows:
 
- * [Creating, Testing, and Containerizing Your Code](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#creating-testing-and-containerizing-your-code)
- * [Signing, Publishing, and Deploying With Horizon Edge](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#signing-publishing-and-deploying-with-horizon-edge)
- * [Registering Horizon Edge Machines](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#registering-horizon-edge-machines)
- * [How Horizon Works](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#how-horizon-works)
- * [Edge Software Design Principles](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Development-Concepts.md#edge-software-design-principles)
+ * [Creating, Testing, and Containerizing Your Code](Edge-Development-Concepts.md#creating-testing-and-containerizing-your-code)
+ * [Signing, Publishing, and Deploying With Horizon Edge](Edge-Development-Concepts.md#signing-publishing-and-deploying-with-horizon-edge)
+ * [Registering Horizon Edge Machines](Edge-Development-Concepts.md#registering-horizon-edge-machines)
+ * [How Horizon Works](Edge-Development-Concepts.md#how-horizon-works)
+ * [Edge Software Design Principles](Edge-Development-Concepts.md#edge-software-design-principles)
   
 ## Creating, Testing, and Containerizing Your Code
 
@@ -47,7 +47,7 @@ Docker containers were selected for development because they are highly flexible
 
 ### An Example Program
 
-An example program consisting of two containerized services is provided.  You may find it helpful to copy this example and modify it to create your first Horizon Edge deployment.  Let's take at this example code, see how it is built into a container, and learn how it will receive its initial configuration and credentials. The Horizon [Edge Developer Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md) will guide you step-by-step through the deployment of this example code on Horizon Edge with the IBM Watson IoT Platform.
+An example program consisting of two containerized services is provided.  You may find it helpful to copy this example and modify it to create your first Horizon Edge deployment.  Let's take at this example code, see how it is built into a container, and learn how it will receive its initial configuration and credentials. The Horizon [Edge Developer Quickstart Guide](Edge-Developer-Quickstart-Guide.md) will guide you step-by-step through the deployment of this example code on Horizon Edge with the IBM Watson IoT Platform.
 
 ![Steps](https://github.com/open-horizon/examples/blob/master/edge/doc/images/Steps.png)
 
@@ -74,13 +74,16 @@ Communicating from a Horizon Service container to the outside Internet can done 
 
 The example code provides a template Horizon Service definition files.  These files uniquely identify the Service (through the combination of its "specRef", "arch"itecture, and "version") and identify its constituent containers.  The definition file also contains information about how the Service containers are to be deployed.  Most of the options available in the underlying Docker commands are available here.  Please consult the [deployment configuration reference](https://github.com/open-horizon/anax/blob/master/doc/deployment_string.md) for full details.
 
-It is recommended that you follow through the [Edge Developer Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md) to build, test, containerize, sign, publish and deploy this example code.
+It is recommended that you follow through the [Edge Developer Quickstart Guide](Edge-Developer-Quickstart-Guide.md) to build, test, containerize, sign, publish and deploy this example code.
 
 ![Connections](https://github.com/open-horizon/examples/blob/master/edge/doc/images/Connections.png)
 
 Note that this example code can be run directly in a host shell on your edge machine (if you manually set the required environment variables).  However, appropriate (very small) Dockerfiles are also provided here for various hardware architectures.  These enable you to instead build and run docker containers (which will ultimately be required for the production Horizon Edge environment).  Tools are also provided that enable the Horizon Agent to orchestrate a local deployment of your containers (closely imitating the production environment).  If you require more information about Docker containerization, or Docker registries, there are many excellent resources available on the Internet to help you with that.
 
-A typical development workflow for Horizon Services is to begin by developing and validating your code locally in a shell on your development host, without containers.  Then when ready, packaging your code into containers and manually deploying and testing those containers locally on your development host.  Then you can push them to the public Docker registry, or a secure private registry like the IBM Bluemix Container Registry. At that point you will want to re-validating everything using the "hzn dev" tool to perform a local deployment on your development host (sandboxing and passing environment variables like the production system will). Then finally you can test on a reduced set of edge nodes (anywhere on earth) deployed through the Horizon Edge production system.  Once you are confident in all of that testing, your containers can be deployed to your full set of edge nodes.  This typical development workflow is illustrated in the diagram below:
+A typical development workflow for Horizon Services is to begin by developing and validating your code locally in a shell on your development host, without containers.  Then when ready, packaging your code into containers and manually deploying and testing those containers locally on your development host.  Then you can push them to the public Docker registry, or a secure private registry like the IBM Bluemix Container Registry.  Details on how to use a private Docker registry are here:
+    [https://github.com/open-horizon/examples/blob/master/edge/doc/Container-Registries.md](Container-Registries.md)
+
+At that point you will want to re-validating everything using the "hzn dev" tool to perform a local deployment on your development host (sandboxing and passing environment variables like the production system will). Then finally you can test on a reduced set of edge nodes (anywhere on earth) deployed through the Horizon Edge production system.  Once you are confident in all of that testing, your containers can be deployed to your full set of edge nodes.  This typical development workflow is illustrated in the diagram below:
 
 ![Work Flow](https://github.com/open-horizon/examples/blob/master/edge/doc/images/WorkFlow.png)
 
@@ -92,13 +95,13 @@ Now that you understand how to write, build and containerize Horizon Service cod
 
 First a little background on the "hzn" tool.  When you install the "horizon" package on your edge node (e.g., following the process in the Quickstart guides) this will install hzn too. Hzn is primarily a wrapper for the REST APIs provided by most of the Horizon components.  Instead of finding the right API, determining its URL, and running a "curl" command to access it, you can more easily use the hzn command.  The hzn command has subcommands for interacting with the Horizon Exchange or the local Horizon Agent, etc.  Hzn also offers detailed online help information for all of its commands and arguments.  Try "hzn --help" for a start, but also remember that you can pass "--help" to and full or partial hzn command.  For example, "hzn exchange --help" will give you help about all of the Horizon Exchange commands offered.  With the hzn command you can interrogate Horizon about the state of most of its components.  You can also use it to interact with these components to create, update or delete objects in the domains of these components.
 
-Let's look specifically at the "hzn dev" subcommand.  The hzn dev subcommand is designed specifically to help developers create and test code for Horizon Edge.  If you follow through the [Edge Developer Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md) you will see this tool in action.  It helps you to create the necessary meta-data files describing your services to Horizon, and helps you verify them.  The "hzn dev service start" and "hzn dev service stop" commands let you use the local Horizon Agent to start and stop your Horizon Service implementations (complete with their dependencies) in an environment simulating production.  The appropriate environment variables will be set, the appropriate Docker virtual private network will be created, and your service container names will be assigned on that network.
+Let's look specifically at the "hzn dev" subcommand.  The hzn dev subcommand is designed specifically to help developers create and test code for Horizon Edge.  If you follow through the [Edge Developer Quickstart Guide](Edge-Developer-Quickstart-Guide.md) you will see this tool in action.  It helps you to create the necessary meta-data files describing your services to Horizon, and helps you verify them.  The "hzn dev service start" and "hzn dev service stop" commands let you use the local Horizon Agent to start and stop your Horizon Service implementations (complete with their dependencies) in an environment simulating production.  The appropriate environment variables will be set, the appropriate Docker virtual private network will be created, and your service container names will be assigned on that network.
 
-The "hzn key create" will help you to create an asymmetric key pair to enable cryptographic signing of your Horizon Service code.  The "hzn util sign" command can then be used to actually sign it when you are ready to deploy.  Similarly, "hzn util verify" can be used to verify that signature.  To actually publish your Service to the Horizon Exchange you will use "hzn exchange service publish".  Then you can verify your Service in the Exchange with "hzn exchange service verify".  All of these commands, and more, are used in the [Edge Developer Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md).
+The "hzn key create" will help you to create an asymmetric key pair to enable cryptographic signing of your Horizon Service code.  The "hzn util sign" command can then be used to actually sign it when you are ready to deploy.  Similarly, "hzn util verify" can be used to verify that signature.  To actually publish your Service to the Horizon Exchange you will use "hzn exchange service publish".  Then you can verify your Service in the Exchange with "hzn exchange service verify".  All of these commands, and more, are used in the [Edge Developer Quickstart Guide](Edge-Developer-Quickstart-Guide.md).
 
 The last remaining task on the development side is to define a deployment pattern (or patterns) for sets of your Horizon Edge nodes.  Your Edge nodes will be configured with an IBM Watsopn IoT Platform device or gateway Type (as will be discussed in the later section on node registration).  Watson IoT Platform device/gateway Types correspond exactly to Horizon Edge Deployment Patterns,
 
-Creating a Deployment Pattern consists of identifying which Horizon Services should run together on devices of this Type, with what sort of access, and which environment variables should be provided to configure them.  This is done by creating a JSON metadata file to detail your Deployment Pattern, and then using "hzn pattern" commands.  Again, this process is shown in the [Edge Developer Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md).
+Creating a Deployment Pattern consists of identifying which Horizon Services should run together on devices of this Type, with what sort of access, and which environment variables should be provided to configure them.  This is done by creating a JSON metadata file to detail your Deployment Pattern, and then using "hzn pattern" commands.  Again, this process is shown in the [Edge Developer Quickstart Guide](Edge-Developer-Quickstart-Guide.md).
 
 Although the Watson IoT Platform instance of Horizon Edge currently does not directly expose this capability, Horizon was also designed to be multi-tenant, enabling multiple sets of software to be run in independent sandboxes on the same Edge host.  This could, for example, enable a manufacturer of appliances to have their own core software running in one sandbox, with high privilege and with full access to the hardware and operating system utilities, while also enabling them to run one or more partner applications.  Those partner applications could have individually scoped access, enabling each to use only those services and resources specified.  If you wish to do this in the context of the Watson IoT Platform you will need to discuss this with your account representative.
 
@@ -106,7 +109,7 @@ Although the Watson IoT Platform instance of Horizon Edge currently does not dir
 
 Now that you understand the developer side of things -- how to create your code for Horizon Edge and include it in your Deployment Pattern -- let's look at how Horizon Edge machines are configured to run your Deployment Pattern.
 
-To begin you will need to install the Horizon software packages on the Edge node (e.g., by following the ["Adding Devices" instructions](https://github.com/open-horizon/examples/blob/master/edge/doc/Adding-Devices.md), or by working your way through the [Edge Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md).  Horizon packages are available for a variety of x86, ARM, and Power architectures as detailed on the Adding Devices page.
+To begin you will need to install the Horizon software packages on the Edge node (e.g., by following the ["Adding Devices" instructions](Adding-Devices.md), or by working your way through the [Edge Quickstart Guide](Edge-Quick-Start-Guide.md).  Horizon packages are available for a variety of x86, ARM, and Power architectures as detailed on the Adding Devices page.
 
 Installing Horizon will start a local Horizon Agent on your Edge node.  It will also install the "hzn" CLI described in the previous section.  Before a new node can join the Horizon Edge, it must be registered.  The [Edge Quickstart Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md) will lead you through that process, setting up the local Horizon Agent on your node and registering your node in the Horizon Exchange.  You will need to provide your Watson IoT Platform Organization name, and the device or gateway Type of this node (which also defines the software Deployment Pattern for the node, as discussed in the previous section).  You must also supply the unique node identifier, and authentication token for the node when you register.  Normally all of this is done with the "wiotp\_agent\_setup" command.
 
@@ -218,12 +221,15 @@ Note also that the Hard-Coded set of environment variable names and the Adjustab
 
 If you haven't already done so, it is recommended that you next run through the [Edge Quickstart Developer Guide]([https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Developer-Quickstart-Guide.md]).  It will guide you through the process of defining Watson IoT Platform credentials, then building some example code, then deploying that code to your Horizon Edge machine by means of a Deployment Pattern.
 
+Some additional edge software development guidelines are here: 
+* [https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Service-Development-Guidelines.md](Edge-Service-Development-Guidelines.md)
+
 For further reading, explore the open source Horizon project:
 * [https://github.com/open-horizon](https://github.com/open-horizon)
 
-You may also find our [Frequently Asked Questions](https://github.com/open-horizon/examples/blob/master/edge/doc/Frequently-Asked-Questions.md) page to be helpful.
+You may also find our [Frequently Asked Questions](Frequently-Asked-Questions.md) page to be helpful.
 
-If things go wrong while you are trying to use Horizon Edge, please try our [Troubleshooting Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Troubleshooting.md).
+If things go wrong while you are trying to use Horizon Edge, please try our [Troubleshooting Guide](Troubleshooting.md).
 
 To discuss the Horizon Edge development process, or to pose questions to the team, visit us at:
 * [https://developer.ibm.com/answers/smart-spaces/17/internet-of-things.html](https://developer.ibm.com/answers/smart-spaces/17/internet-of-things.html)
