@@ -2,7 +2,7 @@
 # Makefile for location container
 #
 
-export VERSION ?= 2.0.7
+export LOCATION_VERSION ?= 2.0.7
 IMAGE ?= location2wiotp
 
 # The docker network used for testing (must match the gps container network)
@@ -17,36 +17,36 @@ export ARCH ?= $(SYSTEM_ARCH)
 # Construct our Docker registry path from the architecture
 #REGISTRY ?= openhorizon
 #REG_PATH := $(REGISTRY)/$(ARCH)
-#IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
+#IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(LOCATION_VERSION)
 REGISTRY ?= registry.ng.bluemix.net
 REG_PATH := $(REGISTRY)/bmpotter/$(ARCH)
-IMAGE_PATH = $(REG_PATH)/$(IMAGE):$(VERSION)
+IMAGE_PATH = $(REG_PATH)/$(IMAGE):$(LOCATION_VERSION)
 
 # Make will search these two relative paths for input and target files
 VPATH=bin
 
 # Running make with no target will build the production image
 .PHONY: default
-default: $(IMAGE)-$(VERSION)
+default: $(IMAGE)-$(LOCATION_VERSION)
 
 # Omitting the image architecture will default to the local architecture
-.PHONY: $(IMAGE)-$(VERSION)
-$(IMAGE)-$(VERSION): .$(IMAGE)-$(VERSION)-$(ARCH)
+.PHONY: $(IMAGE)-$(LOCATION_VERSION)
+$(IMAGE)-$(LOCATION_VERSION): .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 
 # This is the production image target
-.$(IMAGE)-$(VERSION)-$(ARCH): Dockerfile.$(ARCH) *.sh *.pem
+.$(IMAGE)-$(LOCATION_VERSION)-$(ARCH): Dockerfile.$(ARCH) *.sh *.pem
 	docker build -t $(IMAGE_PATH) -f Dockerfile.$(ARCH) .
 	mkdir -p bin
-	touch bin/.$(IMAGE)-$(VERSION)-$(ARCH)
+	touch bin/.$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 
 # This is the "docker save" tarball, suitable for "docker load"
-bin/$(IMAGE)-$(VERSION)-$(ARCH).tar: .$(IMAGE)-$(VERSION)-$(ARCH)
+bin/$(IMAGE)-$(LOCATION_VERSION)-$(ARCH).tar: .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 	mkdir -p bin
-	docker save -o bin/$(IMAGE)-$(VERSION)-$(ARCH).tar $(IMAGE_PATH)
+	docker save -o bin/$(IMAGE)-$(LOCATION_VERSION)-$(ARCH).tar $(IMAGE_PATH)
 
 # Push the production image for this architecture to the resistry, and verify
 .PHONY: docker-push
-docker-push: .$(IMAGE)-$(VERSION)-$(ARCH)
+docker-push: .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 	docker push $(IMAGE_PATH)
 
 .PHONY: docker-verify
@@ -57,7 +57,7 @@ docker-verify:
 # Note: this has been changed to service, because that supports adding the bx container registry auth into the exchange.
 # 		You must 1st docker login into the registry.
 .PHONY: exchange-publish
-exchange-publish: .$(IMAGE)-$(VERSION)-$(ARCH)
+exchange-publish: .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?}   # this verifies these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -r "$(REGISTRY):$$DOCKER_REG_READ_TOKEN" -f horizon/service.definition.json
 
@@ -75,13 +75,13 @@ network:
 
 # Run the image in developer mode on the local host
 .PHONY: develop
-develop: network .$(IMAGE)-$(VERSION)-$(ARCH)
+develop: network .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
 	docker run --rm -it --volume=`pwd`:/outside -e HZN_AGREEMENTID=$(HZN_AGREEMENTID) -e HZN_HASH=$(HZN_HASH) -e HZN_EXCHANGE_URL=$(HZN_EXCHANGE_URL) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE) --name $(IMAGE) $(IMAGE_PATH) /bin/sh
 
 # Run the container as a daemon
 .PHONY: daemon
-daemon: network .$(IMAGE)-$(VERSION)-$(ARCH)
+daemon: network .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
 	docker run -d --volume=`pwd`:/outside -e HZN_AGREEMENTID=$(HZN_AGREEMENTID) -e HZN_HASH=$(HZN_HASH) -e HZN_EXCHANGE_URL=$(HZN_EXCHANGE_URL) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE) --name $(IMAGE) $(IMAGE_PATH)
 
@@ -106,6 +106,6 @@ test:
 clean:
 	-rm -rf bin bin/location.json
 	-docker rm -f $(IMAGE)
-	-docker rmi $(IMAGE)-$(ARCH):latest $(IMAGE)-$(ARCH):$(VERSION) $(IMAGE_PATH)
+	-docker rmi $(IMAGE)-$(ARCH):latest $(IMAGE)-$(ARCH):$(LOCATION_VERSION) $(IMAGE_PATH)
 	-docker network rm $(DOCKER_TEST_NETWORK)
 
