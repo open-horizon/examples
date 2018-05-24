@@ -4,7 +4,13 @@
             "org": "$HZN_ORG_ID",
             "url": "https://$MYDOMAIN/microservices/$PWSMS_NAME",
             "versionRange": "[0.0.0,INFINITY)",
-            "variables": {}
+            "variables": {
+                "PWS_ST_TYPE": "$PWS_ST_TYPE",
+                "PWS_MODEL": "$PWS_MODEL",
+                "PWS_WU_ID": "$PWS_WU_ID",
+                "PWS_WU_KEY": "$PWS_WU_KEY",
+                "PWS_WU_RPDF": "True"
+            }
         },
         {
             "org": "IBM",
