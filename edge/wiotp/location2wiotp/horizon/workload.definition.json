@@ -39,7 +39,7 @@
                         "environment": [
                             "WIOTP_EDGE_MQTT_IP=edge-connector"
                         ],
-                        "image": "openhorizon/${ARCH}_location2wiotp:$LOCATION_VERSION"
+                        "image": "registry.ng.bluemix.net/bmpotter/$ARCH/location2wiotp:$LOCATION_VERSION"
                     }
                 }
             },

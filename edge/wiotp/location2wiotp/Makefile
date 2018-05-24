@@ -2,7 +2,7 @@
 # Makefile for location container
 #
 
-export LOCATION_VERSION ?= 2.0.7
+export LOCATION_VERSION ?= 2.0.8
 IMAGE ?= location2wiotp
 
 # The docker network used for testing (must match the gps container network)
@@ -44,7 +44,7 @@ bin/$(IMAGE)-$(LOCATION_VERSION)-$(ARCH).tar: .$(IMAGE)-$(LOCATION_VERSION)-$(AR
 	mkdir -p bin
 	docker save -o bin/$(IMAGE)-$(LOCATION_VERSION)-$(ARCH).tar $(IMAGE_PATH)
 
-# Push the production image for this architecture to the resistry, and verify
+# Push the production image for this architecture to the resistry
 .PHONY: docker-push
 docker-push: .$(IMAGE)-$(LOCATION_VERSION)-$(ARCH)
 	docker push $(IMAGE_PATH)
