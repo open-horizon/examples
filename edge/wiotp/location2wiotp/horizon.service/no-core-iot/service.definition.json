@@ -11,7 +11,7 @@
     {
       "url": "https://github.com/open-horizon/examples/wiki/service-gps",
       "org": "$HZN_ORG_ID",
-      "version": "[0.0.0,INFINITY)",
+      "version": "$GPS_VERSION",
       "arch": "$ARCH"
     }
   ],

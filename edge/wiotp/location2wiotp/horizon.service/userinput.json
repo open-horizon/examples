@@ -5,10 +5,22 @@
             "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
+                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID",
                 "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
-                "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN",
-                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
+                "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN"
             }
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://github.com/open-horizon/examples/wiki/service-gps",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
         }
     ]
 }

@@ -11,13 +11,13 @@
     {
       "url": "https://github.com/open-horizon/examples/wiki/service-gps",
       "org": "$HZN_ORG_ID",
-      "version": "[0.0.0,INFINITY)",
+      "version": "$GPS_VERSION",
       "arch": "$ARCH"
     },
     {
       "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
       "org": "IBM",
-      "version": "[2.4.0,INFINITY)",
+      "version": "2.4.0",
       "arch": "$ARCH"
     }
   ],
