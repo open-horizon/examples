@@ -5,9 +5,9 @@
             "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
+                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID",
                 "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
-                "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN",
-                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
+                "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN"
             }
         }
     ]
