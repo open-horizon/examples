@@ -15,7 +15,7 @@
 # For developer usage, see the documentation at the "develop" target below.
 #
 
-export VERSION ?= 2.0.4
+export GPS_VERSION ?= 2.0.4
 IMAGE ?= gps
 BINARY=$(IMAGE)
 SOURCE=main.go
@@ -51,7 +51,7 @@ CROSS_COMPILE ?= false
 # Construct our Docker registry path and other architecture-dependent values
 REGISTRY ?= openhorizon
 REG_PATH := $(REGISTRY)/$(ARCH)
-IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
+IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(GPS_VERSION)
 #HOVITOS_REGISTRY=summit.hovitos.engineering
 #$(HOVITOS_REGISTRY)/armhf/golang:1.7.3
 #$(HOVITOS_REGISTRY)/ppc64le/golang:1.8.1
@@ -71,12 +71,12 @@ VPATH=src:bin
 
 # Running make with no target will build the production image
 .PHONY: default
-default: $(IMAGE)-$(VERSION)
+default: $(IMAGE)-$(GPS_VERSION)
 
 # Omitting the image architecture will default to the local architecture
 # NOTE: Must depend on a file in the file system, not an image!
-.PHONY: $(IMAGE)-$(VERSION)
-$(IMAGE)-$(VERSION): .$(IMAGE)-$(VERSION)-$(ARCH)
+.PHONY: $(IMAGE)-$(GPS_VERSION)
+$(IMAGE)-$(GPS_VERSION): .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 
 # Omitting the binary architecture will default to the local architecture
 .PHONY: $(BINARY)
@@ -99,19 +99,19 @@ $(BINARY).ppc64le: $(SOURCE) $(OTHER_SOURCES)
 	docker run --rm -t --volume `pwd`:/outside gloang env GOPATH=/outside $(GOOPTIONS_PPC) sh -c "cd /outside && go get github.com/kellydunn/golang-geo && go build -o bin/$@ src/$(SOURCE)"
 
 # This is the production image target (which depends on the BINARY file)
-.$(IMAGE)-$(VERSION)-$(ARCH): Dockerfile.$(ARCH) $(BINARY).$(ARCH)
+.$(IMAGE)-$(GPS_VERSION)-$(ARCH): Dockerfile.$(ARCH) $(BINARY).$(ARCH)
 	docker build -t $(IMAGE_PATH) -f Dockerfile.$(ARCH) .
 	mkdir -p bin
-	touch bin/.$(IMAGE)-$(VERSION)-$(ARCH)
+	touch bin/.$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 
 # This is the "docker save" tarball, suitable for "docker load"
-bin/$(IMAGE)-$(VERSION)-$(ARCH).tar: .$(IMAGE)-$(VERSION)-$(ARCH)
+bin/$(IMAGE)-$(GPS_VERSION)-$(ARCH).tar: .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	mkdir -p bin
-	docker save -o bin/$(IMAGE)-$(VERSION)-$(ARCH).tar $(IMAGE_PATH)
+	docker save -o bin/$(IMAGE)-$(GPS_VERSION)-$(ARCH).tar $(IMAGE_PATH)
 
 # Push the production image for this architecture to the resistry, and verify
 .PHONY: docker-push
-docker-push: .$(IMAGE)-$(VERSION)-$(ARCH)
+docker-push: .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	docker push $(IMAGE_PATH)
 
 .PHONY: docker-verify
@@ -147,19 +147,19 @@ network:
 #        # /gps
 #
 .PHONY: develop
-develop: network .$(IMAGE)-$(VERSION)-$(ARCH)
+develop: network .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
 	docker run --rm -it --privileged --volume=`pwd`:/outside $(GPSD_DOCKER_DEVICE_ENTRIES) -e HZN_GPS_PORT=$(HZN_GPS_PORT) -e HZN_USE_GPS=true -e HZN_LAT=$(HZN_LAT) -e HZN_LON=$(HZN_LON) -e HZN_LOCATION_ACCURACY_KM=$(HZN_LOCATION_ACCURACY_KM) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE) --name $(IMAGE) $(IMAGE_PATH) /bin/sh
 
 # Run the container as a daemon using GPS hardware for testing purposes
 .PHONY: gps_daemon
-gps_daemon: network .$(IMAGE)-$(VERSION)-$(ARCH)
+gps_daemon: network .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
 	docker run -d --privileged $(GPSD_DOCKER_DEVICE_ENTRIES) -p $(HZN_GPS_PORT):$(HZN_GPS_PORT) -e HZN_GPS_PORT=$(HZN_GPS_PORT) -e HZN_USE_GPS=true -e HZN_LAT=$(HZN_LAT) -e HZN_LON=$(HZN_LON) -e HZN_LOCATION_ACCURACY_KM=$(HZN_LOCATION_ACCURACY_KM) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE) --name $(IMAGE) $(IMAGE_PATH)
 
 # Run the container as a daemon using static coordinates or IP estimate (but not GPS device) testing purposes
 .PHONY: daemon
-daemon: network .$(IMAGE)-$(VERSION)-$(ARCH)
+daemon: network .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
 	docker run -d --privileged -p $(HZN_GPS_PORT):$(HZN_GPS_PORT) -e HZN_GPS_PORT=$(HZN_GPS_PORT) -e HZN_USE_GPS=false -e HZN_LAT=$(HZN_LAT) -e HZN_LON=$(HZN_LON) -e HZN_LOCATION_ACCURACY_KM=$(HZN_LOCATION_ACCURACY_KM) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE) --name $(IMAGE) $(IMAGE_PATH)
 
@@ -206,13 +206,13 @@ docker-push-test: .$(IMAGE_TEST)-$(ARCH)
 .PHONY: develop_test
 develop_test:  network .$(IMAGE_TEST)
 	-docker rm -f $(IMAGE_TEST)
-	docker run --rm -it --volume=`pwd`:/outside -e HZN_GPS_PORT=$(HZN_GPS_PORT) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE_TEST) --name $(IMAGE_TEST) $(IMAGE_TEST):$(VERSION) /bin/bash
+	docker run --rm -it --volume=`pwd`:/outside -e HZN_GPS_PORT=$(HZN_GPS_PORT) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE_TEST) --name $(IMAGE_TEST) $(IMAGE_TEST):$(GPS_VERSION) /bin/bash
 
 # Run the automated tests
 .PHONY: test
 test:  network .$(IMAGE_TEST)
 	-docker rm -f $(IMAGE_TEST)
-	docker run --rm -t --volume `pwd`:/outside -e HZN_GPS_PORT=$(HZN_GPS_PORT) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE_TEST) --name $(IMAGE_TEST) $(IMAGE_TEST):$(VERSION)
+	docker run --rm -t --volume `pwd`:/outside -e HZN_GPS_PORT=$(HZN_GPS_PORT) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE_TEST) --name $(IMAGE_TEST) $(IMAGE_TEST):$(GPS_VERSION)
 
 # Clean everything
 .PHONY: clean
@@ -220,7 +220,7 @@ clean:
 	-rm -rf bin pkg bin/gps.json
 	-rm -rf src/github.com src/gopkg.in
 	-docker rm -f $(IMAGE)
-	-docker rmi $(IMAGE)-$(ARCH):latest $(IMAGE)-$(ARCH):$(VERSION) $(REG_PATH)/$(IMAGE):$(VERSION)
+	-docker rmi $(IMAGE)-$(ARCH):latest $(IMAGE)-$(ARCH):$(GPS_VERSION) $(REG_PATH)/$(IMAGE):$(GPS_VERSION)
 	-docker rm -f $(IMAGE_TEST)
 	-docker rmi $(IMAGE_TEST)
 	-docker network rm $(DOCKER_TEST_NETWORK)

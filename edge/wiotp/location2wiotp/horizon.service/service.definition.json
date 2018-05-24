@@ -1,22 +1,23 @@
 {
+  "org": "$HZN_ORG_ID",
   "label": "Location to WIoTP for $ARCH",
   "description": "Gets the edge node GPS location from the gps service and sends it to WIoTP via the core-iot edge-connector",
   "public": true,
   "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
-  "version": "$VERSION",
+  "version": "$LOCATION_VERSION",
   "arch": "$ARCH",
   "sharable": "multiple",
   "requiredServices": [
     {
       "url": "https://github.com/open-horizon/examples/wiki/service-gps",
       "org": "$HZN_ORG_ID",
-      "version": "[0.0.0,INFINITY)",
+      "version": "$GPS_VERSION",
       "arch": "$ARCH"
     },
     {
       "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot",
       "org": "IBM",
-      "version": "[2.4.0,INFINITY)",
+      "version": "2.4.0",
       "arch": "$ARCH"
     }
   ],
@@ -31,7 +32,7 @@
   "deployment": {
     "services": {
       "location": {
-        "image": "registry.ng.bluemix.net/bmpotter/$ARCH/location2wiotp:$VERSION",
+        "image": "registry.ng.bluemix.net/bmpotter/$ARCH/location2wiotp:$LOCATION_VERSION",
         "binds": [
           "/var/wiotp-edge:/var/wiotp-edge"
         ],
