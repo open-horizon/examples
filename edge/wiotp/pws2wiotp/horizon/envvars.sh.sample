@@ -7,7 +7,7 @@ export WIOTP_API_KEY='a-myapikeyrandomchars'
 export WIOTP_API_TOKEN='myapikeytoken'
 
 # This variable must be set appropriately for your specific Edge Node
-export ARCH=amd64   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
+export ARCH=arm   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
 export PWS2WIOTP_NAME=pws2wiotp   # the name of the workload, used in the docker image path and in the workload url
 export PWS2WIOTP_VERSION=1.1.0   # the workload version, and also used as the tag for the docker image. Must be in OSGI version format.
 export PWSMS_NAME=pwsms   # the name of the microservice, used in the docker image path and in the microservice url

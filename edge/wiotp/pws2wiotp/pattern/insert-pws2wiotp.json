@@ -7,7 +7,7 @@
           "version": "$PWS2WIOTP_VERSION",
           "deployment_overrides": {
             "services": {
-              "pi3streamer2wiotp": {
+              "pws2wiotp": {
                 "environment": [
                   "WIOTP_DOMAIN=$WIOTP_DOMAIN"
                 ]

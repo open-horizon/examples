@@ -10,7 +10,7 @@
                 "PWS_MODEL": "$PWS_MODEL",
                 "PWS_WU_ID": "$PWS_WU_ID",
                 "PWS_WU_KEY": "$PWS_WU_KEY",
-                "PWS_WU_RPDF": "true"
+                "PWS_WU_RPDF": true
             }
         }
     ]
