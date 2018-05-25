@@ -3,7 +3,7 @@
 **Note:** not all of this functionality is in wiotp prod yet, so you can only do this in our bluehorizon hybrid environment at the moment. See [these instructions](https://docs.google.com/document/d/1_dIH79AKo_ngzbW9teE_x0sRfc8wpfikBqHugQQjKME/edit#heading=h.e9qakpsaxtok) for setting that up.
 
 ### Install and Use the IBM Cloud CLI Tool on x86 (Including Mac)
-Begin by installing the IBM Cloud CLI (this must be done on an x86 host).  Instructions are available at the link below for Linux, MacOS, and Windows hosts: [https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html](https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html)
+Begin by installing the IBM Cloud CLI (this must be done on an x86 host).  Instructions are available at the link below for Linux, MacOS, and Windows hosts: [https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html](https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html)  Homebrew for MacOS shortcut: `brew install homebrew/cask/ibm-cloud-cli`
 
 ### Login To IBM Cloud
 Use the IBM Cloud CLI bx command login:
