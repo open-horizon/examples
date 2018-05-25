@@ -73,8 +73,7 @@ curl -fsSL get.docker.com | sh
 * Configure the *apt* manager by adding the bluehorizon repo to /etc/apt/sources.list.d:
 ```
 wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
-aptrepo=updates
-# aptrepo=testing    # or use this for the latest, development version
+aptrepo=testing    # use this for the latest, development version (aptrepo=updates is default)
 cat <<EOF > /etc/apt/sources.list.d/bluehorizon.list
 deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
 deb-src [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-$aptrepo main
