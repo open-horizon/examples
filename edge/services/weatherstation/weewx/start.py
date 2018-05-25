@@ -138,6 +138,13 @@ pws_units = check_env_var("PWS_UNITS", default='us', printerr=True)    # weewx r
 pws_wu_loc = check_env_var("PWS_WU_LOC", default='', printerr=True)
 pws_wu_rapidfire = check_env_var("PWS_WU_RPDF", default='False', printerr=True)
 
+# Deal with a potential lower-case (boolean value from Horizon) or erroneous value
+if pws_wu_rapidfire == "true" or pws_wu_rapidfire == "True": 
+    pws_wu_rapidfire = "True"
+else: 
+    pws_wu_rapidfire = "False"
+
+
 ## Shared data structure (dict for flask server to read & serve)
 manager = Manager()
 sdata = manager.dict()

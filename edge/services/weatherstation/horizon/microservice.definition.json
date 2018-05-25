@@ -35,8 +35,8 @@
     {
       "name": "PWS_WU_RPDF",
       "label": "'Rapidfire' setting for WU data upload (True=up to every 2.5 seconds, station dependent)",
-      "type": "string",
-      "defaultValue": "True"
+      "type": "boolean",
+      "defaultValue": "true"
     }
   ],
   "workloads": [

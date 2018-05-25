@@ -14,7 +14,7 @@ export PWS_ST_TYPE=mystationtype
 export PWS_MODEL=mystationmodel
 export PWS_WU_ID=mystationid
 export PWS_WU_KEY=mystationkey
-export PWS_WU_RPDF=True   # True to send data more often, using WU 'rapidfire'
+export PWS_WU_RPDF=true   # true to send data more often, using WU 'rapidfire' (false to send less often, every few minutes)
 
 # There is normally no need for you to edit these variables
 export WIOTP_DOMAIN=internetofthings.ibmcloud.com
