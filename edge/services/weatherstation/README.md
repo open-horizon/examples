@@ -22,10 +22,10 @@
 
 #### IBM Watson IoT Platform / Horizon Setup  
   - Follow the setup steps in the open-horizon [Edge Quick Start Guide](https://github.com/open-horizon/examples/blob/master/edge/doc/Edge-Quick-Start-Guide.md)
-  - Follow the Watson IoT Platform Setup steps in the guide. You will define a device name and a device type. As an example, your information may look something like:  
+  - For the Watson IoT Platform Setup steps, you will define a device name and a device type. As an example, your information may look something like:  
 
     Device Type: arm32-pws         (a general name for all devices of this type)  
-    Device Name: PI3-PWS           (a specific name for this device)  
+    Device Name: Pi3-PWS           (a specific name for this device)  
     Device Token: jkdas9dusadkna   (some secure string, specific to this device)  
     API Key: 'generated-chars'  
     API Token: 'generated-chars'  
