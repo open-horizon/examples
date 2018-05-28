@@ -1,0 +1,38 @@
+{
+    "microservices": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/microservices/$PWSMS_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "PWS_ST_TYPE": "$PWS_ST_TYPE",
+                "PWS_MODEL": "$PWS_MODEL",
+                "PWS_WU_ID": "$PWS_WU_ID",
+                "PWS_WU_KEY": "$PWS_WU_KEY",
+                "PWS_WU_RPDF": true
+            }
+        },
+        {
+            "org": "IBM",
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/microservices/edge-core-iot-microservice",
+            "versionRange": "2.4.0",
+            "variables": {
+                "WIOTP_DEVICE_AUTH_TOKEN": "$WIOTP_GW_TOKEN",
+                "WIOTP_DOMAIN": "$HZN_ORG_ID.messaging.$WIOTP_DOMAIN",
+                "WIOTP_CLIENT_ID": "g:$HZN_ORG_ID:$WIOTP_GW_TYPE:$WIOTP_GW_ID"
+            }
+        }
+    ],
+    "workloads": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/workloads/$PWS2WIOTP_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "VERBOSE": "1",
+                "PUBLISH": true,
+                "MOCK": false
+            }
+        }
+    ]
+}
