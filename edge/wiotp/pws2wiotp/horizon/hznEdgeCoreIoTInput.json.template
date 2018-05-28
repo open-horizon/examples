@@ -21,7 +21,7 @@
         },
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://$MYDOMAIN/workloads/$PWS2WIOTP_NAME",
+            "url": "https://$MYDOMAIN/microservices/$PWS2WIOTP_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
                 "PWS_ST_TYPE": "$PWS_ST_TYPE",
