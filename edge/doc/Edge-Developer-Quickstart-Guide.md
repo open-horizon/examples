@@ -97,7 +97,7 @@ Now that the microservice container implementation is working correctly, you can
 * `microservice.definition.json` - the Horizon metadata of this microservice. Note a few of the significant json fields:
     * `specRef`: along with the `version` and `arch` this is the unique identifier for this microservice, and ideally a URL to a web site that documents the microservice for potential users of it.
     * `deployment`: contains the docker image(s) that make up this microservice, and how the Horizon agent should run them on each edge node:
-        * `image` - the full docker image name (including the registry, if not in docker hub)
+        * `image` - the full docker image name (including the registry, if not in docker hub). To store images in the IBM Cloud Registry, see these [instructions](Container-Registries.md).
         * `cpu` - this field name is also used as the docker defined DNS name that workloads can use to contact it.
 * `userinput.json` - the runtime input values specified by the edge node owner for the microservice or the Horizon agent. Microservices should require as little input from the edge node owners as possible, ideally none, which is the case here. Note within the file:
     * `url`: this must match the `specRef` in `microservice.definition.json`
@@ -186,7 +186,7 @@ Now that the workload container implementation is working correctly, let's take 
     * `specRef`: a microservice that this workload uses/depends on. This must match the `specRef` value in the microservice.definition.json file that the workload depends on.
     * `userInput`: this section defines the input values that can be specified to this workload by the edge node owner. The `userinput.json` file must include a value for each variable that doesn't have a default value.
     * `deployment`: contains the docker image(s) that make up this workload, and how the Horizon agent should run them on each edge node:
-        * `image` - the full docker image name (including the registry, if not in docker hub)
+        * `image` - the full docker image name (including the registry, if not in docker hub). To store images in the IBM Cloud Registry, see these [instructions](Container-Registries.md).
         * `cpu2wiotp` - this field name is also used as the docker defined DNS name that can be used to contact it.
         * `environment` - environment variables that should be passed to the containers (in addition to the variables Horizon automatically passes)
 * `userinput.json` - the runtime input values specified by the edge node owner for the workload or the Horizon agent. Microservices should require as little input from the edge node owners as possible, ideally none, which is the case here. Note within the file:
