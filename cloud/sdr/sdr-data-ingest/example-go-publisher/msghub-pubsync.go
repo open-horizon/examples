@@ -15,12 +15,29 @@ import (
 	"os"
 	"strings"
 	"strconv"
+	"flag"
 	"crypto/tls"
 	"github.com/Shopify/sarama"
 )
 
+var VerboseBool bool
+
+func Usage(exitCode int) {
+	fmt.Printf("Usage: %s [-h] [-v] [<message>]\n\nEnvironment Variables: MSGHUB_API_KEY, MSGHUB_BROKER_URL, MSGHUB_TOPIC\n", os.Args[0])
+	os.Exit(exitCode)
+}
+
 func main() {
-	fmt.Println("Starting message hub publishing example...")
+	var help bool
+	flag.BoolVar(&help, "h", false, "help")
+	flag.BoolVar(&VerboseBool, "v", false, "verbose")
+	flag.Parse()
+	if help { Usage(1) }
+
+	message := ""
+	if flag.NArg() >= 1 {
+		message = flag.Arg(0)
+	}
 
 	apiKey := requiredEnvVar("MSGHUB_API_KEY", "")
 	username := apiKey[:16]
@@ -30,7 +47,11 @@ func main() {
 	brokers := strings.Split(brokerStr, ",")
 	topic := requiredEnvVar("MSGHUB_TOPIC", "sdr-audio")
 
-	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
+	Verbose("starting message hub publishing example...")
+
+	if VerboseBool {
+		sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
+	}
 
 	client, err := NewClient(username, password, apiKey, brokers)
 	exitOnErr(err)
@@ -40,14 +61,31 @@ func main() {
 
 	defer Close(client, producer, nil)
 
-	fmt.Printf("publishing a few msgs to %s...\n", topic)
-	for i := 0; i < 10; i++ {
-		err = SendMessage(producer, topic, "message "+strconv.Itoa(i))
+	if message != "" {
+		Verbose("publishing the specified msg to %s...\n", topic)
+		err = SendMessage(producer, topic, message)
+		exitOnErr(err)
+	} else {
+		Verbose("publishing a few generated msgs to %s...\n", topic)
+		for i := 0; i < 10; i++ {
+			err = SendMessage(producer, topic, "message "+strconv.Itoa(i))
+			exitOnErr(err)
+		}
 	}
 
-	fmt.Println("Message hub publishing example complete.")
+	Verbose("message hub publishing example complete")
 }
 
+
+func Verbose(msg string, args ...interface{}) {
+	if !VerboseBool {
+		return
+	}
+	if !strings.HasSuffix(msg, "\n") {
+		msg += "\n"
+	}
+	fmt.Fprintf(os.Stderr, "[verbose] "+msg, args...) // send to stderr so it doesn't mess up stdout if they are piping that to jq or something like that
+}
 
 func requiredEnvVar(name, defaultVal string) string {
 	v := os.Getenv(name)
@@ -56,7 +94,7 @@ func requiredEnvVar(name, defaultVal string) string {
 	}
 	if v == "" {
 		fmt.Printf("Error: environment variable '%s' must be defined.\n", name)
-		os.Exit(2)
+		Usage(2)
 	}
 	return v
 }

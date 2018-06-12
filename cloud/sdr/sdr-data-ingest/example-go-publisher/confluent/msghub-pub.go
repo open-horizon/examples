@@ -1,3 +1,4 @@
+// !!This example currently does not work with IBM Message Hub!!
 // Example for publishing messages to IBM Cloud Message Hub (kafka) using go
 
 /* Current build/run requirements:

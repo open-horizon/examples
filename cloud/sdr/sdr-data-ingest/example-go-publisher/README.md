@@ -9,8 +9,14 @@ openssl req -new -x509 -key server.key -out server.pem -days 3650
 export MSGHUB_API_KEY='abcdefg'
 ```
 
+## Build All Examples
+
+```
+make
+```
+
 ## Publish Synchronously
 
 ```
-go run msghubpub.go
+go run msghub-pubsync.go
 ```
