@@ -1,4 +1,4 @@
-# IBM Message Hub Publish and Consume Client Examples in Go
+# IBM Message Hub Producer and Consumer Client Examples in Go
 
 ## Setup
 
@@ -16,11 +16,21 @@ export MSGHUB_API_KEY='abcdefg'
 make
 ```
 
-## Publish Synchronously
+## Produce Messages to IBM Message Hub
 
 ```
-msghub-pubsync 'hello world'
-msghub-pubsync -v 'hello world'     # see verbose output
-msghub-pubsync    # will publish several generated msgs
-msghub-pubsync -h     # see all of the flags and environment variables
+msghub-producer 'hello world'
+msghub-producer -t <topic> 'hello world'   # produce to a different topic
+msghub-producer -v 'hello world'     # see verbose output
+msghub-producer    # will publish several generated msgs
+msghub-producer -h     # see all of the flags and environment variables
+```
+
+## Produce Messages to IBM Message Hub
+
+```
+msghub-consumer
+msghub-consumer -t <topic>   # consume from a different topic
+msghub-consumer -v     # see verbose output
+msghub-consumer -h     # see all of the flags and environment variables
 ```

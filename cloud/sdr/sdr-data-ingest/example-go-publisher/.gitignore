@@ -1,5 +1,4 @@
-msghub-pubsync
-msghub-pubasync
+msghub-producer
 msghub-consumer
 server.key
 server.pem

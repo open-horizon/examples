@@ -1,9 +1,9 @@
-all: msghub-pubsync msghub-consumer
+all: msghub-producer msghub-consumer
 
 %: %.go
 	go build $<
 
 clean:
-	rm -r msghub-pubsync msghub-consumer
+	rm -r msghub-producer msghub-consumer
 
 .PHONY: all clean
