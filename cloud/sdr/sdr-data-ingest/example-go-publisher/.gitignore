@@ -1,1 +1,5 @@
 msghub-pubsync
+msghub-pubasync
+msghub-consumer
+server.key
+server.pem
