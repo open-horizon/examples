@@ -5,9 +5,13 @@
 ```
 go get github.com/Shopify/sarama
 go get github.com/bsm/sarama-cluster
+export MSGHUB_API_KEY='abcdefg'
+```
+
+You can optionally use your own certificate, which can be created like this:
+```
 openssl genrsa -out server.key 2048
 openssl req -new -x509 -key server.key -out server.pem -days 3650
-export MSGHUB_API_KEY='abcdefg'
 ```
 
 ## Build All Examples

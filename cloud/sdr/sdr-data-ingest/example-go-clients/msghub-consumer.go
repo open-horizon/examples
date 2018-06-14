@@ -10,9 +10,9 @@ import (
 	"os/signal"
 	"strings"
 	"flag"
-	"github.com/Shopify/sarama"
-	cluster "github.com/bsm/sarama-cluster"
-	"github.com/open-horizon/examples/cloud/sdr/sdr-data-ingest/example-go-publisher/util"
+	"github.com/Shopify/sarama"		// doc: https://godoc.org/github.com/Shopify/sarama
+	cluster "github.com/bsm/sarama-cluster"		// doc: http://godoc.org/github.com/bsm/sarama-cluster
+	"github.com/open-horizon/examples/cloud/sdr/sdr-data-ingest/example-go-clients/util"
 )
 
 func Usage(exitCode int) {
@@ -116,4 +116,26 @@ func main() {
 	*/
 
 	util.Verbose("message hub consuming example complete")   // we should never get here
+}
+
+
+// Not currently used, because can only listen to 1 partition...
+func ConsumePartition(consumer sarama.Consumer, topic string, partition int32, callback func(*sarama.ConsumerMessage)) error {
+	partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err := partitionConsumer.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	for {
+		select {
+		case msg := <-partitionConsumer.Messages():
+			callback(msg)
+		}
+	}
 }

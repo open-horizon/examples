@@ -1,15 +1,9 @@
-// Utility functions for the examples for publishing and consuming messages to/fromm IBM Cloud Message Hub (kafka) using go
-
-/* Todos:
-- implement async producer
-- decide what to do with tls key and pem
-*/
+// Utility functions for the examples for producing and consuming messages to/fromm IBM Cloud Message Hub (kafka) using go
 
 package util
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"crypto/tls"
@@ -57,9 +51,9 @@ func TlsConfig(certFile, keyFile string) (*tls.Config, error) {
 	return &tls.Config{Certificates: []tls.Certificate{cer}}, nil
 }
 
+/*
 func NewClient(user, pw, apiKey string, brokers []string) (sarama.Client, error) {
-	config := sarama.NewConfig()
-	err := PopulateConfig(config, user, pw, apiKey)
+	config, err := NewConfig(user, pw, apiKey)
 	if err != nil {
 		return nil, err
 	}
@@ -71,76 +65,38 @@ func NewClient(user, pw, apiKey string, brokers []string) (sarama.Client, error)
 
 	return client, nil
 }
+*/
+
+func NewConfig(user, pw, apiKey string) (*sarama.Config, error) {
+	config := sarama.NewConfig()
+	err := PopulateConfig(config, user, pw, apiKey)
+	if err != nil {
+		return nil, err
+	}
+	return config, nil
+}
 
 func PopulateConfig(config *sarama.Config, user, pw, apiKey string) error {
+	/* If you want to create your own certificate and use it, you can...
 	tlsConfig, err := TlsConfig("server.pem", "server.key")
 	if err != nil {
 		return err
 	}
+	*/
 
 	config.ClientID = apiKey
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
 	config.Producer.Return.Successes = true
 	config.Net.TLS.Enable = true
-	config.Net.TLS.Config = tlsConfig
+	// config.Net.TLS.Config = tlsConfig
 	config.Net.SASL.User = user
 	config.Net.SASL.Password = pw
 	config.Net.SASL.Enable = true
 	return nil
 }
 
-func SendSyncMessage(producer sarama.SyncProducer, topic, msg string) error {
-	pMsg := &sarama.ProducerMessage{
-		Topic: topic,
-		Value: sarama.StringEncoder(msg),
-	}
-
-	partition, offset, err := producer.SendMessage(pMsg)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Message published to topic: %s, partition: %d, offset: %d\n", topic, partition, offset)
-	return nil
-}
-
-func SendSyncMessages(producer sarama.SyncProducer, topic string, msgs []string) error {
-	pMsgs := make([]*sarama.ProducerMessage, len(msgs))
-	for i, m := range msgs {
-		pMsgs[i] = &sarama.ProducerMessage{
-			Topic: topic,
-			Value: sarama.StringEncoder(m),
-		}
-	}
-
-	err := producer.SendMessages(pMsgs)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("%d messages published to topic: %s\n", len(msgs), topic)
-	return nil
-}
-
-func ConsumePartition(consumer sarama.Consumer, topic string, partition int32, callback func(*sarama.ConsumerMessage)) error {
-	partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err := partitionConsumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	for {
-		select {
-		case msg := <-partitionConsumer.Messages():
-			callback(msg)
-		}
-	}
-}
-
+/*
 func Close(client sarama.Client, syncProducer sarama.SyncProducer, asyncProducer sarama.AsyncProducer, consumer sarama.Consumer) {
 	if syncProducer != nil {
 		if err := syncProducer.Close(); err != nil {
@@ -161,3 +117,4 @@ func Close(client sarama.Client, syncProducer sarama.SyncProducer, asyncProducer
 		log.Fatalln(err)
 	}
 }
+*/
