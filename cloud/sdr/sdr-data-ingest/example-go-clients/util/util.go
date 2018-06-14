@@ -51,7 +51,8 @@ func TlsConfig(certFile, keyFile string) (*tls.Config, error) {
 	return &tls.Config{Certificates: []tls.Certificate{cer}}, nil
 }
 
-/*
+/* If you want to create your own client object, it can be done like this. We create the producer and
+	consumer objects directly, and let them own the client (so they also close them at the end).
 func NewClient(user, pw, apiKey string, brokers []string) (sarama.Client, error) {
 	config, err := NewConfig(user, pw, apiKey)
 	if err != nil {
@@ -95,26 +96,3 @@ func PopulateConfig(config *sarama.Config, user, pw, apiKey string) error {
 	config.Net.SASL.Enable = true
 	return nil
 }
-
-/*
-func Close(client sarama.Client, syncProducer sarama.SyncProducer, asyncProducer sarama.AsyncProducer, consumer sarama.Consumer) {
-	if syncProducer != nil {
-		if err := syncProducer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}
-	if asyncProducer != nil {
-		if err := asyncProducer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}
-	if consumer != nil {
-		if err := consumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}
-	if err := client.Close(); err != nil {
-		log.Fatalln(err)
-	}
-}
-*/
