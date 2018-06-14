@@ -21,15 +21,16 @@
         },
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://internetofthings.ibmcloud.com/microservices/pwsms",
-            "version": "$PWSMS_VERSION",
+            "url": "https://$MYDOMAIN/microservices/$PWS2WIOTP_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
             "variables": {
-                "PWS_ST_TYPE": "xxxxxx",
-                "PWS_MODEL": "xxxxxx",
-                "PWS_WU_ID": "xxxxxxx",
-                "PWS_WU_KEY": "xxxxxxx",
-                "PWS_WU_RPDF": "True"
+                "PWS_ST_TYPE": "$PWS_ST_TYPE",
+                "PWS_MODEL": "$PWS_MODEL",
+                "PWS_WU_ID": "$PWS_WU_ID",
+                "PWS_WU_KEY": "$PWS_WU_KEY",
+                "PWS_WU_RPDF": "$PWS_WU_RPDF"
             }
         }
     ]
 }
+

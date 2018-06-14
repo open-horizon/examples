@@ -99,7 +99,7 @@ Now that the service container implementation is working correctly, you can use 
 * `service.definition.json` - the Horizon metadata of this service. Note a few of the significant json fields:
     * `url`: along with the `version` and `arch` this is the unique identifier for this service, and ideally a URL to a web site that documents the service for potential users of it.
     * `deployment`: contains the docker image(s) that make up this service, and how the Horizon agent should run them on each edge node:
-        * `image` - the full docker image name (including the registry, if not in docker hub)
+        * `image` - the full docker image name (including the registry, if not in docker hub). To store images in the IBM Cloud Registry, see these [instructions](Container-Registries.md).
         * `cpu` - this field name is also used as the docker defined DNS name that other services can use to contact it.
 * `userinput.json` - the runtime input values specified by the edge node owner for the service or the Horizon agent. Services should require as little input from the edge node owners as possible, ideally none, which is the case here. Note within the file:
     * `url`: this must match the `url` in `service.definition.json`
@@ -189,7 +189,7 @@ Now that the cpu2wiotp service container implementation is working correctly, le
     * `requiredServices.url`: a service that this service uses/depends on. This must match the `url` value in the cpu service.definition.json file that the cpu2wiotp service depends on.
     * `userInput`: this section defines the input values that can be specified to this service by the edge node owner. The `userinput.json` file must include a value for each variable that doesn't have a default value.
     * `deployment`: contains the docker image(s) that make up this service, and how the Horizon agent should run them on each edge node:
-        * `image` - the full docker image name (including the registry, if not in docker hub)
+        * `image` - the full docker image name (including the registry, if not in docker hub). To store images in the IBM Cloud Registry, see these [instructions](Container-Registries.md).
         * `cpu2wiotp` - this field name is also used as the docker defined DNS name that can be used to contact it.
         * `environment` - environment variables that should be passed to the containers (in addition to the variables Horizon automatically passes)
 * `userinput.json` - the runtime input values specified by the edge node owner for the service or the Horizon agent. Services should require as little input from the edge node owners as possible, ideally none, which is the case here. Note within the file:

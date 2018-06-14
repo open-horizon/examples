@@ -7,7 +7,7 @@ export ARCH ?= $(SYSTEM_ARCH)
 # Container image version and workload name
 PWS2WIOTP_VERSION ?= 1.1.0
 WL_NAME=pws2wiotp
-IMAGE=example_wl_$(WL_NAME)
+IMAGE=$(WL_NAME)
 
 # Construct our Docker registry path and other architecture-dependent values
 DOCKER_HUB_ID ?= openhorizon
