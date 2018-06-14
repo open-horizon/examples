@@ -2,11 +2,10 @@
     "global": [],
     "microservices": [
         {
-            "org": "4zfqaf",
-            "url": "http://is8ac.com/microservices/aural2",
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/microservices/$AURAL2_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         }
     ]
 }
-
