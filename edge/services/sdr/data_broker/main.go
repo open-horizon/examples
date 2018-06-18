@@ -167,7 +167,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			if val > 0.5 {
+			if val > 0.01 {
 				msg := &audiolib.AudioMsg{
 					Audio:         audio,
 					Ts:            time.Now(),

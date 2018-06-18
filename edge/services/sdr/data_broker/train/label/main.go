@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/open-horizon/examples/cloud/sdr/sdr_data_processing/watson/stt"
+	"github.com/open-horizon/examples/cloud/sdr/sdr-data-processing/watson/stt"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
 )
 
