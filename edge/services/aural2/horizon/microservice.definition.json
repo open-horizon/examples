@@ -1,14 +1,12 @@
 {
-  "org": "4zfqaf",
-  "label": "",
-  "description": "",
-  "public": false,
-  "specRef": "http://is8ac.com/microservices/aural2",
-  "version": "0.0.1",
-  "arch": "arm64",
-  "sharable": "multiple",
-  "downloadUrl": "not used yet",
-  "matchHardware": {},
+  "org": "$HZN_ORG_ID",
+  "label": "$AURAL2_NAME for $ARCH",
+  "description": "Provides a stream of user intents",
+  "public": true,
+  "specRef": "https://$MYDOMAIN/microservices/$AURAL2_NAME",
+  "version": "$AURAL2_VERSION",
+  "arch": "$ARCH",
+  "sharable": "single",
   "userInput": [],
   "workloads": [{
     "deployment": {
