@@ -9,7 +9,13 @@ params = {
 	]
 }
 
-const result = msgreceive.main(params)
+// const result = msgreceive.main(params)
+// console.log("msgreceive.main() result:")
+// console.log(result)
 
-console.log("msgreceive.main() result:")
-console.log(result)
+msgreceive.main(params).then(function(response){
+	console.log("msgreceive.main() result:")
+	console.log(response)
+}, function(error) {
+    console.log(error.message);
+});
