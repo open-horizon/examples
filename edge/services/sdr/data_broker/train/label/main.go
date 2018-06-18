@@ -3,75 +3,13 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/base32"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/open-horizon/examples/cloud/sdr/sdr_data_processing/watson/stt"
+	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
 )
-
-func getAudio(freq int) (audio []byte, err error) {
-	resp, err := http.Get("http://localhost:8080/audio/" + strconv.Itoa(freq))
-	if err != nil {
-		panic(err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		err = errors.New("bad resp")
-		return
-	}
-	defer resp.Body.Close()
-	audio, err = ioutil.ReadAll(resp.Body)
-	if len(audio) < 100 {
-		panic("audio is too short")
-	}
-	return
-}
-
-// FreqToIndex converts a frequnecy to a list index.
-func FreqToIndex(freq float32, data PowerDist) int {
-	percentPos := (freq - data.Low) / (data.High - data.Low)
-	index := int(float32(len(data.Dbm)) * percentPos)
-	return index
-}
-
-func GetCeilingSignals(data PowerDist, celling float32) (stationFreqs []float32) {
-	for i := float32(85900000); i < data.High; i += 200000 {
-		dbm := data.Dbm[FreqToIndex(i, data)]
-		if dbm > celling && dbm != 0 {
-			stationFreqs = append(stationFreqs, i)
-		}
-	}
-	return
-}
-
-// PowerDist is the distribution of power of frequency.
-type PowerDist struct {
-	Low  float32   `json:"low"`
-	High float32   `json:"high"`
-	Dbm  []float32 `json:"dbm"`
-}
-
-func getPower() (power PowerDist, err error) {
-	resp, err := http.Get("http://localhost:8080/power")
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		err = errors.New("bad resp")
-		return
-	}
-	jsonByte, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(jsonByte, &power)
-	return
-}
 
 func totalText(transcript stt.TranscribeResponse) (sum int) {
 	if len(transcript.Results) == 0 {
@@ -96,14 +34,13 @@ func main() {
 	}
 	var i = 0
 	for {
-		power, err := getPower()
+		stations, err := rtlsdr.GetCeilingSignals("localhost", -13)
 		if err != nil {
 			panic(err)
 		}
-		stations := GetCeilingSignals(power, -13)
 		for _, station := range stations {
 			fmt.Println("starting freq", station)
-			audio, err := getAudio(int(station))
+			audio, err := rtlsdr.GetAudio("localhost", int(station))
 			if err != nil {
 				panic(err)
 			}

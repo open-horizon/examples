@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
 )
 
 func captureAudio(freq int) (audio []byte, err error) {
@@ -49,7 +51,7 @@ func stringListToFloat(stringList []string) (floatList []float32) {
 	return
 }
 
-func capturePower() (power PowerDist, err error) {
+func capturePower() (power rtlsdr.PowerDist, err error) {
 	start := 70000000
 	end := 110000000
 	power.Low = float32(start)
@@ -57,7 +59,6 @@ func capturePower() (power PowerDist, err error) {
 	cmd := exec.Command("rtl_power", "-e", "10", "-c", "20%", "-f", strconv.Itoa(start)+":"+strconv.Itoa(end)+":10000")
 	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
-	fmt.Println("starting command")
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
@@ -78,15 +79,7 @@ func capturePower() (power PowerDist, err error) {
 		}
 		power.Dbm = append(power.Dbm, stringListToFloat(row[6:])...)
 	}
-	//fmt.Println(recordList)
 	return
-}
-
-// PowerDist is the distribution of power of frequency.
-type PowerDist struct {
-	Low  float32   `json:"low"`
-	High float32   `json:"high"`
-	Dbm  []float32 `json:"dbm"`
 }
 
 func audioHandler(w http.ResponseWriter, r *http.Request) {

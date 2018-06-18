@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"strconv"
 
+	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
@@ -34,20 +33,6 @@ func opIsSafe(a string) bool {
 		}
 	}
 	return false
-}
-
-func getAudio(freq int) (audio []byte, err error) {
-	resp, err := http.Get("http://localhost:8080/audio/" + strconv.Itoa(freq))
-	if err != nil {
-		panic(err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		err = errors.New("bad resp")
-		return
-	}
-	defer resp.Body.Close()
-	audio, err = ioutil.ReadAll(resp.Body)
-	return
 }
 
 type model struct {
@@ -119,17 +104,22 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	stations, err := rtlsdr.GetCeilingSignals("localhost", -13)
+	if err != nil {
+		panic(err)
+	}
 	for {
-		//audio, err := getAudio(91100000)
-		audio, err := getAudio(89700000)
-		if err != nil {
-			panic(err)
+		for _, station := range stations {
+			fmt.Println("starting freq", station)
+			audio, err := rtlsdr.GetAudio("localhost", int(station))
+			if err != nil {
+				panic(err)
+			}
+			val, err := m.goodness(audio)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(station, val)
 		}
-		ioutil.WriteFile("/tmp/dat1", audio, 0644)
-		val, err := m.goodness(audio)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(val)
 	}
 }
