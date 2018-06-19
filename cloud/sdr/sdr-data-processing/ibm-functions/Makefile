@@ -12,17 +12,20 @@ MSGHUB_TOPIC ?= sdr-audio
 
 # Upload a new version of the action code
 update-action: $(ACTION_CODE)
-	bx wsk action update --kind nodejs:8 $(WSK_PACKAGE)/$(WSK_ACTION) $<
+	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
+	bx wsk action update --kind nodejs:8 $(WSK_PACKAGE)/$(WSK_ACTION) $< --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
 
 # This requires node.js be installed. On Mac: brew install node
 test-action: actions/msgreceive_test.js $(ACTION_CODE)
+	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
 	node $<
 
 # Create a trigger and action. Note: haven't tried this yet!!
 create: $(ACTION_CODE)
+	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
 	bx wsk package refresh
-	bx wsk trigger create $(WSK_TRIGGER) --feed Bluemix_$(MSGHUB_NAME)_Bruce_Credentials/messageHubFeed --param isJSONData true --param topic $(MSGHUB_TOPIC)
-	bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< # do not think these flag from igor are needed: --param kafka $(KAFKA_INSTANCE) --param destTopic $(DEST_TOPIC)
+	bx wsk trigger create $(WSK_TRIGGER) --feed Bluemix_$(MSGHUB_NAME)_Bruce_Credentials/messageHubFeed --param isJSONData true --param topic $(MSGHUB_TOPIC)  # not sure yet what to specify for --feed
+	bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
 	bx wsk rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_ACTION)
 
 # Remove a trigger and action. Note: haven't tried this yet!!
