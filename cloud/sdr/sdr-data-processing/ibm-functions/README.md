@@ -8,6 +8,13 @@
 - rule: /Hovitos_dev/message-hub-events-rule-2
 - Message Hub instance: Message Hub-rt (Region: US South, CF Org: Hovitos, CF Space: dev)
 
+## Setup
+
+```
+export WATSON_STT_USERNAME="<speech-to-text-user>"
+export WATSON_STT_PASSWORD="<speech-to-text-pw>"
+```
+
 ## Test the Action Locally
 ```
 make test-action
