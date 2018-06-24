@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/is8ac/tfutils/descend"
+	"github.com/is8ac/tfutils/descend/models"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
@@ -54,6 +56,41 @@ func preprocessAudio(s *op.Scope, audio tf.Output) (ffts tf.Output) {
 		),
 		op.Const(s.SubScope("two"), int64(2)),
 	)
+	return
+}
+
+//filter1 := op.StatelessRandomNormal(randomS.SubScope("filter1"), op.Const(s.SubScope("filter1_dims"), []int64{5, 5, 1, 3}), seed)
+//filter2 := op.StatelessRandomNormal(randomS.SubScope("filter2"), op.Const(s.SubScope("filter2_dims"), []int64{5, 5, 3, 5}), seed)
+//filter3 := op.StatelessRandomNormal(randomS.SubScope("filter3"), op.Const(s.SubScope("filter3_dims"), []int64{5, 5, 5, 5}), seed)
+//fc := op.StatelessRandomNormal(randomS.SubScope("fc"), op.Const(s.SubScope("fc_shape"), []int64{5 * 5 * 583, 7}), seed)
+//readout := op.StatelessRandomNormal(randomS.SubScope("readout"), op.Const(s.SubScope("readout_shape"), []int64{7, 2}), seed)
+
+func makeConvModel(input, target tf.Output) (
+	lossFunc descend.LossFunc,
+	size int64,
+	makeFinalizeAccuracy func(*op.Scope, tf.Output, tf.Output, tf.Output) tf.Output,
+) {
+	paramDefs := []models.ParamDef{
+		models.ParamDef{Name: "filter1", Shape: tf.MakeShape(5, 5, 1, 3)},
+		models.ParamDef{Name: "filter2", Shape: tf.MakeShape(5, 5, 3, 5)},
+		models.ParamDef{Name: "filter3", Shape: tf.MakeShape(5, 5, 5, 5)},
+		models.ParamDef{Name: "fc", Shape: tf.MakeShape(5*5*583, 7)},
+		models.ParamDef{Name: "readout", Shape: tf.MakeShape(7, 2)},
+	}
+	unflatten, size := models.MakeUnflatten(paramDefs)
+
+	lossFunc = func(s *op.Scope, params tf.Output) (loss tf.Output) {
+		layerParams := unflatten(s.SubScope("unflatten"), params)
+		output := model(s.SubScope("model"), input, layerParams[0], layerParams[1], layerParams[2], layerParams[3], layerParams[4])
+		loss = op.Mean(s,
+			op.Sum(s,
+				op.Square(s, op.Sub(s, output, target)),
+				op.Const(s.SubScope("one"), int64(1)),
+			),
+			op.Const(s.SubScope("zero"), int64(0)),
+		)
+		return
+	}
 	return
 }
 
