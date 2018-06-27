@@ -105,7 +105,7 @@ func main() {
 
 		fmt.Printf("%d messages produced to topic: %s; successes: %d errors: %d\n", enqueued, topic, successes, errors)
 	} else {
-		// Produce msgs asynchronously
+		// Produce msgs synchronously
 		producer, err := sarama.NewSyncProducer(brokers, config)
 		util.ExitOnErr(err)
 
@@ -116,7 +116,7 @@ func main() {
 		}()
 
 		if message != "" {
-			util.Verbose("producing the specified msg to %s...\n", topic)
+			util.Verbose("producing msg '%s' to %s...\n", message, topic)
 			err = SendSyncMessage(producer, topic, message)
 			util.ExitOnErr(err)
 		} else {
