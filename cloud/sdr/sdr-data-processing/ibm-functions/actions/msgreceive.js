@@ -27,7 +27,7 @@ function main(params) {
     }
 
     /*
-    var options_auth = { user: "8281900f-8621-43ae-b8a6-4656420bef9c", password: "OIZKxcVxxqF6" };
+    var options_auth = { user: params.watsonSttUsername, password: params.watsonSttPassword };
     var client = new Client(options_auth);
     client.get("https://stream.watsonplatform.net/speech-to-text/api/v1/models", function (data, response) {
       console.log(data);     // parsed response body as js object
@@ -36,8 +36,8 @@ function main(params) {
     */
 
     var speechToText = new SpeechToTextV1({
-      username: '8281900f-8621-43ae-b8a6-4656420bef9c',
-      password: 'OIZKxcVxxqF6'
+      username: params.watsonSttUsername,
+      password: params.watsonSttPassword
     });
 
     speechToText.listModels(null, function(error, speechModels) {
