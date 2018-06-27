@@ -30,14 +30,15 @@ func main() {
 	}
 	password := os.Getenv("STT_PASSWORD")
 	if password == "" {
-		panic("STT_USERNAME not set")
+		panic("STT_PASSWORD not set")
 	}
 	var i = 0
 	for {
-		stations, err := rtlsdr.GetCeilingSignals("localhost", -13)
+		stations, err := rtlsdr.GetCeilingSignals("localhost", -5)
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("found", len(stations), "stations")
 		for _, station := range stations {
 			fmt.Println("starting freq", station)
 			audio, err := rtlsdr.GetAudio("localhost", int(station))

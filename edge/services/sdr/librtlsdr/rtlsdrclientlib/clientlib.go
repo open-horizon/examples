@@ -10,7 +10,7 @@ import (
 
 // GetAudio fetches a 30 second chunk of raw audio.
 func GetAudio(hostname string, freq int) (audio []byte, err error) {
-	resp, err := http.Get("http://" + hostname + ":8080/audio/" + strconv.Itoa(freq))
+	resp, err := http.Get("http://" + hostname + ":5427/audio/" + strconv.Itoa(freq))
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +56,7 @@ type PowerDist struct {
 }
 
 func getPower(hostname string) (power PowerDist, err error) {
-	resp, err := http.Get("http://" + hostname + ":8080/power")
+	resp, err := http.Get("http://" + hostname + ":5427/power")
 	if err != nil {
 		panic(err)
 	}

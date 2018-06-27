@@ -21,7 +21,6 @@ func captureAudio(freq int) (audio []byte, err error) {
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-	fmt.Println("starting command")
 	err = cmd.Start()
 	if err != nil {
 		panic(err)
@@ -57,10 +56,13 @@ func capturePower() (power rtlsdr.PowerDist, err error) {
 	power.Low = float32(start)
 	power.High = float32(end)
 	cmd := exec.Command("rtl_power", "-e", "10", "-c", "20%", "-f", strconv.Itoa(start)+":"+strconv.Itoa(end)+":10000")
-	var stdout bytes.Buffer
+	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
+		errStr := string(stderr.Bytes())
+		fmt.Println(errStr)
 		panic(err)
 	}
 	r := csv.NewReader(bytes.NewReader(stdout.Bytes()))
@@ -111,9 +113,10 @@ func powerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	fmt.Println("starting sdr daemon")
 	http.HandleFunc("/audio/", audioHandler)
 	http.HandleFunc("/power", powerHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":5427", nil))
 }
 
 //78

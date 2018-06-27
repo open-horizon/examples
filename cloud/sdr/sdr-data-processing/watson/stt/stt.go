@@ -52,7 +52,10 @@ func Transcribe(rawAudio []byte, username, password string) (response Transcribe
 	r, _ := http.NewRequest("POST", urlStr, bytes.NewReader(wavAudio))
 	r.SetBasicAuth(username, password)
 	r.Header.Add("Content-Type", "audio/wav")
-	resp, _ := client.Do(r)
+	resp, err := client.Do(r)
+	if err != nil {
+		return
+	}
 	if resp.StatusCode != http.StatusOK {
 		err = errors.New("got status" + strconv.Itoa(resp.StatusCode))
 		return

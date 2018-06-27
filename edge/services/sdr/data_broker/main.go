@@ -32,6 +32,7 @@ func opIsSafe(a string) bool {
 		"Softmax",
 		"Squeeze",
 		"RandomUniform",
+		"Identity",
 	}
 	for _, b := range safeOPtypes {
 		if b == a {
@@ -87,7 +88,7 @@ func newModel(path string) (m model, err error) {
 		err = errors.New("unsafe OPs")
 		return
 	}
-	outputOP := graph.Operation("Squeeze")
+	outputOP := graph.Operation("output")
 	if outputOP == nil {
 		err = errors.New("output OP not found")
 		return
@@ -139,9 +140,11 @@ func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
 	return
 }
 
+const hostname string = "192.168.1.131"
+
 func main() {
 	//m, err := newModel("train/conv_model.pb")
-	m, err := newModel("train/random_model/random_model.pb")
+	m, err := newModel("model.pb")
 	if err != nil {
 		panic(err)
 	}
@@ -151,15 +154,14 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("connected to msghub")
-	stations, err := rtlsdr.GetCeilingSignals("localhost", -13)
+	stations, err := rtlsdr.GetCeilingSignals(hostname, -13)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("found", len(stations), "stations")
 	for {
 		for _, station := range stations {
-			fmt.Println("starting freq", station)
-			audio, err := rtlsdr.GetAudio("localhost", int(station))
+			audio, err := rtlsdr.GetAudio(hostname, int(station))
 			if err != nil {
 				panic(err)
 			}
@@ -167,7 +169,8 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			if val > 0.01 {
+			fmt.Println(station, val)
+			if val > 0.5 {
 				msg := &audiolib.AudioMsg{
 					Audio:         audio,
 					Ts:            time.Now(),
@@ -175,12 +178,14 @@ func main() {
 					ExpectedValue: val,
 					DevID:         "isaac_test_desktop",
 				}
+				fmt.Println("sending sample")
 				err = conn.publishAudio(msg)
 				if err != nil {
 					fmt.Println(err)
 				}
+			} else {
+				fmt.Println("not sending")
 			}
-			fmt.Println(station, val)
 		}
 	}
 }
