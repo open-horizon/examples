@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/open-horizon/examples/cloud/sdr/sdr-data-ingest/example-go-clients/util"
 	"github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
@@ -110,15 +110,28 @@ type msghubConn struct {
 	Topic    string
 }
 
+// taken from cloud/sdr/sdr-data-ingest/example-go-clients/util/util.go
+func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
+	config.ClientID = apiKey
+	config.Producer.RequiredAcks = sarama.WaitForAll
+	config.Producer.Retry.Max = 5
+	config.Producer.Return.Successes = true
+	config.Net.TLS.Enable = true
+	config.Net.SASL.User = user
+	config.Net.SASL.Password = pw
+	config.Net.SASL.Enable = true
+	return nil
+}
+
 func connect(topic string) (conn msghubConn, err error) {
 	conn.Topic = topic
-	apiKey := util.RequiredEnvVar("MSGHUB_API_KEY", "")
+	apiKey := getEnv("MSGHUB_API_KEY")
 	username := apiKey[:16]
 	password := apiKey[16:]
-	util.Verbose("username: %s, password: %s\n", username, password)
-	brokerStr := util.RequiredEnvVar("MSGHUB_BROKER_URL", "kafka01-prod02.messagehub.services.us-south.bluemix.net:9093,kafka02-prod02.messagehub.services.us-south.bluemix.net:9093,kafka03-prod02.messagehub.services.us-south.bluemix.net:9093,kafka04-prod02.messagehub.services.us-south.bluemix.net:9093,kafka05-prod02.messagehub.services.us-south.bluemix.net:9093")
+	brokerStr := getEnv("MSGHUB_BROKER_URL")
 	brokers := strings.Split(brokerStr, ",")
-	config, err := util.NewConfig(username, password, apiKey)
+	config := sarama.NewConfig()
+	err = populateConfig(config, username, password, apiKey)
 	if err != nil {
 		return
 	}
@@ -140,10 +153,27 @@ func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
 	return
 }
 
-const hostname string = "192.168.1.131"
+func getEnv(keys ...string) (val string) {
+	if len(keys) == 0 {
+		panic("must give at least one key")
+	}
+	for _, key := range keys {
+		val = os.Getenv(key)
+		if val != "" {
+			return
+		}
+	}
+	if val == "" {
+		fmt.Println("none of", keys, "are set")
+		panic("can't any find set value")
+	}
+	return
+}
+
+const hostname string = "rtlsdr"
 
 func main() {
-	//m, err := newModel("train/conv_model.pb")
+	devID := getEnv("HZN_DEVICE_ID")
 	m, err := newModel("model.pb")
 	if err != nil {
 		panic(err)
@@ -154,7 +184,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("connected to msghub")
-	stations, err := rtlsdr.GetCeilingSignals(hostname, -13)
+	stations, err := rtlsdr.GetCeilingSignals(hostname, -8)
 	if err != nil {
 		panic(err)
 	}
@@ -176,7 +206,7 @@ func main() {
 					Ts:            time.Now(),
 					Freq:          station,
 					ExpectedValue: val,
-					DevID:         "isaac_test_desktop",
+					DevID:         devID,
 				}
 				fmt.Println("sending sample")
 				err = conn.publishAudio(msg)

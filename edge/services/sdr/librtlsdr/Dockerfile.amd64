@@ -5,8 +5,6 @@ RUN apk --no-cache add g++ alpine-sdk
 RUN cd rtl-sdr && mkdir build && cd build && cmake ../ && make && make install
 RUN ls /usr/local/bin/rtl_*
 
-
-
 FROM golang:1.10.0-alpine as go_build
 COPY main.go /
 COPY rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib/clientlib.go
