@@ -1,5 +1,0 @@
-FROM aarch64/alpine:latest
-ENV ARCH=arm64
-COPY aural2_example /bin/
-WORKDIR /
-CMD aural2_example
