@@ -6,6 +6,10 @@
 go get github.com/Shopify/sarama
 go get github.com/bsm/sarama-cluster
 export MSGHUB_API_KEY='abcdefg'
+export MSGHUB_BROKER_URL="kafka01-prod123.messagehub.services.us-south.bluemix.net:9093,kafka02-prod456.messagehub.services.us-south.bluemix.net:9093"
+export MSGHUB_TOPIC="sdr-audio"
+export WATSON_STT_USERNAME="123456789-abcd"
+export WATSON_STT_PASSWORD="ABCDEFGHIJKLMNOP"
 ```
 
 You can optionally use your own certificate, which can be created like this:
