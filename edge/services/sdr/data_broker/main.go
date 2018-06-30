@@ -170,9 +170,14 @@ func getEnv(keys ...string) (val string) {
 	return
 }
 
-const hostname string = "rtlsdr"
+var hostname string = "rtlsdr"
 
 func main() {
+	alt_addr := os.Getenv("RTLSDR_ADDR")
+	if alt_addr != "" {
+		fmt.Println("connecting to remote rtlsdr:", alt_addr)
+		hostname = alt_addr
+	}
 	devID := getEnv("HZN_DEVICE_ID")
 	m, err := newModel("model.pb")
 	if err != nil {

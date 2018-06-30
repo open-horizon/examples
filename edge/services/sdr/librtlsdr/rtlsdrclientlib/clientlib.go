@@ -41,7 +41,7 @@ func GetCeilingSignals(hostname string, celling float32) (stationFreqs []float32
 	}
 	for i := float32(85900000); i < data.High; i += 200000 {
 		dbm := data.Dbm[FreqToIndex(i, data)]
-		if dbm > celling && dbm != 0 {
+		if dbm > celling {
 			stationFreqs = append(stationFreqs, i)
 		}
 	}

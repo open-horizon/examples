@@ -14,9 +14,11 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo --ldflags "-X main.v
 
 FROM arm32v6/alpine:latest
 RUN apk --no-cache add alsa-utils libusb
+COPY mock_audio.raw /mock_audio.raw
 COPY --from=go_build /bin/rtlsdrd /bin/rtlsdrd
 COPY --from=rtl_build /usr/local/bin/rtl_fm /bin/rtl_fm
 COPY --from=rtl_build /usr/local/bin/rtl_power /bin/rtl_power
 COPY --from=rtl_build /usr/local/lib/librtlsdr.so.0 /usr/local/lib/librtlsdr.so.0
+
 WORKDIR /
 CMD ["/bin/rtlsdrd"]
