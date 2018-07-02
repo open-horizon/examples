@@ -16,10 +16,6 @@ DOCKER_NAME ?= sdr_databroker_$(ARCH)
 REG_PATH := $(DOCKER_HUB_ID)/$(ARCH)
 IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
 
-default: build
-
-all: build run
-
 target/build_$(ARCH): main.go
 	docker build -t $(DOCKER_NAME):$(VERSION) -f Dockerfile.$(ARCH) ../
 	touch target/build_$(ARCH)

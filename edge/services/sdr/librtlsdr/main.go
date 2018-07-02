@@ -6,8 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -28,11 +31,13 @@ func captureAudio(freq int) (audio []byte, err error) {
 	time.Sleep(30 * time.Second)
 	err = cmd.Process.Kill()
 	if err != nil {
-		panic(err)
+		err = errors.New(string(stderr.Bytes()))
+		return
 	}
 	audio = stdout.Bytes()
-	//errStr := string(stderr.Bytes())
-	//fmt.Println(errStr)
+	if len(audio) < 100 {
+		err = errors.New("for some reason, audio is too short")
+	}
 	return
 }
 
@@ -61,9 +66,8 @@ func capturePower() (power rtlsdr.PowerDist, err error) {
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		errStr := string(stderr.Bytes())
-		fmt.Println(errStr)
-		panic(err)
+		err = errors.New(string(stderr.Bytes()))
+		return
 	}
 	r := csv.NewReader(bytes.NewReader(stdout.Bytes()))
 	recordList, err := r.ReadAll()
@@ -91,21 +95,37 @@ func audioHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	audio, err := captureAudio(freq)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if (err != nil) && !(os.Getenv("MOCK_IF_YOU_MUST") == "false") {
+		fmt.Println("using mock audio")
+		audio, err = ioutil.ReadFile("mock_audio.raw")
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 	w.Write(audio)
 }
 
 func powerHandler(w http.ResponseWriter, r *http.Request) {
 	power, err := capturePower()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if (err != nil) && !(os.Getenv("MOCK_IF_YOU_MUST") == "false") {
+		err = nil
+		fmt.Println("using mock power data:", err.Error())
+		power = rtlsdr.PowerDist{
+			Low:  float32(70000000),
+			High: float32(110000000),
+			Dbm:  make([]float32, ROWS*COLS),
+		}
+	}
+	for i := range power.Dbm {
+		if math.IsNaN(float64(power.Dbm[i])) {
+			power.Dbm[i] = -1234
+		}
 	}
 	jsonBytes, err := json.Marshal(power)
 	if err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -118,5 +138,3 @@ func main() {
 	http.HandleFunc("/power", powerHandler)
 	log.Fatal(http.ListenAndServe(":5427", nil))
 }
-
-//78
