@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Sentiment.css';
 
 class Sentiment extends Component {
-    state = { insights: ['Trump', 'Soccer'] }
+    state = { insights: ['Trump: negative', 'Soccer: positive'] }
 
     /*
     componentDidMount() {

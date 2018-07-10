@@ -7,9 +7,7 @@
 	},
 	"dependencies": {
 		"cfenv": "1.0.x",
-		"express": "4.15.x",
-		"react": "^16.4.1",
-		"react-dom": "^16.4.1"
+		"express": "4.15.x"
 	},
 	"repository": {},
 	"engines": {

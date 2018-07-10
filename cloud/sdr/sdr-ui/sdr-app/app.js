@@ -1,6 +1,6 @@
 /*eslint-env node*/
 
-// node.js starter application for Bluemix
+// node.js ibm cloud starter application for for the SDR app
 
 // This application uses express as its web server, for more info, see: http://expressjs.com
 var express = require('express');
@@ -8,13 +8,16 @@ var express = require('express');
 // cfenv provides access to your Cloud Foundry environment, for more info, see: https://www.npmjs.com/package/cfenv
 var cfenv = require('cfenv');
 
+const path = require('path')
+
 //var React = require('react');
 
 // create a new express server
 var app = express();
 
-// serve the files out of ./public as our main files
-app.use(express.static(__dirname + '/public'));
+// serve the client files out of ./client/build
+app.use(express.static(path.join(__dirname, 'client', 'build')));
+//app.use(express.static(__dirname + '/public'));
 
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();
