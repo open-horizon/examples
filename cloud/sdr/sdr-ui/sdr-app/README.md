@@ -46,4 +46,5 @@ Then browse https://sdr-app.mybluemix.net/
 ## Notes
 
 - Add redux to manage app state across react components.
+- Add graphql to get postgres data
 - React app creator: https://github.com/facebook/create-react-app
