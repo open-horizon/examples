@@ -2,17 +2,36 @@
 
 This application demonstrates a simple, reusable Node.js web application based on the Express framework.
 
-## Run the App Locally
+## Run the App Sever Locally
 
 [Install Node.js](https://nodejs.org/en/download/) and then:
 
 ```
 npm install   # to install the app's dependencies listed in package.json
-npm install react react-dom -S    # to install the dev version of react and add to package.json
+#npm install react react-dom -S    # to install the dev version of react and add to package.json
 npm start`   # to start the app
 ```
 
 Access the running app in a browser at <http://localhost:6001>
+
+## Add React Client
+
+```
+npm install -g create-react-app
+create-react-app client
+```
+
+## Run Client Locally
+
+```
+npm start
+```
+
+## Build Production Client
+
+```
+npm run build
+```
 
 ## Push Updated App to Cloud Service
 
