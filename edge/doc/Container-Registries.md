@@ -62,7 +62,7 @@ At this point you will be logged in to your private namespace in the IBM Cloud c
    `registry.ng.bluemix.net/<namespace>/<arch/image>:<version>`
 
 ### Create a Read/Write Token For Publishing Services and Patterns
-The golang docker api package that hzn exchange service publish uses doesn't support the specific flavor of authentication that bx cr login uses. In addition, you can't use bx cr login on non-x86 systems if you are developing and publishing there. Both of these problems can be overcome by creating a read/write token for yourself. With that you can use docker login (instead of bx cr login) and then use all of the normal docker  and hzn commands.
+The golang docker api package that `hzn exchange service publish` uses doesn't support the specific flavor of authentication that `bx cr login` uses. In addition, you can't use `bx cr login` on non-x86 systems if you are developing and publishing there. Both of these problems can be overcome by creating a read/write token for yourself. With that you can use `docker login` (instead of `bx cr login`) and then use all of the normal docker and hzn commands.
 
 To create the read/write token:
 
@@ -103,9 +103,11 @@ Put your IBM Cloud container registry read-only token into the exchange under th
 ### Using Your Service on Horizon Edge Nodes
 The only thing special you or anyone else needs to do to use this service in a pattern on an edge node is to verify that /etc/horizon/anax.json contains these values and then restart anax:
 
-   `"TrustCertUpdatesFromOrg": true,`
-   `"TrustDockerAuthFromOrg": true,`
-   `"ServiceUpgradeCheckIntervalS": 300`
+```
+"TrustCertUpdatesFromOrg": true,
+"TrustDockerAuthFromOrg": true,
+"ServiceUpgradeCheckIntervalS": 300
+```
     
 (This is a temporary thing until the horizon-wiotp deb package sets these.)
 
@@ -120,7 +122,7 @@ Once you have push your images to the IBM Cloud registry, you can list all your 
 
    `bx cr images`
 	
-The image-rm command may be used to remove images from your namespace.
+The `image-rm` sub-command may be used to remove images from your namespace.
 
 For more information, please see [using API keys and tokens with bx cr](https://console.bluemix.net/docs/services/Registry/registry_tokens.html#registry_access).
 
