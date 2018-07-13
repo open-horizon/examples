@@ -1,8 +1,10 @@
+// Displays the global word sentiment list
+
 import React, { Component } from 'react';
 import './Sentiment.css';
 
 class Sentiment extends Component {
-    state = { insights: ['Trump: negative', 'Soccer: positive'] }
+    state = { insights: ['Trump: negative', 'WorldCup: positive'] };
 
     /*
     componentDidMount() {
@@ -18,7 +20,7 @@ class Sentiment extends Component {
             <ul className="Sentiment-list">
             {listItems}
             </ul>
-        )
+        );
     }
   }
   

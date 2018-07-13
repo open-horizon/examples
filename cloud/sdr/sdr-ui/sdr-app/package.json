@@ -8,10 +8,11 @@
 	"dependencies": {
 		"cfenv": "1.0.x",
 		"eslint": "^5.1.0",
-		"express": "^4.16.3"
+		"express": "^4.16.3",
+		"winston": "^3.0.0"
 	},
 	"repository": {},
 	"engines": {
-		"node": "6.x"
+		"node": "10.x"
 	}
 }

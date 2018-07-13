@@ -8,7 +8,6 @@ This application demonstrates a simple, reusable Node.js web application based o
 
 ```
 npm install   # to install the app's dependencies listed in package.json
-#npm install react react-dom -S    # to install the dev version of react and add to package.json
 npm start`   # to start the app
 ```
 
@@ -18,7 +17,7 @@ Access the running app in a browser at <http://localhost:6001>
 
 ```
 npm install -g create-react-app
-create-react-app client
+create-react-app client   # see https://github.com/facebook/create-react-app
 ```
 
 ## Run Client Locally
@@ -45,6 +44,5 @@ Then browse https://sdr-app.mybluemix.net/
 
 ## Notes
 
-- Add redux to manage app state across react components.
+- Add redux to manage app state across react components?
 - Add graphql to get postgres data
-- React app creator: https://github.com/facebook/create-react-app

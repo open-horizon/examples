@@ -1,29 +1,68 @@
 /*eslint-env node*/
 
-// node.js ibm cloud starter application for for the SDR app
+/*
+Node.js ibm cloud express server for the SDR app. This serves both the client UI (from its build dir)
+and the data from the SDR postgresql DB.
+*/
 
-// This application uses express as its web server, for more info, see: http://expressjs.com
-var express = require('express');
+// const requiredPort = 6002;   // required because we have to hardcode the PORT env var to this in the cloud service, and the proxy setting in the client package.json
 
-// cfenv provides access to your Cloud Foundry environment, for more info, see: https://www.npmjs.com/package/cfenv
-var cfenv = require('cfenv');
-
-const path = require('path')
-
-//var React = require('react');
+const path = require('path');
+const winston = require('winston');   // for logging: https://github.com/winstonjs/winston
+var express = require('express');   // see: http://expressjs.com
+var cfenv = require('cfenv');   // provides access to your Cloud Foundry environment, see: https://www.npmjs.com/package/cfenv
 
 // create a new express server
 var app = express();
 
-// serve the client files out of ./client/build
+// get the app environment from Cloud Foundry
+var appEnv = cfenv.getAppEnv();
+// console.log(process.env);
+// console.log('HOME: ' + process.env.HOME);
+// console.log(appEnv);
+// const envStr = JSON.stringify(process.env)
+// console.log('Env: ' + envStr)
+
+// serve the client files out of ./client/build (which is built by running 'npm run build' in that dir)
 app.use(express.static(path.join(__dirname, 'client', 'build')));
 //app.use(express.static(__dirname + '/public'));
 
-// get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
+// Set up logging
+if (process.env.CF_INSTANCE_IP) { var logFile = process.env.HOME + '/../logs/sdr-app.log'; }    // when running in the cloud service, HOME is set to /home/vcap/app
+else { var logFile = process.env.HOME + '/logs/sdr-app.log'; }
+// const logFile = '/home/vcap/logs/sdr-app.log';
+console.log('Configuring winston logging to ' + logFile);
+const logger = winston.createLogger({
+  level: 'info',    // and below
+  format: winston.format.combine( winston.format.timestamp(), winston.format.json() ),
+  transports: [
+    // new winston.transports.Console(),
+    new winston.transports.File({ filename: logFile })
+  ]
+});
+logger.info('Winston logging configured.');
+
+/* Verify the port number is correct in all of the environments we run it
+const port = requiredPort
+if (process.env.PORT != requiredPort || appEnv.port != requiredPort) {
+  // I think we have to set the PORT env var in the cloud service to get the proxy in front of the service configured correctly
+  logError(`the PORT env var (${process.env.PORT}) must be set to ${requiredPort}`)
+} */
+
+// logger.info('Env: ' + envStr)
+logger.info(`Important Environment Variables: cenv: url=${appEnv.url},bind=${appEnv.bind},port=${appEnv.port}, USER: ${process.env.USER}, HOME: ${process.env.HOME}, CF_INSTANCE_IP: ${process.env.CF_INSTANCE_IP}, CF_INSTANCE_PORTS: ${process.env.CF_INSTANCE_PORTS}, VCAP_APP_PORT: ${process.env.VCAP_APP_PORT}, NODE_ENV: ${process.env.NODE_ENV}, npm_config_node_version: ${process.env.npm_config_node_version}`)
 
 // start server on the specified port and binding host
 app.listen(appEnv.port, '0.0.0.0', function() {
   // print a message when the server starts listening
-  console.log("server starting on " + appEnv.url);
+  const listeningStr = `SDR express server listening on ${appEnv.url} (port ${appEnv.port})`
+  console.log(listeningStr);
+  logger.info(listeningStr);
 });
+
+
+// Write the error to both the console and log
+function logError(str) {
+  console.error('Error: ' + str);
+  logger.error('Error: ' + str)
+}
