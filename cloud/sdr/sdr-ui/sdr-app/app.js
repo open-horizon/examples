@@ -12,6 +12,16 @@ const winston = require('winston');   // for logging: https://github.com/winston
 var express = require('express');   // see: http://expressjs.com
 var cfenv = require('cfenv');   // provides access to your Cloud Foundry environment, see: https://www.npmjs.com/package/cfenv
 
+// PostgreSQL
+const { postgraphile } = require("postgraphile");
+
+// Graphql server-side modules
+const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const { apolloUploadExpress } = require('apollo-upload-server');
+const bodyParser = require('body-parser');
+const {schema} = require('./server/resources/schema');
+const _ = require('lodash');
+
 // create a new express server
 var app = express();
 
@@ -23,9 +33,16 @@ var appEnv = cfenv.getAppEnv();
 // const envStr = JSON.stringify(process.env)
 // console.log('Env: ' + envStr)
 
+// Configure what express should use/serve:
 // serve the client files out of ./client/build (which is built by running 'npm run build' in that dir)
 app.use(express.static(path.join(__dirname, 'client', 'build')));
 //app.use(express.static(__dirname + '/public'));
+
+const {postgresUrl} = require('./server/config/settings')
+app.use(postgraphile(process.env.SDR_DB_URL || postgresUrl || "postgres://localhost/"));
+
+app.use('/graphql', bodyParser.json(), apolloUploadExpress(), graphqlExpress({ schema }));
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql', }));    // only needed for developers to interactively browse the db
 
 // Set up logging
 if (process.env.CF_INSTANCE_IP) { var logFile = process.env.HOME + '/../logs/sdr-app.log'; }    // when running in the cloud service, HOME is set to /home/vcap/app
@@ -65,4 +82,10 @@ app.listen(appEnv.port, '0.0.0.0', function() {
 function logError(str) {
   console.error('Error: ' + str);
   logger.error('Error: ' + str)
+}
+
+// Write the warning to both the console and log
+function logWarning(str) {
+  console.warning('Warning: ' + str);
+  logger.warning('Warning: ' + str)
 }
