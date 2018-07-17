@@ -1,0 +1,52 @@
+{
+  "label": "Edge $CPU2WIOTP_NAME and Core IoT Service Pattern for $ARCH on mac",
+  "description": "Pattern for the service version of $CPU2WIOTP_NAME and Core IoT for $ARCH",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot-mac",
+      "serviceOrgid": "IBM",
+      "serviceArch": "$ARCH",
+      "agreementLess": true,
+      "serviceVersions": [
+        {
+          "version": "2.4.0",
+          "deployment_overrides": null,
+          "deployment_overrides_signature": "",
+          "priority": {},
+          "upgradePolicy": {}
+        }
+      ],
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "serviceUrl": "https://$MYDOMAIN/services/${CPU2WIOTP_NAME}-mac",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
+        {
+          "version": "$CPU2WIOTP_VERSION",
+          "priority": {},
+          "upgradePolicy": {},
+          "deployment_overrides": null,
+          "deployment_overrides_signature": ""
+        }
+      ],
+      "dataVerification": {
+        "metering": {}
+      },
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    }
+  ]
+}

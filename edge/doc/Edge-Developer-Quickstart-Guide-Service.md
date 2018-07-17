@@ -415,7 +415,7 @@ hzn wiotp device create $WIOTP_GW_TYPE $WIOTP_GW_ID $WIOTP_GW_TOKEN
 **If you are using the bluehorizon hybrid development environment, do not use the -s flag above, and also run these commands:**
 ```
 hzn exchange node create -n "$HZN_DEVICE_ID:$WIOTP_GW_TOKEN"
-hzn exchange pattern publish -p $WIOTP_GW_TYPE -f pattern/cpu2wiotp-service.json
+hzn exchange pattern publish -p $WIOTP_GW_TYPE -f horizon/pattern/cpu2wiotp.json
 hzn exchange agbot addpattern -o IBM stg-agbot-dal09-01.staging.bluehorizon.network $HZN_ORG_ID $WIOTP_GW_TYPE
 hzn exchange agbot addpattern -o IBM stg-agbot-lon02-01.staging.bluehorizon.network $HZN_ORG_ID $WIOTP_GW_TYPE
 hzn exchange agbot addpattern -o IBM stg-agbot-tok02-01.staging.bluehorizon.network $HZN_ORG_ID $WIOTP_GW_TYPE

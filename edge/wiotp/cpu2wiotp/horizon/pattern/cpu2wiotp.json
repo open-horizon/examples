@@ -29,15 +29,7 @@
       "workloadVersions": [
         {
           "version": "$CPU2WIOTP_VERSION",
-          "deployment_overrides": {
-            "services": {
-              "cpu2wiotp": {
-                "environment": [
-                  "WIOTP_DOMAIN=$WIOTP_DOMAIN"
-                ]
-              }
-            }
-          },
+          "deployment_overrides": null,
           "deployment_overrides_signature": "",
           "priority": {},
           "upgradePolicy": {}

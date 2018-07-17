@@ -1,0 +1,76 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$CPU2WIOTP_NAME for $ARCH on mac",
+    "description": "Sample Horizon service that repeatedly reads the CPU load and sends it to WIoTP",
+    "public": true,
+    "url": "https://$MYDOMAIN/services/${CPU2WIOTP_NAME}-mac",
+    "version": "$CPU2WIOTP_VERSION",
+    "arch": "$ARCH",
+    "sharable": "multiple",
+    "matchHardware": null,
+    "requiredServices": [
+        {
+            "url": "https://$MYDOMAIN/services/$CPU_NAME",
+            "org": "$HZN_ORG_ID",
+            "version": "$CPU_VERSION",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "https://internetofthings.ibmcloud.com/wiotp-edge/services/core-iot-mac",
+            "org": "IBM",
+            "version": "2.4.0",
+            "arch": "amd64"
+        }
+    ],
+    "userInput": [
+        {
+            "name": "SAMPLE_SIZE",
+            "label": "the number of samples to read before calculating the average",
+            "type": "int",
+            "defaultValue": "6"
+        },
+        {
+            "name": "SAMPLE_INTERVAL",
+            "label": "the number of seconds between samples",
+            "type": "int",
+            "defaultValue": "5"
+        },
+        {
+            "name": "MOCK",
+            "label": "mock the CPU sampling",
+            "type": "boolean",
+            "defaultValue": "false"
+        },
+        {
+            "name": "PUBLISH",
+            "label": "publish the CPU samples to WIoTP",
+            "type": "boolean",
+            "defaultValue": "true"
+        },
+        {
+            "name": "VERBOSE",
+            "label": "log everything that happens",
+            "type": "string",
+            "defaultValue": "0"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "cpu2wiotp": {
+                "binds": [
+                    "/var/wiotp-edge:/var/wiotp-edge"
+                ],
+                "environment": [
+                    "WIOTP_DOMAIN=$WIOTP_DOMAIN",
+                    "WIOTP_EDGE_MQTT_IP=edge-connector",
+                    "WIOTP_PEM_FILE=/var/wiotp-edge/persist/dc/ca/ca.pem"
+                ],
+                "image": "$DOCKER_HUB_ID/${ARCH}_$CPU2WIOTP_NAME:$CPU2WIOTP_VERSION"
+            }
+        }
+    },
+    "deploymentSignature": "",
+    "imageStore": {
+        "storeType": "dockerRegistry"
+    }
+}
