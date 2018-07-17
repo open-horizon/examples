@@ -9,7 +9,11 @@ export WIOTP_API_TOKEN='myapikeytoken'
 # This variable must be set appropriately for your specific Edge Node
 export ARCH=amd64   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
 export LOCATION_VERSION=2.0.8   # the workload version, and also used as the tag for the docker image. Must be in OSGI version format.
+export GPS_NAME=gps   # the microservice name, used in the docker image path and in the microservice url.
 export GPS_VERSION=2.0.4   # the microservice version, and also used as the tag for the docker image. Must be in OSGI version format.
+
+export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
+export MYDOMAIN=mydomain.com	# used in the workload url
 
 # There is normally no need for you to edit these variables
 export HZN_ORGANIZATION=$HZN_ORG_ID

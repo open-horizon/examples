@@ -15,8 +15,12 @@
 # For developer usage, see the documentation at the "develop" target below.
 #
 
+export GPS_NAME ?= gps
 export GPS_VERSION ?= 2.0.4
-IMAGE ?= gps
+DOCKER_HUB_ID ?= openhorizon
+# If you use this domain in the service definition, the resulting url has documentation for this service
+export MYDOMAIN ?= github.com/open-horizon/examples/wiki
+IMAGE ?= $(GPS_NAME)
 BINARY=$(IMAGE)
 SOURCE=main.go
 OTHER_SOURCES:=$(wildcard src/*/*.go)
@@ -49,12 +53,8 @@ export ARCH ?= $(SYSTEM_ARCH)
 CROSS_COMPILE ?= false
 
 # Construct our Docker registry path and other architecture-dependent values
-REGISTRY ?= openhorizon
-REG_PATH := $(REGISTRY)/$(ARCH)
+REG_PATH := $(DOCKER_HUB_ID)/$(ARCH)
 IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(GPS_VERSION)
-#HOVITOS_REGISTRY=summit.hovitos.engineering
-#$(HOVITOS_REGISTRY)/armhf/golang:1.7.3
-#$(HOVITOS_REGISTRY)/ppc64le/golang:1.8.1
 
 #ifeq ($(ARCH),arm)
 #  ifeq ($(CROSS_COMPILE),true)
@@ -71,7 +71,10 @@ VPATH=src:bin
 
 # Running make with no target will build the production image
 .PHONY: default
-default: $(IMAGE)-$(GPS_VERSION)
+default: build
+
+.PHONY: build
+build: $(IMAGE)-$(GPS_VERSION)
 
 # Omitting the image architecture will default to the local architecture
 # NOTE: Must depend on a file in the file system, not an image!

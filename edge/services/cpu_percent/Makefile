@@ -11,17 +11,18 @@ DOCKER_NAME ?= $(ARCH)_$(CPU_NAME)
 DOCKER_HUB_ID ?= openhorizon
 export MYDOMAIN ?= internetofthings.ibmcloud.com
 PORT_NUM ?= 8347
+IMAGE_PATH ?= $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION)
 
 default: all
 
 all: build run check
 
 build:
-	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build -t $(IMAGE_PATH) -f ./Dockerfile.$(ARCH) .
 
 run:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
-	docker run -d --name $(DOCKER_NAME) --publish=$(PORT_NUM):$(PORT_NUM) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION)
+	docker run -d --name $(DOCKER_NAME) --publish=$(PORT_NUM):$(PORT_NUM) --volume `pwd`:/outside $(IMAGE_PATH)
 
 check:
 	curl -sSL http://localhost:$(PORT_NUM)/v1/cpu | jq .
@@ -31,7 +32,7 @@ stop:
 
 # To publish you must have write access to the docker hub DOCKER_HUB_ID user
 publish: build
-	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION)
+	docker push $(IMAGE_PATH)
 
 # Create/update the metadata in the exchange for this microservice
 exchange-publish: build
@@ -39,6 +40,6 @@ exchange-publish: build
 
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
-	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION) 2> /dev/null || :
+	-docker rmi $(IMAGE_PATH) 2> /dev/null || :
 
 .PHONY: default all build run check stop publish exchange-publish clean

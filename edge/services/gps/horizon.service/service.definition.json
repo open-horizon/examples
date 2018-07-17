@@ -3,7 +3,7 @@
   "label": "GPS for $ARCH",
   "description": "Provides the edge node location via a REST API from a GPS sensor, environment variables, or the IP address",
   "public": true,
-  "url": "https://github.com/open-horizon/examples/wiki/service-gps",
+  "url": "https://$MYDOMAIN/service-$GPS_NAME",
   "version": "$GPS_VERSION",
   "arch": "$ARCH",
   "sharable": "single",
@@ -12,7 +12,7 @@
   "deployment": {
     "services": {
       "gps": {
-        "image": "openhorizon/${ARCH}_gps:$GPS_VERSION",
+        "image": "$DOCKER_HUB_ID/${ARCH}_$GPS_NAME:$GPS_VERSION",
         "privileged": true,
         "devices": [
           "/dev/bus/usb/001/001:/dev/bus/usb/001/001"

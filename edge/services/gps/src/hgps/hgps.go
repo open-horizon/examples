@@ -27,8 +27,8 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-        "strconv"
-        "strings"
+	// "strconv"
+	// "strings"
 	"sync"
 	"time"
 
@@ -385,35 +385,67 @@ func get_public_address() (ip_address string) {
         return
 }
 
+type IPGPSCoordinates struct {
+	Latitude float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	// there are many more fields, but we don't care about them
+}
+
 // Estimate the location of the node by using its IP address.  This function
 // uses the FreeGeoIP service, which enables up to 10,000 queries per hour
 // (after which it returns HTTP 403 responses).  See "http://freegeoip.net/".
 func get_location_from_ip_address(ip_address string) (lat float64, lon float64, err error) {
-        resp, rest_err := http.Get("http://freegeoip.net/csv/" + ip_address)
-        if rest_err != nil {
-		err = errors.New(fmt.Sprintf("ERROR: Request to http://freegeoip.net/csv/%s failed (%v).", rest_err))
+	apikey := "166f0d44636d9ed71c6a01530f687fdb"
+	url := "http://api.ipstack.com/"+ip_address+"?access_key="+apikey+"&format=1"
+	resp, rest_err := http.Get(url)
+	if rest_err != nil {
+		err = errors.New(fmt.Sprintf("ERROR: Request to %s failed: %v", url, rest_err))
 		return
-        }
-        defer resp.Body.Close()
-        body, err := ioutil.ReadAll(resp.Body)
+	}
+	defer resp.Body.Close()
+	httpCode := resp.StatusCode
+	if httpCode != 200 {
+		err = errors.New(fmt.Sprintf("ERROR: Badd http code %d from %s\n", httpCode, url))
+		return
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Printf("Response from %s:\n%s\n", url, string(body))
+	coordinates := IPGPSCoordinates{}
+	err = json.Unmarshal(body, &coordinates)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("ERROR: failed to unmarshal body response from %s: %v", url, err))
+	}
+	lat = coordinates.Latitude
+	lon = coordinates.Longitude
+	return
+
+	/* This API endpoint has been deprecated...
+	resp, rest_err := http.Get("http://freegeoip.net/csv/" + ip_address)
+	if rest_err != nil {
+	err = errors.New(fmt.Sprintf("ERROR: Request to http://freegeoip.net/csv/%s failed (%v).", rest_err))
+	return
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
 	lines := strings.Split(string(body), ",")
 	fmt.Printf("LINES: %v\n", lines)
 	fmt.Printf("LINE[8]: %v\n", lines[8])
 	fmt.Printf("LINE[9]: %v\n", lines[9])
 	// Parse out the latitude and longitude, and convert to float64
-        lat_str := string(lines[8][:len(lines[8])-1])
+    lat_str := string(lines[8][:len(lines[8])-1])
 	lat, lat_err := strconv.ParseFloat(lat_str, 64)
 	if nil != lat_err {
 		err = errors.New(fmt.Sprintf("ERROR: Unable to parse lat from http://freegeoip.net/csv/%s: lat: \"%s\", error: %v.", lat_str, lat_err))
 		return
 	}
-        lon_str := string(lines[9][:len(lines[9])-1])
+    lon_str := string(lines[9][:len(lines[9])-1])
 	lon, lon_err := strconv.ParseFloat(lon_str, 64)
 	if nil != lon_err {
 		err = errors.New(fmt.Sprintf("ERROR: Unable to parse lon from http://freegeoip.net/csv/%s: lon: \"%s\", error: %v.", lon_str, lon_err))
 		return
 	}
 	err = nil
-        return
+		return
+	*/
 }
 
