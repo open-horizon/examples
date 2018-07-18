@@ -1,9 +1,14 @@
-#
 # Makefile for location container
 #
 
+export LOCATION_NAME ?= location2wiotp
 export LOCATION_VERSION ?= 2.0.8
-IMAGE ?= location2wiotp
+# setting the default to the bx container registry so we can test that constantly
+DOCKER_HUB_ID ?= registry.ng.bluemix.net/bmpotter
+REGISTRY ?= $(shell echo $(DOCKER_HUB_ID) | cut -d / -f 1)
+# If you use this domain in the service definition, the resulting url has documentation for this service
+export MYDOMAIN ?= github.com/open-horizon/examples/wiki
+IMAGE ?= $(LOCATION_NAME)
 
 # The docker network used for testing (must match the gps container network)
 DOCKER_TEST_NETWORK ?= gps-test
@@ -18,16 +23,18 @@ export ARCH ?= $(SYSTEM_ARCH)
 #REGISTRY ?= openhorizon
 #REG_PATH := $(REGISTRY)/$(ARCH)
 #IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(LOCATION_VERSION)
-REGISTRY ?= registry.ng.bluemix.net
-REG_PATH := $(REGISTRY)/bmpotter/$(ARCH)
-IMAGE_PATH = $(REG_PATH)/$(IMAGE):$(LOCATION_VERSION)
+REG_PATH := $(DOCKER_HUB_ID)/$(ARCH)
+IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(LOCATION_VERSION)
 
 # Make will search these two relative paths for input and target files
 VPATH=bin
 
 # Running make with no target will build the production image
 .PHONY: default
-default: $(IMAGE)-$(LOCATION_VERSION)
+default: build
+
+.PHONY: build
+build: $(IMAGE)-$(LOCATION_VERSION)
 
 # Omitting the image architecture will default to the local architecture
 .PHONY: $(IMAGE)-$(LOCATION_VERSION)

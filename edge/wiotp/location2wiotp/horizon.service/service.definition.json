@@ -3,7 +3,7 @@
   "label": "Location to WIoTP for $ARCH",
   "description": "Gets the edge node GPS location from the gps service and sends it to WIoTP via the core-iot edge-connector",
   "public": true,
-  "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
+  "url": "https://$MYDOMAIN/service-$LOCATION_NAME",
   "version": "$LOCATION_VERSION",
   "arch": "$ARCH",
   "sharable": "multiple",
@@ -32,7 +32,7 @@
   "deployment": {
     "services": {
       "location": {
-        "image": "registry.ng.bluemix.net/bmpotter/$ARCH/location2wiotp:$LOCATION_VERSION",
+        "image": "$DOCKER_HUB_ID/${ARCH}_$LOCATION_NAME:$LOCATION_VERSION",
         "binds": [
           "/var/wiotp-edge:/var/wiotp-edge"
         ],

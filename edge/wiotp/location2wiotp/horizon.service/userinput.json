@@ -12,7 +12,7 @@
         },
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
+            "url": "https://$MYDOMAIN/service-$LOCATION_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         },

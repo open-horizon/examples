@@ -24,7 +24,7 @@
       }
     },
     {
-      "serviceUrl": "https://github.com/open-horizon/examples/wiki/service-location2wiotp",
+      "serviceUrl": "https://$MYDOMAIN/service-$LOCATION_NAME",
       "serviceOrgid": "$HZN_ORG_ID",
       "serviceArch": "$ARCH",
       "serviceVersions": [

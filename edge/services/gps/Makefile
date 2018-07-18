@@ -16,7 +16,7 @@
 #
 
 export GPS_NAME ?= gps
-export GPS_VERSION ?= 2.0.4
+export GPS_VERSION ?= 2.0.5
 DOCKER_HUB_ID ?= openhorizon
 # If you use this domain in the service definition, the resulting url has documentation for this service
 export MYDOMAIN ?= github.com/open-horizon/examples/wiki
