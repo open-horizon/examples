@@ -49,7 +49,7 @@ func simpleModel(s *op.Scope, input tf.Output, filter, weights tf.Output) (class
 		[]int64{1, 7, 7, 1},
 		"VALID",
 	)
-
+	fmt.Println("conv1", conv1.Shape())
 	flatInput := op.Reshape(s, conv1, op.Const(s.SubScope("shape"), []int64{batchSize, -1}))
 	class = op.Softmax(s, op.MatMul(s, flatInput, weights))
 	return
@@ -61,8 +61,8 @@ func makeSimpleModel(input, target tf.Output) (
 	makeFinalizeAccuracy func(*op.Scope, tf.Output, tf.Output, tf.Output) tf.Output,
 ) {
 	paramDefs := []models.ParamDef{
-		models.ParamDef{Name: "filter1", Shape: tf.MakeShape(11, 11, 1, 3)},
-		models.ParamDef{Name: "weights", Shape: tf.MakeShape(14364, 2)},
+		models.ParamDef{Name: "filter1", Shape: tf.MakeShape(23, 11, 1, 3)},
+		models.ParamDef{Name: "weights", Shape: tf.MakeShape(14148, 2)},
 	}
 	unflatten, size := models.MakeUnflatten(paramDefs)
 
@@ -261,11 +261,11 @@ func varCache(s *op.Scope, input tf.Output, shape tf.Shape, name string) (init *
 const gobalSeed int64 = 0
 
 func main() {
-	const subSize = 10
+	const subSize = 20
 	const globalSeed = 42
 	const batchSize = 100
-	const searchSize float32 = 0.01
-	const gradsScale float32 = 0.1
+	const searchSize float32 = 0.0003
+	const gradsScale float32 = 0.01
 	const dataSize int64 = 1110
 	fmt.Println(tf.Version())
 
@@ -342,7 +342,7 @@ func main() {
 		panic(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		observedGrads, err := sess.Run(nil, []tf.Output{updates, loss}, nil)
 		if err != nil {
 			panic(err)
