@@ -61,19 +61,18 @@ At this point you will be logged in to your private namespace in the IBM Cloud c
 
    `registry.ng.bluemix.net/<namespace>/<arch/image>:<version>`
 
-### Create a Read/Write Token For Publishing Services and Patterns
-The golang docker api package that hzn exchange service publish uses doesn't support the specific flavor of authentication that bx cr login uses. In addition, you can't use bx cr login on non-x86 systems if you are developing and publishing there. Both of these problems can be overcome by creating a read/write token for yourself. With that you can use docker login (instead of bx cr login) and then use all of the normal docker  and hzn commands.
+### Create a Read/Write Token For Publishing Services
+To push a docker image to the IBM Cloud container registry (including having `hzn exchange service publish` do it for you)  you must create a read/write token for yourself. With that you can use `docker login` (instead of `bx cr login`) and then use all of the normal `docker` and `hzn` commands.
 
 To create the read/write token:
 
    `bx cr token-add --description '...' --non-expiring --readwrite`
 	
-The output should contain a line that begins with “Token”, then whitespace, then a long string of characters.  That long string is your token.  You can ignore everything else in that output.  To use this token with docker login, use a user name of “token” (i.e., literally those 5 characters) and then pass the token created above as the password:
+The output should contain a line that begins with “Token”, then whitespace, then a long string of characters.  That long string is your token.  You can ignore everything else in that output.  To use this token with docker login, use a user name of “token” (literally those 5 characters) and then pass the token created above as the password:
 
    `docker login -u token -p 'WJh3NDJ2…' registry.ng.bluemix.net`
 	
-
-Or you could alternatively [create an API key](https://console.bluemix.net/docs/services/Registry/registry_tokens.html#registry_access).
+Alternatively, you can [create an API key](https://console.bluemix.net/docs/services/Registry/registry_tokens.html#registry_access) and use that in the `docker login` command.
 
 ### Create Read-Only Token For Horizon Users
 To enable Horizon edge nodes to pull your service container images, you need to create a read-only token that Horizon can use on your edge nodes to access to your private namespace in the IBM Cloud Container Registry.  The bx command below will create such a token:
@@ -103,9 +102,11 @@ Put your IBM Cloud container registry read-only token into the exchange under th
 ### Using Your Service on Horizon Edge Nodes
 The only thing special you or anyone else needs to do to use this service in a pattern on an edge node is to verify that /etc/horizon/anax.json contains these values and then restart anax:
 
-   `"TrustCertUpdatesFromOrg": true,`
-   `"TrustDockerAuthFromOrg": true,`
-   `"ServiceUpgradeCheckIntervalS": 300`
+```
+"TrustCertUpdatesFromOrg": true,
+"TrustDockerAuthFromOrg": true,
+"ServiceUpgradeCheckIntervalS": 300
+```
     
 (This is a temporary thing until the horizon-wiotp deb package sets these.)
 
@@ -120,7 +121,7 @@ Once you have push your images to the IBM Cloud registry, you can list all your 
 
    `bx cr images`
 	
-The image-rm command may be used to remove images from your namespace.
+The `image-rm` sub-command may be used to remove images from your namespace.
 
 For more information, please see [using API keys and tokens with bx cr](https://console.bluemix.net/docs/services/Registry/registry_tokens.html#registry_access).
 
