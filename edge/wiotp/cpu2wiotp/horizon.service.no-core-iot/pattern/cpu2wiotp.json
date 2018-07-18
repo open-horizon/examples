@@ -4,7 +4,7 @@
   "public": true,
   "services": [
     {
-      "serviceUrl": "https://$MYDOMAIN/services/$CPU2WIOTP_NAME-no-core-iot",
+      "serviceUrl": "https://$MYDOMAIN/services/${CPU2WIOTP_NAME}-no-core-iot",
       "serviceOrgid": "$HZN_ORG_ID",
       "serviceArch": "$ARCH",
       "serviceVersions": [
