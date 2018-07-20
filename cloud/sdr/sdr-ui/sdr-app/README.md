@@ -50,5 +50,8 @@ Then browse https://sdr-app.mybluemix.net/
     - Apollo intro: https://flaviocopes.com/apollo/
     - GraphQL: http://graphql.github.io/learn/queries/
     - GraphQL, PostgreSQL, and pg-promise: https://blog.cloudboost.io/postgresql-and-graphql-2da30c6cde26
+    - Pg-promise: http://vitaly-t.github.io/pg-promise/index.html
     - GraphQL & PostgreSQL Quickstart: https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
     - Postgraphile: https://www.graphile.org/postgraphile/quick-start-guide/
+- Eslint disables: https://gist.github.com/cletusw/e01a85e399ab563b1236
+- JSDoc: http://usejsdoc.org/about-getting-started.html
