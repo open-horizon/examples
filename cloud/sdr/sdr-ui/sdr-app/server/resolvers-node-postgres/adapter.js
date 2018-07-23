@@ -15,12 +15,12 @@ psql.query('select noun, sentiment, numberofmentions from nouns').then((res) => 
     console.log(res.rows);
 }).catch((e) => console.error(e.stack));
 
-// To test what psql.manyOrNone() returns once the promise is fulfilled...
+/* To test what psql.query() returns once the promise is fulfilled...
 (async function() {
     // const mydata = await psql.manyOrNone('select noun, sentiment, numberofmentions from nouns').then((data) => data.slice());
     const res = await psql.query('select noun, sentiment, numberofmentions from nouns');
     console.log('when waiting for the data:');
     console.log(res.rows);
-}());
+}()); */
 
 exports.psql = psql;

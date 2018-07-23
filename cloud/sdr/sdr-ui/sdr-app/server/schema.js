@@ -1,23 +1,30 @@
 // const GraphQLSchema = require('graphql').GraphQLSchema;
 const makeExecutableSchema = require('graphql-tools').makeExecutableSchema;
 
-const resolver = require('./resolver-node-postgres').resolver;
+const resolvers = require('./resolvers-node-postgres').resolvers;
+// console.log('my resolver object:'); console.log(resolvers);
 
-// define our user type
-// then define a users query, which must return an array type that optionally contains 0 or more User types
+/* Define the graphql queries supported. Examples of queries to the svr:
+    query { nouns {noun sentiment numberofmentions timeupdated } }
+    query { noun(noun: "trump") { noun sentiment numberofmentions timeupdated } }
+*/
 const typeDefs = `
+scalar Date
+
 type Noun {
     noun: String!
     sentiment: String
     numberofmentions: Int
+    timeupdated: Date
 }
 
 type Query {
-    nouns: [Noun]
+    nouns: [Noun]!
+    noun(noun: String!): Noun
 }
 `;
 
 exports.schema = makeExecutableSchema({
   typeDefs,
-  resolver,
+  resolvers,
 });

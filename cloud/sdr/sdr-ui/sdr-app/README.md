@@ -48,7 +48,10 @@ Then browse https://sdr-app.mybluemix.net/
 
 - Add graphql to get postgres data
     - Apollo intro: https://flaviocopes.com/apollo/
+    - Apollo docs: https://www.apollographql.com/docs/
     - GraphQL: http://graphql.github.io/learn/queries/
+    - GraphQL queries tutorial: https://building.buildkite.com/tutorial-getting-started-with-graphql-queries-and-mutations-11211dfe5d64
+    - Node-postgres: https://node-postgres.com/
     - GraphQL, PostgreSQL, and pg-promise: https://blog.cloudboost.io/postgresql-and-graphql-2da30c6cde26
     - Pg-promise: http://vitaly-t.github.io/pg-promise/index.html
     - GraphQL & PostgreSQL Quickstart: https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
