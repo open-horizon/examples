@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -43,16 +44,26 @@ func convModel(s *op.Scope, input tf.Output, filter1, filter2, filter3, fcWeight
 
 func simpleModel(s *op.Scope, input tf.Output, filter, weights tf.Output) (class tf.Output) {
 	batchSize := input.Shape().Size(0)
+	// ugly hack
+	if batchSize == -1 {
+		batchSize = 1
+	}
+	fmt.Println("batch_size:", batchSize)
 	conv1 := op.Conv2D(s.SubScope("conv1"),
 		input,
 		filter,
 		[]int64{1, 7, 7, 1},
 		"VALID",
 	)
-	fmt.Println("conv1", conv1.Shape())
+	//fmt.Println("conv1", conv1.Shape())
 	flatInput := op.Reshape(s, conv1, op.Const(s.SubScope("shape"), []int64{batchSize, -1}))
 	class = op.Softmax(s, op.MatMul(s, flatInput, weights))
 	return
+}
+
+var simpleModelParamDefs = []models.ParamDef{
+	models.ParamDef{Name: "filter1", Shape: tf.MakeShape(23, 11, 1, 3)},
+	models.ParamDef{Name: "weights", Shape: tf.MakeShape(14148, 2)},
 }
 
 func makeSimpleModel(input, target tf.Output) (
@@ -60,11 +71,7 @@ func makeSimpleModel(input, target tf.Output) (
 	size int64,
 	makeFinalizeAccuracy func(*op.Scope, tf.Output, tf.Output, tf.Output) tf.Output,
 ) {
-	paramDefs := []models.ParamDef{
-		models.ParamDef{Name: "filter1", Shape: tf.MakeShape(23, 11, 1, 3)},
-		models.ParamDef{Name: "weights", Shape: tf.MakeShape(14148, 2)},
-	}
-	unflatten, size := models.MakeUnflatten(paramDefs)
+	unflatten, size := models.MakeUnflatten(simpleModelParamDefs)
 
 	lossFunc = func(s *op.Scope, params tf.Output) (loss tf.Output) {
 		layerParams := unflatten(s.SubScope("unflatten"), params)
@@ -258,15 +265,39 @@ func varCache(s *op.Scope, input tf.Output, shape tf.Shape, name string) (init *
 	return
 }
 
+func namedIdentity(scope *op.Scope, input tf.Output, name string) (output tf.Output) {
+	if scope.Err() != nil {
+		return
+	}
+	opspec := tf.OpSpec{
+		Type: "Identity",
+		Input: []tf.Input{
+			input,
+		},
+		Name: name,
+	}
+	op := scope.AddOperation(opspec)
+	return op.Output(0)
+}
+
+func getOP(graph *tf.Graph, name string) (operation *tf.Operation, err error) {
+	operation = graph.Operation(name)
+	if operation == nil {
+		err = errors.New("can't find operation " + name)
+		return
+	}
+	return
+}
+
 const gobalSeed int64 = 0
 
 func main() {
-	const subSize = 20
+	const subSize = 30
 	const globalSeed = 42
 	const batchSize = 100
 	const searchSize float32 = 0.0003
 	const gradsScale float32 = 0.01
-	const dataSize int64 = 1110
+	const dataSize int64 = 1100
 	fmt.Println(tf.Version())
 
 	s := op.NewScope()
@@ -292,18 +323,13 @@ func main() {
 
 	grads := createObserveGrads(lossFunc, step)
 	updates := op.Mul(s.SubScope("scale_grads"), grads, op.Const(s.SubScope("grads_scale"), gradsScale))
-	// We are reusing the training data for test. This is bad practice. Don't do it.
+	// We are reusing the training data for test. This is bad practice.
 	accuracyOP := makeFinalizeAccuracy(s.SubScope("accuracy"), params, readFFTs, readLabels)
 
+	unflatten, _ := models.MakeUnflatten(simpleModelParamDefs)
+	layerParams := unflatten(s.SubScope("unflatten"), params)
+
 	graph, err := s.Finalize()
-	if err != nil {
-		panic(err)
-	}
-	file, err := os.Create("conv_model.pb")
-	if err != nil {
-		panic(err)
-	}
-	_, err = graph.WriteTo(file)
 	if err != nil {
 		panic(err)
 	}
@@ -316,10 +342,10 @@ func main() {
 		panic(err)
 	}
 	loadClass("label/good", func(fileName string) error {
-		return loadDatum(fileName, true)
+		return loadDatum(fileName, false)
 	})
 	loadClass("label/nongood", func(fileName string) error {
-		return loadDatum(fileName, false)
+		return loadDatum(fileName, true)
 	})
 
 	_, err = sess.Run(nil, nil, []*tf.Operation{initFFTcache, initLabelsCache})
@@ -342,7 +368,7 @@ func main() {
 		panic(err)
 	}
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1000; i++ {
 		observedGrads, err := sess.Run(nil, []tf.Output{updates, loss}, nil)
 		if err != nil {
 			panic(err)
@@ -364,5 +390,37 @@ func main() {
 			}
 			fmt.Println(i, acc[0].Value().(float32)*100.0, "%")
 		}
+	}
+
+	results, err := sess.Run(nil, layerParams, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	s = op.NewScope()
+	filter := op.Const(s.SubScope("filter"), results[0])
+	weights := op.Const(s.SubScope("weights"), results[1])
+
+	dataPH := op.Placeholder(s.SubScope("input"), tf.String, op.PlaceholderShape(tf.ScalarShape()))
+	ffts := preprocessAudio(s.SubScope("preprocess"), dataPH)
+	fmt.Println("ffts:", ffts.Shape())
+	expandedFfts := op.ExpandDims(s, ffts, op.Const(s.SubScope("one"), int64(0)))
+	fmt.Println("expandedFfts:", expandedFfts.Shape())
+	output := simpleModel(s.SubScope("model"), expandedFfts, filter, weights)
+	label := namedIdentity(s, output, "output")
+	_ = label
+	fmt.Println(output.Shape())
+	graph, err = s.Finalize()
+	if err != nil {
+		panic(err)
+	}
+
+	file, err := os.Create("conv1.pb")
+	if err != nil {
+		panic(err)
+	}
+	_, err = graph.WriteTo(file)
+	if err != nil {
+		panic(err)
 	}
 }
