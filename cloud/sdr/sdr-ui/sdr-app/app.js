@@ -48,12 +48,10 @@ appSvr.use('/graphql', bodyParser.json(), apolloUploadExpress(), graphqlExpress(
 appSvr.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql', }));    // only needed for developers to interactively browse the db
 
 // Set up logging
+var logFile = process.env.HOME + '/logs/sdr-app.log';
 if (process.env.CF_INSTANCE_IP) {
-  var logFile = process.env.HOME + '/../logs/sdr-app.log';     // when running in the cloud service, HOME is set to /home/vcap/app
-} else {
-  var logFile = process.env.HOME + '/logs/sdr-app.log';
+  logFile = process.env.HOME + '/../logs/sdr-app.log';     // when running in the cloud service, HOME is set to /home/vcap/app, but the logs should go in the existing /home/vcap/logs
 }
-// const logFile = '/home/vcap/logs/sdr-app.log';
 console.log('Configuring winston logging to ' + logFile);
 const logger = winston.createLogger({
   level: 'info',    // and below

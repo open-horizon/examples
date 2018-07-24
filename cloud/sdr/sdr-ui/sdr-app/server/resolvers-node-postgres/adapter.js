@@ -1,3 +1,4 @@
+/*eslint-env node*/
 const { Pool } = require('pg');
 const settings = require('../config/settings');
 const connStr = settings.postgresUrl; // add your psql details

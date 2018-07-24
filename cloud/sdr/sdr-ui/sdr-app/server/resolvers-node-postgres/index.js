@@ -1,3 +1,4 @@
+/*eslint-env node*/
 const psql = require('./adapter').psql;
 // console.log('in resolver-node-postgres/index.js');
 
@@ -5,7 +6,7 @@ const psql = require('./adapter').psql;
 exports.resolvers = {
     Query: {
         // nouns() {  // <- also works
-        nouns: (obj, args, context) => {
+        nouns: () => {
             // Graphql will automatically wait for this promise to be fulfilled:
             // https://graphql.org/learn/execution/#asynchronous-resolvers - "During execution, GraphQL will wait for Promises, Futures, and Tasks to complete before continuing and will do so with optimal concurrency."
             console.log('running nouns resolver');

@@ -44,7 +44,7 @@ bx app push sdr-app
 
 Then browse https://sdr-app.mybluemix.net/
 
-## Notes
+## Notes/References
 
 - Add graphql to get postgres data
     - Apollo intro: https://flaviocopes.com/apollo/
@@ -57,4 +57,6 @@ Then browse https://sdr-app.mybluemix.net/
     - GraphQL & PostgreSQL Quickstart: https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
     - Postgraphile: https://www.graphile.org/postgraphile/quick-start-guide/
 - Eslint disables: https://gist.github.com/cletusw/e01a85e399ab563b1236
+- Eslint recommended config for react: https://github.com/yannickcr/eslint-plugin-react#recommended
+- Eslint in-file env list: https://eslint.org/docs/user-guide/configuring
 - JSDoc: http://usejsdoc.org/about-getting-started.html
