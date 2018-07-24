@@ -41,7 +41,17 @@ cd client
 npm start   # to start the react front end. Will start on http://localhost:3000 by default
 ```
 
-The client will send graphql queries to http://localhost:6001/graphql because of the proxy statement in package.json (which is only honored in dev, not production)
+The client will send graphql queries to the dev server at http://localhost:6001/graphql because of the proxy statement in package.json (which is only honored in dev, not production)
+
+## Run the prod Version of Server and Client Locally
+
+Run your app in the same mode it will run when you push it to the cloud (the server serving the front-end from the client/build pack):
+
+```
+npm start
+```
+
+Then browse to http://localhost:6001/ .
 
 ## Build and Push the Updated App to the IBM Cloud Service
 
