@@ -131,7 +131,7 @@ mosquitto_pub -h $HZN_ORG_ID.messaging.$WIOTP_DOMAIN -p 8883 -i "$WIOTP_CLIENT_I
 
 ## Define an Additional Microservice and Workload in the Horizon Exchange
 
-At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. But we want to also show you how to have an additional workload deployed to your edge nodes. For this we will use a simple example microservice and workload created by the Horizon team that gathers CPU usage statistics from your Edge node and publishes those statistics to your Watson IoT Platform.
+At this point, you could register your edge node with Horizon and have the default WIoTP core-iot service deployed to it. But we want to also show you how to have an additional workload deployed to your edge nodes. For this we will use a simple example microservice and workload created by the Horizon team that gathers CPU load statistics from your Edge node and publishes those statistics to your Watson IoT Platform.
 
 * Clone the openhorizon examples project which contains files that you will need during the following steps:
 ```bash
@@ -144,28 +144,26 @@ export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
 ```
 * Add the "cpu" microservice to your WIoTP organization and see that it was added:
 ```bash
-hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/pre-signed/cpu-$ARCH.json
+hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/horizon/pre-signed/cpu-$ARCH.json
 hzn exchange microservice list | jq .
 ```
 
-* Configure the CPU usage workload definition file using your environment variables, add it to your WIoTP organization, and see that it was added:
+* Configure the CPU load workload definition file using your environment variables, add it to your WIoTP organization, and see that it was added:
 ```bash
 mkdir -p ~/hzn
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pre-signed/cpu2wiotp-$ARCH.json > ~/hzn/cpu2wiotp.json
-hzn exchange workload publish -f ~/hzn/cpu2wiotp.json
+hzn exchange workload publish -f ~/examples/edge/wiotp/cpu2wiotp/horizon/pre-signed/cpu2wiotp-$ARCH.json
 hzn exchange workload list | jq .
 ```
 
 ## Augment the Edge Node Deployment Pattern
 
-The Edge system deploys Patterns of code onto WIoTP Edge Node gateways. The deployment Pattern used for a particular gateway has the same name as its Gateway Type. By default the deployment pattern includes the WIoTP core-IoT service. Here you will update the deployment Pattern for your Gateway Type so that it also includes the prebuilt example CPU Usage Workload that we just added to your platform.
+The Edge system deploys Patterns of code onto WIoTP Edge Node gateways. The deployment Pattern used for a particular gateway has the same name as its Gateway Type. By default the deployment pattern includes the WIoTP core-IoT service. Here you will update the deployment Pattern for your Gateway Type so that it also includes the prebuilt example CPU load Workload that we just added to your platform.
 
-* Configure the CPU usage pattern json file using your environment variables and add it to your pattern:
+* Configure the CPU load pattern json file using your environment variables and add it to your pattern:
 ```bash
-envsubst < ~/examples/edge/wiotp/cpu2wiotp/pattern/pre-signed/insert-cpu2wiotp.json > ~/hzn/insert-cpu2wiotp.json
-hzn exchange pattern insertworkload -f ~/hzn/insert-cpu2wiotp.json $WIOTP_GW_TYPE
+hzn exchange pattern insertworkload -f ~/examples/edge/wiotp/cpu2wiotp/horizon/pattern/insert-cpu2wiotp.json $WIOTP_GW_TYPE
 ```
-* Verify that the CPU usage Workload was inserted into the Pattern for your Gateway Type:
+* Verify that the CPU load Workload was inserted into the Pattern for your Gateway Type:
 ```bash
 hzn exchange pattern list $WIOTP_GW_TYPE | jq .
 ```
