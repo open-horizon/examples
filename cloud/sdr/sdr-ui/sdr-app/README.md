@@ -61,6 +61,8 @@ Then browse to http://localhost:6001/ .
 cd client
 npm run build   # build the production version of the client/front end
 cd ..
+bx login   # use --sso if an ibm employee
+bx target -o <cforg> -s <space>
 bx app push sdr-app
 ```
 
