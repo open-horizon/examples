@@ -57,7 +57,7 @@ func (m *model) goodness(audio []byte) (value float32, err error) {
 	if err != nil {
 		return
 	}
-	value = result[0].Value().([]float32)[0]
+	value = result[0].Value().([][]float32)[0][0]
 	return
 }
 
