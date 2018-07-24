@@ -19,7 +19,7 @@ const NOUNS_LIST = gql`
 // client.query({ query: NOUNS_LIST }).then(console.log);
 
 const Sentiment = graphql(NOUNS_LIST)(props =>
-    <ul>
+    <ul className="Sentiment-list">
         {props.data.loading ? '' : props.data.nouns.map((row) =>
             <li key={row.noun}>
                 <strong>{row.noun}:</strong> Sentiment: {row.sentiment}, Number Of Mentions: {row.numberofmentions}, Updated: {row.timeupdated}
