@@ -2,26 +2,27 @@
 # To run these, you must have the 'bx wsk' CLI installed and be logged into it and set the target org and space.
 
 WSK_PACKAGE ?= message-hub-evnts
-WSK_ACTION ?= process-message
-ACTION_CODE ?= actions/msgreceive.js
+# WSK_ACTION ?= process-message   # this is the node.js action we are not using
+# ACTION_CODE ?= actions/msgreceive.js
 WSK_GO_ACTION ?= process-message-go
 ACTION_GO_CODE ?= actions/msgreceive.go
 WSK_TRIGGER ?= message-hub-events-trgr
 #WSK_RULE ?= message-hub-events-rule-2
-WSK_RULE ?= message-hub-events-msghub-process-message-go
+#WSK_RULE ?= message-hub-events-msghub-process-message-go
+WSK_RULE ?= message-hub-evnts-process-message-go_message-hub-events-trgr
 
 MSGHUB_NAME ?= Message_Hub-rt
 MSGHUB_TOPIC ?= sdr-audio
 
 # This requires node.js be installed. On Mac: brew install node
-test-action: actions/msgreceive_test.js $(ACTION_CODE)
-	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
-	node $<
+# test-action: actions/msgreceive_test.js $(ACTION_CODE)
+# 	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
+# 	node $<
 
 # Upload a new version of the action code
-update-action: $(ACTION_CODE)
-	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
-	bx wsk action update $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
+# update-action: $(ACTION_CODE)
+# 	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
+# 	bx wsk action update $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
 
 # This requires go be installed. On Mac: brew install go
 test-go-action: $(ACTION_GO_CODE)
@@ -36,11 +37,11 @@ exec.zip: $(ACTION_GO_CODE)
 	bx wsk action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
 
 # Create a trigger and action. Note: haven't tried this yet!!
-create: $(ACTION_CODE)
+create: exec.zip
 	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
 	bx wsk package refresh
 	bx wsk trigger create $(WSK_TRIGGER) --feed Bluemix_$(MSGHUB_NAME)_Bruce_Credentials/messageHubFeed --param isJSONData true --param topic $(MSGHUB_TOPIC)  # not sure yet what to specify for --feed
-	bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
+	#bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
 	bx wsk action create $(WSK_PACKAGE)/$(WSK_GO_ACTION) $< --native --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
 	bx wsk rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_GO_ACTION)
 
@@ -49,7 +50,7 @@ remove:
 	bx wsk package refresh
 	bx wsk rule delete --disable $(WSK_RULE)
 	bx wsk trigger delete $(WSK_TRIGGER)
-	bx wsk action delete $(WSK_PACKAGE)/$(WSK_ACTION)
+	#bx wsk action delete $(WSK_PACKAGE)/$(WSK_ACTION)
 	bx wsk action delete $(WSK_PACKAGE)/$(WSK_GO_ACTION)
 
 .PHONY: update-action test-action create remove

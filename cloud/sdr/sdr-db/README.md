@@ -30,8 +30,12 @@ CREATE TABLE nouns(
 );
 
 INSERT INTO nouns VALUES ('wedding', 'positive', 2, '2018-06-23 10:05:00');
+INSERT INTO nouns VALUES ('trump', 'negative', 100, '2018-07-23 11:05:00');
+INSERT INTO nouns VALUES ('foo', 'positive', 100, '2018-07-24 11:05:00');
 
+# If you need to manually update a row or change a column definition:
 UPDATE nouns SET timeupdated = '2018-06-23 14:00' WHERE noun = 'wedding';
+ALTER TABLE nouns alter column timeupdated type timestamp with time zone;
 ```
 
 ## Run Example Go Code to Write and Read DB

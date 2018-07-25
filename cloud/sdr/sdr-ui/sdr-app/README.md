@@ -75,6 +75,7 @@ Then browse the application front-end at https://sdr-app.mybluemix.net/
     - Apollo docs: https://www.apollographql.com/docs/
     - GraphQL: http://graphql.github.io/learn/queries/
     - GraphQL queries tutorial: https://building.buildkite.com/tutorial-getting-started-with-graphql-queries-and-mutations-11211dfe5d64
+    - GraphQL IDE: https://github.com/andev-software/graphql-ide
 - Interface to postgresql:
     - Node-postgres: https://node-postgres.com/
     - (not used) Pg-promise: http://vitaly-t.github.io/pg-promise/index.html
@@ -86,3 +87,4 @@ Then browse the application front-end at https://sdr-app.mybluemix.net/
 - JSDoc: http://usejsdoc.org/about-getting-started.html
 - HTML reference: https://html.spec.whatwg.org/multipage/ and https://www.w3.org/TR/html5/syntax.html
 - CSS reference: https://cssreference.io/ and https://www.w3schools.com/cssref/
+- CSS Modules?: https://github.com/css-modules/css-modules or https://github.com/gajus/react-css-modules ?
