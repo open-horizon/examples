@@ -4,15 +4,20 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"strings"
-	"flag"
-	"github.com/Shopify/sarama"		// doc: https://godoc.org/github.com/Shopify/sarama
-	cluster "github.com/bsm/sarama-cluster"		// doc: http://godoc.org/github.com/bsm/sarama-cluster
-	"github.com/open-horizon/examples/cloud/sdr/sdr-data-ingest/example-go-clients/util"
+
+	"github.com/Shopify/sarama"             // doc: https://godoc.org/github.com/Shopify/sarama
+	cluster "github.com/bsm/sarama-cluster" // doc: http://godoc.org/github.com/bsm/sarama-cluster
+	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
+	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/stt"
+	"github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib"
 )
 
 func Usage(exitCode int) {
@@ -21,6 +26,9 @@ func Usage(exitCode int) {
 }
 
 func main() {
+	sttUsername := util.RequiredEnvVar("STT_USERNAME", "")
+	sttPassword := util.RequiredEnvVar("STT_PASSWORD", "")
+
 	// Get all of the input options
 	var topic string
 	flag.StringVar(&topic, "t", "", "topic")
@@ -28,7 +36,9 @@ func main() {
 	flag.BoolVar(&help, "h", false, "help")
 	flag.BoolVar(&util.VerboseBool, "v", false, "verbose")
 	flag.Parse()
-	if help { Usage(1) }
+	if help {
+		Usage(1)
+	}
 
 	apiKey := util.RequiredEnvVar("MSGHUB_API_KEY", "")
 	username := apiKey[:16]
@@ -50,7 +60,7 @@ func main() {
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
-	err := util.PopulateConfig(&config.Config, username, password, apiKey)		// add creds and tls info
+	err := util.PopulateConfig(&config.Config, username, password, apiKey) // add creds and tls info
 	util.ExitOnErr(err)
 
 	// init consumer
@@ -84,58 +94,23 @@ func main() {
 		select {
 		case msg, ok := <-consumer.Messages():
 			if ok {
-				//fmt.Fprintf(os.Stdout, "%s/%d/%d\t%s\t%s\n", msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
-				if util.VerboseBool {
-					fmt.Printf("%s: %s (partition: %d, offset: %d)\n", msg.Topic, msg.Value, msg.Partition, msg.Offset)
-				} else {
-					fmt.Printf("%s: %s\n", msg.Topic, msg.Value)
+				var audioMsg audiolib.AudioMsg
+				dec := gob.NewDecoder(bytes.NewReader(msg.Value))
+				err := dec.Decode(&audioMsg)
+				if err != nil {
+					log.Println(err)
 				}
-				consumer.MarkOffset(msg, "")	// mark message as processed
+				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq)
+				transcript, err := stt.Transcribe(audioMsg.Audio, sttUsername, sttPassword)
+				if err != nil {
+					panic(err)
+				}
+				// do something with the transcript
+				fmt.Println(transcript.Results)
+				consumer.MarkOffset(msg, "") // mark message as processed
 			}
 		case <-signals:
 			return
-		}
-	}
-
-	/* This can only listen to 1 partition, or a hardcoded number of partitions...
-	client, err := util.NewClient(username, password, apiKey, brokers)
-	util.ExitOnErr(err)
-	consumer, err := sarama.NewConsumerFromClient(client)
-	util.ExitOnErr(err)
-	defer util.Close(client, nil, nil, consumer)
-	callback := func(msg *sarama.ConsumerMessage) {
-			if util.VerboseBool {
-				fmt.Printf("%s: %s (partition: %d, offset: %d)\n", msg.Topic, string(msg.Value), msg.Partition, msg.Offset)
-			} else {
-				fmt.Printf("%s: %s\n", msg.Topic, string(msg.Value))
-			}
-		}
-	fmt.Printf("Consuming messages produced to %s...\n", topic)
-	err = util.ConsumePartition(consumer, topic, 0, callback)
-	util.ExitOnErr(err)
-	*/
-
-	util.Verbose("message hub consuming example complete")   // we should never get here
-}
-
-
-// Not currently used, because can only listen to 1 partition...
-func ConsumePartition(consumer sarama.Consumer, topic string, partition int32, callback func(*sarama.ConsumerMessage)) error {
-	partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err := partitionConsumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	for {
-		select {
-		case msg := <-partitionConsumer.Messages():
-			callback(msg)
 		}
 	}
 }

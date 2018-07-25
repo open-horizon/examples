@@ -4,15 +4,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"strconv"
-	"flag"
-	"github.com/Shopify/sarama"		// doc: https://godoc.org/github.com/Shopify/sarama
-	"github.com/open-horizon/examples/cloud/sdr/sdr-data-ingest/example-go-clients/util"
+	"strings"
+
+	"github.com/Shopify/sarama" // doc: https://godoc.org/github.com/Shopify/sarama
+	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
 )
 
 func Usage(exitCode int) {
@@ -29,7 +30,9 @@ func main() {
 	flag.BoolVar(&help, "h", false, "help")
 	flag.BoolVar(&util.VerboseBool, "v", false, "verbose")
 	flag.Parse()
-	if help { Usage(1) }
+	if help {
+		Usage(1)
+	}
 
 	message := ""
 	if flag.NArg() >= 1 {
@@ -61,9 +64,9 @@ func main() {
 		util.ExitOnErr(err)
 
 		defer func() {
-		    if err := producer.Close(); err != nil {
-		        log.Fatalln(err)
-		    }
+			if err := producer.Close(); err != nil {
+				log.Fatalln(err)
+			}
 		}()
 
 		// Trap SIGINT to trigger a shutdown.
@@ -82,25 +85,29 @@ func main() {
 
 		// Now enqueue the msgs in the async producer while also listening for errors and successes
 		var enqueued, errors, successes int
-		ProducerLoop:
+	ProducerLoop:
 		for {
-		    select {
-		    case producerMsg := <-ch:
-		    	producer.Input() <- producerMsg
-		        enqueued++
+			select {
+			case producerMsg := <-ch:
+				producer.Input() <- producerMsg
+				enqueued++
 				// fmt.Printf("DEBUG: enqueue %d\n", enqueued)
-		    case err := <-producer.Errors():
-		        log.Println("Failed to produce message", err)
-		        errors++
+			case err := <-producer.Errors():
+				log.Println("Failed to produce message", err)
+				errors++
 				// fmt.Printf("DEBUG: error %d\n", errors)
-		        if (errors + successes) >= numMsgs { break ProducerLoop }
-		    case <-producer.Successes():
-		        successes++
+				if (errors + successes) >= numMsgs {
+					break ProducerLoop
+				}
+			case <-producer.Successes():
+				successes++
 				// fmt.Printf("DEBUG: success %d\n", successes)
-		        if (errors + successes) >= numMsgs { break ProducerLoop }
-		    case <-signals:
-		        break ProducerLoop
-		    }
+				if (errors + successes) >= numMsgs {
+					break ProducerLoop
+				}
+			case <-signals:
+				break ProducerLoop
+			}
 		}
 
 		fmt.Printf("%d messages produced to topic: %s; successes: %d errors: %d\n", enqueued, topic, successes, errors)
@@ -110,9 +117,9 @@ func main() {
 		util.ExitOnErr(err)
 
 		defer func() {
-		    if err := producer.Close(); err != nil {
-		        log.Fatalln(err)
-		    }
+			if err := producer.Close(); err != nil {
+				log.Fatalln(err)
+			}
 		}()
 
 		if message != "" {
@@ -124,7 +131,7 @@ func main() {
 			util.Verbose("producing %d generated msgs to %s...\n", numMsgs, topic)
 			msgs := make([]string, numMsgs)
 			for i := 0; i < numMsgs; i++ {
-				msgs[i] = "message "+strconv.Itoa(i)
+				msgs[i] = "message " + strconv.Itoa(i)
 			}
 			err = SendSyncMessages(producer, topic, msgs)
 			util.ExitOnErr(err)

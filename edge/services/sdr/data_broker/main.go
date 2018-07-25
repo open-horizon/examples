@@ -116,7 +116,7 @@ type msghubConn struct {
 	Topic    string
 }
 
-// taken from cloud/sdr/sdr-data-ingest/example-go-clients/util/util.go
+// taken from cloud/sdr/data-ingest/example-go-clients/util/util.go
 func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 	config.ClientID = apiKey
 	config.Producer.RequiredAcks = sarama.WaitForAll
