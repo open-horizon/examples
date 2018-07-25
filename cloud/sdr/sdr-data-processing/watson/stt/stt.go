@@ -12,16 +12,19 @@ import (
 	"strconv"
 )
 
+// TranscribeResponse is the top level struct which Watson speech to text gives us.
 type TranscribeResponse struct {
 	Results []Result `json:"results"`
 	Index   int      `json:"results_index"`
 }
 
+// Result is just a list of Alternatives with a final bool. For non streaming, we can probaly ignore Final.
 type Result struct {
 	Alternatives []Alternative `json:"alternatives"`
 	Final        bool          `json:"final"`
 }
 
+// Alternative holds the actual text along with a Confidence
 type Alternative struct {
 	Confidence float32 `json:"confidence"`
 	Transcript string  `json:"transcript"`
@@ -42,7 +45,9 @@ func appendWAVheader(rawAudio []byte) (wavAudio []byte) {
 }
 
 // Transcribe a chunk of raw audio
+// takes raw auidio without a header
 func Transcribe(rawAudio []byte, username, password string) (response TranscribeResponse, err error) {
+	// we need to add a header so that watson will know the specs of the audio.
 	wavAudio := appendWAVheader(rawAudio)
 	apiURL := "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
 

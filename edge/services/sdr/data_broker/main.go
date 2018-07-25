@@ -42,17 +42,23 @@ func opIsSafe(a string) bool {
 	return false
 }
 
+// model holds the session, the input placeholder and output.
 type model struct {
 	Sess    *tf.Session
 	InputPH tf.Output
 	Output  tf.Output
 }
 
+// goodness takes a chunk of raw audio with no headers and returns a value between 0 and 1.
+// 1 for good (in this case speech), 0 for nongood (in this case nonspeech).
+// the audio must be exactly 32 seconds long.
 func (m *model) goodness(audio []byte) (value float32, err error) {
+	// first we must convert the audio to a string tensor.
 	inputTensor, err := tf.NewTensor(string(audio))
 	if err != nil {
 		return
 	}
+	// then feed the input into the input placeholder while pulling on the output.
 	result, err := m.Sess.Run(map[tf.Output]*tf.Tensor{m.InputPH: inputTensor}, []tf.Output{m.Output}, nil)
 	if err != nil {
 		return
@@ -143,6 +149,7 @@ func connect(topic string) (conn msghubConn, err error) {
 }
 
 func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
+	// as AudioMsg implements the sarama.Encoder interface, we can pass it directly to ProducerMessage.
 	msg := &sarama.ProducerMessage{Topic: conn.Topic, Key: nil, Value: audioMsg}
 	partition, offset, err := conn.Producer.SendMessage(msg)
 	if err != nil {
@@ -153,6 +160,7 @@ func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
 	return
 }
 
+// read env vars from system with fall back.
 func getEnv(keys ...string) (val string) {
 	if len(keys) == 0 {
 		panic("must give at least one key")
@@ -170,15 +178,18 @@ func getEnv(keys ...string) (val string) {
 	return
 }
 
+// the default hostname if not overridden
 var hostname string = "rtlsdr"
 
 func main() {
 	alt_addr := os.Getenv("RTLSDR_ADDR")
+	// if no alternative address is set, use the default.
 	if alt_addr != "" {
 		fmt.Println("connecting to remote rtlsdr:", alt_addr)
 		hostname = alt_addr
 	}
 	devID := getEnv("HZN_DEVICE_ID")
+	// load the graph def from FS
 	m, err := newModel("model.pb")
 	if err != nil {
 		panic(err)
