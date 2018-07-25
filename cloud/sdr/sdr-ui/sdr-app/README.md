@@ -87,4 +87,4 @@ Then browse the application front-end at https://sdr-app.mybluemix.net/
 - JSDoc: http://usejsdoc.org/about-getting-started.html
 - HTML reference: https://html.spec.whatwg.org/multipage/ and https://www.w3.org/TR/html5/syntax.html
 - CSS reference: https://cssreference.io/ and https://www.w3schools.com/cssref/
-- CSS Modules?: https://github.com/css-modules/css-modules or https://github.com/gajus/react-css-modules ?
+- CSS Modules (for local scope css - not using): https://github.com/css-modules/css-modules and https://github.com/gajus/react-css-modules and https://github.com/webpack-contrib/css-loader

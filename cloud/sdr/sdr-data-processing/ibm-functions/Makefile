@@ -16,33 +16,33 @@ MSGHUB_TOPIC ?= sdr-audio
 
 # This requires node.js be installed. On Mac: brew install node
 # test-action: actions/msgreceive_test.js $(ACTION_CODE)
-# 	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
+# 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 # 	node $<
 
 # Upload a new version of the action code
 # update-action: $(ACTION_CODE)
-# 	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
-# 	bx wsk action update $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
+# 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
+# 	bx wsk action update $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 
 # This requires go be installed. On Mac: brew install go
 test-go-action: $(ACTION_GO_CODE)
-	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
-	go run $< '{ "messages": [ { "value": "\"this is my first msg\"", "topic": "sdr-audio", "partition": 1 }, { "value": "\"this is my 2nd msg\"", "topic": "sdr-audio", "partition": 1 } ], "watsonSttUsername": "$(WATSON_STT_USERNAME)", "watsonSttPassword": "$(WATSON_STT_PASSWORD)" }'
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
+	go run $< '{ "messages": [ { "value": "\"this is my first msg\"", "topic": "sdr-audio", "partition": 1 }, { "value": "\"this is my 2nd msg\"", "topic": "sdr-audio", "partition": 1 } ], "watsonSttUsername": "$(STT_USERNAME)", "watsonSttPassword": "$(STT_PASSWORD)" }'
 
 # Build and Upload a new version of the action code
 exec.zip: $(ACTION_GO_CODE)
-	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	GOOS=linux GOARCH=amd64 go build -o exec $<
 	zip $@ exec
-	bx wsk action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
+	bx wsk action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 
 # Create a trigger and action. Note: haven't tried this yet!!
 create: exec.zip
-	: $${WATSON_STT_USERNAME:?} $${WATSON_STT_PASSWORD:?}   # this verifies these env vars are set
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	bx wsk package refresh
 	bx wsk trigger create $(WSK_TRIGGER) --feed Bluemix_$(MSGHUB_NAME)_Bruce_Credentials/messageHubFeed --param isJSONData true --param topic $(MSGHUB_TOPIC)  # not sure yet what to specify for --feed
-	#bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
-	bx wsk action create $(WSK_PACKAGE)/$(WSK_GO_ACTION) $< --native --param watsonSttUsername $(WATSON_STT_USERNAME) --param watsonSttPassword $(WATSON_STT_PASSWORD)
+	#bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	bx wsk action create $(WSK_PACKAGE)/$(WSK_GO_ACTION) $< --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 	bx wsk rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_GO_ACTION)
 
 # Remove a trigger and action. Note: haven't tried this yet!!

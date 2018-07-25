@@ -20,8 +20,8 @@ bx wsk action get message-hub-evnts/process-message-go
 ## Setup
 
 ```
-export WATSON_STT_USERNAME="<speech-to-text-user>"
-export WATSON_STT_PASSWORD="<speech-to-text-pw>"
+export STT_USERNAME="<speech-to-text-user>"
+export STT_PASSWORD="<speech-to-text-pw>"
 ```
 
 ## Test the Action Locally

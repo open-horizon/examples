@@ -7,8 +7,8 @@ params = {
 		{ "value": "this is my first msg" },
 		{ "value": "this is my 2nd msg" }
 	],
-	"watsonSttUsername": process.env.WATSON_STT_USERNAME,
-	"watsonSttPassword": process.env.WATSON_STT_PASSWORD
+	"watsonSttUsername": process.env.STT_USERNAME,
+	"watsonSttPassword": process.env.STT_PASSWORD
 }
 
 // const result = msgreceive.main(params)
