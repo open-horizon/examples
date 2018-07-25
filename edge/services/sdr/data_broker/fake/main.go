@@ -83,7 +83,11 @@ func main() {
 	devID := getEnv("HZN_DEVICE_ID")
 	audio, err := ioutil.ReadFile("../../librtlsdr/mock_audio.raw")
 	if err != nil {
-		panic(err)
+		// so we can run it in this dir or up 1
+		audio, err = ioutil.ReadFile("../librtlsdr/mock_audio.raw")
+		if err != nil {
+			panic(err)
+		}
 	}
 	conn, err := connect("sdr-audio")
 	if err != nil {

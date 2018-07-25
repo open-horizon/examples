@@ -100,7 +100,7 @@ func main() {
 				if err != nil {
 					log.Println(err)
 				}
-				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq)
+				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq, ", using Watson STT to convert to text...")
 				transcript, err := stt.Transcribe(audioMsg.Audio, sttUsername, sttPassword)
 				if err != nil {
 					panic(err)
