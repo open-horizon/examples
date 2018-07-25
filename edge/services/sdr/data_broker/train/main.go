@@ -294,9 +294,9 @@ const gobalSeed int64 = 0
 func main() {
 	const subSize = 30
 	const globalSeed = 42
-	const batchSize = 100
+	const batchSize = 150
 	const searchSize float32 = 0.0003
-	const gradsScale float32 = 0.01
+	const gradsScale float32 = 0.005
 	const dataSize int64 = 1100
 	fmt.Println(tf.Version())
 
@@ -368,7 +368,7 @@ func main() {
 		panic(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		observedGrads, err := sess.Run(nil, []tf.Output{updates, loss}, nil)
 		if err != nil {
 			panic(err)
@@ -407,7 +407,7 @@ func main() {
 	expandedFfts := op.ExpandDims(s, ffts, op.Const(s.SubScope("one"), int64(0)))
 	fmt.Println("expandedFfts:", expandedFfts.Shape())
 	output := simpleModel(s.SubScope("model"), expandedFfts, filter, weights)
-	label := namedIdentity(s, output, "output")
+	label := namedIdentity(s, op.Squeeze(s.SubScope("remove_dim"), output), "output")
 	_ = label
 	fmt.Println(output.Shape())
 	graph, err = s.Finalize()
