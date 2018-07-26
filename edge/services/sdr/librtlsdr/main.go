@@ -35,8 +35,15 @@ func captureAudio(freq int) (audio []byte, err error) {
 		return
 	}
 	audio = stdout.Bytes()
-	if len(audio) < 100 {
+	if len(audio) < 900000 {
 		err = errors.New("for some reason, audio is too short")
+	}
+	// if the audio is too long, trim it.
+	if len(audio) > 938496 {
+		audio = audio[:938496]
+	}
+	if len(audio) < 938496 {
+		audio = append(audio, make([]byte, 938496-len(audio))...)
 	}
 	return
 }
