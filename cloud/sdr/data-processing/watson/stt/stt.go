@@ -51,6 +51,7 @@ func appendWAVheader(rawAudio []byte) (wavAudio []byte) {
 func Transcribe(rawAudio []byte, username, password string) (response TranscribeResponse, err error) {
 	// we need to add a header so that watson will know the specs of the audio.
 	wavAudio := appendWAVheader(rawAudio)
+	fmt.Println("using Watson STT to convert the audio to text...")
 	// Watson STT API: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/curl.html?curl
 	apiURL := "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
 

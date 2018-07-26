@@ -81,15 +81,18 @@ func getEnv(keys ...string) (val string) {
 
 func main() {
 	devID := getEnv("HZN_DEVICE_ID")
-	audio, err := ioutil.ReadFile("../../librtlsdr/mock_audio.raw")
+	mockAudio := "librtlsdr/mock_audio.raw"
+	audio, err := ioutil.ReadFile("../../" + mockAudio)
 	if err != nil {
-		// so we can run it in this dir or up 1
-		audio, err = ioutil.ReadFile("../librtlsdr/mock_audio.raw")
+		// so we can run it in this dir or up 1 dir
+		audio, err = ioutil.ReadFile("../" + mockAudio)
 		if err != nil {
 			panic(err)
 		}
 	}
-	conn, err := connect("sdr-audio")
+	topic := getEnv("MSGHUB_TOPIC")
+	fmt.Printf("using topic %s\n", topic)
+	conn, err := connect(topic)
 	if err != nil {
 		panic(err)
 	}

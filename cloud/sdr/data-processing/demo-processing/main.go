@@ -6,6 +6,7 @@ package main
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -100,13 +101,20 @@ func main() {
 				if err != nil {
 					log.Println(err)
 				}
-				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq, ", using Watson STT to convert to text...")
+				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq)
 				transcript, err := stt.Transcribe(audioMsg.Audio, sttUsername, sttPassword)
 				if err != nil {
 					panic(err)
 				}
 				// do something with the transcript
 				fmt.Println(transcript.Results)
+				if util.VerboseBool {
+					json, err := json.MarshalIndent(transcript.Results, "", "    ")
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println(string(json))
+				}
 				consumer.MarkOffset(msg, "") // mark message as processed
 			}
 		case <-signals:
