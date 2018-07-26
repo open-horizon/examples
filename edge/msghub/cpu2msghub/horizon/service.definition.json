@@ -55,7 +55,7 @@
         },
         {
             "name": "PUBLISH",
-            "label": "publish the CPU samples to WIoTP",
+            "label": "publish the CPU samples to IBM Message Hub",
             "type": "boolean",
             "defaultValue": "true"
         },

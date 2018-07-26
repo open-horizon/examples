@@ -1,9 +1,9 @@
 {
   "org": "$HZN_ORG_ID",
   "label": "$CPU_NAME for $ARCH",
-  "description": "Provides a REST API to query the CPU load",
+  "description": "Provides a REST API to query the CPU percent",
   "public": true,
-  "url": "https://$MYDOMAIN/services/$CPU_NAME",
+  "url": "https://$MYDOMAIN/service-$CPU_NAME",
   "version": "$CPU_VERSION",
   "arch": "$ARCH",
   "sharable": "single",

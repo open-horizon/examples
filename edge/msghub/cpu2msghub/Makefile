@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-export CPU2MSGHUB_NAME ?= cpu2wiotp
+export CPU2MSGHUB_NAME ?= cpu2msghub
 export CPU2MSGHUB_VERSION ?= 1.2.2
 DOCKER_NAME ?= $(ARCH)_$(CPU2MSGHUB_NAME)
 DOCKER_HUB_ID ?= openhorizon
@@ -44,9 +44,10 @@ hznstop:
 publish: build
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION)
 
-# Create/update the metadata in the exchange for this workload
+# Create/update the metadata in the exchange for this service
 exchange-publish: build
-	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f service/workload.definition.json
+	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
+	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :

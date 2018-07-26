@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Horizon sample workload to query the cpu load from a sample service, calculate a window average, and publish it to Watson IoT Platform
-# This workload expects the CPU service to be running, unless it is running in mock mode.
+# Horizon sample service to query the cpu load from a sample service, calculate a window average, query the gps coordinate, and publish them to Watson IoT Platform
+# This service requires the CPU and GPS services to be running, unless it is running in mock mode.
 
 # Verify required environment variables are set
 checkRequiredEnvVar() {
@@ -23,7 +23,7 @@ VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
 
 echo "Optional environment variables (or default values): SAMPLE_INTERVAL=$SAMPLE_INTERVAL, SAMPLE_SIZE=$SAMPLE_SIZE, PUBLISH=$PUBLISH, MOCK=$MOCK"
 
-# When this workload is running in standalone mode, there are no required env vars.
+# When this service is running in standalone mode, there are no required env vars.
 if [[ "$PUBLISH" == "true" ]]; then
   echo "Checking for required environment variables for publishing to IBM Message Hub:"
   checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
@@ -100,7 +100,7 @@ while true; do
 
       if [[ "$PUBLISH" == "true" ]]; then
         # Send data to IBM Message Hub
-        echo "$json | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC
+        echo "echo $json | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC"
         echo "$json" | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC
         checkrc $? "kafkacat" "continue"
       else
