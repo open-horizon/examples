@@ -6,6 +6,7 @@ package main
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -107,6 +108,13 @@ func main() {
 				}
 				// do something with the transcript
 				fmt.Println(transcript.Results)
+				if util.VerboseBool {
+					json, err := json.MarshalIndent(transcript.Results, "", "    ")
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println(string(json))
+				}
 				consumer.MarkOffset(msg, "") // mark message as processed
 			}
 		case <-signals:

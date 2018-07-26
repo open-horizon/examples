@@ -3,10 +3,11 @@
 package util
 
 import (
+	"crypto/tls"
 	"fmt"
 	"os"
 	"strings"
-	"crypto/tls"
+
 	"github.com/Shopify/sarama"
 )
 
@@ -25,7 +26,7 @@ func Verbose(msg string, args ...interface{}) {
 // RequiredEnvVar gets an env var value. If a default value is not supplied and the env var is not defined, a fatal error is displayed.
 func RequiredEnvVar(name, defaultVal string) string {
 	v := os.Getenv(name)
-	if defaultVal != "" {
+	if v == "" && defaultVal != "" {
 		v = defaultVal
 	}
 	if v == "" {

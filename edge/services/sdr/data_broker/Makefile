@@ -30,11 +30,15 @@ publish: target/build_$(ARCH)
 	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
+fakepub: fake/main.go
+	go build -o $@ $<
+
 clean:
 	-docker rm -f $(IMAGE_PATH)
 	-docker stop $(IMAGE) && docker rm $(IMAGE)
 	-docker rmi $(IMAGE)
 	-docker network rm example
 	-rm target/*
+	-rm -f fakepub
 
-.PHONY: default all build dev run check docker-publish exchange-publish clean
+.PHONY: default all build dev run check docker-publish exchange-publish fakepub clean
