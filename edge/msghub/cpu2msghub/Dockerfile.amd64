@@ -6,4 +6,4 @@ RUN wget --quiet --output-document=/etc/apk/keys/sgerrand.rsa.pub https://alpine
 
 COPY *.sh /
 WORKDIR /
-CMD /workload.sh
+CMD /service.sh

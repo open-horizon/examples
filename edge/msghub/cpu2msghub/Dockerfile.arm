@@ -5,4 +5,4 @@ RUN apk --no-cache --update add curl ca-certificates wget jq bc
 
 COPY *.sh /
 WORKDIR /
-CMD /workload.sh
+CMD /service.sh
