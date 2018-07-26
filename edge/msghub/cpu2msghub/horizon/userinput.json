@@ -1,0 +1,35 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/service-$CPU_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/service-$GPS_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/service-$CPU2MSGHUB_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "MOCK": false,
+                "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
+                "PUBLISH": true,
+                "SAMPLE_INTERVAL": 2,
+                "SAMPLE_SIZE": 5,
+                "VERBOSE": "1"
+            }
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/services/$CPU_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
+}

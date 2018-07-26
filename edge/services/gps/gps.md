@@ -1,23 +1,32 @@
-# Horizon GPS Microservice
+# Horizon GPS Service
 
-The GPS microservice provides location coordinates and satellite data to Horizon workload clients.
+The GPS service provides location coordinates and satellite data to other Horizon services.
 
-## Environment Variables
+## Input Values
 
-These environment variables are used by the GPS microservice container (and are passed by Horizon):
+These values can be passed to the GPS service thru the `global` section of the input file given to `hzn register`:
+```
+  "global": [
+    {
+      "type": "LocationAttributes",
+      "variables": {
+        "lat": 45.421530,     /* this is passed to each container as HZN_LAT */
+        "lon": -75.697193,    /* this is passed to each container as HZN_LON */
+        "use_gps": false,    /* true if you have, and want to use, an attached GPS sensor. Passed to each container as HZN_USE_GPS. */
+        "location_accuracy_km": 0.0   /* Make the node location inaccurate by this number of KM to protect privacy. */
+      }
+    }
+  ],
+```
 
-* **HZN_USE_GPS==true**: the device owner will allow exact gps coords from gps sensor to be shared
-    - **HZN_LAT**, **HZN_LON** can be optionally set as fallback when the gps sensor is not available
-    - **HZN_LOCATION_ACCURACY_KM** is ignored (because sharing exact coords was approved)
-    - **HZN_USER_PROVIDED_COORDS** is also ignored (because we do not care if coords are estimated or not, because we are not applying an accuracy)
-* **HZN_USE_GPS==false** (default): do not share exact gps coords from gps sensor
-    - **HZN_LAT**, **HZN_LON** must be set (either entered by device owner, or estimated from IP)
-    - **HZN_USER_PROVIDED_COORDS==true** (default): device owner entered lat/lon
-        - **HZN_LOCATION_ACCURACY_KM**: obfuscate lat/lon by this much
-    - **HZN_USER_PROVIDED_COORDS==false**: lat/lon was estimated from IP
-        - **HZN_LOCATION_ACCURACY_KM** is ignored (forced to 0) because IP estimate is already inaccurate
+If you don't specify the values above, the GPS service will default to using the edge node's public IP to estimate its location.
 
 ## RESTful API
+
+Other Horizon services can use the GPS service by requiring it in its own service definition, and then in its code accessing the GPS REST APIs with the URL:
+```
+http://gps:31779/v1/<api-from-the-list-below>
+```
 
 ### **API:** GET /gps/location
 ---
@@ -29,6 +38,7 @@ none
 
 code: 
 * 200 -- success
+* other http codes TBD
 
 body:
 
@@ -67,6 +77,7 @@ none
 
 code: 
 * 200 -- success
+* other http codes TBD
 
 body:
 

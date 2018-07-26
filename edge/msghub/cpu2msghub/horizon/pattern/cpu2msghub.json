@@ -1,0 +1,33 @@
+{
+  "label": "Edge $CPU2MSGHUB_NAME Service Pattern for $ARCH",
+  "description": "Pattern for $CPU2MSGHUB_NAME sending cpu and gps info to the IBM Message Hub for $ARCH",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "https://$MYDOMAIN/service-${CPU2MSGHUB_NAME}",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
+        {
+          "version": "$CPU2MSGHUB_VERSION",
+          "priority": {},
+          "upgradePolicy": {},
+          "deployment_overrides": null,
+          "deployment_overrides_signature": ""
+        }
+      ],
+      "dataVerification": {
+        "metering": {}
+      },
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    }
+  ]
+}
