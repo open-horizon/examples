@@ -9,7 +9,7 @@ export CPU_NAME ?= cpu
 export CPU_VERSION ?= 1.2.2
 DOCKER_NAME ?= $(ARCH)_$(CPU_NAME)
 DOCKER_HUB_ID ?= openhorizon
-export MYDOMAIN ?= internetofthings.ibmcloud.com
+export MYDOMAIN ?= github.com/open-horizon/examples/wiki
 PORT_NUM ?= 8347
 IMAGE_PATH ?= $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU_VERSION)
 
@@ -34,9 +34,10 @@ stop:
 publish: build
 	docker push $(IMAGE_PATH)
 
-# Create/update the metadata in the exchange for this microservice
+# Create/update the metadata in the exchange for this service
 exchange-publish: build
-	hzn exchange microservice publish -k $$PRIVATE_KEY_FILE -f horizon/microservice.definition.json
+	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
+	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :

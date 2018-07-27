@@ -1,6 +1,6 @@
-# Horizon GPS REST Microservice
+# Horizon GPS REST Service
 
-The shared "gps" microservice REST API provides location data
+The shared "gps" service REST API provides location data
 (i.e., latitude, longitude, elevation) which has either been
 statically provided by the owner, or derived from the device's IP address,
 or may have been provided by GPS hardware when available.  The source of
@@ -17,14 +17,14 @@ The standard Linux `make` tool is used to operate on this code.  Please see the 
 
 ## Building
 
-To build and tag the `gps` microservice docker container for the local architecture, go to this directory and run make with no target:
+To build and tag the `gps` service docker container for the local architecture, go to this directory and run make with no target:
 ```
     $ make
 ```
 
 ## Testing
 
-To test the `gps` microservice container, build it, run it as a daemon for testing purposes, then finally run the test program.  Execute these commands from this directory to accomplish that:
+To test the `gps` service container, build it, run it as a daemon for testing purposes, then finally run the test program.  Execute these commands from this directory to accomplish that:
 ```
     $ make
     $ make daemon
@@ -33,7 +33,7 @@ To test the `gps` microservice container, build it, run it as a daemon for testi
 
 ## Publishing to the Horizon Docker Registry
 
-To publish the `gps` microservice docker container (for this local architecture) to the Docker Hub registry, and create the defintion for it in the Horizon Exchange:
+To publish the `gps` service docker container (for this local architecture) to the Docker Hub registry, and create the defintion for it in the Horizon Exchange:
 ```
     $ make
     $ make exchange-publish
@@ -41,13 +41,13 @@ To publish the `gps` microservice docker container (for this local architecture)
 
 ## Development and Test Development
 
-To facilitate development of the `gps` microservice, use the `develop` target:
+To facilitate development of the `gps` service, use the `develop` target:
 ```
     $ make develop
 ```
-This will build the `gps` microservice container, then mount this working directory and run `/bin/sh` in that container.  In that shell, `cd /outside` and then you can work on the original files here outside the container, and run them in the context of the container.
+This will build the `gps` service container, then mount this working directory and run `/bin/sh` in that container.  In that shell, `cd /outside` and then you can work on the original files here outside the container, and run them in the context of the container.
 
-Similarly, to facilitate development of the test container for the `gps` microservice, use the `develop-test` target:
+Similarly, to facilitate development of the test container for the `gps` service, use the `develop-test` target:
 ```
     $ make develop-test
 ```
@@ -55,7 +55,7 @@ This will build the test container, then mount this working directory and run `/
 
 ## Debugging
 
-To debug the gps microservice, you can connect directly to the servcie from any shell on the host as follows:
+To debug the gps service, you can connect directly to the servcie from any shell on the host as follows:
 ```
     export gps_ip=`docker inspect gps | grep IPAddress | tail -1 | sed 's/.*: "//;s/",//'`
     curl -s http://$gps_ip:31779/v1/gps | jq

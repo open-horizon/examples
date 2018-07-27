@@ -1,0 +1,8 @@
+FROM arm32v6/alpine:latest
+RUN apk --no-cache --update add curl ca-certificates wget jq bc
+
+#todo: Build/install kafkacat to publish msgs to IBM Message Hub: https://github.com/edenhill/kafkacat and https://github.com/sgerrand/alpine-pkg-kafkacat
+
+COPY *.sh /
+WORKDIR /
+CMD /service.sh

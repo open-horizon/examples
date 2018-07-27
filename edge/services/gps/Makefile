@@ -2,18 +2,6 @@
 # Makefile for gps
 #
 # NOTE: Requires make to be installed, but no other build tools are required.
-#       On our Horizon RPi images you can:  sudo apt-get install -y make
-#
-# Typical usage involves building and running the REST service daemon:
-#   $ make gps_daemon   # Run it configured as a daemon using GPS hardware
-# or:
-#   $ make daemon       # Run it configured as a daemon using static coords
-#
-# And then testing it:
-#   $ make test         # Run the test suite container (which runs forever)
-#
-# For developer usage, see the documentation at the "develop" target below.
-#
 
 export GPS_NAME ?= gps
 export GPS_VERSION ?= 2.0.5
@@ -64,7 +52,6 @@ IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(GPS_VERSION)
 #    ARM_COMPILE_IMAGE := golang
 #  endif
 #endif
-
 
 # Make will search these two relative paths for input and target files
 VPATH=src:bin
@@ -124,31 +111,14 @@ docker-verify:
 
 .PHONY: exchange-publish
 exchange-publish:
-	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?}   # this verifies these env vars are set
-	hzn exchange microservice publish -k $$PRIVATE_KEY_FILE -f horizon/microservice.definition.json
-
-.PHONY: exchange-publish-service
-exchange-publish-service:
-	hzn exchange service publish -k $$PRIVATE_KEY_FILE -f horizon/service.definition.json
+	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
+	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
 # Create the docker network
 .PHONY: network
 network:
 	-docker network create $(DOCKER_TEST_NETWORK)
 
-#
-# Run the image in developer mode on the local host
-#   - opens a shell into the container, with this host directory mounted
-#   - inside that shell you will typically work in that directory.  E.g.:
-#        # cd /outside
-#        # vi src/main.go ...
-#     then to build the binary:
-#        # make gps
-#     and (optionally) adjust environment variables:
-#        # export HZN_... = ...
-#     then finally run the compiled binary with:
-#        # /gps
-#
 .PHONY: develop
 develop: network .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
@@ -239,7 +209,7 @@ check_hw:
 check_gpsd:
 	gpsd -D5 -N -n /dev/ttyACM0
 
-# Check the output from the microservice:
+# Check the output from the service:
 .PHONY: check
 check:
 	 curl -s `docker inspect gps | grep IPAddress | tail -1 | sed 's/.*": "//;s/".*//'`:31779/v1/gps | jq

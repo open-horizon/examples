@@ -1,9 +1,9 @@
 {
     "global": [],
-    "microservices": [
+    "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://$MYDOMAIN/microservices/$CPU_NAME",
+            "url": "https://$MYDOMAIN/service-$CPU_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         }
