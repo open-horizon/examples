@@ -3,13 +3,10 @@ package stt
 import (
 	"bytes"
 	"encoding/hex"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/url"
-	"strconv"
+
+	"github.com/open-horizon/examples/cloud/sdr/data-processing/wutil"
 )
 
 // TranscribeResponse is the top level struct which Watson speech to text gives us.
@@ -52,29 +49,9 @@ func Transcribe(rawAudio []byte, username, password string) (response Transcribe
 	// we need to add a header so that watson will know the specs of the audio.
 	wavAudio := appendWAVheader(rawAudio)
 	fmt.Println("using Watson STT to convert the audio to text...")
-	// Watson STT API: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/curl.html?curl
+	// Watson STT API: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/curl.html?curl#recognize-sessionless
 	apiURL := "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
-
-	u, _ := url.ParseRequestURI(apiURL)
-	urlStr := fmt.Sprintf("%v", u)
-	client := &http.Client{}
-	r, _ := http.NewRequest("POST", urlStr, bytes.NewReader(wavAudio))
-	r.SetBasicAuth(username, password)
-	r.Header.Add("Content-Type", "audio/wav")
-	resp, err := client.Do(r)
-	if err != nil {
-		return
-	}
-	if resp.StatusCode != http.StatusOK {
-		err = errors.New("got status" + strconv.Itoa(resp.StatusCode))
-		return
-	}
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	if err = json.Unmarshal(bytes, &response); err != nil {
-		return
-	}
+	headers := []wutil.Header{{Key: "Content-Type", Value: "audio/wav"}}
+	err = wutil.HTTPPost(apiURL, username, password, headers, bytes.NewReader(wavAudio), &response)
 	return
 }

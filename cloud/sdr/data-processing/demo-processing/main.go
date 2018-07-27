@@ -17,6 +17,7 @@ import (
 	"github.com/Shopify/sarama"             // doc: https://godoc.org/github.com/Shopify/sarama
 	cluster "github.com/bsm/sarama-cluster" // doc: http://godoc.org/github.com/bsm/sarama-cluster
 	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
+	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/nlu"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/stt"
 	"github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib"
 )
@@ -26,9 +27,14 @@ func Usage(exitCode int) {
 	os.Exit(exitCode)
 }
 
+const minConfidence = 0.5
+
 func main() {
 	sttUsername := util.RequiredEnvVar("STT_USERNAME", "")
 	sttPassword := util.RequiredEnvVar("STT_PASSWORD", "")
+
+	nluUsername := util.RequiredEnvVar("NLU_USERNAME", "")
+	nluPassword := util.RequiredEnvVar("NLU_PASSWORD", "")
 
 	// Get all of the input options
 	var topic string
@@ -95,6 +101,7 @@ func main() {
 		select {
 		case msg, ok := <-consumer.Messages():
 			if ok {
+				// Got an audio clip, convert it to text
 				var audioMsg audiolib.AudioMsg
 				dec := gob.NewDecoder(bytes.NewReader(msg.Value))
 				err := dec.Decode(&audioMsg)
@@ -106,15 +113,29 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
-				// do something with the transcript
 				fmt.Println(transcript.Results)
 				if util.VerboseBool {
 					json, err := json.MarshalIndent(transcript.Results, "", "    ")
 					if err != nil {
 						panic(err)
 					}
-					fmt.Println(string(json))
+					fmt.Printf("STT: %s\n", string(json))
 				}
+
+				// Send each string of text with good confidence to NLU
+				for _, r := range transcript.Results {
+					altNum := 0 //todo: we only seem to get 1 alternative, not sure if it will always be that way
+					if r.Final && r.Alternatives[altNum].Confidence > minConfidence {
+						sentiments, err := nlu.Sentiment(r.Alternatives[altNum].Transcript, nluUsername, nluPassword)
+						if err != nil {
+							panic(err)
+						}
+						fmt.Printf("NLU: %s\n", sentiments)
+					} else {
+						fmt.Printf("Skipping: Final: %v, Confidence: %f\n", r.Final, r.Alternatives[altNum].Confidence)
+					}
+				}
+
 				consumer.MarkOffset(msg, "") // mark message as processed
 			}
 		case <-signals:
