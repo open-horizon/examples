@@ -31,7 +31,7 @@ stop:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 
 # To publish you must have write access to the docker hub DOCKER_HUB_ID user
-publish: build
+docker-push: build
 	docker push $(IMAGE_PATH)
 
 # Create/update the metadata in the exchange for this service

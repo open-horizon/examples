@@ -10,7 +10,7 @@
 #
 # Written by Glen Darling, November 2016.
 
-FROM arm32v6/alpine
+FROM aarch64/alpine:latest
 MAINTAINER glendarling@us.ibm.com
 
 # Install gpsd
@@ -20,7 +20,7 @@ RUN apk --no-cache add gpsd
 EXPOSE 31779
 
 # Copy over the ARM version of the server binary
-COPY bin/gps.arm /gps
+COPY bin/gps.arm64 /gps
 
 # Set the default command to be the go executable to start everything
 CMD /gps
