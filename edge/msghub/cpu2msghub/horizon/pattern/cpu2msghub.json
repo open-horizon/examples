@@ -5,7 +5,7 @@
   "services": [
     {
       "serviceUrl": "https://$MYDOMAIN/service-${CPU2MSGHUB_NAME}",
-      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceOrgid": "IBM",
       "serviceArch": "$ARCH",
       "serviceVersions": [
         {

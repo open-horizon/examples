@@ -25,3 +25,4 @@ export MSGHUB_BROKER_URL="kafka01-prod02.messagehub.services.us-south.bluemix.ne
 # There is normally no need for you to edit these variables
 export HZN_ORGANIZATION=$HZN_ORG_ID
 export HZN_EXCHANGE_USER_AUTH="$EXCHANGE_USER:$EXCHANGE_PW"
+export EXCHANGE_NODEAUTH="$HZN_DEVICE_ID:$HZN_DEVICE_TOKEN"
