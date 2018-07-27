@@ -37,21 +37,12 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(SYSTEM_ARCH)
 
-# Cross compile in this context means on amd64 compile for arm. You must also set ARCH to arm above
+# Cross compile in this context means on amd64 compile for arm or arm64. You must also set ARCH to arm or arm64
 CROSS_COMPILE ?= false
 
 # Construct our Docker registry path and other architecture-dependent values
 REG_PATH := $(DOCKER_HUB_ID)/$(ARCH)
 IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(GPS_VERSION)
-
-#ifeq ($(ARCH),arm)
-#  ifeq ($(CROSS_COMPILE),true)
-    # golang is an x86 image from the public docker registry
-#    ARM_COMPILE_IMAGE := golang
-#  else
-#    ARM_COMPILE_IMAGE := golang
-#  endif
-#endif
 
 # Make will search these two relative paths for input and target files
 VPATH=src:bin
@@ -73,12 +64,17 @@ $(IMAGE)-$(GPS_VERSION): .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 $(BINARY): $(BINARY).$(ARCH)
 
 # This section has compilation rules for the architecture-specific binaries
-# For RPi (ARMv7) -- golang image is not working there, so this is a bit ugly
+# For RPi (ARMv7)
 GOOPTIONS_ARM=CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7
 $(BINARY).arm: $(SOURCE) $(OTHER_SOURCES)
 	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_ARM) sh -c "cd /outside && go get github.com/kellydunn/golang-geo && go build -o bin/$@ src/$(SOURCE)"
 
-# For amd64 (this is for 64bit -- I think you would use GOARCH=386 for 32bit)
+# For arm64
+GOOPTIONS_ARM64=CGO_ENABLED=0 GOOS=linux GOARCH=arm64
+$(BINARY).arm64: $(SOURCE) $(OTHER_SOURCES)
+	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_ARM64) sh -c "cd /outside && go get github.com/kellydunn/golang-geo && go build -o bin/$@ src/$(SOURCE)"
+
+# For amd64 (this is for 64bit)
 GOOPTIONS_AMD64=CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 $(BINARY).amd64: $(SOURCE) $(OTHER_SOURCES)
 	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_AMD64) sh -c "cd /outside && go get github.com/kellydunn/golang-geo && go build -o bin/$@ src/$(SOURCE)"
@@ -141,6 +137,9 @@ BINARY_TEST = $(BINARY)-test
 
 $(BINARY_TEST).arm: $(TEST_SOURCE) $(OTHER_SOURCES)
 	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_ARM) sh -c "cd /outside && go get gopkg.in/go-playground/validator.v8 github.com/eclipse/paho.mqtt.golang && go build -o bin/$@ src/$(TEST_SOURCE)"
+
+$(BINARY_TEST).arm64: $(TEST_SOURCE) $(OTHER_SOURCES)
+	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_ARM64) sh -c "cd /outside && go get gopkg.in/go-playground/validator.v8 github.com/eclipse/paho.mqtt.golang && go build -o bin/$@ src/$(TEST_SOURCE)"
 
 $(BINARY_TEST).amd64: $(TEST_SOURCE) $(OTHER_SOURCES)
 	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_AMD64) sh -c "cd /outside && go get gopkg.in/go-playground/validator.v8 github.com/eclipse/paho.mqtt.golang && go build -o bin/$@ src/$(TEST_SOURCE)"

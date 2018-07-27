@@ -16,7 +16,9 @@ default: all
 all: build run check
 
 build:
+	if [[ $(ARCH) =~ arm.* ]]; then mkdir -p tmp/$(ARCH); cp ../../../tools/kafkacat/$(ARCH)/*.rsa.pub ../../../tools/kafkacat/$(ARCH)/kafkacat-*.apk tmp/$(ARCH); fi
 	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION) -f ./Dockerfile.$(ARCH) .
+	if [[ $(ARCH) =~ arm.* ]]; then rm -f tmp/$(ARCH)/*.rsa.pub tmp/$(ARCH)/kafkacat-*.apk; fi
 
 run:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
@@ -41,7 +43,7 @@ hznstop:
 	hzn dev service stop
 
 # Push the docker image to the registry. You must have write access to the docker hub openhorizon user
-publish: build
+docker-push: build
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION)
 
 # Create/update the metadata in the exchange for this service
