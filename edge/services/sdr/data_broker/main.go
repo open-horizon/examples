@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -199,38 +200,65 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// create a map to hold the goodness for each station we have ever oberved.
+	// This map will grow as long as the program lives
+	stationGoodness := map[float32]float32{}
 	fmt.Println("connected to msghub")
-	stations, err := rtlsdr.GetCeilingSignals(hostname, -8)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("found", len(stations), "stations")
+	lastStationsRefresh := time.Time{}
 	for {
-		for _, station := range stations {
-			audio, err := rtlsdr.GetAudio(hostname, int(station))
+		// if it has been over 5 minuts since we last updated the list of strong stations,
+		if time.Now().Sub(lastStationsRefresh) > (5 * time.Minute) {
+			// for ever, we aquire a list of stations,
+			stations, err := rtlsdr.GetCeilingSignals(hostname, -8)
 			if err != nil {
 				panic(err)
 			}
-			val, err := m.goodness(audio)
-			if err != nil {
-				panic(err)
-			}
-			fmt.Println(station, val)
-			if val > 0.5 {
-				msg := &audiolib.AudioMsg{
-					Audio:         audio,
-					Ts:            time.Now(),
-					Freq:          station,
-					ExpectedValue: val,
-					DevID:         devID,
+			for _, station := range stations {
+				_, prs := stationGoodness[station]
+				if !prs {
+					// only if the station is not already in our map, do we add it, with an initial value of 0.5
+					fmt.Println("found new station: ", station)
+					stationGoodness[station] = 0.5
 				}
-				fmt.Println("sending sample")
-				err = conn.publishAudio(msg)
+			}
+			// if no stations can be found, we can't do anything, so panic.
+			if len(stationGoodness) < 1 {
+				panic("No FM stations. Move the antenna?")
+			}
+			fmt.Println("found", len(stations), "stations")
+			fmt.Println(stationGoodness)
+			lastStationsRefresh = time.Now()
+		}
+		for station, goodness := range stationGoodness {
+			// if our goodness is less then a random number between 0 and 1.
+			if rand.Float32() < goodness {
+				audio, err := rtlsdr.GetAudio(hostname, int(station))
 				if err != nil {
-					fmt.Println(err)
+					panic(err)
 				}
-			} else {
-				fmt.Println("not sending")
+				val, err := m.goodness(audio)
+				if err != nil {
+					panic(err)
+				}
+				// if the value is close to 1, the goodness of that station will increase, if the value is small, the goodness will decrease.
+				stationGoodness[station] = stationGoodness[station]*(val+0.3) + 0.05
+				fmt.Println(station, "observed value:", val, "updated goodness:", stationGoodness[station])
+				// if the value is over 0.5, it is worth sending to the cloud.
+				if val > 0.5 {
+					// construct the message,
+					msg := &audiolib.AudioMsg{
+						Audio:         audio,
+						Ts:            time.Now(),
+						Freq:          station,
+						ExpectedValue: val,
+						DevID:         devID,
+					}
+					// and publish it to msghub
+					err = conn.publishAudio(msg)
+					if err != nil {
+						fmt.Println(err)
+					}
+				}
 			}
 		}
 	}
