@@ -32,7 +32,14 @@ if [[ "$PUBLISH" == "true" ]]; then
   checkRequiredEnvVar "MSGHUB_BROKER_URL"
   MSGHUB_USERNAME="${MSGHUB_API_KEY:0:16}"
   MSGHUB_PASSWORD="${MSGHUB_API_KEY:16}"
-  MSGHUB_TOPIC="$HZN_ORGANIZATION.$HZN_DEVICE_ID"  #todo: see if HZN_PATTERN is passed in and use that
+  # If HZN_PATTERN is passed in, use that for in the topic
+  #todo: at some point make HZN_PATTERN a required env var
+  if [[ -n "$HZN_PATTERN" ]]; then
+    MSGHUB_TOPIC="$HZN_ORGANIZATION.$HZN_PATTERN"
+  else
+    MSGHUB_TOPIC="$HZN_ORGANIZATION.$HZN_DEVICE_ID"
+  fi
+  echo "Will publish to topic: $MSGHUB_TOPIC"
 fi
 
 # Check the exit status of the previously run command and exit if nonzero (unless 'continue' is passed in)
