@@ -1,4 +1,5 @@
-FROM aarch64/alpine:latest
+FROM arm64v8/alpine:latest
+#FROM aarch64/alpine:latest
 RUN apk --no-cache --update add curl jq bc
 
 # We build kafkacat outside of this Dockerfile using: https://github.com/sgerrand/alpine-pkg-kafkacat and the instructions in README.md
