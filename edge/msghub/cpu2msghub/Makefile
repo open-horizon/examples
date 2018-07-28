@@ -51,8 +51,13 @@ exchange-publish: build
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
+# Create/update the deployment pattern for a set of edge nodes
+publish-pattern:
+	: $${HZN_PATTERN:?} $${HZN_EXCHANGE_USER_AUTH:?}   # this verifies these env vars are set
+	hzn exchange pattern publish -p $$HZN_PATTERN -f horizon/pattern/cpu2msghub.json
+
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION) 2> /dev/null || :
 
-.PHONY: default all build run check stop hznbuild hznstart hznstop publish exchange-publish clean
+.PHONY: default all build run check stop hznbuild hznstart hznstop publish exchange-publish publish-pattern clean

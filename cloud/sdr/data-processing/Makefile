@@ -1,9 +1,9 @@
-all: stt-sample
+all: wat-sample
 
-stt-sample: demo-processing/main.go watson/stt/stt.go
+wat-sample: demo-processing/main.go watson/*/*.go wutil/wutil.go
 	go build -o $@ $<
 
 clean:
-	rm -r stt-sample
+	rm -r wat-sample
 
 .PHONY: all clean

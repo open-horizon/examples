@@ -4,10 +4,24 @@ The Watson insights from SDR audio analysis are stored an IBM Compose Postgresql
 
 ## Schema (in progress)
 
-- Nouns: noun (key), localStation (key and foreign key), edgeNodeId (key and foreign key), sentiment, numberOfMentions, timeUpdated
-- LocalStations: edgeNodeId (key), frequency, dataQualityMetric
-- EdgeNode: id (key), latitude, longitude
-- Phase 2: Stations: callLetters, localStation
+- Nouns:
+    - noun (key, string)
+    - edgeNode (key, foreign key, string) - horizon org/nodeid
+    - frequency (key, foreign key, float) - station frequency
+    - sentiment (float) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received from this node and station.
+    - numberOfMentions (integer) - running count
+    - timeUpdated (date) - most recent update
+- Stations:
+    - edgeNode (key, string) - horizon org/nodeid that received data from this station
+    - frequency (key, float) - station frequency
+    - dataQualityMetric (float) - as determined/reported by the data_broker service
+    - Phase 2:
+        - callLetters (when broadcast)
+        - (maybe some other way to determine that stations from nearby nodes are actually the same)
+- EdgeNodes:
+    - edgeNode (key, string) - horizon org/nodeid
+    - latitude (float) - latitude of the node
+    - longitude (float) - longitude of the node
 
 ## Manually Connect to the DB
 ```
