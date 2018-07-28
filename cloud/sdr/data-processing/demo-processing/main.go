@@ -6,7 +6,6 @@ package main
 import (
 	"bytes"
 	"encoding/gob"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -19,6 +18,7 @@ import (
 	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/nlu"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/stt"
+	"github.com/open-horizon/examples/cloud/sdr/data-processing/wutil"
 	"github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib"
 )
 
@@ -113,16 +113,13 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
-				fmt.Println(transcript.Results)
 				if util.VerboseBool {
-					json, err := json.MarshalIndent(transcript.Results, "", "    ")
-					if err != nil {
-						panic(err)
-					}
-					fmt.Printf("STT: %s\n", string(json))
+					fmt.Println("STT:", wutil.MarshalIndent(transcript.Results))
+				} else {
+					fmt.Println("STT:", transcript.Results)
 				}
 
-				// Send each string of text with good confidence to NLU
+				// Send each string of text that has good confidence to NLU
 				for _, r := range transcript.Results {
 					altNum := 0 //todo: we only seem to get 1 alternative, not sure if it will always be that way
 					if r.Final && r.Alternatives[altNum].Confidence > minConfidence {
@@ -130,9 +127,14 @@ func main() {
 						if err != nil {
 							panic(err)
 						}
-						fmt.Printf("NLU: %s\n", sentiments)
+						//todo: if also requestion keywords, filter out entity/keyword duplciates
+						if util.VerboseBool {
+							fmt.Println("NLU:", wutil.MarshalIndent(sentiments))
+						} else {
+							fmt.Println("NLU:", sentiments)
+						}
 					} else {
-						fmt.Printf("Skipping: Final: %v, Confidence: %f\n", r.Final, r.Alternatives[altNum].Confidence)
+						util.Verbose("Skipping: Final: %v, Confidence: %f, Text: %s\n", r.Final, r.Alternatives[altNum].Confidence, r.Alternatives[altNum].Transcript)
 					}
 				}
 

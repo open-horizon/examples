@@ -50,3 +50,12 @@ func HTTPPost(url, username, password string, headers []Header, requestBody io.R
 	}
 	return
 }
+
+// MarshallIndent converts the struct to json and then to a string, for quick output.
+func MarshalIndent(myStruct interface{}) string {
+	json, err := json.MarshalIndent(myStruct, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+	return string(json)
+}
