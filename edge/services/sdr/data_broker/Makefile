@@ -30,7 +30,7 @@ run: target/build_$(ARCH)
 # To publish you must have write access to the docker hub openhorizon user
 publish: target/build_$(ARCH)
 	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
-	#docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 fakepub: fake/main.go
 	go build -o $@ $<
