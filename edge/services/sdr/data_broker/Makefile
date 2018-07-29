@@ -6,15 +6,17 @@ export ARCH ?= $(SYSTEM_ARCH)
 
 # Container image version and workload name
 VERSION ?= 0.0.1
-WL_NAME=sdr_data_broker
+WL_NAME=sdr2msghub
 IMAGE=$(WL_NAME)
 
 
 # Construct our Docker registry path and other architecture-dependent values
 DOCKER_HUB_ID ?= openhorizon
-DOCKER_NAME ?= sdr_databroker_$(ARCH)
+DOCKER_NAME ?= $(ARCH)_sdr2msghub
 REG_PATH := $(DOCKER_HUB_ID)/$(ARCH)
 IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
+
+build: target/build_$(ARCH)
 
 target/build_$(ARCH): main.go
 	docker build -t $(DOCKER_NAME):$(VERSION) -f Dockerfile.$(ARCH) ../
@@ -28,7 +30,7 @@ run: target/build_$(ARCH)
 # To publish you must have write access to the docker hub openhorizon user
 publish: target/build_$(ARCH)
 	docker tag $(DOCKER_NAME):$(VERSION) $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
-	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
+	#docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 fakepub: fake/main.go
 	go build -o $@ $<
