@@ -6,12 +6,15 @@ ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
 VERSION ?= 0.0.1
-DOCKER_NAME ?= rtlsdr_$(ARCH)
-DOCKER_HUB_ID ?= openhorizon
+DOCKER_NAME ?= $(ARCH)_sdr
+DOCKER_HUB_ID ?= is8ac
 
 default: build
 
 all: build run
+
+
+build: target/build_$(ARCH)
 
 target/build_$(ARCH): Dockerfile.$(ARCH) main.go
 	docker build -t $(DOCKER_NAME):$(VERSION) -f Dockerfile.$(ARCH) --build-arg version=$(VERSION) .
@@ -19,8 +22,8 @@ target/build_$(ARCH): Dockerfile.$(ARCH) main.go
 
 run: target/build_$(ARCH)
 	-docker network create sdr
-	-docker kill rtlsdr
-	docker run -it --rm --privileged --name rtlsdr --net=sdr --net-alias=rtlsdr --publish=5427:5427 $(DOCKER_NAME):$(VERSION)
+	-docker kill sdr
+	docker run -it --rm --privileged --name sdr --net=sdr --net-alias=rtlsdr --publish=5427:5427 $(DOCKER_NAME):$(VERSION)
 
 # To publish you must have write access to the docker hub openhorizon user
 publish: target/build_$(ARCH)
@@ -28,6 +31,7 @@ publish: target/build_$(ARCH)
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(VERSION)
 
 clean:
+	rm target/*
 	-docker rm -f $(DOCKER_NAME):$(VERSION)
 	-docker rmi cpu
 	-docker network rm example

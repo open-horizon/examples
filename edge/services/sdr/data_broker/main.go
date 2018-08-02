@@ -133,16 +133,20 @@ func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 func connect(topic string) (conn msghubConn, err error) {
 	conn.Topic = topic
 	apiKey := getEnv("MSGHUB_API_KEY")
+	fmt.Println("msghub key:", apiKey)
 	username := apiKey[:16]
 	password := apiKey[16:]
 	brokerStr := getEnv("MSGHUB_BROKER_URL")
+	fmt.Println("url:", brokerStr)
 	brokers := strings.Split(brokerStr, ",")
 	config := sarama.NewConfig()
 	err = populateConfig(config, username, password, apiKey)
 	if err != nil {
 		return
 	}
+	fmt.Println("now connecting to msghub")
 	conn.Producer, err = sarama.NewSyncProducer(brokers, config)
+	fmt.Println("done trying to connect")
 	if err != nil {
 		return
 	}
@@ -180,7 +184,7 @@ func getEnv(keys ...string) (val string) {
 }
 
 // the default hostname if not overridden
-var hostname string = "rtlsdr"
+var hostname string = "sdr"
 
 func main() {
 	alt_addr := os.Getenv("RTLSDR_ADDR")
@@ -200,10 +204,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("connected to msghub")
 	// create a map to hold the goodness for each station we have ever oberved.
 	// This map will grow as long as the program lives
 	stationGoodness := map[float32]float32{}
-	fmt.Println("connected to msghub")
 	lastStationsRefresh := time.Time{}
 	for {
 		// if it has been over 5 minuts since we last updated the list of strong stations,

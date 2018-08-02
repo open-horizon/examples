@@ -117,8 +117,8 @@ func audioHandler(w http.ResponseWriter, r *http.Request) {
 func powerHandler(w http.ResponseWriter, r *http.Request) {
 	power, err := capturePower()
 	if (err != nil) && !(os.Getenv("MOCK_IF_YOU_MUST") == "false") {
-		err = nil
 		fmt.Println("using mock power data:", err.Error())
+		err = nil
 		power = rtlsdr.PowerDist{
 			Low:  float32(70000000),
 			High: float32(110000000),
