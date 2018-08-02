@@ -4,14 +4,18 @@ The Watson insights from SDR audio analysis are stored an IBM Compose Postgresql
 
 ## Schema (in progress)
 
-- Nouns:
+- GlobalNouns: summary of the nouns and sentiments from all nodes and stations
     - noun (key, string)
-    - edgeNode (key, foreign key, string) - horizon org/nodeid
-    - frequency (key, foreign key, float) - station frequency
-    - sentiment (float) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received from this node and station.
+    - sentiment (float) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received for this noun from all nodes/stations.
     - numberOfMentions (integer) - running count
     - timeUpdated (date) - most recent update
-- Stations:
+- NodeNouns: summary of the nouns and sentiments from this node (all stations)
+    - noun (key, string)
+    - edgeNode (key, foreign key, string) - horizon org/nodeid
+    - sentiment (float) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received from this node (for all stations).
+    - numberOfMentions (integer) - running count
+    - timeUpdated (date) - most recent update
+- Stations: list of the nodes and their stations that we've received audio clips from
     - edgeNode (key, string) - horizon org/nodeid that received data from this station
     - frequency (key, float) - station frequency
     - dataQualityMetric (float) - as determined/reported by the data_broker service
@@ -34,22 +38,29 @@ export SDR_DB_NAME=sdr
 psql "sslmode=require host=$SDR_DB_HOST port=$SDR_DB_PORT dbname=$SDR_DB_NAME user=$SDR_DB_USER password=$SDR_DB_PASSWORD"
 ```
 
-## Example Commands to Create/Modify Tables
+## Example SQL Statements to Manually Create/Modify Tables
 ```
-CREATE TABLE nouns(
-   noun TEXT PRIMARY KEY NOT NULL,
-   sentiment TEXT NOT NULL,
-   numberofmentions INT NOT NULL,
-   timeupdated timestamp with time zone
-);
+CREATE TABLE globalnouns(noun TEXT PRIMARY KEY NOT NULL, sentiment FLOAT NOT NULL, numberofmentions BIGINT NOT NULL, timeupdated timestamp with time zone);
 
-INSERT INTO nouns VALUES ('wedding', 'positive', 2, '2018-06-23 10:05:00');
-INSERT INTO nouns VALUES ('trump', 'negative', 100, '2018-07-23 11:05:00');
-INSERT INTO nouns VALUES ('foo', 'positive', 100, '2018-07-24 11:05:00');
+CREATE TABLE nodenouns(noun TEXT NOT NULL, edgenode TEXT NOT NULL, sentiment FLOAT NOT NULL, numberofmentions BIGINT NOT NULL, timeupdated timestamp with time zone, PRIMARY KEY(noun, edgenode) );
 
-# If you need to manually update a row or change a column definition:
-UPDATE nouns SET timeupdated = '2018-06-23 14:00' WHERE noun = 'wedding';
-ALTER TABLE nouns alter column timeupdated type timestamp with time zone;
+CREATE TABLE stations(edgenode TEXT NOT NULL, frequency FLOAT NOT NULL, dataqualitymetric FLOAT, timeupdated timestamp with time zone, PRIMARY KEY(edgenode, frequency) );
+
+CREATE TABLE edgenodes(edgenode TEXT PRIMARY KEY NOT NULL, latitude FLOAT NOT NULL, longitude FLOAT NOT NULL, timeupdated timestamp with time zone);
+
+# Add rows to the globalnouns table:
+INSERT INTO globalnouns VALUES ('wedding', 0.99, 2, '2018-06-23 10:05:00');
+INSERT INTO globalnouns VALUES ('trump', -0.25, 100, '2018-07-23 11:05:00');
+INSERT INTO globalnouns VALUES ('foo', 0.0, 100, '2018-08-01 11:05:00');
+
+# Update a row:
+UPDATE globalnouns SET sentiment = 0.25, timeupdated = '2018-06-23 14:00' WHERE noun = 'wedding';
+
+# Upsert a row (insert if not there, update if there):
+INSERT INTO globalnouns VALUES ('wedding', 0.5, 1, CURRENT_TIMESTAMP) ON CONFLICT (noun) DO UPDATE SET sentiment = ((globalnouns.sentiment * globalnouns.numberofmentions) + 0.5) / (globalnouns.numberofmentions + 1), numberofmentions = globalnouns.numberofmentions + 1, timeupdated = CURRENT_TIMESTAMP;
+
+# If you need to change a column definition:
+ALTER TABLE globalnouns alter column timeupdated type timestamp with time zone;
 ```
 
 ## Run Example Go Code to Write and Read DB
