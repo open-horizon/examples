@@ -41,6 +41,7 @@ func main() {
 
 	// Increment the numberofmentions for noun==wedding
 	// stmt, err := db.Prepare("update globalnouns set numberofmentions = numberofmentions + 1, timeupdated = CURRENT_TIMESTAMP where noun=$1")
+	// This is the postgres way to upsert a row (insert if not there, update if there)
 	stmt, err := db.Prepare("INSERT INTO globalnouns VALUES ($1, $2, 1, CURRENT_TIMESTAMP) ON CONFLICT (noun) DO UPDATE SET sentiment = ((globalnouns.sentiment * globalnouns.numberofmentions) + $2) / (globalnouns.numberofmentions + 1), numberofmentions = globalnouns.numberofmentions + 1, timeupdated = CURRENT_TIMESTAMP")
 	exitOnErr(err)
 	defer stmt.Close()

@@ -6,26 +6,27 @@ The Watson insights from SDR audio analysis are stored an IBM Compose Postgresql
 
 - GlobalNouns: summary of the nouns and sentiments from all nodes and stations
     - noun (key, string)
-    - sentiment (float) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received for this noun from all nodes/stations.
+    - sentiment (float64) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received for this noun from all nodes/stations.
     - numberOfMentions (integer) - running count
     - timeUpdated (date) - most recent update
 - NodeNouns: summary of the nouns and sentiments from this node (all stations)
     - noun (key, string)
     - edgeNode (key, foreign key, string) - horizon org/nodeid
-    - sentiment (float) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received from this node (for all stations).
+    - sentiment (float64) - sentiment score from -1.0 (full negative) to 1.0 (full positive). A running average of all sentiments we've received from this node (for all stations).
     - numberOfMentions (integer) - running count
     - timeUpdated (date) - most recent update
 - Stations: list of the nodes and their stations that we've received audio clips from
     - edgeNode (key, string) - horizon org/nodeid that received data from this station
-    - frequency (key, float) - station frequency
-    - dataQualityMetric (float) - as determined/reported by the data_broker service
+    - frequency (key, float32) - station frequency
+    - numberofclips (int) - number of audio clips received from this station from this edge node
+    - dataQualityMetric (float32) - as determined/reported by the data_broker service
     - Phase 2:
         - callLetters (when broadcast)
         - (maybe some other way to determine that stations from nearby nodes are actually the same)
 - EdgeNodes:
     - edgeNode (key, string) - horizon org/nodeid
-    - latitude (float) - latitude of the node
-    - longitude (float) - longitude of the node
+    - latitude (float32) - latitude of the node
+    - longitude (float32) - longitude of the node
 
 ## Manually Connect to the DB
 ```
@@ -40,13 +41,13 @@ psql "sslmode=require host=$SDR_DB_HOST port=$SDR_DB_PORT dbname=$SDR_DB_NAME us
 
 ## Example SQL Statements to Manually Create/Modify Tables
 ```
-CREATE TABLE globalnouns(noun TEXT PRIMARY KEY NOT NULL, sentiment FLOAT NOT NULL, numberofmentions BIGINT NOT NULL, timeupdated timestamp with time zone);
+CREATE TABLE globalnouns(noun TEXT PRIMARY KEY NOT NULL, sentiment DOUBLE PRECISION NOT NULL, numberofmentions BIGINT NOT NULL, timeupdated timestamp with time zone);
 
-CREATE TABLE nodenouns(noun TEXT NOT NULL, edgenode TEXT NOT NULL, sentiment FLOAT NOT NULL, numberofmentions BIGINT NOT NULL, timeupdated timestamp with time zone, PRIMARY KEY(noun, edgenode) );
+CREATE TABLE nodenouns(noun TEXT NOT NULL, edgenode TEXT NOT NULL, sentiment DOUBLE PRECISION NOT NULL, numberofmentions BIGINT NOT NULL, timeupdated timestamp with time zone, PRIMARY KEY(noun, edgenode) );
 
-CREATE TABLE stations(edgenode TEXT NOT NULL, frequency FLOAT NOT NULL, dataqualitymetric FLOAT, timeupdated timestamp with time zone, PRIMARY KEY(edgenode, frequency) );
+CREATE TABLE stations(edgenode TEXT NOT NULL, frequency REAL NOT NULL, numberofclips BIGINT NOT NULL, dataqualitymetric REAL, timeupdated timestamp with time zone, PRIMARY KEY(edgenode, frequency) );
 
-CREATE TABLE edgenodes(edgenode TEXT PRIMARY KEY NOT NULL, latitude FLOAT NOT NULL, longitude FLOAT NOT NULL, timeupdated timestamp with time zone);
+CREATE TABLE edgenodes(edgenode TEXT PRIMARY KEY NOT NULL, latitude REAL NOT NULL, longitude REAL NOT NULL, timeupdated timestamp with time zone);
 
 # Add rows to the globalnouns table:
 INSERT INTO globalnouns VALUES ('wedding', 0.99, 2, '2018-06-23 10:05:00');
