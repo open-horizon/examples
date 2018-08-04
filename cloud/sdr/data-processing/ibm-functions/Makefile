@@ -24,19 +24,20 @@ MSGHUB_TOPIC ?= sdr-audio
 # 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 # 	bx wsk action update $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 
+# Note: this is not useful as-is, because it doesn't pass audio to the action serialized with gob
 # This requires go be installed. On Mac: brew install go
 test-go-action: $(ACTION_GO_CODE)
-	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
-	go run $< '{ "messages": [ { "value": "\"this is my first msg\"", "topic": "sdr-audio", "partition": 1 }, { "value": "\"this is my 2nd msg\"", "topic": "sdr-audio", "partition": 1 } ], "watsonSttUsername": "$(STT_USERNAME)", "watsonSttPassword": "$(STT_PASSWORD)" }'
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
+	go run $< '{ "messages": [ { "value": "\"this is my first msg\"", "topic": "$(MSGHUB_TOPIC)", "partition": 1 }, { "value": "\"this is my 2nd msg\"", "topic": "$(MSGHUB_TOPIC)", "partition": 1 } ], "watsonSttUsername": "$(STT_USERNAME)", "watsonSttPassword": "$(STT_PASSWORD)", "watsonNluUsername": "$(NLU_USERNAME)", "watsonNluPassword": "$(NLU_PASSWORD)", "postgresUrl": "$(SDR_DB_URL)" }'
 
 # Build and Upload a new version of the action code
 exec.zip: $(ACTION_GO_CODE)
-	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
 	GOOS=linux GOARCH=amd64 go build -o exec $<
 	zip $@ exec
-	bx wsk action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	bx wsk action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
 
-# Create a trigger and action. Note: haven't tried this yet!!
+# Create a trigger and action. Note: haven't tried this yet!! (I did it thru the UI)
 create: exec.zip
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	bx wsk package refresh
