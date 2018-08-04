@@ -22,9 +22,15 @@ bx wsk action get message-hub-evnts/process-message-go
 ```
 export STT_USERNAME="<speech-to-text-user>"
 export STT_PASSWORD="<speech-to-text-pw>"
+export NLU_USERNAME="<natural-language-understand-user>"
+export NLU_PASSWORD="<natural-language-understand-pw>"
+export SDR_DB_URL="postgres://user:pw@$host:port/dbname"
 ```
 
 ## Test the Action Locally
+
+**Note: this is not useful as-is, because it doesn't pass audio to the action serialized with gob.**
+
 ```
 make test-go-action
 ```

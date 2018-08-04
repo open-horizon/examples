@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/wutil"
 )
 
@@ -37,7 +38,7 @@ func appendWAVheader(rawAudio []byte) (wavAudio []byte) {
 		panic("bad hex")
 	}
 	wavFileName := "/tmp/stt-demo.wav"
-	fmt.Printf("converting raw audio to a wav file, and storing in %s\n", wavFileName)
+	util.Verbose("converting raw audio to a wav file, and storing in %s\n", wavFileName)
 	wavAudio = append(header, rawAudio...)
 	ioutil.WriteFile(wavFileName, wavAudio, 0644)
 	return

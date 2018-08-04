@@ -74,13 +74,13 @@ func getEnv(keys ...string) (val string) {
 	}
 	if val == "" {
 		fmt.Println("none of", keys, "are set")
-		panic("can't any find set value")
+		panic("can't find any set env var value")
 	}
 	return
 }
 
 func main() {
-	devID := getEnv("HZN_DEVICE_ID")
+	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
 	mockAudio := "librtlsdr/mock_audio.raw"
 	audio, err := ioutil.ReadFile("../../" + mockAudio)
 	if err != nil {
@@ -103,6 +103,8 @@ func main() {
 		Freq:          123.45,
 		ExpectedValue: 0.9,
 		DevID:         devID,
+		Lat:           42.214607,
+		Lon:           -73.959494,
 	}
 	fmt.Println("sending sample")
 	err = conn.publishAudio(msg)

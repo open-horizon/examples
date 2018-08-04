@@ -21,7 +21,7 @@ type EntityFeature struct {
 	Keywords SentimentOption `json:"keywords"` //todo: other keywords. This gives us more results, but we have to eliminate duplicates from what was returned in the entities list
 }
 
-// SentimentOption will recognize nouns and do and return sentiment for each
+// SentimentOption will recognize nouns and return sentiment for each
 type SentimentOption struct {
 	Sentiment bool `json:"sentiment"`
 }
