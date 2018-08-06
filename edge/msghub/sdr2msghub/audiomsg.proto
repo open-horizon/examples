@@ -1,0 +1,14 @@
+syntax = "proto3";
+package audiolib;
+
+import "google/protobuf/timestamp.proto";
+
+message AudioMsg {
+  string devID = 1;
+  float lat = 2;
+  float lon = 3;
+  float freq = 6;
+  float expectedValue = 7;
+  bytes audio = 8;
+  google.protobuf.Timestamp ts = 9;
+}

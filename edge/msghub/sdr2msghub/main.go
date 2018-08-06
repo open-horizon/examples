@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
@@ -193,14 +194,16 @@ func main() {
 		fmt.Println("connecting to remote rtlsdr:", alt_addr)
 		hostname = alt_addr
 	}
-	devID := getEnv("HZN_DEVICE_ID")
+	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
 	// load the graph def from FS
 	m, err := newModel("model.pb")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("model loaded")
-	conn, err := connect("sdr-audio")
+	topic := getEnv("MSGHUB_TOPIC")
+	fmt.Printf("using topic %s\n", topic)
+	conn, err := connect(topic)
 	if err != nil {
 		panic(err)
 	}
@@ -252,7 +255,7 @@ func main() {
 					// construct the message,
 					msg := &audiolib.AudioMsg{
 						Audio:         audio,
-						Ts:            time.Now(),
+						Ts:            ptypes.TimestampNow(),
 						Freq:          station,
 						ExpectedValue: val,
 						DevID:         devID,
