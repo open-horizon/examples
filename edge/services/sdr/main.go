@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
+	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 )
 
 func captureAudio(freq int) (audio []byte, err error) {
