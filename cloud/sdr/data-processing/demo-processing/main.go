@@ -4,8 +4,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/gob"
 	"flag"
 	"fmt"
 	"log"
@@ -20,11 +18,14 @@ import (
 	cluster "github.com/bsm/sarama-cluster" // doc: http://godoc.org/github.com/bsm/sarama-cluster
 	_ "github.com/lib/pq"
 
+	"github.com/golang/protobuf/ptypes"
+
+	"github.com/golang/protobuf/proto"
 	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/nlu"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/stt"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/wutil"
-	"github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib"
+	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
 )
 
 func usage(exitCode int) {
@@ -108,11 +109,17 @@ func main() {
 		case msg, ok := <-consumer.Messages():
 			if ok {
 				// Got an audio clip, convert it to text
-				var audioMsg audiolib.AudioMsg
-				dec := gob.NewDecoder(bytes.NewReader(msg.Value))
-				err := dec.Decode(&audioMsg)
+				audioMsg := &audiolib.AudioMsg{}
+				err = proto.Unmarshal(msg.Value, audioMsg)
 				if err != nil {
 					log.Println(err)
+					continue
+				}
+				// since the protobuff time is a github.com/golang/protobuf/ptypes.Timestamp, not a time.Time, we must decode it.
+				timeStamp, err := ptypes.Timestamp(audioMsg.Ts)
+				if err != nil {
+					log.Println(err)
+					continue
 				}
 				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq)
 				transcript, err := stt.Transcribe(audioMsg.Audio, sttUsername, sttPassword)
@@ -136,14 +143,14 @@ func main() {
 						} else {
 							fmt.Println("NLU:", sentiments)
 						}
-						addSentimentsToDB(db, sentiments, audioMsg.Ts, audioMsg.DevID)
+						addSentimentsToDB(db, sentiments, timeStamp, audioMsg.DevID)
 					} else {
 						util.Verbose("Skipping: Final: %v, Confidence: %f, Text: %s\n", r.Final, r.Alternatives[altNum].Confidence, r.Alternatives[altNum].Transcript)
 					}
 				}
 
 				// Record node and station info in db
-				addNodeStationToDB(db, audioMsg.Ts, audioMsg.DevID, audioMsg.Freq, audioMsg.Lat, audioMsg.Lon, audioMsg.ExpectedValue)
+				addNodeStationToDB(db, timeStamp, audioMsg.DevID, audioMsg.Freq, audioMsg.Lat, audioMsg.Lon, audioMsg.ExpectedValue)
 
 				consumer.MarkOffset(msg, "") // mark message as processed
 			}
