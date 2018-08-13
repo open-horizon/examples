@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib"
+	"github.com/golang/protobuf/ptypes"
+	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
 )
 
 type msghubConn struct {
@@ -81,7 +81,7 @@ func getEnv(keys ...string) (val string) {
 
 func main() {
 	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
-	mockAudio := "librtlsdr/mock_audio.raw"
+	mockAudio := "services/sdr/mock_audio.raw"
 	audio, err := ioutil.ReadFile("../../" + mockAudio)
 	if err != nil {
 		// so we can run it in this dir or up 1 dir
@@ -99,7 +99,7 @@ func main() {
 	fmt.Println("connected to msghub")
 	msg := &audiolib.AudioMsg{
 		Audio:         audio,
-		Ts:            time.Now(),
+		Ts:            ptypes.TimestampNow(),
 		Freq:          123.45,
 		ExpectedValue: 0.9,
 		DevID:         devID,

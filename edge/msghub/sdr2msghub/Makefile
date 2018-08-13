@@ -44,3 +44,6 @@ clean:
 	-rm -f fakepub
 
 .PHONY: default all build dev run check docker-publish exchange-publish fakepub clean
+
+protobuf: audiomsg.proto
+	protoc --go_out=audiolib audiomsg.proto
