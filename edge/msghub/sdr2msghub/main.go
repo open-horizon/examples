@@ -184,20 +184,6 @@ func getEnv(keys ...string) (val string) {
 	return
 }
 
-var replacer = strings.NewReplacer(
-	"@", "_",
-	"#", "_",
-	"%", "_",
-	"(", "_",
-	")", "_",
-	"+", "_",
-	"=", "_",
-	":", "_",
-	",", "_",
-	"<", "_",
-	">", "_",
-)
-
 // the default hostname if not overridden
 var hostname string = "sdr"
 
@@ -215,7 +201,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("model loaded")
-	topic := replacer.Replace(getEnv("MSGHUB_TOPIC"))
+	topic := getEnv("MSGHUB_TOPIC")
 	fmt.Printf("using topic %s\n", topic)
 	conn, err := connect(topic)
 	if err != nil {
