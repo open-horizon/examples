@@ -6,7 +6,7 @@ export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
 export CPU2MSGHUB_NAME ?= cpu2msghub
-export CPU2MSGHUB_VERSION ?= 1.2.2
+export CPU2MSGHUB_VERSION ?= 1.2.3
 DOCKER_NAME ?= $(ARCH)_$(CPU2MSGHUB_NAME)
 DOCKER_HUB_ID ?= openhorizon
 export MYDOMAIN ?= github.com/open-horizon/examples/wiki

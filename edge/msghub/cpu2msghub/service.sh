@@ -27,18 +27,20 @@ echo "Optional environment variables (or default values): SAMPLE_INTERVAL=$SAMPL
 if [[ "$PUBLISH" == "true" ]]; then
   echo "Checking for required environment variables for publishing to IBM Message Hub:"
   checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
+  #checkRequiredEnvVar "HZN_PATTERN"      #todo: add this line when hzn dev passes it
   checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon
   checkRequiredEnvVar "MSGHUB_API_KEY"
   checkRequiredEnvVar "MSGHUB_BROKER_URL"
   MSGHUB_USERNAME="${MSGHUB_API_KEY:0:16}"
   MSGHUB_PASSWORD="${MSGHUB_API_KEY:16}"
-  # If HZN_PATTERN is passed in, use that for in the topic
-  #todo: at some point make HZN_PATTERN a required env var
+  # If HZN_PATTERN is passed in, use that for the topic
   if [[ -n "$HZN_PATTERN" ]]; then
     MSGHUB_TOPIC="$HZN_ORGANIZATION.$HZN_PATTERN"
   else
     MSGHUB_TOPIC="$HZN_ORGANIZATION.$HZN_DEVICE_ID"
   fi
+  # The only special chars allowed in the topic are: -._
+  MSGHUB_TOPIC="${MSGHUB_TOPIC//[@#%()+=:,<>]/_}"
   echo "Will publish to topic: $MSGHUB_TOPIC"
 fi
 
