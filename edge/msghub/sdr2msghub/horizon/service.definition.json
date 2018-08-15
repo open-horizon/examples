@@ -34,7 +34,8 @@
         "services": {
             "sdr2msghub": {
                 "environment": [
-                    "MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL"
+                    "MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL",
+                    "MSGHUB_TOPIC=sdr-audio"
                 ],
                 "image": "$DOCKER_HUB_ID/${ARCH}_$SDR2MSGHUB_NAME:$SDR2MSGHUB_VERSION"
             }
