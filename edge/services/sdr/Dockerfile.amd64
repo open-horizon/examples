@@ -7,7 +7,7 @@ RUN ls /usr/local/bin/rtl_*
 
 FROM golang:1.10.0-alpine as go_build
 COPY main.go /
-COPY rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib/clientlib.go
+COPY rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib/clientlib.go
 ARG version=0.0.1
 ENV MIC_VERSION $version
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo --ldflags "-X main.version=${MIC_VERSION}" -o /bin/rtlsdrd /main.go
