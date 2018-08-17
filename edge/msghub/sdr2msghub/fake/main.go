@@ -90,6 +90,8 @@ func main() {
 			panic(err)
 		}
 	}
+	audio = []byte("this is fake audio") //todo: remove
+	// audio = audio[:250000] //todo: remove
 	topic := getEnv("MSGHUB_TOPIC")
 	fmt.Printf("using topic %s\n", topic)
 	conn, err := connect(topic)
