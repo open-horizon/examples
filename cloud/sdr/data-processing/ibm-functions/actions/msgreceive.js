@@ -29,6 +29,7 @@ function main(params) {
       //todo: support multiple msgs
       // var msgBuf = Buffer.from(params.messages[0].value, 'base64')
       // var msg = AudioMsg.decode(msgBuf);
+      console.log("decoding msg...")
       var msg = root.audiolib.AudioMsg.decode(params.messages[0].value);
       console.log("got msg from " + msg.devID + " at " + new Date(msg.ts.seconds*1000));
       console.log(msg)

@@ -7,8 +7,8 @@ WSK_ACTION ?= process-message   # this is the node.js action we are not using
 ACTION_CODE ?= actions/msgreceive.js
 PROTO_FILE ?= ../../../../edge/msghub/sdr2msghub/audiomsg.proto
 PROTO_JS ?= actions/audiomsg.js
-PKG_JSON ?= actions/package.json
-ACTION_ZIP ?= actions/msgreceive.zip
+# PKG_JSON ?= actions/package.json
+ACTION_ZIP ?= msgreceive.zip
 WSK_TRIGGER ?= message-received-trigger
 WSK_RULE ?= message-received-rule
 
@@ -29,18 +29,20 @@ action-test: actions/msgreceive_test.js $(ACTION_CODE) $(PROTO_JS)
 	node $<
 
 # Upload a new version of the action code
-action-update: $(ACTION_CODE) $(PROTO_JS) $(PKG_JSON)
+action-update: $(ACTION_CODE) $(PROTO_JS)
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	rm -f $(ACTION_ZIP)
-	zip -j $(ACTION_ZIP) $^
-	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_ZIP) --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
+	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_ZIP) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 
 # Create a trigger, action, and rule
-create: $(ACTION_CODE)
+create: $(ACTION_CODE) $(PROTO_JS)
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	#ic fn package refresh  # this gives an auth error for some reason
 	ic fn trigger create $(WSK_TRIGGER) --feed $(WSK_MSGHUB_FEED) --param isJSONData false --param isBinaryValue false --param topic $(MSGHUB_TOPIC)
-	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	rm -f $(ACTION_ZIP)
+	cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
+	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_ZIP) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 	ic fn rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_ACTION)
 
 # Remove the trigger, action and rule

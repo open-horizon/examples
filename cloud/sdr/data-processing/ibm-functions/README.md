@@ -85,6 +85,7 @@ make exec.zip  # Upload the Action to the IBM Functions Service
     - https://github.com/IBM/ibm-cloud-functions-message-hub-trigger  and  https://github.com/apache/incubator-openwhisk-package-kafka
 - Node.js actions:
     - Node.js packages that are pre-installed in the IBM Funcions Node.js 8 environment: https://console.bluemix.net/docs/openwhisk/openwhisk_reference.html#openwhisk_ref_javascript_environments
+    - Packaging your action as a nodejs module: https://console.bluemix.net/docs/openwhisk/openwhisk_actions.html#openwhisk_js_packaged_action
     - Trigger parameters: https://github.com/apache/incubator-openwhisk-package-kafka#creating-a-trigger-that-listens-to-an-ibm-messagehub-instance
     - Watson Node.js SDK package: https://www.npmjs.com/package/watson-developer-cloud
     - Watson STT Nodejs SDK: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/node.html?node
