@@ -5,10 +5,10 @@ WSK_PACKAGE ?= message-hub-evnts
 WSK_MSGHUB_FEED ?= openwhisk-messagehub/messageHubFeed
 WSK_ACTION ?= process-message   # this is the node.js action we are not using
 ACTION_CODE ?= actions/msgreceive.js
-PROTO_FILE ?= ../../../../edge/msghub/sdr2msghub/audiomsg.proto
-PROTO_JS ?= actions/audiomsg.js
+# PROTO_FILE ?= ../../../../edge/msghub/sdr2msghub/audiomsg.proto
+# PROTO_JS ?= actions/audiomsg.js
 # PKG_JSON ?= actions/package.json
-ACTION_ZIP ?= msgreceive.zip
+# ACTION_ZIP ?= msgreceive.zip
 WSK_TRIGGER ?= message-received-trigger
 WSK_RULE ?= message-received-rule
 
@@ -20,29 +20,29 @@ MSGHUB_NAME ?= msghub-hzndemo
 MSGHUB_TOPIC ?= sdr-audio
 
 # Build the js version of the protobufs struct definition
-$(PROTO_JS): $(PROTO_FILE)
-	actions/node_modules/protobufjs/cli/bin/pbjs -t static-module -w commonjs -o $(PROTO_JS) $(PROTO_FILE)
+# $(PROTO_JS): $(PROTO_FILE)
+# 	actions/node_modules/protobufjs/cli/bin/pbjs -t static-module -w commonjs -o $(PROTO_JS) $(PROTO_FILE)
 
 # This requires node.js be installed. On Mac: brew install node
-action-test: actions/msgreceive_test.js $(ACTION_CODE) $(PROTO_JS)
+action-test: actions/msgreceive_test.js $(ACTION_CODE)
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	node $<
 
 # Upload a new version of the action code
-action-update: $(ACTION_CODE) $(PROTO_JS)
+action-update: $(ACTION_CODE)
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
-	rm -f $(ACTION_ZIP)
-	cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
-	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_ZIP) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	# rm -f $(ACTION_ZIP)
+	# cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
+	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 
 # Create a trigger, action, and rule
-create: $(ACTION_CODE) $(PROTO_JS)
+create: $(ACTION_CODE)
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
 	#ic fn package refresh  # this gives an auth error for some reason
-	ic fn trigger create $(WSK_TRIGGER) --feed $(WSK_MSGHUB_FEED) --param isJSONData false --param isBinaryValue false --param topic $(MSGHUB_TOPIC)
-	rm -f $(ACTION_ZIP)
-	cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
-	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_ZIP) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	ic fn trigger create $(WSK_TRIGGER) --feed $(WSK_MSGHUB_FEED) --param isJSONData true --param isBinaryValue false --param topic $(MSGHUB_TOPIC)
+	# rm -f $(ACTION_ZIP)
+	# cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
+	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
 	ic fn rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_ACTION)
 
 # Remove the trigger, action and rule

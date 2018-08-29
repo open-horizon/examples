@@ -1,15 +1,18 @@
 package main
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
+	// "github.com/golang/protobuf/ptypes"
+	// "github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
 )
 
 type msghubConn struct {
@@ -49,7 +52,8 @@ func connect(topic string) (conn msghubConn, err error) {
 	return
 }
 
-func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
+// func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
+func (conn *msghubConn) publishAudio(audioMsg *AudioMsg) (err error) {
 	// as AudioMsg implements the sarama.Encoder interface, we can pass it directly to ProducerMessage.
 	msg := &sarama.ProducerMessage{Topic: conn.Topic, Key: nil, Value: audioMsg}
 	partition, offset, err := conn.Producer.SendMessage(msg)
@@ -79,18 +83,45 @@ func getEnv(keys ...string) (val string) {
 	return
 }
 
+// AudioMsg holds the metadata and audio that we send to IBM Message Hub
+type AudioMsg struct {
+	Audio         string  `json:"audio"`
+	Ts            int64   `json:"ts"`
+	Freq          float32 `json:"freq"`
+	ExpectedValue float32 `json:"expectedValue"`
+	DevID         string  `json:"devID"`
+	Lat           float32 `json:"lat"`
+	Lon           float32 `json:"lon"`
+}
+
+// Encode implemented for the https://godoc.org/github.com/Shopify/sarama#Encoder interface
+func (msg *AudioMsg) Encode() (serialized []byte, err error) {
+	serialized, err = json.Marshal(msg)
+	return
+}
+
+// Length implemented for the https://godoc.org/github.com/Shopify/sarama#Encoder interface
+// This is an ugly hack becouse I can't easily calculate the length without actualy serializing the object.
+func (msg *AudioMsg) Length() int {
+	serialized, _ := msg.Encode()
+	return len(serialized)
+}
+
 func main() {
 	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
-	mockAudio := "services/sdr/mock_audio.raw"
-	audio, err := ioutil.ReadFile("../../" + mockAudio)
+	// mockAudio := "services/sdr/mock_audio.raw"
+	mockAudio := "../../services/sdr/mock_audio.ogg" // if running it from the Makefile in edge/msghub/sdr2msghub
+	audioBytes, err := ioutil.ReadFile(mockAudio)
 	if err != nil {
-		// so we can run it in this dir or up 1 dir
-		audio, err = ioutil.ReadFile("../" + mockAudio)
+		audioBytes, err = ioutil.ReadFile("../" + mockAudio) // if running it via go run in edge/msghub/sdr2msghub/fake
 		if err != nil {
 			panic(err)
 		}
 	}
-	audio = []byte("this is fake audio") //todo: remove
+	audio := base64.StdEncoding.EncodeToString(audioBytes)
+	// audio := base64.StdEncoding.EncodeToString([]byte("this is fake audio")) //todo: remove
+	// audio := "this is fake audio" //todo: remove
+	// audio = []byte("this is fake audio") //todo: remove
 	// audio = audio[:250000] //todo: remove
 	topic := getEnv("MSGHUB_TOPIC")
 	fmt.Printf("using topic %s\n", topic)
@@ -99,7 +130,16 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("connected to msghub")
-	msg := &audiolib.AudioMsg{
+	msg := &AudioMsg{
+		Audio:         audio,
+		Ts:            time.Now().Unix(),
+		Freq:          123.45,
+		ExpectedValue: 0.9,
+		DevID:         devID,
+		Lat:           42.214607,
+		Lon:           -73.959494,
+	}
+	/* msg := &audiolib.AudioMsg{
 		Audio:         audio,
 		Ts:            ptypes.TimestampNow(),
 		Freq:          123.45,
@@ -107,7 +147,7 @@ func main() {
 		DevID:         devID,
 		Lat:           42.214607,
 		Lon:           -73.959494,
-	}
+	} */
 	fmt.Println("sending sample")
 	err = conn.publishAudio(msg)
 	if err != nil {

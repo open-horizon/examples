@@ -6,9 +6,9 @@
 	"author": "Bruce Potter",
 	"license": "Apache-2.0",
 	"dependencies": {
+		"async": "^2.6.1",
 		"pg": "^7.4.3",
 		"promise": "^8.0.1",
-		"protobufjs": "^6.8.8",
 		"watson-developer-cloud": "^3.9.0"
 	},
 	"repository": {},

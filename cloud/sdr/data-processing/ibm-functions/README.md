@@ -38,7 +38,7 @@ Note: this assumes the /Hovitos_dev/openwhisk-messagehub package has already bee
 Note: use the make targets to create the official objects.
 
 ```
-ic fn trigger update message-received-trigger --param isBinaryValue false
+ic fn trigger update message-received-trigger --param isJSONData true --param isBinaryValue false
 
 ic fn rule create message-received-rule message-received-trigger message-hub-evnts/process-message
 ```
@@ -89,7 +89,9 @@ make exec.zip  # Upload the Action to the IBM Functions Service
     - Trigger parameters: https://github.com/apache/incubator-openwhisk-package-kafka#creating-a-trigger-that-listens-to-an-ibm-messagehub-instance
     - Watson Node.js SDK package: https://www.npmjs.com/package/watson-developer-cloud
     - Watson STT Nodejs SDK: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/node.html?node
+    - Watson NLU Node.js SDK: https://www.ibm.com/watson/developercloud/natural-language-understanding/api/v1/?node#post-analyze
     - JS Protobufs: https://www.npmjs.com/package/protobufjs
+    - Using binary data with msg hub/openwhisk triggers: https://medium.com/openwhisk/integrating-openwhisk-with-message-hub-now-with-binary-data-81b5b2dc1d69
 - Golang docker actions (not currently used):
     - https://console.bluemix.net/docs/openwhisk/openwhisk_actions.html#openwhisk_actions (sections: "Creating Go actions" and "Creating Docker actions")
     - https://www.ibm.com/blogs/bluemix/2017/01/docker-bluemix-openwhisk/
