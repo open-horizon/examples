@@ -88,6 +88,7 @@ make exec.zip  # Upload the Action to the IBM Functions Service
     - Packaging your action as a nodejs module: https://console.bluemix.net/docs/openwhisk/openwhisk_actions.html#openwhisk_js_packaged_action
     - Trigger parameters: https://github.com/apache/incubator-openwhisk-package-kafka#creating-a-trigger-that-listens-to-an-ibm-messagehub-instance
     - Watson Node.js SDK package: https://www.npmjs.com/package/watson-developer-cloud
+    - 3.7.0 Version of Watson Node.js SDK: https://github.com/watson-developer-cloud/node-sdk/blob/v3.7.0/README.md
     - Watson STT Nodejs SDK: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/node.html?node
     - Watson NLU Node.js SDK: https://www.ibm.com/watson/developercloud/natural-language-understanding/api/v1/?node#post-analyze
     - JS Protobufs: https://www.npmjs.com/package/protobufjs
@@ -96,3 +97,11 @@ make exec.zip  # Upload the Action to the IBM Functions Service
     - https://console.bluemix.net/docs/openwhisk/openwhisk_actions.html#openwhisk_actions (sections: "Creating Go actions" and "Creating Docker actions")
     - https://www.ibm.com/blogs/bluemix/2017/01/docker-bluemix-openwhisk/
     - https://console.bluemix.net/docs/openwhisk/openwhisk_reference.html#openwhisk_ref_docker
+
+## Problems I Ran Into
+- Difficulty creating package, action, trigger, rule
+- Bug in `ic fn package refresh` (now fixed)
+- Go action gets msg via command line, so command line length limitation on audio data
+- Applicationn error in node.js action when using when using protobufjs to deserialize msg
+- Trigger doesn't invoke action when msg > 250K (open support ticket)
+- watson-developer-cloud SDK node.js module is older version that i can't find the docs for (this is preventing me from running NLU).

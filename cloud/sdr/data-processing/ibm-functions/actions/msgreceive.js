@@ -1,5 +1,4 @@
 /*eslint-env node*/
-//const Client = require('node-rest-client').Client;  // <- don't need this because using the Nodejs SDK
 const Promise = require('promise');
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
@@ -32,7 +31,7 @@ function main(params) {
     naturalLangUnderstanding = new NaturalLanguageUnderstandingV1({
       username: params.watsonNluUsername,
       password: params.watsonNluPassword,
-      version: '2018-03-16'
+      version: '2018-04-05'
     });
 
     // Process each msg. The processing of each msg is asynchronous, so use the async module to wait for them all before we complete our promise.
@@ -68,9 +67,10 @@ function sttTranscribe(message, index, callback) {
       console.log(error);
       callback(error);
     } else {
-      // const resultStr = JSON.stringify(sttResults, null, 2);
       console.log("Processing Watson STT results...");
-      // console.log(resultStr);
+      /* const resultStr = JSON.stringify(sttResults, null, 2);
+      console.log(resultStr);
+      callback(); */
       // console.log(sttResults);
 
       // Process each result. The processing of each result is asynchronous, so use the async module to wait for them all before we call our callback.
@@ -108,8 +108,8 @@ function nluSentiment(sttResult, index, callback) {
           console.log(error);
           callback(error);
         } else {
-          const resultStr = JSON.stringify(nluResults, null, 2);
           console.log('Sentiment analysis results:');
+          const resultStr = JSON.stringify(nluResults, null, 2);
           console.log(resultStr);
           callback();
         }
@@ -145,6 +145,7 @@ exports.main = main;
       }); */
 
       /* This is how we would use the watson stt rest api...
+      const Client = require('node-rest-client').Client;
       const options_auth = { user: params.watsonSttUsername, password: params.watsonSttPassword };
       const client = new Client(options_auth);
       client.get("https://stream.watsonplatform.net/speech-to-text/api/v1/models", function (data, response) {

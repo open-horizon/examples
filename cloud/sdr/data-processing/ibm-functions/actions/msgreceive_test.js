@@ -27,7 +27,7 @@ var payload = {
 	// audio: "this is some audio data that could end up being pretty big",
 	ts: Math.floor(Date.now()/1000)
 };
-var payload2 = {
+/* var payload2 = {
 	devID: "bpmac2",
 	lat: 42.1,
 	lon: -73.0,
@@ -35,7 +35,7 @@ var payload2 = {
 	expectedValue: 0.8,
 	audio: audioEncoded,
 	ts: Math.floor(Date.now()/1000)
-};
+}; */
 /* var errMsg = root.audiolib.AudioMsg.verify(payload);	// check that it conforms to our PB type
 if (errMsg) throw Error(errMsg);
 console.log("payload verified"); */
@@ -49,7 +49,7 @@ const params = {
 		// { "value": buffer.toString('base64') }
 		// { "value": buffer }
 		{ "value": payload },
-		{ "value": payload2 },
+		// { "value": payload2 },
 	],
 	"watsonSttUsername": process.env.STT_USERNAME,
 	"watsonSttPassword": process.env.STT_PASSWORD,

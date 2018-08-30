@@ -9,7 +9,7 @@
 		"async": "^2.6.1",
 		"pg": "^7.4.3",
 		"promise": "^8.0.1",
-		"watson-developer-cloud": "^3.9.0"
+		"watson-developer-cloud": "^3.7.0"
 	},
 	"repository": {},
 	"engines": {

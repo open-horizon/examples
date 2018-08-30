@@ -25,24 +25,24 @@ MSGHUB_TOPIC ?= sdr-audio
 
 # This requires node.js be installed. On Mac: brew install node
 action-test: actions/msgreceive_test.js $(ACTION_CODE)
-	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
 	node $<
 
 # Upload a new version of the action code
 action-update: $(ACTION_CODE)
-	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
 	# rm -f $(ACTION_ZIP)
 	# cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
-	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
 
 # Create a trigger, action, and rule
 create: $(ACTION_CODE)
-	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
 	#ic fn package refresh  # this gives an auth error for some reason
 	ic fn trigger create $(WSK_TRIGGER) --feed $(WSK_MSGHUB_FEED) --param isJSONData true --param isBinaryValue false --param topic $(MSGHUB_TOPIC)
 	# rm -f $(ACTION_ZIP)
 	# cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
-	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
 	ic fn rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_ACTION)
 
 # Remove the trigger, action and rule
