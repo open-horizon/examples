@@ -17,7 +17,7 @@ protobuf.load("../../../../../edge/msghub/sdr2msghub/audiomsg.proto").then(funct
 
 // This is our object that will be put in the messages.value field
 var payload = {
-	devID: "bpmac",
+	devID: "IBM/bpmac",
 	lat: 42.1,
 	lon: -73.0,
 	freq: 97.8,
@@ -28,7 +28,7 @@ var payload = {
 	ts: Math.floor(Date.now()/1000)
 };
 /* var payload2 = {
-	devID: "bpmac2",
+	devID: "IBM/bpmac2",
 	lat: 42.1,
 	lon: -73.0,
 	freq: 101.5,
@@ -55,6 +55,7 @@ const params = {
 	"watsonSttPassword": process.env.STT_PASSWORD,
 	"watsonNluUsername": process.env.NLU_USERNAME,
 	"watsonNluPassword": process.env.NLU_PASSWORD,
+	"postgresUrl": process.env.SDR_DB_URL,
 }
 
 // const result = msgreceive.main(params)

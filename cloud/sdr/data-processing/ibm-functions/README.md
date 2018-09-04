@@ -93,6 +93,7 @@ make exec.zip  # Upload the Action to the IBM Functions Service
     - Watson NLU Node.js SDK: https://www.ibm.com/watson/developercloud/natural-language-understanding/api/v1/?node#post-analyze
     - JS Protobufs: https://www.npmjs.com/package/protobufjs
     - Using binary data with msg hub/openwhisk triggers: https://medium.com/openwhisk/integrating-openwhisk-with-message-hub-now-with-binary-data-81b5b2dc1d69
+    - Node postgres: https://node-postgres.com/
 - Golang docker actions (not currently used):
     - https://console.bluemix.net/docs/openwhisk/openwhisk_actions.html#openwhisk_actions (sections: "Creating Go actions" and "Creating Docker actions")
     - https://www.ibm.com/blogs/bluemix/2017/01/docker-bluemix-openwhisk/
