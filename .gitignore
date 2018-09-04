@@ -1,2 +1,3 @@
 horizon_build
 .DS_Store
+.eslintignore

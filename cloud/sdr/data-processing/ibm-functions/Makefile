@@ -1,29 +1,59 @@
 # Targets for creating IBM Functions objects.
-# To run these, you must have the 'bx wsk' CLI installed and be logged into it and set the target org and space.
+# To run these, you must have the 'ic fn' CLI installed and be logged into it and set the target org and space.
 
 WSK_PACKAGE ?= message-hub-evnts
-# WSK_ACTION ?= process-message   # this is the node.js action we are not using
-# ACTION_CODE ?= actions/msgreceive.js
+WSK_MSGHUB_FEED ?= openwhisk-messagehub/messageHubFeed
+WSK_ACTION ?= process-message   # this is the node.js action we are not using
+ACTION_CODE ?= actions/msgreceive.js
+# PROTO_FILE ?= ../../../../edge/msghub/sdr2msghub/audiomsg.proto
+# PROTO_JS ?= actions/audiomsg.js
+# PKG_JSON ?= actions/package.json
+# ACTION_ZIP ?= msgreceive.zip
+WSK_TRIGGER ?= message-received-trigger
+WSK_RULE ?= message-received-rule
+
+# not used:
 WSK_GO_ACTION ?= process-message-go
 ACTION_GO_CODE ?= actions/msgreceive.go
-WSK_TRIGGER ?= message-hub-events-trgr
-#WSK_RULE ?= message-hub-events-rule-2
-#WSK_RULE ?= message-hub-events-msghub-process-message-go
-WSK_RULE ?= message-hub-evnts-process-message-go_message-hub-events-trgr
 
-MSGHUB_NAME ?= Message_Hub-rt
+MSGHUB_NAME ?= msghub-hzndemo
 MSGHUB_TOPIC ?= sdr-audio
 
+# Build the js version of the protobufs struct definition
+# $(PROTO_JS): $(PROTO_FILE)
+# 	actions/node_modules/protobufjs/cli/bin/pbjs -t static-module -w commonjs -o $(PROTO_JS) $(PROTO_FILE)
+
 # This requires node.js be installed. On Mac: brew install node
-# test-action: actions/msgreceive_test.js $(ACTION_CODE)
-# 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
-# 	node $<
+action-test: actions/msgreceive_test.js $(ACTION_CODE)
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
+	node $<
 
 # Upload a new version of the action code
-# update-action: $(ACTION_CODE)
-# 	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
-# 	bx wsk action update $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
+action-update: $(ACTION_CODE)
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
+	# rm -f $(ACTION_ZIP)
+	# cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
+	ic fn action update $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
 
+# Create a trigger, action, and rule
+create: $(ACTION_CODE)
+	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
+	#ic fn package refresh  # this gives an auth error for some reason
+	ic fn trigger create $(WSK_TRIGGER) --feed $(WSK_MSGHUB_FEED) --param isJSONData true --param isBinaryValue false --param topic $(MSGHUB_TOPIC)
+	# rm -f $(ACTION_ZIP)
+	# cd actions; zip -qr ../$(ACTION_ZIP) * -x test/\* -x msgreceive_test.js; cd ..
+	ic fn action create $(WSK_PACKAGE)/$(WSK_ACTION) $(ACTION_CODE) --kind nodejs:8 --memory 512 --timeout 300000 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
+	ic fn rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_ACTION)
+
+# Remove the trigger, action and rule
+remove:
+	#ic fn package refresh  # this gives an auth error for some reason
+	ic fn rule delete --disable $(WSK_RULE)
+	ic fn trigger delete $(WSK_TRIGGER)
+	ic fn action delete $(WSK_PACKAGE)/$(WSK_ACTION)
+
+
+# The golang-related targets. Not used anymore!
 # Note: this is not useful as-is, because it doesn't pass audio to the action serialized with gob
 # This requires go be installed. On Mac: brew install go
 test-go-action: $(ACTION_GO_CODE)
@@ -35,23 +65,6 @@ exec.zip: $(ACTION_GO_CODE)
 	: $${STT_USERNAME:?} $${STT_PASSWORD:?} $${NLU_USERNAME:?} $${NLU_PASSWORD:?} $${SDR_DB_URL:?}   # this verifies these env vars are set
 	GOOS=linux GOARCH=amd64 go build -o exec $<
 	zip $@ exec
-	bx wsk action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
+	ic fn action update $(WSK_PACKAGE)/$(WSK_GO_ACTION) $@ --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD) --param watsonNluUsername $(NLU_USERNAME) --param watsonNluPassword $(NLU_PASSWORD) --param postgresUrl $(SDR_DB_URL)
 
-# Create a trigger and action. Note: haven't tried this yet!! (I did it thru the UI)
-create: exec.zip
-	: $${STT_USERNAME:?} $${STT_PASSWORD:?}   # this verifies these env vars are set
-	bx wsk package refresh
-	bx wsk trigger create $(WSK_TRIGGER) --feed Bluemix_$(MSGHUB_NAME)_Bruce_Credentials/messageHubFeed --param isJSONData true --param topic $(MSGHUB_TOPIC)  # not sure yet what to specify for --feed
-	#bx wsk action create $(WSK_PACKAGE)/$(WSK_ACTION) $< --kind nodejs:8 --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
-	bx wsk action create $(WSK_PACKAGE)/$(WSK_GO_ACTION) $< --native --param watsonSttUsername $(STT_USERNAME) --param watsonSttPassword $(STT_PASSWORD)
-	bx wsk rule create $(WSK_RULE) $(WSK_TRIGGER) $(WSK_PACKAGE)/$(WSK_GO_ACTION)
-
-# Remove a trigger and action. Note: haven't tried this yet!!
-remove:
-	bx wsk package refresh
-	bx wsk rule delete --disable $(WSK_RULE)
-	bx wsk trigger delete $(WSK_TRIGGER)
-	#bx wsk action delete $(WSK_PACKAGE)/$(WSK_ACTION)
-	bx wsk action delete $(WSK_PACKAGE)/$(WSK_GO_ACTION)
-
-.PHONY: update-action test-action create remove
+.PHONY: action-update action-test create remove test-go-action

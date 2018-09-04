@@ -11,7 +11,7 @@ psql.query('SELECT NOW()')
     .then((res) => console.log('Connected to db: ' + res.rows[0].now))
     .catch((e) => setImmediate(() => { throw e; }));
 
-psql.query('select noun, sentiment, numberofmentions from nouns').then((res) => {
+psql.query('select noun, sentiment, numberofmentions from globalnouns').then((res) => {
     console.log('nouns table:');
     console.log(res.rows);
 }).catch((e) => console.error(e.stack));
