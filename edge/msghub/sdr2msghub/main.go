@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
@@ -254,8 +253,8 @@ func main() {
 				if val > 0.5 {
 					// construct the message,
 					msg := &audiolib.AudioMsg{
-						Audio:         audio,
-						Ts:            ptypes.TimestampNow(),
+						Audio:         audiolib.RawToB64Mp3(audio),
+						Ts:            time.Now().Unix(),
 						Freq:          station,
 						ExpectedValue: val,
 						DevID:         devID,

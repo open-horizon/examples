@@ -19,13 +19,13 @@ IMAGE_PATH = $(REG_PATH)_$(IMAGE):$(VERSION)
 build: target/build_$(ARCH)
 
 target/build_$(ARCH): main.go
-	docker build -t $(DOCKER_NAME):$(VERSION) -f Dockerfile.$(ARCH) ../
+	docker build -t $(DOCKER_NAME):$(VERSION) -f Dockerfile.$(ARCH) ../../
 	touch target/build_$(ARCH)
 
 run: target/build_$(ARCH)
 	-docker network create sdr
 	#-docker rm -f $(IMAGE_PATH)
-	docker run -it --rm -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" -e MSGHUB_API_KEY="$(MSGHUB_API_KEY)" -e MSGHUB_BROKER_URL="$(MSGHUB_BROKER_URL)" --name $(IMAGE) --net=sdr --net-alias=$(WL_NAME) $(DOCKER_NAME):$(VERSION)
+	docker run -it --rm -e WIOTP_DOMAIN="${WIOTP_DOMAIN}" -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" -e MSGHUB_API_KEY="$(MSGHUB_API_KEY)" -e MSGHUB_BROKER_URL="$(MSGHUB_BROKER_URL)" -e HZN_ORG_ID="ibm" -e MSGHUB_TOPIC="$(MSGHUB_TOPIC)" --name $(IMAGE) --net=sdr --net-alias=$(WL_NAME) $(DOCKER_NAME):$(VERSION)
 
 # To publish you must have write access to the docker hub openhorizon user
 publish: target/build_$(ARCH)

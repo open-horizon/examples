@@ -4,6 +4,8 @@
 package main
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -18,9 +20,6 @@ import (
 	cluster "github.com/bsm/sarama-cluster" // doc: http://godoc.org/github.com/bsm/sarama-cluster
 	_ "github.com/lib/pq"
 
-	"github.com/golang/protobuf/ptypes"
-
-	"github.com/golang/protobuf/proto"
 	"github.com/open-horizon/examples/cloud/sdr/data-ingest/example-go-clients/util"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/nlu"
 	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/stt"
@@ -110,19 +109,19 @@ func main() {
 			if ok {
 				// Got an audio clip, convert it to text
 				audioMsg := &audiolib.AudioMsg{}
-				err = proto.Unmarshal(msg.Value, audioMsg)
+				err = json.Unmarshal(msg.Value, &audioMsg)
 				if err != nil {
 					log.Println(err)
 					continue
 				}
-				// since the protobuff time is a github.com/golang/protobuf/ptypes.Timestamp, not a time.Time, we must decode it.
-				timeStamp, err := ptypes.Timestamp(audioMsg.Ts)
+				timeStamp := time.Unix(audioMsg.Ts, 0)
+				audio, err := base64.StdEncoding.DecodeString(audioMsg.Audio)
 				if err != nil {
 					log.Println(err)
 					continue
 				}
 				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq)
-				transcript, err := stt.Transcribe(audioMsg.Audio, sttUsername, sttPassword)
+				transcript, err := stt.Transcribe(audio, sttUsername, sttPassword)
 				fatalIfErr(err)
 				if util.VerboseBool {
 					fmt.Println("STT:", wutil.MarshalIndent(transcript.Results))
@@ -137,7 +136,10 @@ func main() {
 					altNum := 0 //todo: we only seem to get 1 alternative, not sure if it will always be that way
 					if r.Final && r.Alternatives[altNum].Confidence > minConfidence {
 						sentiments, err := nlu.Sentiment(r.Alternatives[altNum].Transcript, nluUsername, nluPassword)
-						fatalIfErr(err)
+						if err != nil {
+							fmt.Println(err)
+							continue
+						}
 						if util.VerboseBool {
 							fmt.Println("NLU:", wutil.MarshalIndent(sentiments))
 						} else {
