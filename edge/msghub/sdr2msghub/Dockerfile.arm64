@@ -2,7 +2,8 @@ FROM arm64v8/golang:1.10 as go_build
 
 RUN apt-get update && apt-get install -y \
   curl \
-  git
+  git \
+  lame
 
 RUN curl -L \
   "http://1dd40.http.dal05.cdn.softlayer.net/arm_artifacts/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
@@ -13,13 +14,15 @@ ENV LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
 RUN go get \
   github.com/tensorflow/tensorflow/tensorflow/go
 RUN go get github.com/Shopify/sarama
+RUN apt-get install libmp3lame-dev
+RUN go get github.com/viert/lame
 
 
 RUN cd ${GOPATH}/src/github.com/tensorflow/tensorflow && git checkout r1.6
 
-COPY data_broker/main.go /
-COPY data_broker/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/data_broker/audiolib/audiolib.go
-COPY librtlsdr/rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib/clientlib.go
+COPY msghub/sdr2msghub/main.go /
+COPY msghub/sdr2msghub/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib/audiolib.go
+COPY services/sdr/rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib/clientlib.go
 RUN go build -o /bin/data_broker /main.go
 
 FROM arm64v8/ubuntu:18.04
@@ -27,7 +30,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates \
   tar \
   ncdu \
-  curl
+  curl \
+  lame
 
 RUN curl -L \
 "http://1dd40.http.dal05.cdn.softlayer.net/arm_artifacts/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
