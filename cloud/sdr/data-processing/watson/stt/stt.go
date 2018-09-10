@@ -25,13 +25,12 @@ type Alternative struct {
 	Transcript string  `json:"transcript"`
 }
 
-// Transcribe a chunk of raw audio
-// takes mp3 audio
-func Transcribe(mp3Audio []byte, username, password string) (response TranscribeResponse, err error) {
+// Transcribe a chunk of audio
+func Transcribe(audioBytes []byte, contentType string, username, password string) (response TranscribeResponse, err error) {
 	fmt.Println("using Watson STT to convert the audio to text...")
 	// Watson STT API: https://www.ibm.com/watson/developercloud/speech-to-text/api/v1/curl.html?curl#recognize-sessionless
 	apiURL := "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
-	headers := []wutil.Header{{Key: "Content-Type", Value: "audio/mpeg"}}
-	err = wutil.HTTPPost(apiURL, username, password, headers, bytes.NewReader(mp3Audio), &response)
+	headers := []wutil.Header{{Key: "Content-Type", Value: contentType}}
+	err = wutil.HTTPPost(apiURL, username, password, headers, bytes.NewReader(audioBytes), &response)
 	return
 }

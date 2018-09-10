@@ -114,6 +114,9 @@ func main() {
 					log.Println(err)
 					continue
 				}
+				if audioMsg.ContentType == "" {
+					audioMsg.ContentType = "audio/mpeg"
+				}
 				timeStamp := time.Unix(audioMsg.Ts, 0)
 				audio, err := base64.StdEncoding.DecodeString(audioMsg.Audio)
 				if err != nil {
@@ -121,7 +124,7 @@ func main() {
 					continue
 				}
 				fmt.Println("got audio from device:", audioMsg.DevID, "on station:", audioMsg.Freq)
-				transcript, err := stt.Transcribe(audio, sttUsername, sttPassword)
+				transcript, err := stt.Transcribe(audio, audioMsg.ContentType, sttUsername, sttPassword)
 				fatalIfErr(err)
 				if util.VerboseBool {
 					fmt.Println("STT:", wutil.MarshalIndent(transcript.Results))
