@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # Container image version and workload name
-VERSION ?= 0.0.1
+VERSION ?= 0.0.2
 WL_NAME=sdr2msghub
 IMAGE=$(WL_NAME)
 

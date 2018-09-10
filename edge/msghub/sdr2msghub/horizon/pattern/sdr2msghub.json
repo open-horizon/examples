@@ -1,6 +1,6 @@
 {
   "label": "Edge $SDR2MSGHUB_NAME Service Pattern for $ARCH",
-  "description": "Pattern for $SDR2MSGHUB_NAME sending FM radio filterd for speech to the IBM Message Hub for $ARCH",
+  "description": "Pattern for $SDR2MSGHUB_NAME sending FM radio filtered for speech to the IBM Message Hub for $ARCH",
   "public": true,
   "services": [
     {

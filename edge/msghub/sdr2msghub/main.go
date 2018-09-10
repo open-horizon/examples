@@ -185,7 +185,7 @@ func getEnv(keys ...string) (val string) {
 	return
 }
 
-// Copied pasted from github.com/open-horizon/examples/edge/services/gps/src/hgps to workaround package import issues.
+// Copy pasted from github.com/open-horizon/examples/edge/services/gps/src/hgps to workaround package import issues.
 type sourceType string
 
 const (
@@ -240,7 +240,7 @@ func main() {
 		fmt.Println("connecting to remote gps:", gps_alt_addr)
 		gpshostname = gps_alt_addr
 	}
-	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
+	devID := getEnv("HZN_ORG_ID", "HZN_ORGANIZATION") + "/" + getEnv("HZN_DEVICE_ID")
 	// load the graph def from FS
 	m, err := newModel("model.pb")
 	if err != nil {
