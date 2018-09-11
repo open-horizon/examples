@@ -62,6 +62,9 @@ INSERT INTO globalnouns VALUES ('wedding', 0.5, 1, CURRENT_TIMESTAMP) ON CONFLIC
 
 # If you need to change a column definition:
 ALTER TABLE globalnouns alter column timeupdated type timestamp with time zone;
+
+# Get the 20 rows most recently updated:
+select * from globalnouns order by timeupdated desc limit 20;
 ```
 
 ## Run Example Go Code to Write and Read DB

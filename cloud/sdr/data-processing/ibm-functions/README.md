@@ -104,5 +104,5 @@ make exec.zip  # Upload the Action to the IBM Functions Service
 - Bug in `ic fn package refresh` (now fixed)
 - Go action gets msg via command line, so command line length limitation on audio data
 - Applicationn error in node.js action when using when using protobufjs to deserialize msg
-- Trigger doesn't invoke action when msg > 250K (open support ticket)
-- watson-developer-cloud SDK node.js module is older version that i can't find the docs for (this is preventing me from running NLU).
+- Trigger doesn't invoke action when msg > 250K (igoro opened support ticket?)
+- watson-developer-cloud SDK node.js module is older version that i can't find the docs for (for a while this prevented me from running NLU successfully).

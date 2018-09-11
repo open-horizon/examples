@@ -7,7 +7,7 @@ const msgreceive = require('./msgreceive.js');
 var fs = require('fs');		// to read the sample ogg file
 
 // Read the sample ogg file and base64 encode it
-const mockAudioFile = "../../../../edge/services/sdr/mock_audio.ogg" // if running it from the Makefile in cloud/sdr/data-processing/ibm-functions
+const mockAudioFile = "../../../../edge/services/sdr/mock_audio.mp3" // if running it from the Makefile in cloud/sdr/data-processing/ibm-functions
 var audioEncoded = fs.readFileSync(mockAudioFile, { encoding: 'base64' });
 if (!audioEncoded) { audioEncoded = fs.readFileSync('../'+mockAudioFile, { encoding: 'base64' }); } // if running it directly from cloud/sdr/data-processing/ibm-functions/actions
 
@@ -22,6 +22,7 @@ var payload = {
 	lon: -73.0,
 	freq: 97.8,
 	expectedValue: 0.8,
+	contentType: 'audio/mp3',
 	audio: audioEncoded,
 	// audio: Buffer.from("this is some audio data that could end up being pretty big").toString('base64'),
 	// audio: "this is some audio data that could end up being pretty big",
