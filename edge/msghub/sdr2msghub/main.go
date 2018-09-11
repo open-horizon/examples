@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -16,6 +18,7 @@ import (
 	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+	"github.com/viert/lame"
 )
 
 func opIsSafe(a string) bool {
@@ -135,11 +138,9 @@ func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 func connect(topic string) (conn msghubConn, err error) {
 	conn.Topic = topic
 	apiKey := getEnv("MSGHUB_API_KEY")
-	fmt.Println("msghub key:", apiKey)
 	username := apiKey[:16]
 	password := apiKey[16:]
 	brokerStr := getEnv("MSGHUB_BROKER_URL")
-	fmt.Println("url:", brokerStr)
 	brokers := strings.Split(brokerStr, ",")
 	config := sarama.NewConfig()
 	err = populateConfig(config, username, password, apiKey)
@@ -220,6 +221,28 @@ func getGPS() (location locationData, err error) {
 		return
 	}
 	err = json.Unmarshal(jsonByte, &location)
+	return
+}
+
+func rawToB64Mp3(rawBytes []byte) (b64Bytes string) {
+	reader := bytes.NewReader(rawBytes)
+	mp3Buff := bytes.Buffer{}
+
+	wr := lame.NewWriter(&mp3Buff)
+	wr.Encoder.SetBitrate(30)
+	wr.Encoder.SetQuality(1)
+	wr.Encoder.SetInSamplerate(16000)
+	wr.Encoder.SetNumChannels(1)
+	// IMPORTANT!
+	wr.Encoder.InitParams()
+	reader.WriteTo(wr)
+
+	b64Buff := bytes.Buffer{}
+	encoder := base64.NewEncoder(base64.StdEncoding, &b64Buff)
+	encoder.Write(mp3Buff.Bytes())
+	encoder.Close()
+
+	b64Bytes = string(b64Buff.Bytes())
 	return
 }
 
@@ -313,7 +336,7 @@ func main() {
 					}
 					// construct the message,
 					msg := &audiolib.AudioMsg{
-						Audio:         audiolib.RawToB64Mp3(audio),
+						Audio:         rawToB64Mp3(audio),
 						Ts:            time.Now().Unix(),
 						Freq:          station,
 						ExpectedValue: val,

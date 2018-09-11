@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -82,7 +83,7 @@ func getEnv(keys ...string) (val string) {
 
 func main() {
 	devID := getEnv("HZN_ORG_ID", "HZN_ORGANIZATION") + "/" + getEnv("HZN_DEVICE_ID")
-	mockAudio := "../../services/sdr/mock_audio.raw" // if running it from the Makefile in edge/msghub/sdr2msghub
+	mockAudio := "../../services/sdr/mock_audio.mp3" // if running it from the Makefile in edge/msghub/sdr2msghub
 	audioBytes, err := ioutil.ReadFile(mockAudio)
 	if err != nil {
 		audioBytes, err = ioutil.ReadFile("../" + mockAudio) // if running it via go run in edge/msghub/sdr2msghub/fake
@@ -98,7 +99,7 @@ func main() {
 	}
 	fmt.Println("connected to msghub")
 	msg := &audiolib.AudioMsg{
-		Audio:         audiolib.RawToB64Mp3(audioBytes),
+		Audio:         base64.StdEncoding.EncodeToString(audioBytes),
 		Ts:            time.Now().Unix(),
 		Freq:          123.45,
 		ExpectedValue: 0.9,
