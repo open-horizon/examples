@@ -144,7 +144,7 @@ export HZN_EXCHANGE_URL="https://$HZN_ORG_ID.$WIOTP_DOMAIN/api/v0002/edgenode/"
 ```
 * Add the "cpu" microservice to your WIoTP organization and see that it was added:
 ```bash
-hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/horizon/pre-signed/cpu-$ARCH.json
+hzn exchange microservice publish -f ~/examples/edge/services/cpu_percent/horizon.microservice/pre-signed/cpu-$ARCH.json
 hzn exchange microservice list | jq .
 ```
 
