@@ -82,7 +82,7 @@ func getEnv(keys ...string) (val string) {
 }
 
 func main() {
-	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
+	devID := getEnv("HZN_ORG_ID", "HZN_ORGANIZATION") + "/" + getEnv("HZN_DEVICE_ID")
 	mockAudio := "../../services/sdr/mock_audio.mp3" // if running it from the Makefile in edge/msghub/sdr2msghub
 	audioBytes, err := ioutil.ReadFile(mockAudio)
 	if err != nil {

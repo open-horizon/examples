@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"bytes"
 	"encoding/base64"
 	"errors"
@@ -8,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -184,6 +186,44 @@ func getEnv(keys ...string) (val string) {
 	return
 }
 
+// Copy pasted from github.com/open-horizon/examples/edge/services/gps/src/hgps to workaround package import issues.
+type sourceType string
+
+const (
+	MANUAL    sourceType = "Manual"
+	ESTIMATED sourceType = "Estimated"
+	SEARCHING sourceType = "Searching"
+	GPS       sourceType = "GPS"
+)
+
+// JSON struct for location data
+type locationData struct {
+	Latitude   float64    `json:"latitude" description:"Location latitude"`
+	Longitude  float64    `json:"longitude" description:"Location longitude"`
+	ElevationM float64    `json:"elevation" description:"Location elevation in meters"`
+	AccuracyKM float64    `json:"accuracy_km" description:"Location accuracy in kilometers"`
+	LocSource  sourceType `json:"loc_source" description:"Location source (one of: Manual, Estimated, GPS, or Searching)"`
+	LastUpdate int64      `json:"loc_last_update" description:"Time of most recent location update (UTC)."`
+}
+
+func getGPS() (location locationData, err error) {
+	resp, err := http.Get("http://" + gpshostname + ":31779/v1/gps/location")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		err = errors.New("bad resp")
+		return
+	}
+	jsonByte, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(jsonByte, &location)
+	return
+}
+
 func rawToB64Mp3(rawBytes []byte) (b64Bytes string) {
 	reader := bytes.NewReader(rawBytes)
 	mp3Buff := bytes.Buffer{}
@@ -208,6 +248,7 @@ func rawToB64Mp3(rawBytes []byte) (b64Bytes string) {
 
 // the default hostname if not overridden
 var hostname string = "sdr"
+var gpshostname string = "gps"
 
 func main() {
 	alt_addr := os.Getenv("RTLSDR_ADDR")
@@ -216,7 +257,13 @@ func main() {
 		fmt.Println("connecting to remote rtlsdr:", alt_addr)
 		hostname = alt_addr
 	}
-	devID := getEnv("HZN_ORG_ID") + "/" + getEnv("HZN_DEVICE_ID")
+	gps_alt_addr := os.Getenv("GPS_ADDR")
+	// if no alternative address is set, use the default.
+	if gps_alt_addr != "" {
+		fmt.Println("connecting to remote gps:", gps_alt_addr)
+		gpshostname = gps_alt_addr
+	}
+	devID := getEnv("HZN_ORG_ID", "HZN_ORGANIZATION") + "/" + getEnv("HZN_DEVICE_ID")
 	// load the graph def from FS
 	m, err := newModel("model.pb")
 	if err != nil {
@@ -234,6 +281,14 @@ func main() {
 	// This map will grow as long as the program lives
 	stationGoodness := map[float32]float32{}
 	lastStationsRefresh := time.Time{}
+
+	// make it fail sooner.
+	_, err = getGPS()
+	if err != nil {
+		fmt.Println(err)
+		panic("can't get location from GPS")
+	}
+
 	for {
 		// if it has been over 5 minuts since we last updated the list of strong stations,
 		if time.Now().Sub(lastStationsRefresh) > (5 * time.Minute) {
@@ -274,6 +329,11 @@ func main() {
 				fmt.Println(station, "observed value:", val, "updated goodness:", stationGoodness[station])
 				// if the value is over 0.5, it is worth sending to the cloud.
 				if val > 0.5 {
+					location, err := getGPS()
+					if err != nil {
+						fmt.Println(err)
+						continue
+					}
 					// construct the message,
 					msg := &audiolib.AudioMsg{
 						Audio:         rawToB64Mp3(audio),
@@ -281,6 +341,9 @@ func main() {
 						Freq:          station,
 						ExpectedValue: val,
 						DevID:         devID,
+						Lat:           float32(location.Latitude),
+						Lon:           float32(location.Longitude),
+						ContentType:   "audio/mpeg",
 					}
 					// and publish it to msghub
 					err = conn.publishAudio(msg)

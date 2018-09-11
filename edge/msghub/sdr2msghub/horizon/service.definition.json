@@ -14,6 +14,12 @@
             "org": "$HZN_ORG_ID",
             "version": "$SDR_VERSION",
             "arch": "$ARCH"
+        },
+        {
+            "url": "https://$MYDOMAIN/service-$GPS_NAME",
+            "org": "$HZN_ORG_ID",
+            "version": "$GPS_VERSION",
+            "arch": "$ARCH"
         }
     ],
     "userInput": [
