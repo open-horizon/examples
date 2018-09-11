@@ -61,9 +61,11 @@ function sttTranscribe(message) {
   const audioDecoded = Buffer.from(msg.audio, 'base64');
   console.log("Transcribing msg from " + msg.devID + ', audio length ' + audioDecoded.length + ", at " + new Date(msg.ts*1000) + '...');
 
+  var contentType = 'audio/mp3'   // the default if they don't explicitly set it
+  if (msg.contentType) { contentType = msg.contentType }
   const recognizeParams = {
     audio: buffer2stream(audioDecoded),
-    content_type: 'audio/ogg',
+    content_type: contentType,
     max_alternatives: 1,  // default is 1
   };
 
@@ -152,8 +154,8 @@ function addOneSentimentToDB(entity, db, ts, nodeID) {
   // Add this noun/sentiment to the globalnouns table and the noun/sentiment to the nodenouns table
   // This is the postgres way to upsert a row (insert if not there, update if there)
   return db.query("INSERT INTO globalnouns VALUES ($1, $2, 1, $3) ON CONFLICT (noun) DO UPDATE SET sentiment = ((globalnouns.sentiment * globalnouns.numberofmentions) + $2) / (globalnouns.numberofmentions + 1), numberofmentions = globalnouns.numberofmentions + 1, timeupdated = $3", [noun, sentiment, ts])
-  .then(result => {
-    console.log(`globalnouns table: inserted/updated ${result.rowCount} rows`);
+  .then( () => {
+    // console.log(`globalnouns table: inserted/updated ${result.rowCount} rows`);
     return db.query("INSERT INTO nodenouns VALUES ($1, $4, $2, 1, $3) ON CONFLICT ON CONSTRAINT nodenouns_pkey DO UPDATE SET sentiment = ((nodenouns.sentiment * nodenouns.numberofmentions) + $2) / (nodenouns.numberofmentions + 1), numberofmentions = nodenouns.numberofmentions + 1, timeupdated = $3", [noun, sentiment, ts, nodeID])
   })
   .then(result => {console.log(`nodenouns table: inserted/updated ${result.rowCount} rows`)})
@@ -170,8 +172,8 @@ function addNodeStationToDB(db, timeStamp, nodeID, stationFreq, latitude, longit
 
 	// Add station and node info to the db tables. Chain the promises together and return the chain.
   return db.query("INSERT INTO stations VALUES ($1, $2, 1, $3, $4) ON CONFLICT ON CONSTRAINT stations_pkey DO UPDATE SET numberofclips = stations.numberofclips + 1, dataqualitymetric =$3, timeupdated = $4", [nodeID, stationFreq, expectedValue, ts])
-  .then(result => {
-    console.log(`stations table: inserted/updated ${result.rowCount} rows`);
+  .then( () => {
+    // console.log(`stations table: inserted/updated ${result.rowCount} rows`);
     return db.query("INSERT INTO edgenodes VALUES ($1, $2, $3, $4) ON CONFLICT (edgenode) DO UPDATE SET latitude = $2, longitude = $3, timeupdated = $4", [nodeID, latitude, longitude, ts])
   })
   .then((result) => {console.log(`edgenodes table: inserted/updated ${result.rowCount} rows`)})
