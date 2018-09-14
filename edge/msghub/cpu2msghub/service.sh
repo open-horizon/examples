@@ -104,7 +104,7 @@ while true; do
         loc=$(echo $json | jq -c '{ lat: .latitude, lon: .longitude, alt: .elevation }')
       fi
 
-      json='{"cpu":'$average',"gps":'$loc'}'
+      json='{"nodeID":"'$HZN_DEVICE_ID'","cpu":'$average',"gps":'$loc'}'
       #echo "avg: $json"
 
       if [[ "$PUBLISH" == "true" ]]; then
