@@ -6,7 +6,49 @@
     {
       "serviceUrl": "https://$MYDOMAIN/service-${CPU2MSGHUB_NAME}",
       "serviceOrgid": "IBM",
-      "serviceArch": "$ARCH",
+      "serviceArch": "amd64",
+      "serviceVersions": [
+        {
+          "version": "$CPU2MSGHUB_VERSION",
+          "priority": {},
+          "upgradePolicy": {},
+          "deployment_overrides": null,
+          "deployment_overrides_signature": ""
+        }
+      ],
+      "dataVerification": {
+        "metering": {}
+      },
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "serviceUrl": "https://$MYDOMAIN/service-${CPU2MSGHUB_NAME}",
+      "serviceOrgid": "IBM",
+      "serviceArch": "arm",
+      "serviceVersions": [
+        {
+          "version": "$CPU2MSGHUB_VERSION",
+          "priority": {},
+          "upgradePolicy": {},
+          "deployment_overrides": null,
+          "deployment_overrides_signature": ""
+        }
+      ],
+      "dataVerification": {
+        "metering": {}
+      },
+      "nodeHealth": {
+        "missing_heartbeat_interval": 600,
+        "check_agreement_status": 120
+      }
+    },
+    {
+      "serviceUrl": "https://$MYDOMAIN/service-${CPU2MSGHUB_NAME}",
+      "serviceOrgid": "IBM",
+      "serviceArch": "arm64",
       "serviceVersions": [
         {
           "version": "$CPU2MSGHUB_VERSION",
