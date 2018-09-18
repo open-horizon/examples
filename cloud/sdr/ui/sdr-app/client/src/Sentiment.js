@@ -6,9 +6,9 @@ import { graphql } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import './Sentiment.css';
 
-const NOUNS_LIST = gql`
+const GLOBALNOUNS_LIST = gql`
 {
-    nouns {
+    globalnouns {
         noun
         sentiment
         numberofmentions
@@ -16,13 +16,13 @@ const NOUNS_LIST = gql`
     }
 }
 `;
-// client.query({ query: NOUNS_LIST }).then(console.log);
+// client.query({ query: GLOBALNOUNS_LIST }).then(console.log);
 
-const Sentiment = graphql(NOUNS_LIST)(props =>
+const Sentiment = graphql(GLOBALNOUNS_LIST)(props =>
     <ul className="Sentiment-list">
-        {props.data.loading ? '' : props.data.nouns.map((row) =>
+        {props.data.loading ? '' : props.data.globalnouns.map((row) =>
             <li key={row.noun}>
-                <strong>{row.noun}:</strong> Sentiment: {row.sentiment}, Number Of Mentions: {row.numberofmentions}, Updated: {row.timeupdated}
+                <strong>{row.noun}:</strong> Sentiment: {row.sentiment}, Number Of Mentions: {row.numberofmentions}, Last Updated: {row.timeupdated}
             </li>
         )}
     </ul>
