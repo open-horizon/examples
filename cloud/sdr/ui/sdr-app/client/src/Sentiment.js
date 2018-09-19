@@ -18,17 +18,29 @@ const GLOBALNOUNS_LIST = gql`
 `;
 // client.query({ query: GLOBALNOUNS_LIST }).then(console.log);
 
-const Sentiment = graphql(GLOBALNOUNS_LIST)(props =>
-    <ul className="Sentiment-list">
+const Sentiment = graphql(GLOBALNOUNS_LIST)(props => { return (
+    <table className="Sentiment-table">
+        <thead>
+            <tr>
+                <th className="Sentiment-cell">Keyword</th>
+                <th>Sentiment</th>
+                <th>Number of Mentions</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
         {props.data.loading ? '' : props.data.globalnouns.map((row) =>
-            <li key={row.noun}>
-                <strong>{row.noun}:</strong> Sentiment: {row.sentiment}, Number Of Mentions: {row.numberofmentions}, Last Updated: {row.timeupdated}
-            </li>
+            <tr key={row.noun}>
+                <td>{row.noun}</td> <td>{row.sentiment}</td> <td>{row.numberofmentions}</td> <td>{row.timeupdated}</td>
+            </tr>
         )}
-    </ul>
+        </tbody>
+    </table>
+)}
 );
 
-/* class Sentiment extends Component {
+/* leaving this here as reference for now...
+class Sentiment extends Component {
     constructor(props) {
         super(props);
         this.state = { insights: ['Trump: negative', 'WorldCup: positive'] };

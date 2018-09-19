@@ -1,4 +1,15 @@
-.Sentiment-list {
-    text-align: left;
-  }
-  
+.Sentiment-table {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th {
+  padding: 10px;
+  background-color: rgb(171, 211, 248)
+}
+
+td {
+  padding: 5px;
+  background-color: rgb(247, 247, 247)
+}
