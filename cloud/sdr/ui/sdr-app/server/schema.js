@@ -20,7 +20,7 @@ type Noun {
 }
 
 type Query {
-    nouns: [Noun]!
+    globalnouns: [Noun]!
     noun(noun: String!): Noun
 }
 `;

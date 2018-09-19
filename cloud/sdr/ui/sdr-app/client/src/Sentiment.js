@@ -6,9 +6,9 @@ import { graphql } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import './Sentiment.css';
 
-const NOUNS_LIST = gql`
+const GLOBALNOUNS_LIST = gql`
 {
-    nouns {
+    globalnouns {
         noun
         sentiment
         numberofmentions
@@ -16,19 +16,31 @@ const NOUNS_LIST = gql`
     }
 }
 `;
-// client.query({ query: NOUNS_LIST }).then(console.log);
+// client.query({ query: GLOBALNOUNS_LIST }).then(console.log);
 
-const Sentiment = graphql(NOUNS_LIST)(props =>
-    <ul className="Sentiment-list">
-        {props.data.loading ? '' : props.data.nouns.map((row) =>
-            <li key={row.noun}>
-                <strong>{row.noun}:</strong> Sentiment: {row.sentiment}, Number Of Mentions: {row.numberofmentions}, Updated: {row.timeupdated}
-            </li>
+const Sentiment = graphql(GLOBALNOUNS_LIST)(props => { return (
+    <table className="Sentiment-table">
+        <thead>
+            <tr>
+                <th className="Sentiment-cell">Keyword</th>
+                <th>Sentiment</th>
+                <th>Number of Mentions</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+        {props.data.loading ? '' : props.data.globalnouns.map((row) =>
+            <tr key={row.noun}>
+                <td>{row.noun}</td> <td>{row.sentiment}</td> <td>{row.numberofmentions}</td> <td>{row.timeupdated}</td>
+            </tr>
         )}
-    </ul>
+        </tbody>
+    </table>
+)}
 );
 
-/* class Sentiment extends Component {
+/* leaving this here as reference for now...
+class Sentiment extends Component {
     constructor(props) {
         super(props);
         this.state = { insights: ['Trump: negative', 'WorldCup: positive'] };

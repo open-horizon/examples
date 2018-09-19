@@ -15,7 +15,7 @@ Access the GraphQL web interface in a browser at <http://localhost:6001/graphiql
 
 ```
 query {
-    nouns {
+    globalnouns {
       noun
       sentiment
       numberofmentions
@@ -24,7 +24,7 @@ query {
 }
 ```
 
-## Creation of React Client
+## Initial Creation of React Client
 
 For reference, the react client code was added with:
 
@@ -61,9 +61,9 @@ Then browse to http://localhost:6001/ .
 cd client
 npm run build   # build the production version of the client/front end
 cd ..
-bx login   # use --sso if an ibm employee
-bx target -o <cforg> -s <space>
-bx app push sdr-app
+ic login   # use --sso if an ibm employee
+ic target -o <cforg> -s <space>
+ic app push sdr-app
 ```
 
 Then browse the application front-end at https://sdr-app.mybluemix.net/
