@@ -20,8 +20,8 @@ type Noun {
 }
 
 type Query {
-    globalnouns: [Noun]!
-    noun(noun: String!): Noun
+    globalnouns(limit: Int): [Noun]!
+    nodenouns(edgenode: String!, limit: Int): [Noun]
 }
 `;
 
