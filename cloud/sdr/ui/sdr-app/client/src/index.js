@@ -11,6 +11,7 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import gql from 'graphql-tag';
+import Header from './components/Header';
 
 const client = new ApolloClient({
     link: createUploadLink(),
@@ -32,7 +33,7 @@ client.query({ query: NOUNS_LIST }).then(console.log);
 
 ReactDOM.render(
     <ApolloProvider client={client}>
-        <App />
+        <Header />
     </ApolloProvider>,
     document.getElementById('root')
 );
