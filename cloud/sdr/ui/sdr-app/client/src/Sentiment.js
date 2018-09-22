@@ -6,9 +6,13 @@ import { graphql } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import './Sentiment.css';
 
+const NOUN_LIMIT = 20;
+const TEMP_EDGE_NODE = 'ibm/isaac_x86_desktop';     //todo: just to test nodenouns table, remove eventually
+const TEMP_EDGE_NODE_LIMIT = 5;     //todo: just to test nodenouns table, remove eventually
+
 const GLOBALNOUNS_LIST = gql`
 {
-    globalnouns {
+    globalnouns(limit: ${NOUN_LIMIT}) {
         noun
         sentiment
         numberofmentions
@@ -16,9 +20,23 @@ const GLOBALNOUNS_LIST = gql`
     }
 }
 `;
+
+const EDGE_NODE_NOUNS_LIST = gql`
+{
+    nodenouns(edgenode: "${TEMP_EDGE_NODE}", limit: ${TEMP_EDGE_NODE_LIMIT}) {
+        noun
+        sentiment
+        numberofmentions
+        timeupdated
+    }
+}
+`;
+
 // client.query({ query: GLOBALNOUNS_LIST }).then(console.log);
 
-const Sentiment = graphql(GLOBALNOUNS_LIST)(props => { return (
+export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => { return (
+    <div>
+    <p>The top {NOUN_LIMIT} keywords mentioned on all of the edge nodes:</p>
     <table className="Sentiment-table">
         <thead>
             <tr>
@@ -36,6 +54,31 @@ const Sentiment = graphql(GLOBALNOUNS_LIST)(props => { return (
         )}
         </tbody>
     </table>
+    </div>
+)}
+);
+
+export const EdgeNodeSentiments = graphql(EDGE_NODE_NOUNS_LIST)(props => { return (
+    <div>
+    <p>The top {TEMP_EDGE_NODE_LIMIT} keywords mentioned on edge node <strong>{TEMP_EDGE_NODE}</strong>:</p>
+    <table className="Sentiment-table">
+        <thead>
+            <tr>
+                <th className="Sentiment-cell">Keyword</th>
+                <th>Sentiment</th>
+                <th>Number of Mentions</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+        {props.data.loading ? '' : props.data.nodenouns.map((row) =>
+            <tr key={row.noun}>
+                <td>{row.noun}</td> <td>{row.sentiment}</td> <td>{row.numberofmentions}</td> <td>{row.timeupdated}</td>
+            </tr>
+        )}
+        </tbody>
+    </table>
+    </div>
 )}
 );
 
@@ -59,4 +102,4 @@ class Sentiment extends Component {
     }
 } */
   
-export default Sentiment;
+//export default Sentiment;

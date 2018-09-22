@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
-import Sentiment from './Sentiment';
+import {GlobalSentiments, EdgeNodeSentiments} from './Sentiment';
 
 
 class App extends Component {
@@ -17,8 +17,11 @@ class App extends Component {
           <h1 className="App-title">IBM SDR Insights Edge Application</h1>
         </header>
         <h1 className="Page-title">Global Keyword Sentiments</h1>
-        <p>The top 20 keywords mentioned on all of the edge nodes.</p>
-        <Sentiment />
+        <GlobalSentiments />
+        {/*todo: just an example, remove this */}
+        <br></br>
+        <h1 className="Page-title">Keyword Sentiments From a Sample Edge Node</h1>
+        <EdgeNodeSentiments />
       </div>
     );
   }
