@@ -3,8 +3,9 @@
 
 import React, { Component } from 'react';
 //import logo from './logo.svg';
-// import './App.css';
+import './App.css';
 import Sentiment from './Sentiment';
+
 
 class App extends Component {
   render() {
