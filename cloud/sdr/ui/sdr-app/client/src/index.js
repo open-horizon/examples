@@ -21,6 +21,9 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+import EdgeNodeMap from './containers/EdgeNodeMap';
+import GlobalServices from './containers/GlobalServices';
+
 import 'carbon-components/css/carbon-components.css'
 import 'carbon-addons-cloud/css/styles.css'
 import '@ibm/plex/css/ibm-plex.css'
