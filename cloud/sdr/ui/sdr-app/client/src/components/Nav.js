@@ -2,16 +2,21 @@ import React, {Component} from 'react'
 import {
   InteriorLeftNav, InteriorLeftNavItem,
 } from 'carbon-addons-cloud-react'
+import {
+  Link,
+} from 'react-router-dom'
+
+import './Nav.css'
 
 class Nav extends Component {
   render() {
     return (
-      <InteriorLeftNav>
-        <InteriorLeftNavItem href="#1" label="Global Keywords">
-          
+      <InteriorLeftNav className="nav-top-reset">
+        <InteriorLeftNavItem>
+          <Link to="/global-keywords">Global Keywords</Link>
         </InteriorLeftNavItem>
-        <InteriorLeftNavItem href="#2" label="Edge Nodes">
-          
+        <InteriorLeftNavItem>
+          <Link to="/edge-nodes">Edge Nodes</Link>
         </InteriorLeftNavItem>
       </InteriorLeftNav>
     )
