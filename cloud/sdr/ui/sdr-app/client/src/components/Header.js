@@ -3,8 +3,6 @@ import {
   CloudHeader,
 } from 'carbon-addons-cloud-react'
 
-import Nav from './Nav'
-
 import './Header.css'
 
 class Header extends Component {
@@ -18,7 +16,6 @@ class Header extends Component {
         productName="Cloud"
         logoHref="https://www.ibm.com/cloud/"
       />
-      <Nav />
       </div>
     )
   }
