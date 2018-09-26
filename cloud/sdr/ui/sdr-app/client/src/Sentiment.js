@@ -36,7 +36,7 @@ const EDGE_NODE_NOUNS_LIST = gql`
 
 export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => { return (
     <div>
-    <p>The top {NOUN_LIMIT} keywords mentioned on all of the edge nodes:</p>
+    <p className="page-description">The top {NOUN_LIMIT} keywords mentioned on all of the edge nodes:</p>
     <table className="Sentiment-table">
         <thead>
             <tr>

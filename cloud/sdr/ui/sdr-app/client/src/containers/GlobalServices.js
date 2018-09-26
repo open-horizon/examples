@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import Sentiment from '../Sentiment'
+import {GlobalSentiments} from '../Sentiment'
 
 import './GlobalServices.css'
 
@@ -13,15 +13,10 @@ class GlobalServices extends Component {
           <h1 className="page-title">Global Keyword Sentiments</h1>
         </div>
       </div>
-      <div className="bx--row">
-        <div className="bx--col-xs-12">
-          <p className="page-description">The top 20 keywords mentioned on all of the edge nodes.</p>
-        </div>
-      </div>
       <br />
       <div className="bx--row">
         <div className="bx--col-xs-12">
-          <Sentiment />
+          <GlobalSentiments />
         </div>
       </div>
       </div>
