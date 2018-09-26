@@ -55,7 +55,7 @@ INSERT INTO globalnouns VALUES ('trump', -0.25, 100, '2018-07-23 11:05:00');
 INSERT INTO globalnouns VALUES ('foo', 0.0, 100, '2018-08-01 11:05:00');
 
 # Update a row:
-UPDATE globalnouns SET sentiment = 0.25, timeupdated = '2018-06-23 14:00' WHERE noun = 'wedding';
+UPDATE globalnouns SET sentiment = 0.25, timeupdated = '2018-06-23 14:00' where noun = 'wedding';
 
 # Upsert a row (insert if not there, update if there):
 INSERT INTO globalnouns VALUES ('wedding', 0.5, 1, CURRENT_TIMESTAMP) ON CONFLICT (noun) DO UPDATE SET sentiment = ((globalnouns.sentiment * globalnouns.numberofmentions) + 0.5) / (globalnouns.numberofmentions + 1), numberofmentions = globalnouns.numberofmentions + 1, timeupdated = CURRENT_TIMESTAMP;
@@ -65,6 +65,8 @@ ALTER TABLE globalnouns alter column timeupdated type timestamp with time zone;
 
 # Get the 20 rows most recently updated:
 select * from globalnouns order by timeupdated desc limit 20;
+select * from nodenouns where edgenode = 'ibm/isaac_x86_desktop' order by timeupdated desc limit 20;
+select * from nodenouns where edgenode like '%isaac_x86_desktop' order by timeupdated desc limit 20;
 ```
 
 ## Run Example Go Code to Write and Read DB
