@@ -35,17 +35,17 @@ const client = new ApolloClient({
 });
 
 // Test a query to graphql on our back-end
-const NOUNS_LIST = gql`
-{
-    nouns {
-        noun
-        sentiment
-        numberofmentions
-        timeupdated
-    }
-}
-`;
-client.query({ query: NOUNS_LIST }).then(console.log);
+// const NOUNS_LIST = gql`
+// {
+//     nodenouns {
+//         noun
+//         sentiment
+//         numberofmentions
+//         timeupdated
+//     }
+// }
+// `;
+// client.query({ query: NOUNS_LIST }).then(console.log);
 
 ReactDOM.render(
     <ApolloProvider client={client}>
