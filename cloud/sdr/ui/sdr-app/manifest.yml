@@ -1,5 +1,5 @@
 ---
 applications:
-- name: sample-nodejs-helloworld
+- name: sdr-app
   random-route: true
   memory: 256M
