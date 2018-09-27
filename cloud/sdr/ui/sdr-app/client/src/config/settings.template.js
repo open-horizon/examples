@@ -1,0 +1,1 @@
+exports.MAPBOX_TOKEN = ''
