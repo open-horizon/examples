@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:6006",
+  "proxy": "http://localhost:6005",
   "dependencies": {
     "@ibm/plex": "^1.1.6",
     "ajv": "^6.5.2",
@@ -51,6 +51,7 @@
     "react-geolocated": "^2.4.0",
     "react-map-gl": "^3.3.4",
     "react-router-dom": "^4.3.1",
+    "react-svg": "^6.0.15",
     "resolve": "1.6.0",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
