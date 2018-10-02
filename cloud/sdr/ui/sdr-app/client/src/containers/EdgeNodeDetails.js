@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {graphql} from 'react-apollo'
 import {gql} from 'apollo-boost'
 
-import {EdgeSentiments} from '../Sentiment'
+import {EdgeNodeSentiments} from '../Sentiment'
 
 const EDGE_NODE_NOUNS_LIST = gql`
 query nodenouns($edgenode: String, $limit: Int) {
@@ -15,7 +15,7 @@ query nodenouns($edgenode: String, $limit: Int) {
 }
 `
 
-class EdgeNodeSentiments extends Component {
+class EdgeNodeDetails extends Component {
   state = {
 
   }
@@ -26,9 +26,9 @@ class EdgeNodeSentiments extends Component {
 
   render() {
     return (
-      <EdgeSentiments />
+      <EdgeNodeSentiments nodeId={this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')} />
     )
   }
 }
 
-export default graphql(EDGE_NODE_NOUNS_LIST)(EdgeNodeSentiments)
+export default graphql(EDGE_NODE_NOUNS_LIST)(EdgeNodeDetails)
