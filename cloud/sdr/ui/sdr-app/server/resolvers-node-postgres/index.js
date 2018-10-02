@@ -10,12 +10,18 @@ exports.resolvers = {
             // Graphql will automatically wait for this promise to be fulfilled:
             // https://graphql.org/learn/execution/#asynchronous-resolvers - "During execution, GraphQL will wait for Promises, Futures, and Tasks to complete before continuing and will do so with optimal concurrency."
             console.log('running globalnouns resolver with limit='+args.limit);
-            return psql.query(`select noun, sentiment, numberofmentions, timeupdated from globalnouns order by timeupdated desc limit ${args.limit}`).then((res) => res.rows);
+            return psql.query(`select noun, sentiment, numberofmentions, timeupdated from globalnouns order by timeupdated desc limit ${args.limit}`)
+                    .then((res) => res.rows);
             // return [{ noun: 'wedding', sentiment: 'positive', numberofmentions: 10 }];
         },
         nodenouns: (obj, args) => {
             console.log('running nodenouns resolver for '+args.edgenode);
-            return psql.query(`select noun, sentiment, numberofmentions, timeupdated from nodenouns where edgenode = '${args.edgenode}' order by timeupdated desc limit ${args.limit}`).then((res) => res.rows);
-        }
-    }
+            return psql.query(`select noun, sentiment, numberofmentions, timeupdated from nodenouns where edgenode = '${args.edgenode}' order by timeupdated desc limit ${args.limit}`)
+                    .then((res) => res.rows);
+        },
+        edgenodes: (obj, args) => {
+            return psql.query('select edgenode, latitude, longitude, timeupdated from edgenodes')
+                    .then((res) => res.rows);
+        },
+    },
 };

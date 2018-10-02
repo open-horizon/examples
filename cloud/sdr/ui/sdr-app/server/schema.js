@@ -19,9 +19,17 @@ type Noun {
     timeupdated: Date
 }
 
+type EdgeNode {
+    edgenode: String
+    latitude: Float
+    longitude: Float
+    timeupdated: Date
+}
+
 type Query {
     globalnouns(limit: Int): [Noun]!
     nodenouns(edgenode: String!, limit: Int): [Noun]
+    edgenodes(limit: Int): [EdgeNode]
 }
 `;
 
