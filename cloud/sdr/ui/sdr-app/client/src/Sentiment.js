@@ -24,7 +24,7 @@ const {
     TableBody,
     TableCell,
     TableHeader,
-  } = DataTable
+} = DataTable
 
 const NOUN_LIMIT = 20;
 const TEMP_EDGE_NODE = 'ibm/isaac_x86_desktop';     //todo: just to test nodenouns table, remove eventually
@@ -80,19 +80,19 @@ export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => {
             })
         })
     }
-    
+
     return (
         <div>
             <DataTable
                 headers={globalSentimentHeaders}
                 rows={globalNouns}
-                render={({rows, headers, getHeaderProps}) => (
+                render={({ rows, headers, getHeaderProps }) => (
                     <TableContainer title="Global Keyword Sentiments">
                         <Table>
                             <TableHead>
                                 <TableRow>
                                     {headers.map(header => (
-                                        <TableHeader {...getHeaderProps({header})}>
+                                        <TableHeader {...getHeaderProps({ header })}>
                                             {header.header}
                                         </TableHeader>
                                     ))}
@@ -117,74 +117,58 @@ export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => {
     )
 });
 
-// client.query({ query: GLOBALNOUNS_LIST }).then(console.log);
+export const EdgeNodeSentiments = (props => {
 
-// export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => { return (
-//     <div>
-//     <p className="page-description">The top {NOUN_LIMIT} keywords mentioned on all of the edge nodes:</p>
-//     <table className="Sentiment-table">
-//         <thead>
-//             <tr>
-//                 <th className="Sentiment-cell">Keyword</th>
-//                 <th>Sentiment</th>
-//                 <th>Number of Mentions</th>
-//                 <th>Last Updated</th>
-//             </tr>
-//         </thead>
-//         <tbody>
-//         {props.data.loading ? '' : props.data.globalnouns.map((row) =>
-//             <tr key={row.noun}>
-//                 <td>{row.noun}</td> <td>{row.sentiment}</td> <td>{row.numberofmentions}</td> <td>{row.timeupdated}</td>
-//             </tr>
-//         )}
-//         </tbody>
-//     </table>
-//     </div>
-// )}
-// );
+    return (
+        <Query query={EDGE_NODE_NOUNS_LIST} variables={{limit: 20, edgenode: props.nodeId}}>
+        {({loading, error, data}) => {
+            if (loading) return "Loading..."
+            if (error) return `Error! ${error.message}`
 
-export const EdgeSentiments = graphql(EDGE_NODE_NOUNS_LIST)(props => { return (
-    <div>
-    <p>The top {TEMP_EDGE_NODE_LIMIT} keywords mentioned on edge node <strong>{TEMP_EDGE_NODE}</strong>:</p>
-    <table className="Sentiment-table">
-        <thead>
-            <tr>
-                <th className="Sentiment-cell">Keyword</th>
-                <th>Sentiment</th>
-                <th>Number of Mentions</th>
-                <th>Last Updated</th>
-            </tr>
-        </thead>
-        <tbody>
-        {props.data.loading ? '' : props.data.nodenouns.map((row) =>
-            <tr key={row.noun}>
-                <td>{row.noun}</td> <td>{row.sentiment}</td> <td>{row.numberofmentions}</td> <td>{row.timeupdated}</td>
-            </tr>
-        )}
-        </tbody>
-    </table>
-    </div>
-)}
-);
+            let nodenouns = []
 
-/* leaving this here as reference for now...
-class Sentiment extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { insights: ['Trump: negative', 'WorldCup: positive'] };
-    }
-    componentDidMount() { this.state.insights = ['Trump', 'Soccer'] }
+            if (data && data.nodenouns) {
+                nodenouns = data.nodenouns.map(o => {
+                    return Object.assign({}, o, {
+                        id: o.noun,
+                        timeupdated: moment(o.timeupdated).toString(),
+                    })
+                })
+            }
 
-    render() {
-        const listItems = this.state.insights.map((word) =>
-            <li key={word}>{word}</li>
-        );
-        return (
-            <ul className="Sentiment-list">
-            {listItems}
-            </ul>
-        );
-    }
-} */
-  
-//export default Sentiment;
+            return (
+                <DataTable
+                    headers={globalSentimentHeaders}
+                    rows={nodenouns}
+                    render={({ rows, headers, getHeaderProps }) => (
+                        <TableContainer title={`The top ${NOUN_LIMIT} nouns on node: ${props && props.nodeId}`}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        {headers.map(header => (
+                                            <TableHeader {...getHeaderProps({ header })}>
+                                                {header.header}
+                                            </TableHeader>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.map(row => (
+                                        <TableRow key={row.id}>
+                                            {row.cells.map(cell => (
+                                                <TableCell key={cell.id}>
+                                                    {cell.value}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                />
+            )
+        }}
+        </Query>
+    )
+});
