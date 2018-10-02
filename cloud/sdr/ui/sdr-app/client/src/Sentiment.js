@@ -42,8 +42,8 @@ const GLOBALNOUNS_LIST = gql`
 `;
 
 const EDGE_NODE_NOUNS_LIST = gql`
-{
-    nodenouns(edgenode: "${TEMP_EDGE_NODE}", limit: ${TEMP_EDGE_NODE_LIMIT}) {
+query nodenouns($edgenode: String!, $limit: Int!) {
+    nodenouns(edgenode: $edgenode, limit: $limit) {
         noun
         sentiment
         numberofmentions
@@ -68,7 +68,7 @@ const globalSentimentHeaders = [
     },
 ]
 
-export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => { 
+export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => {
 
     let globalNouns = []
 
