@@ -140,7 +140,7 @@ export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => {
 // )}
 // );
 
-export const EdgeNodeSentiments = graphql(EDGE_NODE_NOUNS_LIST)(props => { return (
+export const EdgeSentiments = graphql(EDGE_NODE_NOUNS_LIST)(props => { return (
     <div>
     <p>The top {TEMP_EDGE_NODE_LIMIT} keywords mentioned on edge node <strong>{TEMP_EDGE_NODE}</strong>:</p>
     <table className="Sentiment-table">
