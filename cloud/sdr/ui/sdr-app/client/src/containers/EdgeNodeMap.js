@@ -8,7 +8,8 @@ import ReactMapGL, {
   NavigationControl,
 } from 'react-map-gl'
 import {geolocated} from 'react-geolocated'
-import ReactSVG from 'react-svg'
+import { graphql } from 'react-apollo'
+import { gql } from 'apollo-boost'
 
 import MapMarker from '../components/MapMarker'
 import MapMarkerPopup from '../components/MapMarkerPopup'
@@ -16,6 +17,17 @@ import MapMarkerPopup from '../components/MapMarkerPopup'
 import {
   MAPBOX_TOKEN,
 } from '../config/settings'
+
+const EDGE_NODE_LIST = gql`
+{
+  edgenodes {
+    edgenode
+    latitude
+    longitude
+    timeupdated
+  }
+}
+`
 
 class EdgeNodeMap extends Component {
   state = {
@@ -28,13 +40,13 @@ class EdgeNodeMap extends Component {
     }
   }
 
-  _renderCityMarker = (city, index) => {
+  _renderCityMarker = (edgeNodes, index) => {
     return (
       <Marker key={`marker-${index}`}
-        longitude={city.longitude}
-        latitude={city.latitude}
+        longitude={edgeNodes[0].longitude}
+        latitude={edgeNodes[0].latitude}
       >
-        <MapMarker size={20} onClick={() => this.setState({popupInfo: city})} />
+        <MapMarker size={20} onClick={() => this.setState({popupInfo: edgeNodes})} />
       </Marker>
     )
   }
@@ -45,8 +57,8 @@ class EdgeNodeMap extends Component {
     return popupInfo && (
       <Popup tipSize={5}
         anchor="top"
-        longitude={popupInfo.longitude}
-        latitude={popupInfo.latitude}
+        longitude={popupInfo[0].longitude}
+        latitude={popupInfo[0].latitude}
         onClose={() => this.setState({popupInfo: null})} >
         <MapMarkerPopup info={popupInfo} />
       </Popup>
@@ -54,11 +66,29 @@ class EdgeNodeMap extends Component {
   }
 
   render() {
+    let edgeNodes = []
+    if (this.props && this.props.data && this.props.data.edgenodes) {
+      edgeNodes = this.props.data.edgenodes
+    }
 
-    const cities = [{
-      latitude: 41.1264849,
-      longitude: -73.7140195,
-    }]
+    // hash key is: {lat}-{lng}
+    // hash val is: array of edgeNode
+    let edgeNodeHash = {}
+
+    for (let i = 0; i < edgeNodes.length; i++) {
+      const checkKey = edgeNodes[i].latitude + '-' + edgeNodes[i].longitude
+      if (typeof edgeNodeHash[checkKey] === 'undefined') { // create new in hash
+        edgeNodeHash[checkKey] = [edgeNodes[i]]
+      } else { // there's another edge node w/ same lat and lng, group them together
+        edgeNodeHash[checkKey].push(edgeNodes[i])
+      }
+    }
+
+    let edgeNodesDeduped = []
+
+    for (let i = 0; i < Object.keys(edgeNodeHash).length; i++) {
+      edgeNodesDeduped.push(edgeNodeHash[Object.keys(edgeNodeHash)[i]])
+    }
 
     return (
       <div className="bx--row">
@@ -71,7 +101,7 @@ class EdgeNodeMap extends Component {
               mapboxApiAccessToken={MAPBOX_TOKEN}
               className="edge-node-map"
             >
-              {cities.map(this._renderCityMarker)}
+              {edgeNodesDeduped.map(this._renderCityMarker)}
 
               {this._renderPopup()}
             </ReactMapGL>
@@ -82,9 +112,9 @@ class EdgeNodeMap extends Component {
   }
 }
 
-export default geolocated({
+export default graphql(EDGE_NODE_LIST)(geolocated({
   positionOptions: {
     enableHighAccuracy: false,
   },
   userDecisionTimeout: 5000,
-})(EdgeNodeMap)
+})(EdgeNodeMap))
