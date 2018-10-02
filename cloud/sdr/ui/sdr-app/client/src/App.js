@@ -16,6 +16,7 @@ import Header from './components/Header';
 import Nav from './components/Nav';
 
 import './App.css';
+import EdgeNodeDetails from './containers/EdgeNodeDetails';
 
 class App extends Component {
   render() {
@@ -29,7 +30,8 @@ class App extends Component {
                 <div className="bx--offset-xs-2 bx--col-xs-12">
                   <div className="app-content">
                     <Route path="/global-keywords" component={GlobalServices} />
-                    <Route path="/edge-nodes" component={EdgeNodeMap} />
+                    <Route exact path="/edge-nodes" component={EdgeNodeMap} />
+                    <Route path="/edge-nodes/:id" component={EdgeNodeDetails} />
                   </div>
                 </div>
               </div>
