@@ -12,7 +12,7 @@ export default class MapMarkerPopup extends PureComponent {
     if (info.length > 1) {
       renderList = <div>
         <h1>Multiple Nodes Found</h1>
-        <div>{info.map(o => <div key={o.edgenode}><a href={`/${o.edgenode}`}>{o.edgenode}&n</a><br /></div>)}</div>  
+        <div>{info.map(o => <div key={o.edgenode}><a href={`/edge-nodes/${o.edgenode}`}>{o.edgenode}&n</a><br /></div>)}</div>  
       </div>
     }
 
@@ -23,7 +23,7 @@ export default class MapMarkerPopup extends PureComponent {
         }
         {info.length === 1 &&
           <div>
-            <h1>{info[0].edgenode}</h1>
+            <h1><a href={`/edge-nodes/${info[0].edgenode}`}>{info[0].edgenode}</a></h1>
             <p>
               Latitude: {info[0].latitude}
               <br />
