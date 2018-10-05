@@ -23,5 +23,10 @@ exports.resolvers = {
             return psql.query('select edgenode, latitude, longitude, timeupdated from edgenodes')
                     .then((res) => res.rows);
         },
+        edgenodetopnoun: (obj, args) => {
+            console.log('running edgenodetopnoun for '+args.edgenode)
+            return psql.query(`select noun, sentiment, numberofmentions, timeupdated from nodenouns where edgenode = '${args.edgenode}' order by numberofmentions desc limit 1`)
+                    .then((res) => res.rows[0]);
+        },
     },
 };
