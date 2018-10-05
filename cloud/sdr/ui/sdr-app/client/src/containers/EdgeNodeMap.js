@@ -8,7 +8,7 @@ import ReactMapGL, {
   NavigationControl,
 } from 'react-map-gl'
 import {geolocated} from 'react-geolocated'
-import { graphql } from 'react-apollo'
+import { graphql, Query } from 'react-apollo'
 import { gql } from 'apollo-boost'
 
 import MapMarker from '../components/MapMarker'
@@ -26,6 +26,17 @@ const EDGE_NODE_LIST = gql`
     longitude
     timeupdated
   }
+}
+`
+
+const EDGE_NODE_TOP_NOUN = gql`
+query edgenodetopnoun($edgenode: String!) {
+    edgenodetopnoun(edgenode: $edgenode) {
+        noun
+        sentiment
+        numberofmentions
+        timeupdated
+    }
 }
 `
 
@@ -60,7 +71,17 @@ class EdgeNodeMap extends Component {
         longitude={popupInfo[0].longitude}
         latitude={popupInfo[0].latitude}
         onClose={() => this.setState({popupInfo: null})} >
-        <MapMarkerPopup info={popupInfo} />
+        {popupInfo.length === 1 ?
+          <Query query={EDGE_NODE_TOP_NOUN} variables={{edgenode: popupInfo[0].edgenode}}>
+            {({loading, error, data}) => {
+              if (loading) return "Loading..."
+              if (error) return `Error! ${error.message}`
+
+              return <MapMarkerPopup info={popupInfo} data={data} />
+            }}
+        </Query>
+        : <MapMarkerPopup info={popupInfo} />
+        }
       </Popup>
     );
   }

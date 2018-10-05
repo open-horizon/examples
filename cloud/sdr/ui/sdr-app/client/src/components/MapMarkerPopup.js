@@ -4,10 +4,12 @@ import moment from 'moment'
 export default class MapMarkerPopup extends PureComponent {
 
   render() {
-    const {info} = this.props
+    const {info, data} = this.props
     const displayName = `${info.city}, ${info.state}`
 
     let renderList = undefined
+
+    console.log('data passed thru', data)
 
     if (info.length > 1) {
       renderList = <div>
@@ -30,6 +32,12 @@ export default class MapMarkerPopup extends PureComponent {
               Longitiude: {info[0].longitude}
               <br />
               Last Updated: {moment(info[0].timeupdated).toString()}
+              <br />
+              Top Noun: {data.edgenodetopnoun.noun}
+              <br />
+              Number of Mentions: {data.edgenodetopnoun.numberofmentions}
+              <br />
+              Sentiment: {data.edgenodetopnoun.sentiment}
             </p>
           </div>
         }
