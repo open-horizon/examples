@@ -13,7 +13,7 @@ const typeDefs = `
 scalar Date
 
 type Noun {
-    noun: String!
+    noun: String
     sentiment: String
     numberofmentions: Int
     timeupdated: Date
@@ -29,6 +29,7 @@ type EdgeNode {
 type Query {
     globalnouns(limit: Int): [Noun]!
     nodenouns(edgenode: String!, limit: Int): [Noun]
+    edgenodetopnoun(edgenode: String!): Noun
     edgenodes(limit: Int): [EdgeNode]
 }
 `;
