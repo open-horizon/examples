@@ -112,9 +112,15 @@ class EdgeNodeMap extends Component {
     }
 
     return (
-      <div className="bx--row">
-        <div className="bx--col-xs-12">
-          <div>
+      <div>
+        <Breadcrumb noTrailingSlash={false}>
+          <BreadcrumbItem href="/edge-nodes">
+            Edge Nodes
+          </BreadcrumbItem>
+        </Breadcrumb>
+        <br />
+        <div className="bx--row">
+          <div className="bx--col-xs-12">
             <ReactMapGL
               mapStyle='mapbox://styles/mapbox/dark-v9'
               {...this.state.viewport}

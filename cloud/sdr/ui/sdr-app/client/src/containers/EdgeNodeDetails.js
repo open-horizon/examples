@@ -1,6 +1,11 @@
 import React, {Component} from 'react'
 import {graphql} from 'react-apollo'
 import {gql} from 'apollo-boost'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+} from 'carbon-components-react'
+
 
 import {EdgeNodeSentiments} from '../Sentiment'
 
@@ -26,7 +31,18 @@ class EdgeNodeDetails extends Component {
 
   render() {
     return (
-      <EdgeNodeSentiments nodeId={this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')} />
+      <div>
+        <Breadcrumb noTrailingSlash={false}>
+          <BreadcrumbItem href="/edge-nodes">
+            Edge Nodes
+          </BreadcrumbItem>
+          <BreadcrumbItem href="#">
+            {this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')}
+          </BreadcrumbItem>
+        </Breadcrumb>
+        <br />
+        <EdgeNodeSentiments nodeId={this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')} />
+      </div>
     )
   }
 }
