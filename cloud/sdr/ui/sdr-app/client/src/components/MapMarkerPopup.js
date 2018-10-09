@@ -1,5 +1,8 @@
 import React, {PureComponent} from 'react'
 import moment from 'moment'
+import {
+  Tag,
+} from 'carbon-components-react'
 
 export default class MapMarkerPopup extends PureComponent {
 
@@ -14,7 +17,7 @@ export default class MapMarkerPopup extends PureComponent {
     if (info.length > 1) {
       renderList = <div>
         <h1>Multiple Nodes Found</h1>
-        <div>{info.map(o => <div key={o.edgenode}><a href={`/edge-nodes/${o.edgenode}`}>{o.edgenode}&n</a><br /></div>)}</div>  
+        <div>{info.map(o => <Tag key={o.edgenode} type="custom"><a href={`/edge-nodes/${o.edgenode}`}>{o.edgenode}</a><br /></Tag>)}</div>  
       </div>
     }
 
