@@ -1,3 +1,7 @@
 horizon_build
 .DS_Store
 .eslintignore
+
+cloud/sdr/ui/sdr-app/client/\.env
+
+cloud/sdr/ui/sdr-app/client/src/config/settings\.js
