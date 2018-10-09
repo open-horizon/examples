@@ -7,6 +7,13 @@ import ReactMapGL, {
   Popup,
   NavigationControl,
 } from 'react-map-gl'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Tile,
+  Loading,
+} from 'carbon-components-react'
+import { SizeMe } from 'react-sizeme'
 import {geolocated} from 'react-geolocated'
 import { graphql, Query } from 'react-apollo'
 import { gql } from 'apollo-boost'
@@ -43,8 +50,8 @@ query edgenodetopnoun($edgenode: String!) {
 class EdgeNodeMap extends Component {
   state = {
     viewport: {
-      height: 800,
       width: 800,
+      height: 800,
       latitude: (this.props.isGeolocationAvailable && this.props.isGeolocationEnabled && this.props.coords && this.props.coords.latitude) || 41.1264849,
       longitude: (this.props.isGeolocationAvailable && this.props.isGeolocationEnabled && this.props.coords && this.props.coords.longitude) || -73.7140195,
       zoom: 8,
@@ -74,7 +81,7 @@ class EdgeNodeMap extends Component {
         {popupInfo.length === 1 ?
           <Query query={EDGE_NODE_TOP_NOUN} variables={{edgenode: popupInfo[0].edgenode}}>
             {({loading, error, data}) => {
-              if (loading) return "Loading..."
+              if (loading) return <Loading withOverlay={false} />
               if (error) return `Error! ${error.message}`
 
               return <MapMarkerPopup info={popupInfo} data={data} />
