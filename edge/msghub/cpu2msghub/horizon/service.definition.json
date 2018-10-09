@@ -7,7 +7,6 @@
     "version": "$CPU2MSGHUB_VERSION",
     "arch": "$ARCH",
     "sharable": "multiple",
-    "matchHardware": null,
     "requiredServices": [
         {
             "url": "https://$MYDOMAIN/service-$CPU_NAME",
@@ -70,8 +69,5 @@
             }
         }
     },
-    "deploymentSignature": "",
-    "imageStore": {
-        "storeType": "dockerRegistry"
-    }
+    "deploymentSignature": ""
 }

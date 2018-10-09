@@ -1,4 +1,4 @@
-# Transform the machine arch into some standard values: "arm", "arm64", or "x86"
+# Transform the machine arch into some standard values: "arm", "arm64", or "amd64"
 SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above

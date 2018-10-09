@@ -3,7 +3,7 @@ export HZN_EXCHANGE_URL="https://exchange.staging.bluehorizon.network/api/v1"
 export HZN_ORG_ID=myorg
 export EXCHANGE_USER=myuser
 export EXCHANGE_PW=mypw
-export MYDOMAIN=github.com/open-horizon/examples/wiki
+export MYDOMAIN=mydomain.com
 export HZN_PATTERN=mypattern    # this is the device type
 
 # This variable must be set appropriately for your specific Edge Node
