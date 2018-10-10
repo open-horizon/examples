@@ -16,6 +16,11 @@ psql.query('select noun, sentiment, numberofmentions from globalnouns order by t
     console.log(res.rows);
 }).catch((e) => console.error(e.stack));
 
+psql.query('select edgenode, latitude, longitude, timeupdated from edgenodes').then((res) => {
+    console.log('edgenodes table:');
+    console.log(res.rows);
+})
+
 /* To test what psql.query() returns once the promise is fulfilled...
 (async function() {
     // const mydata = await psql.manyOrNone('select noun, sentiment, numberofmentions from globalnouns').then((data) => data.slice());

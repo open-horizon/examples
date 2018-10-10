@@ -7,7 +7,13 @@ import {
   BrowserRouter,
   Route,
   Link,
+  Redirect,
 } from 'react-router-dom';
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+} from 'carbon-components-react'
 
 import GlobalServices from './containers/GlobalServices';
 import EdgeNodeMap from './containers/EdgeNodeMap';
@@ -16,6 +22,7 @@ import Header from './components/Header';
 import Nav from './components/Nav';
 
 import './App.css';
+import EdgeNodeDetails from './containers/EdgeNodeDetails';
 
 class App extends Component {
   render() {
@@ -28,8 +35,10 @@ class App extends Component {
               <div className="bx--row">
                 <div className="bx--offset-xs-2 bx--col-xs-12">
                   <div className="app-content">
+                    <Route exact path="/" render={() => <Redirect to="/global-keywords" />} />
                     <Route path="/global-keywords" component={GlobalServices} />
-                    <Route path="/edge-nodes" component={EdgeNodeMap} />
+                    <Route exact path="/edge-nodes" component={EdgeNodeMap} />
+                    <Route path="/edge-nodes/:id" component={EdgeNodeDetails} />
                   </div>
                 </div>
               </div>

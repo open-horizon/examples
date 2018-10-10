@@ -74,7 +74,7 @@ if (process.env.PORT != requiredPort || appEnv.port != requiredPort) {
 logger.info(`Important Environment Variables: cenv: url=${appEnv.url},bind=${appEnv.bind},port=${appEnv.port}, USER: ${process.env.USER}, HOME: ${process.env.HOME}, CF_INSTANCE_IP: ${process.env.CF_INSTANCE_IP}, CF_INSTANCE_PORTS: ${process.env.CF_INSTANCE_PORTS}, VCAP_APP_PORT: ${process.env.VCAP_APP_PORT}, NODE_ENV: ${process.env.NODE_ENV}, npm_config_node_version: ${process.env.npm_config_node_version}`);
 
 // start server on the specified port and binding host
-appSvr.listen(appEnv.port, '0.0.0.0', function() {
+appSvr.listen(appEnv.port || 6005, '0.0.0.0', function() {
   // print a message when the server starts listening
   const listeningStr = `SDR express server listening on ${appEnv.url} (port ${appEnv.port})`;
   console.log(listeningStr);

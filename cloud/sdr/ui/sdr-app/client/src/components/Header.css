@@ -3,3 +3,8 @@ body {
   padding: 0;
   font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
 }
+
+.cloud-header-fixed {
+  position: fixed;
+  z-index: 100;
+}
