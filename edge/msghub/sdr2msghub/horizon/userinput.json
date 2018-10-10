@@ -1,17 +1,30 @@
 {
-  "services": [{
-      "org": "IBM",
-      "url": "https://$MYDOMAIN/service-$SDR_NAME",
-      "versionRange": "[0.0.0,INFINITY)",
-      "variables": {}
-    },
-    {
-      "org": "IBM",
-      "url": "https://$MYDOMAIN/service-$SDR2MSGHUB_NAME",
-      "versionRange": "[0.0.0,INFINITY)",
-      "variables": {
-        "MSGHUB_API_KEY": "$MSGHUB_API_KEY"
-      }
-    }
-  ]
+    "services": [
+        {
+            "org": "IBM",
+            "url": "https://$MYDOMAIN/service-$SDR_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "IBM",
+            "url": "https://$MYDOMAIN/service-$SDR2MSGHUB_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "MSGHUB_API_KEY": "$MSGHUB_API_KEY"
+            }
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/service-$SDR_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "https://$MYDOMAIN/service-$GPS_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
 }
