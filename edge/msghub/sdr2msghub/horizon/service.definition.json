@@ -11,13 +11,13 @@
         {
             "url": "https://$MYDOMAIN/service-$SDR_NAME",
             "org": "$HZN_ORG_ID",
-            "version": "[0.0.0,INFINITY)",
+            "version": "$SDR_VERSION",
             "arch": "$ARCH"
         },
         {
             "url": "https://$MYDOMAIN/service-$GPS_NAME",
             "org": "$HZN_ORG_ID",
-            "version": "[0.0.0,INFINITY)",
+            "version": "$GPS_VERSION",
             "arch": "$ARCH"
         }
     ],

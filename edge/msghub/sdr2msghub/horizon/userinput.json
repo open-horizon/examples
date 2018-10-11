@@ -2,12 +2,6 @@
     "services": [
         {
             "org": "IBM",
-            "url": "https://$MYDOMAIN/service-$SDR_NAME",
-            "versionRange": "[0.0.0,INFINITY)",
-            "variables": {}
-        },
-        {
-            "org": "IBM",
             "url": "https://$MYDOMAIN/service-$SDR2MSGHUB_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {

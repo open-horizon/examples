@@ -1,5 +1,5 @@
 # Set these values appropriate for your Horizon instance
-export HZN_EXCHANGE_URL="https://exchange.staging.bluehorizon.network/api/v1"
+export HZN_EXCHANGE_URL="stg-edge-cluster.us-south.containers.appdomain.cloud/v1"
 export HZN_ORG_ID=myorg
 export HZN_EXCHANGE_USER_AUTH=myuser:mypw
 export MYDOMAIN=mydomain.com
