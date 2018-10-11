@@ -35,7 +35,7 @@ docker-push: build
 	docker push $(IMAGE_PATH)
 
 # Create/update the metadata in the exchange for this service
-exchange-publish: build
+publish-service: build
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
@@ -43,4 +43,4 @@ clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 	-docker rmi $(IMAGE_PATH) 2> /dev/null || :
 
-.PHONY: default all build run check stop publish exchange-publish clean
+.PHONY: default all build run check stop publish publish-service clean

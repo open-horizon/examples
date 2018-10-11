@@ -68,6 +68,5 @@
                 "image": "$DOCKER_HUB_ID/${ARCH}_$CPU2MSGHUB_NAME:$CPU2MSGHUB_VERSION"
             }
         }
-    },
-    "deploymentSignature": ""
+    }
 }

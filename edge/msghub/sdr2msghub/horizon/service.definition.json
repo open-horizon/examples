@@ -1,7 +1,7 @@
 {
     "org": "$HZN_ORG_ID",
     "label": "$SDR2MSGHUB_NAME for $ARCH",
-    "description": "Sample Horizon service that sends 30 second clips of FM radio rich in what it thinks is speech to IBM Message Hub",
+    "description": "Sample Horizon service that sends 30 second clips of FM radio rich in speech to IBM Message Hub",
     "public": true,
     "url": "https://$MYDOMAIN/service-$SDR2MSGHUB_NAME",
     "version": "$SDR2MSGHUB_VERSION",
@@ -45,6 +45,5 @@
                 "image": "$DOCKER_HUB_ID/${ARCH}_$SDR2MSGHUB_NAME:$SDR2MSGHUB_VERSION"
             }
         }
-    },
-    "deploymentSignature": ""
+    }
 }

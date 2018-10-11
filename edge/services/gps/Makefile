@@ -105,8 +105,8 @@ docker-verify:
 	docker version --format '{{.Server.Version}}'
 	docker pull $(IMAGE_PATH) | grep '^Digest: '
 
-.PHONY: exchange-publish
-exchange-publish:
+.PHONY: publish-service
+publish-service:
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 

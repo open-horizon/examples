@@ -15,6 +15,5 @@
         "image": "$DOCKER_HUB_ID/${ARCH}_$CPU_NAME:$CPU_VERSION"
       }
     }
-  },
-  "deploymentSignature": ""
+  }
 }
