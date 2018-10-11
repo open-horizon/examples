@@ -29,7 +29,7 @@
       "serviceArch": "arm64",
       "serviceVersions": [
         {
-          "version": "0.0.1"
+          "version": "$SDR2MSGHUB_VERSION"
         }
       ]
     }
