@@ -15,6 +15,7 @@ class Header extends Component {
         companyName="IBM"
         productName="Cloud"
         logoHref="https://www.ibm.com/cloud/"
+        className="cloud-header-fixed"
       />
       </div>
     )

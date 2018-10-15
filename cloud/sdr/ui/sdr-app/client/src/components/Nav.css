@@ -1,6 +1,15 @@
 .nav-top-reset {
   top: 48px !important;
 }
+
 .bx--interior-left-nav-collapse {
   display: none !important;
+}
+
+.active-route {
+  background-color: #5596e6;
+}
+
+.active-route a {
+  color: white !important;
 }

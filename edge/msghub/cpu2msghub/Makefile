@@ -6,7 +6,7 @@ export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
 export CPU2MSGHUB_NAME ?= cpu2msghub
-export CPU2MSGHUB_VERSION ?= 1.2.4
+export CPU2MSGHUB_VERSION ?= 1.2.5
 DOCKER_NAME ?= $(ARCH)_$(CPU2MSGHUB_NAME)
 DOCKER_HUB_ID ?= openhorizon
 export MYDOMAIN ?= github.com/open-horizon/examples/wiki
@@ -47,14 +47,14 @@ docker-push: build
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION)
 
 # Create/update the metadata in the exchange for this service
-exchange-publish: build
+publish-service: build
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
 # Create/update the deployment pattern for a set of edge nodes
 publish-pattern:
-	: $${HZN_PATTERN:?} $${HZN_EXCHANGE_USER_AUTH:?}   # this verifies these env vars are set
-	hzn exchange pattern publish -p $$HZN_PATTERN -f horizon/pattern/cpu2msghub.json
+	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?}   # this verifies these env vars are set
+	hzn exchange pattern publish -p $$CPU2MSGHUB_NAME -f horizon/pattern/cpu2msghub.json
 
 clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :

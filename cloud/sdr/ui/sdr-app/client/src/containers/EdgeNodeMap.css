@@ -1,0 +1,16 @@
+.mapMarkerStyle {
+  background-image: url('map-marker.svg');
+  background-size: cover;
+  width: 25px;
+  height: 33px;
+  /* border-radius: 50%; */
+  cursor: pointer;
+}
+
+.edge-node-map {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: inherit;
+  height: inherit;
+}

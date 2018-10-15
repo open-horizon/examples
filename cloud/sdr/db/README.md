@@ -67,6 +67,9 @@ ALTER TABLE globalnouns alter column timeupdated type timestamp with time zone;
 select * from globalnouns order by timeupdated desc limit 20;
 select * from nodenouns where edgenode = 'ibm/isaac_x86_desktop' order by timeupdated desc limit 20;
 select * from nodenouns where edgenode like '%isaac_x86_desktop' order by timeupdated desc limit 20;
+
+# Get the 20 most mentioned words:
+select * from nodenouns where edgenode = 'IBM/bpmac' order by numberofmentions desc, timeupdated desc limit 20;
 ```
 
 ## Run Example Go Code to Write and Read DB

@@ -19,9 +19,5 @@
         ]
       }
     }
-  },
-  "deploymentSignature": "",
-  "imageStore": {
-    "storeType": "dockerRegistry"
   }
 }

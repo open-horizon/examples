@@ -1,7 +1,7 @@
 # Set these values appropriate for your Horizon instance
-export HZN_EXCHANGE_URL="https://exchange.staging.bluehorizon.network/api/v1"
+export HZN_EXCHANGE_URL="stg-edge-cluster.us-south.containers.appdomain.cloud/v1"
 export HZN_ORG_ID=myorg
-export MYDOMAIN=github.com/open-horizon/examples/wiki
+export MYDOMAIN=mydomain.com
 
 export ARCH=amd64   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
 export GPS_NAME=gps   # the service name, used in the docker image path and in the service url.
