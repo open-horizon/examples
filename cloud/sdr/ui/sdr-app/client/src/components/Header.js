@@ -13,8 +13,12 @@ class Header extends Component {
       <div>
       <CloudHeader 
         companyName="IBM"
-        productName="Cloud"
+        productName="SDR Sentiment Viewer"
         logoHref="https://www.ibm.com/cloud/"
+        links={[
+          { href: 'https://console.bluemix.net/catalog/', linkText: 'Catalog' },
+          { href: 'https://console.stage1.bluemix.net/docs/services/edge-fabric/', linkText: 'Docs' },
+        ]}
         className="cloud-header-fixed"
       />
       </div>
