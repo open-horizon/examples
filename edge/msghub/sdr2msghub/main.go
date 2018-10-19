@@ -299,6 +299,8 @@ func main() {
 		}
 	}
 	sdr_origin := ""
+	var hasCapturedFirstClip = false
+	var hasSentFirstClip = false
 	for {
 		// if it has been over 5 minuts since we last updated the list of strong stations,
 		if time.Now().Sub(lastStationsRefresh) > (5 * time.Minute) {
@@ -333,13 +335,19 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
+				if !hasCapturedFirstClip {
+					fmt.Println("Captured first clip")
+					hasCapturedFirstClip = true
+				}
 				val, err := m.goodness(audio)
 				if err != nil {
 					panic(err)
 				}
 				// if the value is close to 1, the goodness of that station will increase, if the value is small, the goodness will decrease.
 				stationGoodness[station] = stationGoodness[station]*(val+0.3) + 0.05
-				fmt.Println(station, "observed value:", val, "updated goodness:", stationGoodness[station])
+				if verbose {
+					fmt.Println(station, "observed value:", val, "updated goodness:", stationGoodness[station])
+				}
 				// if the value is over 0.5, it is worth sending to the cloud.
 				if val > 0.5 {
 					var location = locationData{}
@@ -366,6 +374,10 @@ func main() {
 					err = conn.publishAudio(msg)
 					if err != nil {
 						fmt.Println(err)
+					}
+					if !hasSentFirstClip {
+						fmt.Println("Sent first clip")
+						hasSentFirstClip = true
 					}
 				} else {
 					if verbose {
