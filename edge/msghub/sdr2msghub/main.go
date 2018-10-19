@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -263,6 +263,14 @@ func main() {
 		fmt.Println("connecting to remote gps:", gps_alt_addr)
 		gpshostname = gps_alt_addr
 	}
+	use_gps := os.Getenv("USE_GPS") != "false"
+	if !use_gps {
+		fmt.Println("not using GPS because USE_GPS=false")
+	}
+	verbose := os.Getenv("VERBOSE") == "1"
+	if verbose {
+		fmt.Println("verbose logging enabled")
+	}
 	devID := getEnv("HZN_ORG_ID", "HZN_ORGANIZATION") + "/" + getEnv("HZN_DEVICE_ID")
 	// load the graph def from FS
 	m, err := newModel("model.pb")
@@ -283,21 +291,26 @@ func main() {
 	lastStationsRefresh := time.Time{}
 
 	// make it fail sooner.
-	_, err = getGPS()
-	if err != nil {
-		fmt.Println(err)
-		panic("can't get location from GPS")
+	if use_gps {
+		_, err = getGPS()
+		if err != nil {
+			fmt.Println(err)
+			panic("can't get location from GPS")
+		}
 	}
-
+	sdr_origin := ""
 	for {
 		// if it has been over 5 minuts since we last updated the list of strong stations,
 		if time.Now().Sub(lastStationsRefresh) > (5 * time.Minute) {
+			fmt.Println("fetching new list of stations")
 			// for ever, we aquire a list of stations,
-			stations, err := rtlsdr.GetCeilingSignals(hostname, -8)
+			freqs, err := rtlsdr.GetFreqs(hostname)
 			if err != nil {
 				panic(err)
 			}
-			for _, station := range stations {
+			fmt.Println("got", len(freqs.Freqs), "freqs from sdr")
+			sdr_origin = freqs.Origin
+			for _, station := range freqs.Freqs {
 				_, prs := stationGoodness[station]
 				if !prs {
 					// only if the station is not already in our map, do we add it, with an initial value of 0.5
@@ -309,7 +322,7 @@ func main() {
 			if len(stationGoodness) < 1 {
 				panic("No FM stations. Move the antenna?")
 			}
-			fmt.Println("found", len(stations), "stations")
+			fmt.Println("found", len(freqs.Freqs), "stations from", freqs.Origin)
 			fmt.Println(stationGoodness)
 			lastStationsRefresh = time.Now()
 		}
@@ -329,10 +342,13 @@ func main() {
 				fmt.Println(station, "observed value:", val, "updated goodness:", stationGoodness[station])
 				// if the value is over 0.5, it is worth sending to the cloud.
 				if val > 0.5 {
-					location, err := getGPS()
-					if err != nil {
-						fmt.Println(err)
-						continue
+					var location = locationData{}
+					if use_gps {
+						location, err = getGPS()
+						if err != nil {
+							fmt.Println(err)
+							continue
+						}
 					}
 					// construct the message,
 					msg := &audiolib.AudioMsg{
@@ -344,11 +360,16 @@ func main() {
 						Lat:           float32(location.Latitude),
 						Lon:           float32(location.Longitude),
 						ContentType:   "audio/mpeg",
+						Origin:        sdr_origin,
 					}
 					// and publish it to msghub
 					err = conn.publishAudio(msg)
 					if err != nil {
 						fmt.Println(err)
+					}
+				} else {
+					if verbose {
+						fmt.Println("Not sending sample from", station, "becouse value is", val)
 					}
 				}
 			}

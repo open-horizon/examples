@@ -6,15 +6,17 @@ RUN cd rtl-sdr && mkdir build && cd build && cmake ../ && make && make install
 RUN ls /usr/local/bin/rtl_*
 
 FROM golang:1.10.0-alpine as go_build
+RUN apk --no-cache add git
+RUN go get github.com/hajimehoshi/go-mp3
 COPY main.go /
 COPY rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib/clientlib.go
-ARG version=0.0.1
+COPY bbcfake/bbcfake.go /go/src/github.com/open-horizon/examples/edge/services/sdr/bbcfake/bbcfake.go
+ARG version=0.0.2
 ENV MIC_VERSION $version
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo --ldflags "-X main.version=${MIC_VERSION}" -o /bin/rtlsdrd /main.go
 
 FROM alpine:latest
-RUN apk --no-cache add alsa-utils libusb
-COPY mock_audio.raw /mock_audio.raw
+RUN apk --no-cache add alsa-utils libusb ca-certificates
 COPY --from=go_build /bin/rtlsdrd /bin/rtlsdrd
 COPY --from=rtl_build /usr/local/bin/rtl_fm /bin/rtl_fm
 COPY --from=rtl_build /usr/local/bin/rtl_power /bin/rtl_power

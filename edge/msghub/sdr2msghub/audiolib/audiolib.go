@@ -14,6 +14,7 @@ type AudioMsg struct {
 	Lat           float32 `json:"lat"`
 	Lon           float32 `json:"lon"`
 	ContentType   string  `json:"contentType"`
+	Origin        string  `json:"origin"`
 }
 
 // Encode implemented for the https://godoc.org/github.com/Shopify/sarama#Encoder interface
