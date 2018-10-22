@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # Container image version and workload name
-export SDR2MSGHUB_VERSION = 0.0.2
+export SDR2MSGHUB_VERSION = 0.0.3
 export SDR2MSGHUB_NAME = sdr2msghub
 
 # When creating the service definition, we reference these
@@ -29,7 +29,7 @@ target/build_$(ARCH): main.go
 run: target/build_$(ARCH)
 	-docker network create sdr
 	#-docker rm -f $(IMAGE_PATH)
-	docker run -it --rm -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" -e MSGHUB_API_KEY="$(MSGHUB_API_KEY)" -e MSGHUB_BROKER_URL="$(MSGHUB_BROKER_URL)" -e MSGHUB_TOPIC="$(MSGHUB_TOPIC)" --name $(SDR2MSGHUB_NAME) --net=sdr --net-alias=$(SDR2MSGHUB_NAME) $(IMAGE_PATH)
+	docker run -it --rm -e HZN_ORGANIZATION="$(HZN_ORG_ID)" -e USE_GPS="false" -e HZN_DEVICE_ID="$(HZN_DEVICE_ID)" -e MSGHUB_API_KEY="$(MSGHUB_API_KEY)" -e MSGHUB_BROKER_URL="$(MSGHUB_BROKER_URL)" -e MSGHUB_TOPIC="$(MSGHUB_TOPIC)" --name $(SDR2MSGHUB_NAME) --net=sdr --net-alias=$(SDR2MSGHUB_NAME) $(IMAGE_PATH)
 
 # To publish you must have write access to the docker hub openhorizon user
 publish: target/build_$(ARCH)

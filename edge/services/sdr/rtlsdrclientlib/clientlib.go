@@ -3,9 +3,11 @@ package rtlsdr
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // GetAudio fetches a 30 second chunk of raw audio.
@@ -34,7 +36,7 @@ func FreqToIndex(freq float32, data PowerDist) int {
 }
 
 // GetCeilingSignals fetches the signal power distribution and samples it down to a list of frequencies at which there (probably) exist strong FM signals.
-func GetCeilingSignals(hostname string, celling float32) (stationFreqs []float32, err error) {
+func GetCeilingSignals(hostname string, celling float32) (stationFreqs []float32, origin string, err error) {
 	data, err := getPower(hostname)
 	if err != nil {
 		return
@@ -45,14 +47,45 @@ func GetCeilingSignals(hostname string, celling float32) (stationFreqs []float32
 			stationFreqs = append(stationFreqs, i)
 		}
 	}
+	origin = data.Origin
 	return
+}
+
+// Freqs stores a list of frequencies of stations
+type Freqs struct {
+	Origin string    `json:"origin"`
+	Freqs  []float32 `json:"freqs"`
 }
 
 // PowerDist is the distribution of power of frequency.
 type PowerDist struct {
-	Low  float32   `json:"low"`
-	High float32   `json:"high"`
-	Dbm  []float32 `json:"dbm"`
+	Origin string    `json:"origin"`
+	Low    float32   `json:"low"`
+	High   float32   `json:"high"`
+	Dbm    []float32 `json:"dbm"`
+}
+
+func GetFreqs(hostname string) (freqs Freqs, err error) {
+	timeout := time.Duration(20 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, err := client.Get("http://" + hostname + ":5427/freqs")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		err = errors.New("bad resp")
+		return
+	}
+	jsonByte, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(jsonByte, &freqs)
+	fmt.Println("done with freq")
+	return
 }
 
 func getPower(hostname string) (power PowerDist, err error) {
