@@ -5,7 +5,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
 } from 'carbon-components-react'
-
+import qs from 'query-string'
 
 import {EdgeNodeSentiments} from '../Sentiment'
 
@@ -37,11 +37,11 @@ class EdgeNodeDetails extends Component {
             Edge Nodes
           </BreadcrumbItem>
           <BreadcrumbItem href="#">
-            {this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')}
+            {window.location && window.location.search && qs.parse(window.location.search).id}
           </BreadcrumbItem>
         </Breadcrumb>
         <br />
-        <EdgeNodeSentiments nodeId={this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')} />
+        <EdgeNodeSentiments nodeId={window.location && window.location.search && qs.parse(window.location.search).id} />
       </div>
     )
   }
