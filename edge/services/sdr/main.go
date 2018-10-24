@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -16,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/open-horizon/examples/edge/services/sdr/bbcfake"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 )
 
@@ -65,17 +65,20 @@ func stringListToFloat(stringList []string) (floatList []float32) {
 func capturePower() (power rtlsdr.PowerDist, err error) {
 	start := 70000000
 	end := 110000000
+	power.Origin = "sdr_hardware"
 	power.Low = float32(start)
 	power.High = float32(end)
 	cmd := exec.Command("rtl_power", "-e", "10", "-c", "20%", "-f", strconv.Itoa(start)+":"+strconv.Itoa(end)+":10000")
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
+	fmt.Println("starting command")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New(string(stderr.Bytes()))
 		return
 	}
+	fmt.Println("done running command")
 	r := csv.NewReader(bytes.NewReader(stdout.Bytes()))
 	recordList, err := r.ReadAll()
 	if err != nil {
@@ -95,34 +98,40 @@ func capturePower() (power rtlsdr.PowerDist, err error) {
 	return
 }
 
-func audioHandler(w http.ResponseWriter, r *http.Request) {
-	freq, err := strconv.Atoi(r.URL.Path[7:])
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	audio, err := captureAudio(freq)
-	if (err != nil) && !(os.Getenv("MOCK_IF_YOU_MUST") == "false") {
-		fmt.Println("using mock audio")
-		audio, err = ioutil.ReadFile("mock_audio.raw")
+func makeAudioHandler(fake *bbcfake.FakeRadio) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		freq, err := strconv.Atoi(r.URL.Path[7:])
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		var audio []byte
+		if freq == 0 {
+			audio = fake.GetNextChunk()
+			time.Sleep(30 * time.Second)
+		} else {
+			audio, err = captureAudio(freq)
+		}
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		w.Write(audio[:938496])
 	}
-	w.Write(audio)
 }
 
 func powerHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("/power is deprecated! Please use /freqs")
 	power, err := capturePower()
 	if (err != nil) && !(os.Getenv("MOCK_IF_YOU_MUST") == "false") {
 		fmt.Println("using mock power data:", err.Error())
 		err = nil
 		power = rtlsdr.PowerDist{
-			Low:  float32(70000000),
-			High: float32(110000000),
-			Dbm:  make([]float32, ROWS*COLS),
+			Origin: "mock_file",
+			Low:    float32(70000000),
+			High:   float32(110000000),
+			Dbm:    make([]float32, ROWS*COLS),
 		}
 	}
 	for i := range power.Dbm {
@@ -139,9 +148,56 @@ func powerHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonBytes)
 }
 
+func FreqToIndex(freq float32, data rtlsdr.PowerDist) int {
+	percentPos := (freq - data.Low) / (data.High - data.Low)
+	index := int(float32(len(data.Dbm)) * percentPos)
+	return index
+}
+
+func getCeilingSignals(celling float32) (freqs []float32, origin string) {
+	fmt.Println("begin capture power")
+	data, err := capturePower()
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println("sending fake freq")
+		origin = "fake"
+		freqs = []float32{0.0}
+		return
+	}
+	for i := range data.Dbm {
+		if math.IsNaN(float64(data.Dbm[i])) {
+			data.Dbm[i] = -1234
+		}
+	}
+
+	for i := float32(85900000); i < data.High; i += 200000 {
+		dbm := data.Dbm[FreqToIndex(i, data)]
+		if dbm > celling {
+			freqs = append(freqs, i)
+		}
+	}
+	origin = "sdr_hardware"
+	return
+}
+
+func freqsHandler(w http.ResponseWriter, r *http.Request) {
+	freqs, origin := getCeilingSignals(-8)
+	jsonBytes, err := json.Marshal(rtlsdr.Freqs{Origin: origin, Freqs: freqs})
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonBytes)
+}
+
 func main() {
+	fake := bbcfake.NewFakeRadio()
+	//chunk := fake.GetNextChunk()
+
 	fmt.Println("starting sdr daemon")
-	http.HandleFunc("/audio/", audioHandler)
+	http.HandleFunc("/audio/", makeAudioHandler(&fake))
 	http.HandleFunc("/power", powerHandler)
+	http.HandleFunc("/freqs", freqsHandler)
 	log.Fatal(http.ListenAndServe(":5427", nil))
 }

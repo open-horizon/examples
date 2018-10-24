@@ -38,7 +38,7 @@ class App extends Component {
                     <Route exact path="/" render={() => <Redirect to="/global-keywords" />} />
                     <Route path="/global-keywords" component={GlobalServices} />
                     <Route exact path="/edge-nodes" component={EdgeNodeMap} />
-                    <Route path="/edge-nodes/:id" component={EdgeNodeDetails} />
+                    <Route path="/edge-nodes/details" component={EdgeNodeDetails} />
                   </div>
                 </div>
               </div>
