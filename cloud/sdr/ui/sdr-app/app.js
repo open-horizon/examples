@@ -31,7 +31,7 @@ const userProfileManager = appID.UserProfileManager
 const UnauthorizedException = appID.UnauthorizedException
 
 const APPID_LOGIN_URL = '/ibm/bluemix/appid/login'
-const APPID_CALLBACK_URL = '/ibm/cloud/appid/callback';
+const APPID_CALLBACK_URL = '/ibm/bluemix/appid/callback';
 
 const RETURNING_USER_HINT = "An identified user returned to the app with the same identity. The app accesses his identified profile and the previous selections that he made.";
 const NEW_USER_HINT = "An identified user logged in for the first time. Now when he logs in with the same credentials from any device or web client, the app will show his same profile and selections.";
@@ -137,14 +137,18 @@ appSvr.get('/logout', (req, res, next) => {
 })
 
 appSvr.get('/token', (req, res) => {
-  res.render('token', {
-    tokens: JSON.stringify(req.session[WebAppStrategy.AUTH_CONTEXT])
+  res.json({
+    tokens: req.session[WebAppStrategy.AUTH_CONTEXT],
   })
+})
+
+appSvr.get('/userInformation', (req, res) => {
+
 })
 
 appSvr.get('/error', (req, res) => {
   let errArr = req.flash('error')
-  res.render('error')
+  res.redirect('/error')
 })
 
 appSvr.get('/change_password', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
