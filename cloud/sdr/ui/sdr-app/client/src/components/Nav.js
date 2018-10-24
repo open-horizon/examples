@@ -26,10 +26,10 @@ class Nav extends Component {
     return (
       <InteriorLeftNav className="nav-top-reset">
         <InteriorLeftNavItem className={activeRoute === 'global-keywords' && 'active-route'}>
-          <Link to="/global-keywords">Global Keywords</Link>
+          <Link to="/app/global-keywords">Global Keywords</Link>
         </InteriorLeftNavItem>
         <InteriorLeftNavItem className={activeRoute === 'edge-nodes' && 'active-route'}>
-          <Link to="/edge-nodes">Edge Nodes</Link>
+          <Link to="/app/edge-nodes">Edge Nodes</Link>
         </InteriorLeftNavItem>
       </InteriorLeftNav>
     )

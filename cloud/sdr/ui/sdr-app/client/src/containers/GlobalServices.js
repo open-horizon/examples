@@ -14,7 +14,7 @@ class GlobalServices extends Component {
     return (
       <div>
         <Breadcrumb noTrailingSlash={false}>
-          <BreadcrumbItem href="/global-keywords">
+          <BreadcrumbItem href="/app/global-keywords">
             Global Keywords
           </BreadcrumbItem>
         </Breadcrumb>
