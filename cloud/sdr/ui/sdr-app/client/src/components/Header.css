@@ -8,3 +8,18 @@ body {
   position: fixed;
   z-index: 100;
 }
+
+.user-tile {
+  top: 55px;
+  position: absolute
+}
+
+.list {
+  background-color: #152935;
+  width: 12.5rem;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  list-style: none;
+  padding: 20px;
+}
