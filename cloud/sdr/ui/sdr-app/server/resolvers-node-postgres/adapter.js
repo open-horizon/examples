@@ -12,13 +12,9 @@ psql.query('SELECT NOW()')
     .catch((e) => setImmediate(() => { throw e; }));
 
 psql.query('select noun, sentiment, numberofmentions from globalnouns order by timeupdated desc limit 5').then((res) => {
-    console.log('globalnouns table:');
-    console.log(res.rows);
 }).catch((e) => console.error(e.stack));
 
 psql.query('select edgenode, latitude, longitude, timeupdated from edgenodes').then((res) => {
-    console.log('edgenodes table:');
-    console.log(res.rows);
 })
 
 /* To test what psql.query() returns once the promise is fulfilled...
