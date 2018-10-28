@@ -29,8 +29,10 @@ class Header extends Component {
         }
       })
     } else {
-      console.log('Error with fetching login token')
-      window.location.href = '/login'
+      console.error('Error with fetching login token')
+      console.log('res result from fetching tokens: ', res)
+      console.log('json result from fetching tokens: ', json)
+      // window.location.href = '/login'
     }
   }
 
