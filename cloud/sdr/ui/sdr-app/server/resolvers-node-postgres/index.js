@@ -26,4 +26,10 @@ exports.resolvers = {
                     .then((res) => res.rows[0]);
         },
     },
+    Mutation: {
+        testAddNoun: (obj, args) => {
+            return psql.query(`insert into nodenouns (edgenode, noun, sentiment, numberofmentions, timeupdated) values ('orgid/iddqd', 'access', -0.708717, 1, '2018-10-11T12:56:43.000Z')`)
+                    .then((res) => res.rows[0])
+        }
+    },
 };

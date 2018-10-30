@@ -32,6 +32,10 @@ type Query {
     edgenodetopnoun(edgenode: String!): Noun
     edgenodes(limit: Int): [EdgeNode]
 }
+
+type Mutation {
+    testAddNoun: [Noun]
+}
 `;
 
 exports.schema = makeExecutableSchema({
