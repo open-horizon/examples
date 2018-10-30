@@ -32,7 +32,7 @@ class Header extends Component {
       console.error('Error with fetching login token')
       console.log('res result from fetching tokens: ', res)
       console.log('json result from fetching tokens: ', json)
-      // window.location.href = '/login'
+      window.location.href = '/login'
     }
   }
 
