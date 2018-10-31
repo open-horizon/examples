@@ -35,10 +35,11 @@ class App extends Component {
               <div className="bx--row">
                 <div className="bx--offset-xs-2 bx--col-xs-12">
                   <div className="app-content">
-                    <Route exact path="/" render={() => <Redirect to="/global-keywords" />} />
-                    <Route path="/global-keywords" component={GlobalServices} />
-                    <Route exact path="/edge-nodes" component={EdgeNodeMap} />
-                    <Route path="/edge-nodes/details" component={EdgeNodeDetails} />
+                    <Route exact path="/" render ={() => <Redirect to="/app/global-keywords" />} />
+                    <Route exact path="/app" render={() => <Redirect to="/app/global-keywords" />} />
+                    <Route path="/app/global-keywords" component={GlobalServices} />
+                    <Route exact path="/app/edge-nodes" component={EdgeNodeMap} />
+                    <Route path="/app/edge-nodes/details" component={EdgeNodeDetails} />
                   </div>
                 </div>
               </div>

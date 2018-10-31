@@ -19,7 +19,7 @@ import {
 import gql from 'graphql-tag';
 import './index.css';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import registerServiceWorker, {unregister} from './registerServiceWorker';
 
 import EdgeNodeMap from './containers/EdgeNodeMap';
 import GlobalServices from './containers/GlobalServices';
@@ -53,4 +53,5 @@ ReactDOM.render(
     </ApolloProvider>,
     document.getElementById('root')
 );
-registerServiceWorker();
+// registerServiceWorker();
+unregister()
