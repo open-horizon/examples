@@ -36,6 +36,8 @@ class Header extends Component {
         renderUserCb: () => {
           return <ul className="list">
             <li>{json.tokens.identityTokenPayload.email}</li>
+            <li><a href="/change_password" className="bx--link">Change Password</a></li>
+            <br />
             <li><a href="/logout" className="bx--link">Log Out</a></li>
           </ul>
         }
