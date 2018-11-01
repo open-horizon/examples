@@ -63,7 +63,6 @@ appSvr.use(session({
   saveUninitialized: true,
   proxy: true,
   cookie: {
-    httpOnly: true,
     secure: !isLocal,
   },
 }));
