@@ -15,6 +15,12 @@ class Header extends Component {
     renderUserCb: () => {},
   }
 
+  /**
+   * Use an async version of componentDidMount so that
+   * the header can properly render the user's email and log out button.
+   * This also checks to make sure the user is logged in, otherwise they
+   * will be redirected to the login route.
+   */
   async componentDidMount() {
     const res = await fetch('/token', {
       method: 'GET',

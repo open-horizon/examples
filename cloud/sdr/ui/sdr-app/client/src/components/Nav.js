@@ -12,17 +12,13 @@ class Nav extends Component {
 
   render() {
 
+    // highlight the correct route
     let activeRoute = "global-keywords"
-
     let locationHref = window.location.href
-
     if (locationHref.includes("edge-nodes")) {
       activeRoute = "edge-nodes"
     }
-
-    console.log('active route', activeRoute)
   
-
     return (
       <InteriorLeftNav className="nav-top-reset">
         <InteriorLeftNavItem className={activeRoute === 'global-keywords' && 'active-route'}>

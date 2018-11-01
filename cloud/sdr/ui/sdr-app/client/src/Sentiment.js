@@ -27,9 +27,8 @@ const {
 } = DataTable
 
 const NOUN_LIMIT = 20;
-const TEMP_EDGE_NODE = 'ibm/isaac_x86_desktop';     //todo: just to test nodenouns table, remove eventually
-const TEMP_EDGE_NODE_LIMIT = 5;     //todo: just to test nodenouns table, remove eventually
 
+// Get list of top $limit nouns for all edge nodes
 const GLOBALNOUNS_LIST = gql`
 query globalnouns($limit: Int!) {
     globalnouns(limit: $limit) {
@@ -39,8 +38,9 @@ query globalnouns($limit: Int!) {
         timeupdated
     }
 }
-`;
+`
 
+// Get list of top $limit nouns for a single edge node
 const EDGE_NODE_NOUNS_LIST = gql`
 query nodenouns($edgenode: String!, $limit: Int!) {
     nodenouns(edgenode: $edgenode, limit: $limit) {
@@ -50,8 +50,9 @@ query nodenouns($edgenode: String!, $limit: Int!) {
         timeupdated
     }
 }
-`;
+`
 
+// Table layout for sentiments
 const globalSentimentHeaders = [
     {
         key: 'noun',
