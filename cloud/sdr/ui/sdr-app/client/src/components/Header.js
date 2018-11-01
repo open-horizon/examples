@@ -16,7 +16,13 @@ class Header extends Component {
   }
 
   async componentDidMount() {
-    const res = await fetch('/token')
+    const res = await fetch('/token', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json; charset=utf-8',
+      },
+    })
     const json = await res.json()
     if (json.tokens && json.tokens.identityTokenPayload && json.tokens.identityTokenPayload.email) {
 
@@ -30,46 +36,8 @@ class Header extends Component {
       })
     } else {
       console.error('Error with fetching login token')
-      console.log('res result from fetching tokens: ', res)
-      console.log('json result from fetching tokens: ', json)
       window.location.href = '/login'
     }
-  }
-
-  async renderUser() {
-    const res = await fetch('/token')
-    const json = await res.json()
-    if (json.tokens && json.tokens.identityTokenPayload && json.tokens.identityTokenPayload.email) {
-      return <ul className="list">
-        <li>{json.tokens.identityTokenPayload.email}</li>
-        <li><a href="/logout" className="bx--link">Log Out</a></li>
-      </ul>
-    } else {
-      console.log('could not get', json)
-    }
-
-    // fetch('/token')
-    //     .then((res) => {
-    //       return res.json()
-    //     })
-    //     .then((json) => {
-    //       console.log('json', json)
-    //       if (json.tokens && json.tokens.identityTokenPayload && json.tokens.identityTokenPayload.email) {
-    //         renderItems = <ul className="list">
-    //           <li>{json.tokens.identityTokenPayload.email}</li>
-    //           <li><a href="/logout" className="bx--link">Log Out</a></li>
-    //         </ul>
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       window.location.href = '/login'
-    //     })
-    // if (typeof renderItems === "undefined") {
-    //   console.log('renderitems is undefined')
-    //   // window.location.href = '/login'
-    // } else {
-    //   return renderItems
-    // }
   }
 
   render() {
