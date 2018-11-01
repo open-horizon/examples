@@ -31,8 +31,8 @@ const TEMP_EDGE_NODE = 'ibm/isaac_x86_desktop';     //todo: just to test nodenou
 const TEMP_EDGE_NODE_LIMIT = 5;     //todo: just to test nodenouns table, remove eventually
 
 const GLOBALNOUNS_LIST = gql`
-{
-    globalnouns(limit: ${NOUN_LIMIT}) {
+query globalnouns($limit: Int!) {
+    globalnouns(limit: $limit) {
         noun
         sentiment
         numberofmentions
@@ -68,22 +68,30 @@ const globalSentimentHeaders = [
     },
 ]
 
-export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => {
-
-    let globalNouns = []
-
-    if (props && props.data && props.data.globalnouns) {
-        globalNouns = props.data.globalnouns.map(o => {
-            return Object.assign({}, o, {
-                id: o.noun,
-                timeupdated: moment(o.timeupdated).toString(),
-            })
-        })
-    }
-
+export const GlobalSentiments = (props => {
     return (
-        <div>
-            <DataTable
+        <Query
+            query={GLOBALNOUNS_LIST}
+            variables={{limit: NOUN_LIMIT}}
+            pollInterval={1000}
+        >
+        {({loading, error, data}) => {
+            if (loading) return "Loading..."
+            if (error) return `Error! ${error.message}`
+
+            let globalNouns = []
+
+            if (data && data.globalnouns) {
+                globalNouns = data.globalnouns.map(o => {
+                    return Object.assign({}, o, {
+                        id: o.noun,
+                        timeupdated: moment(o.timeupdated).toString(),
+                    })
+                })
+            }
+
+            return (
+                <DataTable
                 headers={globalSentimentHeaders}
                 rows={globalNouns}
                 render={({ rows, headers, getHeaderProps }) => (
@@ -113,14 +121,21 @@ export const GlobalSentiments = graphql(GLOBALNOUNS_LIST)(props => {
                     </TableContainer>
                 )}
             />
-        </div>
+            )
+
+        }}
+        </Query>
     )
-});
+})
 
 export const EdgeNodeSentiments = (props => {
 
     return (
-        <Query query={EDGE_NODE_NOUNS_LIST} variables={{limit: 20, edgenode: props.nodeId}}>
+        <Query 
+            query={EDGE_NODE_NOUNS_LIST} 
+            variables={{limit: 20, edgenode: props.nodeId}}
+            pollInterval={1000}
+        >
         {({loading, error, data}) => {
             if (loading) return "Loading..."
             if (error) return `Error! ${error.message}`
@@ -171,4 +186,4 @@ export const EdgeNodeSentiments = (props => {
         }}
         </Query>
     )
-});
+})

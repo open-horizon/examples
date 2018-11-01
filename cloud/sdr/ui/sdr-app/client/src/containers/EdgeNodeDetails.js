@@ -33,7 +33,7 @@ class EdgeNodeDetails extends Component {
     return (
       <div>
         <Breadcrumb noTrailingSlash={false}>
-          <BreadcrumbItem href="/edge-nodes">
+          <BreadcrumbItem href="/app/edge-nodes">
             Edge Nodes
           </BreadcrumbItem>
           <BreadcrumbItem href="#">

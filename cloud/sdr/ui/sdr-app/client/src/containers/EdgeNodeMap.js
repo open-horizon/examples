@@ -79,7 +79,11 @@ class EdgeNodeMap extends Component {
         latitude={popupInfo[0].latitude}
         onClose={() => this.setState({popupInfo: null})} >
         {popupInfo.length === 1 ?
-          <Query query={EDGE_NODE_TOP_NOUN} variables={{edgenode: popupInfo[0].edgenode}}>
+          <Query 
+            query={EDGE_NODE_TOP_NOUN} 
+            variables={{edgenode: popupInfo[0].edgenode}}
+            pollInterval={1000}
+          >
             {({loading, error, data}) => {
               if (loading) return <Loading withOverlay={false} />
               if (error) return `Error! ${error.message}`
@@ -121,7 +125,7 @@ class EdgeNodeMap extends Component {
     return (
       <div>
         <Breadcrumb noTrailingSlash={false}>
-          <BreadcrumbItem href="/edge-nodes">
+          <BreadcrumbItem href="/app/edge-nodes">
             Edge Nodes
           </BreadcrumbItem>
         </Breadcrumb>
@@ -146,7 +150,9 @@ class EdgeNodeMap extends Component {
   }
 }
 
-export default graphql(EDGE_NODE_LIST)(geolocated({
+export default graphql(EDGE_NODE_LIST, {
+  pollInterval: 1000,
+})(geolocated({
   positionOptions: {
     enableHighAccuracy: false,
   },
