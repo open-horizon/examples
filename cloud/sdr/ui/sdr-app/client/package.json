@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:6006",
   "dependencies": {
+    "merge": ">=1.2.1",
     "@ibm/plex": "^1.1.6",
     "ajv": "^6.5.2",
     "apollo-boost": "^0.1.10",
