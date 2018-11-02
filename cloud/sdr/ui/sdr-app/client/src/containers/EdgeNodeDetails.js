@@ -9,6 +9,7 @@ import qs from 'query-string'
 
 import {EdgeNodeSentiments} from '../Sentiment'
 
+// Fetch list of edge node nouns
 const EDGE_NODE_NOUNS_LIST = gql`
 query nodenouns($edgenode: String, $limit: Int) {
   nodenouns(edgenode: $edgenode, limit: $limit) {
@@ -21,13 +22,6 @@ query nodenouns($edgenode: String, $limit: Int) {
 `
 
 class EdgeNodeDetails extends Component {
-  state = {
-
-  }
-
-  componentDidMount() {
-    console.log('props', this.props)
-  }
 
   render() {
     return (

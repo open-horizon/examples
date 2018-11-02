@@ -25,6 +25,8 @@
 		"connect-flash": "^0.1.1",
 		"cookie-parser": "^1.4.3",
 		"cors": "^2.8.4",
+		"cryptiles": ">=4.1.2",
+		"hoek": ">=4.2.1",
 		"express": "^4.16.4",
 		"express-enforces-ssl": "^1.1.0",
 		"express-session": "^1.15.6",
