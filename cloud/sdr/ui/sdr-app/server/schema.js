@@ -1,8 +1,8 @@
 /*eslint-env node*/
 // const GraphQLSchema = require('graphql').GraphQLSchema;
-const makeExecutableSchema = require('graphql-tools').makeExecutableSchema;
+const makeExecutableSchema = require('graphql-tools').makeExecutableSchema
 
-const resolvers = require('./resolvers-node-postgres').resolvers;
+const resolvers = require('./resolvers-node-postgres').resolvers
 // console.log('my resolver object:'); console.log(resolvers);
 
 /* Define the graphql queries supported. Examples of queries to the svr:
@@ -32,11 +32,7 @@ type Query {
     edgenodetopnoun(edgenode: String!): Noun
     edgenodes(limit: Int): [EdgeNode]
 }
-
-type Mutation {
-    testAddNoun: [Noun]
-}
-`;
+`
 
 exports.schema = makeExecutableSchema({
   typeDefs,

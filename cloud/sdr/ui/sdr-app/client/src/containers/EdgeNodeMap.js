@@ -25,6 +25,7 @@ import {
   MAPBOX_TOKEN,
 } from '../config/settings'
 
+// Get list of edge nodes
 const EDGE_NODE_LIST = gql`
 {
   edgenodes {
@@ -36,6 +37,7 @@ const EDGE_NODE_LIST = gql`
 }
 `
 
+// Get the single top noun for an edge node
 const EDGE_NODE_TOP_NOUN = gql`
 query edgenodetopnoun($edgenode: String!) {
     edgenodetopnoun(edgenode: $edgenode) {
@@ -48,6 +50,8 @@ query edgenodetopnoun($edgenode: String!) {
 `
 
 class EdgeNodeMap extends Component {
+
+  // set up viewport for the map
   state = {
     viewport: {
       width: 800,
@@ -69,6 +73,9 @@ class EdgeNodeMap extends Component {
     )
   }
 
+  // popup for edge node markers on map. shows brief
+  // info if only 1 edge node for that lat/lng, otherwise
+  // shows a list
   _renderPopup() {
     const {popupInfo} = this.state
 
@@ -150,6 +157,7 @@ class EdgeNodeMap extends Component {
   }
 }
 
+// Include data polling into graphql fetch for edge nodes
 export default graphql(EDGE_NODE_LIST, {
   pollInterval: 1000,
 })(geolocated({

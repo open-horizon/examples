@@ -12,8 +12,7 @@ export default class MapMarkerPopup extends PureComponent {
 
     let renderList = undefined
 
-    console.log('data passed thru', data)
-
+    // if there are more than one nodes at this lat/lng, render a list instead
     if (info.length > 1) {
       renderList = <div>
         <h1>Multiple Nodes Found</h1>
