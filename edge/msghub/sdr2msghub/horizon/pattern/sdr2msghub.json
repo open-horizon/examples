@@ -5,7 +5,7 @@
   "services": [
     {
       "serviceUrl": "https://$MYDOMAIN/service-${SDR2MSGHUB_NAME}",
-      "serviceOrgid": "IBM",
+      "serviceOrgid": "$HZN_ORG_ID",
       "serviceArch": "amd64",
       "serviceVersions": [
         {
@@ -15,7 +15,7 @@
     },
     {
       "serviceUrl": "https://$MYDOMAIN/service-${SDR2MSGHUB_NAME}",
-      "serviceOrgid": "IBM",
+      "serviceOrgid": "$HZN_ORG_ID",
       "serviceArch": "arm",
       "serviceVersions": [
         {
@@ -25,7 +25,7 @@
     },
     {
       "serviceUrl": "https://$MYDOMAIN/service-${SDR2MSGHUB_NAME}",
-      "serviceOrgid": "IBM",
+      "serviceOrgid": "$HZN_ORG_ID",
       "serviceArch": "arm64",
       "serviceVersions": [
         {

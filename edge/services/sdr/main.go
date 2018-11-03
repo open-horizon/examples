@@ -74,14 +74,11 @@ func capturePower() (power rtlsdr.PowerDist, err error) {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	cmd.Env = append(cmd.Env, "RTLSDR_RPC_IS_ENABLED=1", "RTLSDR_RPC_SERV_ADDR=localhost")
-	fmt.Println("env", cmd.Env)
-	fmt.Println("starting command")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New(string(stderr.Bytes()))
 		return
 	}
-	fmt.Println("done running command")
 	r := csv.NewReader(bytes.NewReader(stdout.Bytes()))
 	recordList, err := r.ReadAll()
 	if err != nil {
