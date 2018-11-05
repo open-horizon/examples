@@ -5,10 +5,11 @@ import {
   Breadcrumb,
   BreadcrumbItem,
 } from 'carbon-components-react'
-
+import qs from 'query-string'
 
 import {EdgeNodeSentiments} from '../Sentiment'
 
+// Fetch list of edge node nouns
 const EDGE_NODE_NOUNS_LIST = gql`
 query nodenouns($edgenode: String, $limit: Int) {
   nodenouns(edgenode: $edgenode, limit: $limit) {
@@ -21,27 +22,20 @@ query nodenouns($edgenode: String, $limit: Int) {
 `
 
 class EdgeNodeDetails extends Component {
-  state = {
-
-  }
-
-  componentDidMount() {
-    console.log('props', this.props)
-  }
 
   render() {
     return (
       <div>
         <Breadcrumb noTrailingSlash={false}>
-          <BreadcrumbItem href="/edge-nodes">
+          <BreadcrumbItem href="/app/edge-nodes">
             Edge Nodes
           </BreadcrumbItem>
           <BreadcrumbItem href="#">
-            {this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')}
+            {window.location && window.location.search && qs.parse(window.location.search).id}
           </BreadcrumbItem>
         </Breadcrumb>
         <br />
-        <EdgeNodeSentiments nodeId={this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').splice(2,5).join('/')} />
+        <EdgeNodeSentiments nodeId={window.location && window.location.search && qs.parse(window.location.search).id} />
       </div>
     )
   }

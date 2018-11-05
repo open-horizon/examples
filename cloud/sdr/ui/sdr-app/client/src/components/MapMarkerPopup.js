@@ -12,12 +12,11 @@ export default class MapMarkerPopup extends PureComponent {
 
     let renderList = undefined
 
-    console.log('data passed thru', data)
-
+    // if there are more than one nodes at this lat/lng, render a list instead
     if (info.length > 1) {
       renderList = <div>
         <h1>Multiple Nodes Found</h1>
-        <div>{info.map(o => <Tag key={o.edgenode} type="custom"><a href={`/edge-nodes/${o.edgenode}`}>{o.edgenode}</a><br /></Tag>)}</div>  
+        <div>{info.map(o => <Tag key={o.edgenode} type="custom"><a href={`/app/edge-nodes/details?id=${o.edgenode}`}>{o.edgenode}</a><br /></Tag>)}</div>  
       </div>
     }
 
@@ -28,7 +27,7 @@ export default class MapMarkerPopup extends PureComponent {
         }
         {info.length === 1 &&
           <div>
-            <h1><a href={`/edge-nodes/${info[0].edgenode}`}>{info[0].edgenode}</a></h1>
+            <h1><a href={`/app/edge-nodes/details?id=${info[0].edgenode}`}>{info[0].edgenode}</a></h1>
             <p>
               Latitude: {info[0].latitude}
               <br />

@@ -2,18 +2,6 @@
     "services": [
         {
             "org": "IBM",
-            "url": "https://$MYDOMAIN/service-$CPU_NAME",
-            "versionRange": "[0.0.0,INFINITY)",
-            "variables": {}
-        },
-        {
-            "org": "IBM",
-            "url": "https://$MYDOMAIN/service-$GPS_NAME",
-            "versionRange": "[0.0.0,INFINITY)",
-            "variables": {}
-        },
-        {
-            "org": "IBM",
             "url": "https://$MYDOMAIN/service-$CPU2MSGHUB_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
