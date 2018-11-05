@@ -10,7 +10,7 @@
     "requiredServices": [
         {
             "url": "https://$MYDOMAIN/service-$SDR_NAME",
-            "org": "IBM",
+            "org": "$HZN_ORG_ID",
             "version": "$SDR_VERSION",
             "arch": "$ARCH"
         },
