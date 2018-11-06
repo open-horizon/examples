@@ -1,8 +1,8 @@
 FROM arm32v6/alpine:latest as rtl_build
-RUN apk --no-cache add git cmake libusb-dev make gcc
-RUN git clone git://git.osmocom.org/rtl-sdr.git
-RUN apk --no-cache add g++ alpine-sdk
-RUN cd rtl-sdr && mkdir build && cd build && cmake ../ && make && make install
+RUN apk --no-cache add git cmake libusb-dev make gcc  g++ alpine-sdk
+RUN git clone https://github.com/texane/librtlsdr
+RUN cd librtlsdr && git checkout rpc
+RUN cd librtlsdr && mkdir build && cd build && cmake ../ && make && make install
 RUN ls /usr/local/bin/rtl_*
 
 FROM arm32v6/golang:1.10.0-alpine as go_build
@@ -18,9 +18,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo --ldflags "-X main.v
 FROM arm32v6/alpine:latest
 RUN apk --no-cache add alsa-utils libusb ca-certificates
 COPY --from=go_build /bin/rtlsdrd /bin/rtlsdrd
+COPY --from=rtl_build /usr/local/bin/rtl_rpcd /bin/rtl_rpcd
 COPY --from=rtl_build /usr/local/bin/rtl_fm /bin/rtl_fm
 COPY --from=rtl_build /usr/local/bin/rtl_power /bin/rtl_power
 COPY --from=rtl_build /usr/local/lib/librtlsdr.so.0 /usr/local/lib/librtlsdr.so.0
-
 WORKDIR /
 CMD ["/bin/rtlsdrd"]

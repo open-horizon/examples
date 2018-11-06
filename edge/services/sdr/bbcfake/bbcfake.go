@@ -67,11 +67,10 @@ func ListMp3Urls(url string) (urls map[string]bool, err error) {
 		fmt.Println(err)
 	}
 	page, err := ioutil.ReadAll(resp.Body)
-	//page, err := ioutil.ReadFile("/tmp/page")
 	if err != nil {
 		fmt.Println(err)
 	}
-	r, err := regexp.Compile("http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-low/proto/http/vpid/([a-z]|[0-9]){8}.mp3")
+	r, err := regexp.Compile("https://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download/proto/https/vpid/([a-z]|[0-9]){8}.mp3")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -86,7 +85,6 @@ func ListLinks() (links map[string]bool, err error) {
 		fmt.Println(err)
 	}
 	page, err := ioutil.ReadAll(resp.Body)
-	//page, err := ioutil.ReadFile("/tmp/page")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -99,7 +97,7 @@ func ListLinks() (links map[string]bool, err error) {
 	candidates := r.FindAllString(string(page), -1)
 	links = map[string]bool{}
 	for _, input := range candidates {
-		links[input] = true
+		links[input+"/episodes/downloads"] = true
 	}
 	return
 }
@@ -116,37 +114,58 @@ func NewFakeRadio() FakeRadio {
 
 // FakeRadio is holds the state for the radio.
 type FakeRadio struct {
+	linksPointer  int
+	links         []string
 	urlsPointer   int
 	urls          []string
 	chunksPointer int
 	chunks        [][]byte
 }
 
-func (fr *FakeRadio) refreshUrls() {
-	fmt.Println("fetching a new set of URLs")
+func (fr *FakeRadio) refreshLinks() {
+	fmt.Println("fetching a new set of links")
 
 	links, err := ListLinks()
 	if err != nil {
 		panic(err)
 	}
 	for link := range links {
-		mp3s, err := ListMp3Urls(link)
-		if err != nil {
-			panic(err)
-		}
-		for l := range mp3s {
-			fr.urls = append(fr.urls, l)
-		}
+		fr.links = append(fr.links, link)
 	}
-	if len(fr.urls) == 0 {
+	if len(fr.links) == 0 {
 		panic("got 0 URLs, something is very wrong, please contact the developers.")
+	}
+	fr.linksPointer = len(fr.links)
+	fmt.Println("got", len(fr.links), "links")
+}
+
+func (fr *FakeRadio) getNextlink() string {
+	for fr.linksPointer == 0 {
+		fmt.Println("no links, refreshing...")
+		fr.refreshLinks()
+	}
+	fr.linksPointer--
+	return fr.links[fr.linksPointer]
+}
+
+func (fr *FakeRadio) refreshUrls() {
+	fmt.Println("fetching a new set of URLs")
+
+	link := fr.getNextlink()
+	mp3s, err := ListMp3Urls(link)
+	if err != nil {
+		panic(err)
+	}
+	for l := range mp3s {
+		fr.urls = append(fr.urls, l)
 	}
 	fr.urlsPointer = len(fr.urls)
 	fmt.Println("got", len(fr.urls), "urls")
 }
 
 func (fr *FakeRadio) getNextURL() string {
-	if fr.urlsPointer == 0 {
+	for fr.urlsPointer == 0 {
+		fmt.Println("no urls, refreshing")
 		fr.refreshUrls()
 	}
 	fr.urlsPointer--
@@ -167,6 +186,7 @@ func (fr *FakeRadio) refreshChunks() {
 // GetNextChunk may fetch a new audio file
 func (fr *FakeRadio) GetNextChunk() (chunk []byte) {
 	if fr.chunksPointer == 0 {
+		fmt.Println("no chunks, refreshing...")
 		fr.refreshChunks()
 	}
 	fr.chunksPointer--

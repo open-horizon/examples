@@ -4,7 +4,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(SYSTEM_ARCH)
 
-export SDR_VERSION = 0.0.2
+export SDR_VERSION = 0.0.5
 export SDR_NAME = sdr
 
 # These variables can be overridden from the environment

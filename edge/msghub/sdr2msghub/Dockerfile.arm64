@@ -3,7 +3,8 @@ FROM arm64v8/golang:1.10 as go_build
 RUN apt-get update && apt-get install -y \
   curl \
   git \
-  lame
+  lame \
+  libmp3lame-dev
 
 RUN curl -L \
   "http://1dd40.http.dal05.cdn.softlayer.net/arm_artifacts/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
@@ -11,14 +12,14 @@ RUN curl -L \
 ENV LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
 
 # go deps for tf
-RUN go get \
-  github.com/tensorflow/tensorflow/tensorflow/go
+RUN mkdir -p ${GOPATH}/src/github.com/tensorflow/ && \
+  cd ${GOPATH}/src/github.com/tensorflow/ && \
+  git clone https://github.com/tensorflow/tensorflow.git
+
+RUN cd ${GOPATH}/src/github.com/tensorflow/tensorflow && git checkout v1.6.0
+
 RUN go get github.com/Shopify/sarama
-RUN apt-get install libmp3lame-dev
 RUN go get github.com/viert/lame
-
-
-RUN cd ${GOPATH}/src/github.com/tensorflow/tensorflow && git checkout r1.6
 
 COPY msghub/sdr2msghub/main.go /
 COPY msghub/sdr2msghub/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib/audiolib.go
