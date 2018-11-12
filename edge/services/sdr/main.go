@@ -24,6 +24,7 @@ func captureAudio(freq int) (audio []byte, err error) {
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
+	cmd.Env = append(cmd.Env, "RTLSDR_RPC_IS_ENABLED=1", "RTLSDR_RPC_SERV_ADDR=localhost")
 	err = cmd.Start()
 	if err != nil {
 		panic(err)
@@ -110,7 +111,11 @@ func makeAudioHandler(fake *bbcfake.FakeRadio) func(w http.ResponseWriter, r *ht
 			audio = fake.GetNextChunk()
 			time.Sleep(30 * time.Second)
 		} else {
-			audio, err = captureAudio(freq)
+			if rtlRpcdIsAlive {
+				audio, err = captureAudio(freq)
+			} else {
+				err = errors.New("freq != 0 but rtl_rpcd is dead")
+			}
 		}
 		if err != nil {
 			fmt.Println(err)
@@ -191,6 +196,8 @@ func freqsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonBytes)
 }
 
+var rtlRpcdIsAlive = true
+
 func startRtlrpcd(onFail func(error)) {
 	cmd := exec.Command("rtl_rpcd")
 	var stdout, stderr bytes.Buffer
@@ -199,6 +206,8 @@ func startRtlrpcd(onFail func(error)) {
 	startTime := time.Now()
 	fmt.Println("starting rtl_rpcd")
 	err := cmd.Run()
+	fmt.Println("run err:", err)
+	rtlRpcdIsAlive = false
 	fmt.Println("rtl_rpcd stopped after", startTime.Sub(time.Now()), "seconds")
 	onFail(err)
 }

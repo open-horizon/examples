@@ -6,7 +6,7 @@
   "url": "https://$MYDOMAIN/service-$SDR_NAME",
   "version": "$SDR_VERSION",
   "arch": "$ARCH",
-  "sharable": "single",
+  "sharable": "exclusive",
   "requiredServices": [],
   "userInput": [],
   "deployment": {

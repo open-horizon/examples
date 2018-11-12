@@ -66,7 +66,7 @@ type PowerDist struct {
 }
 
 func GetFreqs(hostname string) (freqs Freqs, err error) {
-	timeout := time.Duration(20 * time.Second)
+	timeout := time.Duration(40 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
