@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # Container image version and workload name
-export SDR2MSGHUB_VERSION = 0.0.3
+export SDR2MSGHUB_VERSION = 0.0.4
 export SDR2MSGHUB_NAME = sdr2msghub
 
 # When creating the service definition, we reference these
