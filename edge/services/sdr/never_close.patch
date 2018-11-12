@@ -1,0 +1,29 @@
+*** librtlsdr/src/rtl_rpcd.c	Thu Mar 31 02:15:48 2016
+--- librtlsdr.hack/src/rtl_rpcd.c	Thu Mar 31 01:50:56 2016
+***************
+*** 503,508 ****
+--- 503,509 ----
+        if (rpcd->dev != NULL)
+        {
+  	/* already opened */
++ 	PRINTF("hack: already open\n");
+  	err = 0;
+  	goto on_error;
+        }
+***************
+*** 522,531 ****
+--- 523,536 ----
+      {
+        uint32_t did;
+  
++ 	PRINTF("hack: keeping open\n");
++ 
++ /*
+        if (rtlsdr_rpc_msg_pop_uint32(q, &did)) goto on_error;
+        if ((rpcd->dev == NULL) || (rpcd->did != did)) goto on_error;
+        err = rtlsdr_close(rpcd->dev);
+        rpcd->dev = NULL;
++ */
+  
+        break ;
+      }

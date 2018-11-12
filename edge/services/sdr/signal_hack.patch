@@ -1,0 +1,25 @@
+*** librtlsdr/src/rtl_rpcd.c	Thu Mar 31 15:08:54 2016
+--- librtlsdr.hack/src/rtl_rpcd.c	Thu Mar 31 17:10:16 2016
+***************
+*** 15,20 ****
+--- 15,21 ----
+  #include <netdb.h>
+  #include <rtl-sdr.h>
+  #include "rtlsdr_rpc_msg.h"
++ #include <signal.h>
+  
+  
+  #if 1
+***************
+*** 1105,1110 ****
+--- 1106,1115 ----
+    const char* addr;
+    const char* port;
+  
++ 
++   PRINTF("hack: ignoring sigpipe\n");
++   signal(SIGPIPE, SIG_IGN);
++ 
+    addr = getenv("RTLSDR_RPC_SERV_ADDR");
+    if (addr == NULL) addr = "0.0.0.0";
+  
