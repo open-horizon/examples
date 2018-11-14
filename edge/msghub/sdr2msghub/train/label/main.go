@@ -7,8 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/open-horizon/examples/cloud/sdr/data-processing/watson/stt"
-	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/librtlsdr/rtlsdrclientlib"
+	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/train/watson/stt"
+	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 )
 
 func totalText(transcript stt.TranscribeResponse) (sum int) {
@@ -34,18 +34,18 @@ func main() {
 	}
 	var i = 0
 	for {
-		stations, err := rtlsdr.GetCeilingSignals("localhost", -5)
+		stations, err := rtlsdr.GetFreqs("localhost")
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("found", len(stations), "stations")
-		for _, station := range stations {
+		fmt.Println("found", len(stations.Freqs), "stations")
+		for _, station := range stations.Freqs {
 			fmt.Println("starting freq", station)
 			audio, err := rtlsdr.GetAudio("localhost", int(station))
 			if err != nil {
 				panic(err)
 			}
-			transcript, err := stt.Transcribe(audio, username, password)
+			transcript, err := stt.Transcribe(audio, "audio/wave", username, password)
 			if err != nil {
 				panic(err)
 			}
