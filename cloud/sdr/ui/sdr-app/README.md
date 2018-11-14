@@ -36,9 +36,11 @@ To get service credentials for some of the configs used in this app, you will ha
 
 The app should have the following configurations set:
 
-`sdr-app/localdev-config.json` The following credentials can be retrieved from the IBM App ID service inside the Bluemix Dashboard. 
-
 ```
+sdr-app/localdev-config.json
+The following credentials can be retrieved from the IBM App ID service inside the Bluemix Dashboard. 
+
+
 {
   "clientId": "{clientId from app id}",
   "oauthServerUrl": "{oauthServerUrl from app id}",
@@ -48,13 +50,17 @@ The app should have the following configurations set:
 }
 ```
 
-`sdr-app/server/config/settings.js`
+```
+sdr-app/server/config/settings.js
 
-```exports.postgresUrl = ''```
+exports.postgresUrl = ''
+```
 
-`sdr-app/client/src/config/settings.js`
+```
+sdr-app/client/src/config/settings.js
 
-```exports.MAPBOX_TOKEN = ''```
+exports.MAPBOX_TOKEN = ''
+```
 
 ---
 
