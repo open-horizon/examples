@@ -1,5 +1,4 @@
 # Set these values appropriate for your Horizon instance
-export HZN_EXCHANGE_URL="stg-edge-cluster.us-south.containers.appdomain.cloud/v1"
 export HZN_ORG_ID=myorg
 export EXCHANGE_USER=myuser
 export EXCHANGE_PW=mypw
@@ -28,3 +27,6 @@ export MSGHUB_BROKER_URL="kafka01-prod02.messagehub.services.us-south.bluemix.ne
 export HZN_ORGANIZATION=$HZN_ORG_ID
 export HZN_EXCHANGE_USER_AUTH="$EXCHANGE_USER:$EXCHANGE_PW"
 export EXCHANGE_NODEAUTH="$HZN_DEVICE_ID:$HZN_DEVICE_TOKEN"
+
+# You only need to set this if you are running 'hzn dev' without the full edge fabric agent installed
+export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"

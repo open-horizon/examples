@@ -1,5 +1,4 @@
 # Set these values appropriate for your Horizon instance
-export HZN_EXCHANGE_URL="https://stg-edge-cluster.us-south.containers.appdomain.cloud/v1"
 export HZN_ORG_ID=myorg
 export HZN_EXCHANGE_USER_AUTH=myuser:mypw
 export MYDOMAIN=mydomain.com
@@ -20,3 +19,6 @@ export SDR_NAME=sdr
 export SDR_VERSION=x.x.x
 export GPS_NAME=gps
 export GPS_VERSION=x.x.x
+
+# You only need to set this if you are running 'hzn dev' without the full edge fabric agent installed
+export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"

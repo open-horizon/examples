@@ -1,5 +1,4 @@
 # Set these values appropriate for your Horizon instance
-export HZN_EXCHANGE_URL="stg-edge-cluster.us-south.containers.appdomain.cloud/v1"
 export HZN_ORG_ID=myorg
 export MYDOMAIN=mydomain.com
 
@@ -8,3 +7,6 @@ export CPU_NAME=cpu   # the name of the service, used in the docker image path a
 export CPU_VERSION=1.2.2   # the service version, and also used as the tag for the docker image. Must be in OSGI version format.
 
 export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
+
+# You only need to set this if you are running 'hzn dev' without the full edge fabric agent installed
+export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"

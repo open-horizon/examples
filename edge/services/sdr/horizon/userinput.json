@@ -3,7 +3,7 @@
     "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://$MYDOMAIN/service-$SDR_NAME",
+            "url": "$MYDOMAIN.$SDR_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         }

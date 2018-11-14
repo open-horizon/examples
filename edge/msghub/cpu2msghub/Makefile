@@ -7,18 +7,28 @@ export ARCH ?= $(SYSTEM_ARCH)
 # These variables can be overridden from the environment
 export CPU2MSGHUB_NAME ?= cpu2msghub
 export CPU2MSGHUB_VERSION ?= 1.2.5
+# the required services - make sure these versions are up to date!
+export CPU_NAME ?= cpu
+export CPU_VERSION ?= 1.2.2
+export GPS_NAME ?= gps
+export GPS_VERSION ?= 2.0.5
 DOCKER_NAME ?= $(ARCH)_$(CPU2MSGHUB_NAME)
-DOCKER_HUB_ID ?= openhorizon
-export MYDOMAIN ?= github.com/open-horizon/examples/wiki
+export DOCKER_HUB_ID ?= openhorizon
+export MYDOMAIN ?= github.com.open-horizon.examples
 
 default: all
 
 all: build run check
 
 build:
-	if [[ $(ARCH) =~ arm.* ]]; then mkdir -p tmp/$(ARCH); cp ../../../tools/kafkacat/$(ARCH)/*.rsa.pub ../../../tools/kafkacat/$(ARCH)/kafkacat-*.apk tmp/$(ARCH); fi
+ifeq (,$(findstring amd64,$(ARCH)))
+	mkdir -p tmp/$(ARCH)
+	cp ../../../tools/kafkacat/$(ARCH)/*.rsa.pub ../../../tools/kafkacat/$(ARCH)/kafkacat-*.apk tmp/$(ARCH)
+endif
 	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION) -f ./Dockerfile.$(ARCH) .
-	if [[ $(ARCH) =~ arm.* ]]; then rm -f tmp/$(ARCH)/*.rsa.pub tmp/$(ARCH)/kafkacat-*.apk; fi
+ifeq (,$(findstring amd64,$(ARCH)))
+	rm -f tmp/$(ARCH)/*.rsa.pub tmp/$(ARCH)/kafkacat-*.apk
+endif
 
 run:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
@@ -47,7 +57,8 @@ docker-push: build
 	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION)
 
 # Create/update the metadata in the exchange for this service
-publish-service: build
+publish-service: build publish-service-only
+publish-service-only:
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
@@ -60,4 +71,4 @@ clean:
 	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
 	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION) 2> /dev/null || :
 
-.PHONY: default all build run check stop hznbuild hznstart hznstop publish exchange-publish publish-pattern clean
+.PHONY: default all build run check stop hznbuild hznstart hznstop publish-service publish-service-only publish-pattern clean
