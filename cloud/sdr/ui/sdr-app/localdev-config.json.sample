@@ -1,0 +1,7 @@
+{
+  "clientId": "{clientId from app id}",
+  "oauthServerUrl": "{oauthServerUrl from app id}",
+  "profilesUrl": "{profilesUrl from app id}",
+  "secret": "{secret of service from app id}",
+  "tenantId": "{tenantId from app id}"
+}
