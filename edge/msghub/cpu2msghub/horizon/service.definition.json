@@ -3,19 +3,20 @@
     "label": "$CPU2MSGHUB_NAME for $ARCH",
     "description": "Sample Horizon service that repeatedly reads the CPU load and GPS location, and sends it to IBM Message Hub",
     "public": true,
-    "url": "https://$MYDOMAIN/service-$CPU2MSGHUB_NAME",
+    "documentation": "https://console.test.cloud.ibm.com/docs/services/edge-fabric/poc/cpu.html",
+    "url": "$MYDOMAIN.$CPU2MSGHUB_NAME",
     "version": "$CPU2MSGHUB_VERSION",
     "arch": "$ARCH",
     "sharable": "multiple",
     "requiredServices": [
         {
-            "url": "https://$MYDOMAIN/service-$CPU_NAME",
+            "url": "$MYDOMAIN.$CPU_NAME",
             "org": "IBM",
             "version": "$CPU_VERSION",
             "arch": "$ARCH"
         },
         {
-            "url": "https://$MYDOMAIN/service-$GPS_NAME",
+            "url": "$MYDOMAIN.$GPS_NAME",
             "org": "IBM",
             "version": "$GPS_VERSION",
             "arch": "$ARCH"

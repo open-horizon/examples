@@ -2,7 +2,7 @@
     "services": [
         {
             "org": "IBM",
-            "url": "https://$MYDOMAIN/service-$CPU2MSGHUB_NAME",
+            "url": "$MYDOMAIN.$CPU2MSGHUB_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
                 "MOCK": false,

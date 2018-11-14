@@ -3,10 +3,11 @@
   "label": "$CPU_NAME for $ARCH",
   "description": "Provides a REST API to query the CPU percent",
   "public": true,
-  "url": "https://$MYDOMAIN/service-$CPU_NAME",
+  "documentation": "https://console.test.cloud.ibm.com/docs/services/edge-fabric/poc/cpu.html",
+  "url": "$MYDOMAIN.$CPU_NAME",
   "version": "$CPU_VERSION",
   "arch": "$ARCH",
-  "sharable": "single",
+  "sharable": "singleton",
   "requiredServices": [],
   "userInput": [],
   "deployment": {

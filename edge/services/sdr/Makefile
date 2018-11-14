@@ -10,7 +10,7 @@ export SDR_NAME = sdr
 # These variables can be overridden from the environment
 DOCKER_NAME ?= $(ARCH)_$(SDR_NAME)
 export DOCKER_HUB_ID ?= openhorizon
-export MYDOMAIN ?= github.com/open-horizon/examples/wiki
+export MYDOMAIN ?= github.com.open-horizon.examples
 
 default: build
 

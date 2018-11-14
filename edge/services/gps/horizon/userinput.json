@@ -2,7 +2,7 @@
     "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://$MYDOMAIN/service-$GPS_NAME",
+            "url": "$MYDOMAIN.$GPS_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         }

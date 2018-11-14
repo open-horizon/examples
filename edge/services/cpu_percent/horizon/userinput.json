@@ -3,7 +3,7 @@
     "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://$MYDOMAIN/service-$CPU_NAME",
+            "url": "$MYDOMAIN.$CPU_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {}
         }
