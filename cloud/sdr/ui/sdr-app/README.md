@@ -2,6 +2,68 @@
 
 This application demonstrates a simple, reusable Node.js web application based on the Express framework.
 
+---
+
+## Prereqs
+
+### Mapbox Token
+- https://www.mapbox.com/help/how-access-tokens-work/
+
+### IBM App ID
+This app requires you have an instance of IBM App ID inside the Bluemix Console
+- https://console.bluemix.net/catalog/services/app-id
+
+Once the App ID instance is deployed, under `Identity Providers` -> `Manage` under the `Identity Providers` tab only the following should be enabled:
+
+- Cloud Directory
+
+Under `Identity Providers` -> `Manage` under the `Authentication Settings` tab, enter the redirect URL to your app and sign-in token expiration periods.
+
+Under `Identity Providers` -> `Cloud Directory` under the `Settings` tab, the following settings are applied:
+
+- Allow users to sign-up and sign-in using: `Email and password`
+- Allow users to sign-up to your app: `No`
+- Allow users to manage their account from your app: `Yes`
+
+
+In order for users to sign into your app, you'll have to manually create their accounts (their passwords can be changed in the app by the users once they've logged in) inside `Users` -> `Add User` button.
+
+You will also have to create a connection from the IBM App ID instance to the SDR App instance under `Connections` -> `Create Connection` button. You can give it any Access Role and Auto Generate a Service ID.
+
+To get service credentials for some of the configs used in this app, you will have to create a new one under `Service Credentials` -> `New Credential` with any Role, and connect the auto-generated Service ID from the previous step.
+
+## Configs
+
+The app should have the following configurations set:
+
+```
+sdr-app/localdev-config.json
+The following credentials can be retrieved from the IBM App ID service inside the Bluemix Dashboard. 
+
+
+{
+  "clientId": "{clientId from app id}",
+  "oauthServerUrl": "{oauthServerUrl from app id}",
+  "profilesUrl": "{profilesUrl from app id}",
+  "secret": "{secret of service from app id}",
+  "tenantId": "{tenantId from app id}"
+}
+```
+
+```
+sdr-app/server/config/settings.js
+
+exports.postgresUrl = ''
+```
+
+```
+sdr-app/client/src/config/settings.js
+
+exports.MAPBOX_TOKEN = ''
+```
+
+---
+
 ## Run dev Version of the App Sever Locally
 
 [Install Node.js](https://nodejs.org/en/download/) and then:
@@ -23,6 +85,7 @@ query {
     }
 }
 ```
+
 
 ## Initial Creation of React Client
 
@@ -67,6 +130,8 @@ ic app push sdr-app
 ```
 
 Then browse the application front-end at https://sdr-app.mybluemix.net/
+
+---
 
 ## Notes/References
 
