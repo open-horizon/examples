@@ -17,6 +17,7 @@ import {
 
 import GlobalServices from './containers/GlobalServices';
 import EdgeNodeMap from './containers/EdgeNodeMap';
+import About from './containers/About';
 
 import Header from './components/Header';
 import Nav from './components/Nav';
@@ -40,6 +41,7 @@ class App extends Component {
                     <Route path="/app/global-keywords" component={GlobalServices} />
                     <Route exact path="/app/edge-nodes" component={EdgeNodeMap} />
                     <Route path="/app/edge-nodes/details" component={EdgeNodeDetails} />
+                    <Route path="/app/about" component={About} />
                   </div>
                 </div>
               </div>
