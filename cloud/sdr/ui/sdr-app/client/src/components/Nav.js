@@ -17,6 +17,8 @@ class Nav extends Component {
     let locationHref = window.location.href
     if (locationHref.includes("edge-nodes")) {
       activeRoute = "edge-nodes"
+    } else if (locationHref.includes("about")) {
+      activeRoute = "about"
     }
   
     return (
@@ -26,6 +28,10 @@ class Nav extends Component {
         </InteriorLeftNavItem>
         <InteriorLeftNavItem className={activeRoute === 'edge-nodes' && 'active-route'}>
           <Link to="/app/edge-nodes">Edge Nodes</Link>
+        </InteriorLeftNavItem>
+        <br />
+        <InteriorLeftNavItem className={activeRoute === 'about' && 'active-route'}>
+          <Link to="/app/about">About</Link>
         </InteriorLeftNavItem>
       </InteriorLeftNav>
     )
