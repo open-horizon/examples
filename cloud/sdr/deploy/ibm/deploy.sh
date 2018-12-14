@@ -209,7 +209,7 @@ function teardown_stt_(){
 function deploy_nlu_(){
 	echo `now` "Creating $NLU_INSTANCE Watson Natural Language Understanding service instance with the $NLU_INSTANCE_PLAN plan"
 	echo `now` "Current Watson Natural Language Understanding instances:"
-	ibmcloud -q service list | grep natural-language-understanding
+	ibmcloud -q service list | grep natural-language-understanding || true
 	if [[ $(ibmcloud -q service list | grep natural-language-understanding | cut -d' ' -f1 | grep -Fx "$NLU_INSTANCE") ]]; then
 	 	echo `now` "There is $NLU_INSTANCE Watson NLU instance created already, skipping its creation..."
 	else
