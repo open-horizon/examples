@@ -157,7 +157,7 @@ function check_prereqs(){
 function deploy_stt_(){
 	echo `now` "Creating $STT_INSTANCE Watson Speech-To-Text service instance with the $STT_INSTANCE_PLAN plan"
 	echo `now` "Current Watson Speech-To-Text instances:"
-	ibmcloud -q service list | grep speech_to_text || true
+	ibmcloud -q service list | grep speech_to_text || :
 	if [[ $(ibmcloud -q service list | grep speech_to_text | cut -d' ' -f1 | grep -Fx "$STT_INSTANCE") ]]; then
 	 	echo `now` "There is $STT_INSTANCE Watson STT instance created already, skipping its creation..."
 	else
@@ -176,7 +176,7 @@ function deploy_stt_(){
 	fi
 	echo `now` "Creating and configuring $STT_INSTANCE Watson STT is finished"
 	echo `now` "Current Watson STT instances:"
-	ibmcloud -q service list | grep speech_to_text || true
+	ibmcloud -q service list | grep speech_to_text || :
 }
 
 # Delete Watson Speech-To-text instance
@@ -186,7 +186,7 @@ function teardown_stt_(){
 	sleep $WAIT_RESPONSE
 	echo `now` "Deleting $STT_INSTANCE_CREDS credentials for $STT_INSTANCE"
 	echo `now` "Current Watson STT instances:"
-	ibmcloud -q service list | grep speech_to_text || true
+	ibmcloud -q service list | grep speech_to_text || :
 	if [[ $(ibmcloud service keys "$STT_INSTANCE" | cut -d' ' -f1 | grep -Fx "$STT_INSTANCE_CREDS") ]]; then
 	 	echo `now` "Found $STT_INSTANCE_CREDS credentials for $STT_INSTANCE, deleting..."
 	 	ibmcloud service key-delete "$STT_INSTANCE" "$STT_INSTANCE_CREDS" -f
@@ -202,20 +202,20 @@ function teardown_stt_(){
 	fi
 	echo `now` "Finished deleting $STT_INSTANCE and its credentials $STT_INSTANCE_CREDS"
 	echo `now` "Current Watson STT instances:"
-	ibmcloud -q service list | grep speech_to_text || true
+	ibmcloud -q service list | grep speech_to_text || :
 }
 
 # Create Watson Natural Language Understanding instance
 function deploy_nlu_(){
 	echo `now` "Creating $NLU_INSTANCE Watson Natural Language Understanding service instance with the $NLU_INSTANCE_PLAN plan"
 	echo `now` "Current Watson Natural Language Understanding instances:"
-	ibmcloud -q service list | grep natural-language-understanding || true
+	ibmcloud -q service list | grep natural-language-understanding || :
 	if [[ $(ibmcloud -q service list | grep natural-language-understanding | cut -d' ' -f1 | grep -Fx "$NLU_INSTANCE") ]]; then
 	 	echo `now` "There is $NLU_INSTANCE Watson NLU instance created already, skipping its creation..."
 	else
 	 	echo `now` "Found no Watson NLU instance $NLU_INSTANCE with the $NLU_INSTANCE_PLAN plan, creating..."
 	 	ibmcloud -q service create natural-language-understanding "$NLU_INSTANCE_PLAN" "$NLU_INSTANCE"
-	 	ibmcloud -q service list | grep natural-language-understanding  || true
+	 	ibmcloud -q service list | grep natural-language-understanding  || :
 	fi
 	echo `now` "Creating credentials $NLU_INSTANCE_CREDS for $NLU_INSTANCE"
 	echo `now` "Current credentials for $NLU_INSTANCE:"
@@ -228,7 +228,7 @@ function deploy_nlu_(){
 	fi
 	echo `now` "Creating and configuring $NLU_INSTANCE Watson NLU is finished"
 	echo `now` "Current Watson NLU instances:"
-	ibmcloud -q service list | grep natural-language-understanding || true
+	ibmcloud -q service list | grep natural-language-understanding || :
 }
 
 # Delete Watson Natural Language Understanding instance
@@ -238,7 +238,7 @@ function teardown_nlu_(){
 	sleep $WAIT_RESPONSE
 	echo `now` "Deleting $NLU_INSTANCE_CREDS credentials for $NLU_INSTANCE"
 	echo `now` "Current Watson NLU instances:"
-	ibmcloud -q service list | grep natural-language-understanding || true
+	ibmcloud -q service list | grep natural-language-understanding || :
 	if [[ $(ibmcloud service keys "$NLU_INSTANCE" | cut -d' ' -f1 | grep -Fx "$NLU_INSTANCE_CREDS") ]]; then
 	 	echo `now` "Found $NLU_INSTANCE_CREDS credentials for $NLU_INSTANCE, deleting..."
 	 	ibmcloud service key-delete "$NLU_INSTANCE" "$NLU_INSTANCE_CREDS" -f
@@ -254,20 +254,20 @@ function teardown_nlu_(){
 	fi
 	echo `now` "Finished deleting $NLU_INSTANCE and its credentials $NLU_INSTANCE_CREDS"
 	echo `now` "Current Watson NLU instances:"
-	ibmcloud -q service list | grep natural-language-understanding || true
+	ibmcloud -q service list | grep natural-language-understanding || :
 }
 
 # Create and configure Event Streams Instance
 function deploy_es_(){
 	echo `now` "Creating Event Streams instance $MH_INSTANCE"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || true
+	ibmcloud -q service list | grep messagehub || :
 	if [[ $(ibmcloud -q service list | grep messagehub | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE") ]]; then
 	 	echo `now` "There is $MH_INSTANCE Event Streams instance created already, skipping its creation..."
 	else
 	 	echo `now` "Found no Event Streams instance $MH_INSTANCE, creating..."
 	 	ibmcloud -q service create messagehub standard "$MH_INSTANCE"
-	 	ibmcloud -q service list | grep messagehub || true
+	 	ibmcloud -q service list | grep messagehub || :
 	fi
 	echo `now` "Creating credentials $MH_INSTANCE_CREDS for $MH_INSTANCE"
 	echo `now` "Current credentials for $MH_INSTANCE:"
@@ -309,7 +309,7 @@ function deploy_es_(){
 	fi 
 	echo `now` "Finished creation $MH_INSTANCE instance with $MH_SDR_TOPIC topic, $MH_SDR_TOPIC_PARTIONS partition(s)"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || true
+	ibmcloud -q service list | grep messagehub || :
 }
 
 # Delete Event Streams instance
@@ -319,7 +319,7 @@ function teardown_es_(){
 	sleep $WAIT_RESPONSE
 	echo `now` "Deleting $MH_INSTANCE_CREDS for $MH_INSTANCE"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || true
+	ibmcloud -q service list | grep messagehub || :
 	if [[ $(ibmcloud service keys "$MH_INSTANCE" | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE_CREDS") ]]; then
 	 	echo `now` "Found $MH_INSTANCE_CREDS credentials for $MH_INSTANCE, deleting..."
 	 	ibmcloud service key-delete "$MH_INSTANCE" "$MH_INSTANCE_CREDS" -f
@@ -335,20 +335,20 @@ function teardown_es_(){
 	fi
 	echo `now` "Finished deleting $MH_INSTANCE and its credentials $MH_INSTANCE_CREDS"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || true
+	ibmcloud -q service list | grep messagehub || :
 }
 
 # Create and configure Compose for PostgreSQL instance
 function deploy_db_(){
 	echo `now` "Creating $DB_INSTANCE Compose PostgreSQL DB with the $DB_INSTANCE_PLAN plan"
 	echo `now` "Current Compose for PostgreSQL instances:"
-	ibmcloud -q service list | grep compose-for-postgresql || true
+	ibmcloud -q service list | grep compose-for-postgresql || :
 	if [[ $(ibmcloud -q service list | grep compose-for-postgresql | cut -d' ' -f1 | grep -Fx "$DB_INSTANCE") ]]; then
 	 	echo `now` "There is $DB_INSTANCE Compose for PostgreSQL instance created already, skipping its creation..."
 	else
 	 	echo `now` "Found no Compose for PostgreSQL instance $DB_INSTANCE with $DB_INSTANCE_PLAN plan, creating..."
 	 	ibmcloud -q service create compose-for-postgresql "$DB_INSTANCE_PLAN" "$DB_INSTANCE"
-	 	ibmcloud -q service list | grep compose-for-postgresql || true
+	 	ibmcloud -q service list | grep compose-for-postgresql || :
 	fi
 	echo `now` "Creating credentials $DB_INSTANCE_CREDS for $DB_INSTANCE"
 	echo `now` "Current credentials for $DB_INSTANCE:"
@@ -393,7 +393,7 @@ function deploy_db_(){
 	fi
 	echo `now` "Creating and configuring $DB_INSTANCE Compose for PostgreSQL is finished"
 	echo `now` "Current Compose for PostgreSQL instances:"
-	ibmcloud -q service list | grep compose-for-postgresql || true
+	ibmcloud -q service list | grep compose-for-postgresql || :
 }
 
 # Delete Compose for PostgreSQL instance
@@ -403,7 +403,7 @@ function teardown_db_(){
 	sleep $WAIT_RESPONSE
 	echo `now` "Deleting $DB_INSTANCE_CREDS credentials for $DB_INSTANCE"
 	echo `now` "Current Compose for PostgreSQL instances:"
-	ibmcloud -q service list | grep compose-for-postgresql || true
+	ibmcloud -q service list | grep compose-for-postgresql || :
 	if [[ $(ibmcloud service keys "$DB_INSTANCE" | cut -d' ' -f1 | grep -Fx "$DB_INSTANCE_CREDS") ]]; then
 	 	echo `now` "Found $DB_INSTANCE_CREDS credentials for $DB_INSTANCE, deleting..."
 	 	ibmcloud service key-delete "$DB_INSTANCE" "$DB_INSTANCE_CREDS" -f
@@ -419,7 +419,7 @@ function teardown_db_(){
 	fi
 	echo `now` "Finished deleting $DB_INSTANCE and its credentials $DB_INSTANCE_CREDS"
 	echo `now` "Current Compose for PostgreSQL instances:"
-	ibmcloud -q service list | grep compose-for-postgresql || true
+	ibmcloud -q service list | grep compose-for-postgresql || :
 }
 
 # Create and configure functions
