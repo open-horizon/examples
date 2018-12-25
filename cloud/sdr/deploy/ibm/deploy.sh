@@ -163,7 +163,7 @@ function deploy_stt_(){
 	else
 	 	echo `now` "Found no Watson STT instance $STT_INSTANCE with the $STT_INSTANCE_PLAN plan, creating..."
 	 	ibmcloud -q service create speech_to_text "$STT_INSTANCE_PLAN" "$STT_INSTANCE"
-	 	ibmcloud -q service list | grep speech_to_text
+	 	ibmcloud -q service list | grep speech_to_text || :
 	fi
 	echo `now` "Creating credentials $STT_INSTANCE_CREDS for $STT_INSTANCE Watson STT instance"
 	echo `now` "Current credentials for ${STT_INSTANCE}:"
