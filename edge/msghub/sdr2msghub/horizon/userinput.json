@@ -1,7 +1,7 @@
 {
     "services": [
         {
-            "org": "$HZN_ORG_ID",
+            "org": "IBM",
             "url": "$MYDOMAIN.$SDR2MSGHUB_NAME",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
