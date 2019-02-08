@@ -27,8 +27,5 @@ RUN apk --no-cache add mosquitto-clients musl-dev bash vim curl wget jq
 # Copy over the test code
 COPY bin/gps-test.arm /gps-test
 
-# Get the current PEM file for Watson IoT
-COPY ca-staging.pem /
-
 # Default command will run the tests
 CMD /gps-test

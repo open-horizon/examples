@@ -25,6 +25,5 @@ MAINTAINER glendarling@us.ibm.com
 #RUN apk --no-cache add musl-dev bash vim curl jq
 
 COPY bin/gps-test.amd64 /gps-test
-COPY ca-staging.pem /
 
 CMD /gps-test
