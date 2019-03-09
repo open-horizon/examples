@@ -1,12 +1,13 @@
 {
     "services": [
         {
-            "org": "IBM",
-            "url": "$MYDOMAIN.$CPU2MSGHUB_NAME",
+            "org": "$HZN_ORG_ID",
+            "url": "$SERVICE_URL",
             "versionRange": "[0.0.0,INFINITY)",
             "variables": {
-                "MOCK": false,
                 "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
+                "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
+                "MOCK": false,
                 "PUBLISH": true,
                 "SAMPLE_INTERVAL": 2,
                 "SAMPLE_SIZE": 5,

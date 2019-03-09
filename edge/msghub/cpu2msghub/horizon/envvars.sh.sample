@@ -1,32 +1,14 @@
-# Set these values appropriate for your Horizon instance
-export HZN_ORG_ID=myorg
-export EXCHANGE_USER=myuser
-export EXCHANGE_PW=mypw
-export MYDOMAIN=mydomain.com
-export HZN_PATTERN=mypattern    # this is the device type
-
-# This variable must be set appropriately for your specific Edge Node
-export HZN_DEVICE_ID=mydevice
-export HZN_DEVICE_TOKEN=mypw
-
-export ARCH=amd64   # arch of your edge node: amd64, or arm for Raspberry Pi, or arm64 for TX2
-export CPU2MSGHUB_NAME=cpu2msghub   # the name of the service, used in the docker image path and in the service url
-export CPU2MSGHUB_VERSION=1.2.3   # the service version, and also used as the tag for the docker image. Must be in OSGI version format.
-export CPU_NAME=cpu   # the name of the service, used in the docker image path and in the service url
-export CPU_VERSION=1.2.2   # the service version, and also used as the tag for the docker image. Must be in OSGI version format.
-export GPS_NAME=gps   # the service name, used in the docker image path and in the service url.
-export GPS_VERSION=2.0.5   # the service version, and also used as the tag for the docker image. Must be in OSGI version format.
-
+# Set these values appropriate for you:
+export HZN_EXCHANGE_USER_AUTH="myuser:mypw"
 export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
 
-# This is IBM Message Hub you are sending data to
+# This is the IBM Event Streams instance you are sending data to
 export MSGHUB_API_KEY='abcdefghijklmn0123456789'
 export MSGHUB_BROKER_URL="kafka01-prod02.messagehub.services.us-south.bluemix.net:1234,kafka02-prod02.messagehub.services.us-south.bluemix.net:1234,kafka03-prod02.messagehub.services.us-south.bluemix.net:1234,kafka04-prod02.messagehub.services.us-south.bluemix.net:1234,kafka05-prod02.messagehub.services.us-south.bluemix.net:1234"
+export MSGHUB_ADMIN_URL=https://kafka-admin-prod02.messagehub.services.us-south.bluemix.net:443
 
-# There is normally no need for you to edit these variables
-export HZN_ORGANIZATION=$HZN_ORG_ID
-export HZN_EXCHANGE_USER_AUTH="$EXCHANGE_USER:$EXCHANGE_PW"
-export EXCHANGE_NODEAUTH="$HZN_DEVICE_ID:$HZN_DEVICE_TOKEN"
+# This is not needed until you register your edge node with the service and pattern you published in the exchange:
+export EXCHANGE_NODEAUTH="mydeviceid:mydevicetoken"
 
 # You only need to set this if you are running 'hzn dev' without the full edge fabric agent installed
-export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"
+#export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"
