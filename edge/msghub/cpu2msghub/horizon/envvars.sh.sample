@@ -8,6 +8,7 @@ export MSGHUB_BROKER_URL="kafka01-prod02.messagehub.services.us-south.bluemix.ne
 export MSGHUB_ADMIN_URL=https://kafka-admin-prod02.messagehub.services.us-south.bluemix.net:443
 
 # This is not needed until you register your edge node with the service and pattern you published in the exchange:
+#todo: this will change to HZN_EXCHANGE_NODE_AUTH when anax issue 786 is completed
 export EXCHANGE_NODEAUTH="mydeviceid:mydevicetoken"
 
 # You only need to set this if you are running 'hzn dev' without the full edge fabric agent installed

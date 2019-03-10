@@ -12,7 +12,7 @@ export SERVICE_VERSION ?= 1.2.6
 export DOCKER_HUB_ID ?= openhorizon
 
 # Derived variables
-export HZN_PATTERN ?= pattern-$(SERVICE_NAME)
+export HZN_PATTERN ?= $(HZN_ORG_ID)/pattern-$(SERVICE_NAME)
 export DOCKER_IMAGE ?= $(DOCKER_HUB_ID)/$(ARCH)_$(SERVICE_NAME):$(SERVICE_VERSION)
 
 default: hznstart
@@ -39,7 +39,7 @@ stop:
 
 msghub-topic:
 	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
-	export MSGHUB_TOPIC="$${HZN_ORG_ID//[@#%()+=:,<>\/]/_}.$${HZN_ORG_ID//[@#%()+=:,<>\/]/_}_$${HZN_PATTERN//[@#%()+=:,<>\/]/_}" && curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $(MSGHUB_API_KEY)" -d "{ \"name\": \"$$MSGHUB_TOPIC\", \"partitions\": 2 }" $(MSGHUB_ADMIN_URL)/admin/topics
+	export MSGHUB_TOPIC="$${HZN_ORG_ID//[@#%()+=:,<>\/]/_}.$${HZN_PATTERN//[@#%()+=:,<>\/]/_}" && curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $(MSGHUB_API_KEY)" -d "{ \"name\": \"$$MSGHUB_TOPIC\", \"partitions\": 2 }" $(MSGHUB_ADMIN_URL)/admin/topics
 
 msghub-topic-list:
 	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
@@ -52,7 +52,7 @@ hznbuild: build
 	hzn dev dependency fetch --arch=$(ARCH) --org IBM --url github.com.open-horizon.examples.gps
 	hzn dev service verify
 
-hznstart: hznbuild
+hznstart:
 	: $${MSGHUB_API_KEY:?} $${MSGHUB_BROKER_URL:?}   # verify these env vars are set
 	hzn dev service start
 
@@ -72,11 +72,11 @@ publish-service-only:
 # Create/update the deployment pattern for a set of edge nodes
 publish-pattern:
 	: $${HZN_EXCHANGE_USER_AUTH:?}   # verify these env vars are set
-	hzn exchange pattern publish -p $(HZN_PATTERN) -f horizon/pattern/pattern-cpu2msghub.json
+	hzn exchange pattern publish -p $${HZN_PATTERN#*/} -f horizon/pattern/pattern-cpu2msghub.json
 
 register-node:
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${EXCHANGE_NODEAUTH:?} $${MSGHUB_API_KEY:?} $${MSGHUB_BROKER_URL:?}   # verify these env vars are set
-	hzn register -u $(HZN_EXCHANGE_USER_AUTH) -n $(EXCHANGE_NODEAUTH) $(HZN_ORG_ID) $(HZN_ORG_ID)/$(HZN_PATTERN) -f horizon/userinput.json
+	hzn register -u $(HZN_EXCHANGE_USER_AUTH) -n $(EXCHANGE_NODEAUTH) $(HZN_ORG_ID) $(HZN_PATTERN) -f horizon/userinput.json
 
 testmake:
 	echo $$DOCKER_IMAGE
