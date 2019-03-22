@@ -5,7 +5,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 export ARCH ?= $(SYSTEM_ARCH)
 
 # These variables can be overridden from the environment
-export HZN_ORG_ID=IBM
+export HZN_ORG_ID ?= IBM
 export SERVICE_NAME ?= cpu2msghub
 export SERVICE_URL ?= github.com.open-horizon.examples.$(SERVICE_NAME)
 export SERVICE_VERSION ?= 1.2.6
