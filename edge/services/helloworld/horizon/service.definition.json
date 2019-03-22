@@ -1,0 +1,27 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_URL",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "multiple",
+    "requiredServices": [],
+    "userInput": [
+        {
+            "name": "HW_WHO",
+            "label": "Who to say hello to",
+            "type": "string",
+            "defaultValue": "World"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "image": "$DOCKER_IMAGE"
+            }
+        }
+    }
+}
