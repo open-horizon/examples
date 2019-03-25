@@ -3,6 +3,6 @@
 # Very simple Horizon sample service.
 
 while true; do
-  echo "Hello ${HW_WHO}!"
+  echo "$HZN_DEVICE_ID says: Hello ${HW_WHO}!"
   sleep 3
 done
