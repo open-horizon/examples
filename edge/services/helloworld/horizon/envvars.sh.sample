@@ -1,9 +1,9 @@
-# Set these values appropriate for you:
-export HZN_EXCHANGE_USER_AUTH="myuser:mypw"
-export DOCKER_HUB_ID=mydockerhubid   # your docker hub username, sign up at https://hub.docker.com/sso/start/?next=https://hub.docker.com/
+# Needed to run 'hzn dev' without the full edge fabric agent installed:
+export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"
 
-# This is not needed until you register your edge node with the service and pattern you published in the exchange:
+# Needed to publish the service and pattern in the edge fabric exchange:
+export HZN_EXCHANGE_USER_AUTH="myuser:mypw"
+
+# Needed to register your edge node with the edge fabric:
 export HZN_EXCHANGE_NODE_AUTH="mydeviceid:mydevicetoken"
 
-# You only need to set this if you are running 'hzn dev' without the full edge fabric agent installed
-#export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"

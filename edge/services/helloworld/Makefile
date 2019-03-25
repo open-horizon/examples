@@ -4,7 +4,7 @@ SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(SYSTEM_ARCH)
 
-# These variables can be overridden from the environment
+# Set these variables as appropriate
 export HZN_ORG_ID ?= IBM
 export SERVICE_NAME ?= helloworld
 export SERVICE_URL ?= github.com.open-horizon.examples.$(SERVICE_NAME)
