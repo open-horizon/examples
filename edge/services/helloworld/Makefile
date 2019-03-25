@@ -26,13 +26,10 @@ hznstart:
 hznstop:
 	hzn dev service stop
 
-# Push the docker image to the registry. You must have write access to the docker registry specified by DOCKER_HUB_ID
-docker-push: build
-	docker push $(DOCKER_IMAGE)
-
 # Create/update the metadata in the exchange for this service
-publish-service: build publish-service-only
-publish-service-only:
+build-publish-service: build publish-service-only
+
+publish-service:
 	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # verify these env vars are set
 	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
 
