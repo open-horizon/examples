@@ -8,7 +8,7 @@ The standard Linux `make` tool is used to operate on this code.  Please see the 
 
 ## Building
 
-To build and tag the `speedtest` service docker container for the local architecture, within this directory run make with no target:
+To build and tag the `speedtest` Service docker container for the local architecture, within this directory run make with no target:
 ```
     $ make
 ```
@@ -74,9 +74,9 @@ curl -sS localhost:5659/v1/speedtest | jq
 
 ## Development and Test Development
 
-To facilitate development of the `gps` service, use the `develop` target:
+To facilitate development of the `speedtest` Service, use the `develop` target:
 ```
     $ make dev
 ```
-This will build the `speedtest` service container, then mount this working directory as `/outside` within the container and run `/bin/sh` in the container.  In that shell, `cd /outside` and then you can work on the original files here outside the container, and run them in the context of the container.
+This will build the `speedtest` Service container, then mount this working directory as `/outside` within the container and run `/bin/sh` in the container.  In that shell, `cd /outside` and then you can work on the original files here outside the container, and run them in the context of the container.
 
