@@ -72,11 +72,11 @@ curl -sS localhost:5659/v1/speedtest | jq
 }
 ```
 
-## Development and Test Development
+## Development Environment
 
-To facilitate development of the `speedtest` Service, use the `develop` target:
+To facilitate development of the `speedtest` Service, you may wish to use the `dev` target:
 ```
     $ make dev
 ```
-This will build the `speedtest` Service container, then mount this working directory as `/outside` within the container and run `/bin/sh` in the container.  In that shell, `cd /outside` and then you can work on the original files here outside the container, and run them in the context of the container.
+This will build the `speedtest` Service container, then mount this working directory as `/outside` within the container and run `/bin/sh` in the container.  In that shell, `cd /outside` and then you can work on the original files in persistent storage outside the container, and also run them within the context of the container.
 
