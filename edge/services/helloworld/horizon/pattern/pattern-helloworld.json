@@ -1,0 +1,17 @@
+{
+  "label": "Edge $SERVICE_NAME Service Pattern for $ARCH",
+  "description": "Pattern for $SERVICE_NAME",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "$SERVICE_NAME",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
+        {
+          "version": "$SERVICE_VERSION"
+        }
+      ]
+    }
+  ]
+}
