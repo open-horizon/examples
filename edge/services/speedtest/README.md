@@ -16,6 +16,7 @@ To build and tag the `speedtest` Service docker container for the local architec
 ## Testing
 
 To test the `speedtest` Service container, build and run it, then run a simple curl probe if its REST API, e.g.:
+
 ```
     $ make
     $ make test
@@ -72,11 +73,29 @@ curl -sS localhost:5659/v1/speedtest | jq
 }
 ```
 
+## Pushing To DockerHub
+
+When you are ready, `docker login` to youor DockerHub account. Once that succeeds then you can push an appropriately-tagged image to account `openhorizon` in DockerHub with this command:
+
+```
+    $ make push
+```
+
+## Publishing to the Exchange
+
+Once you have managed to push the image to DockerHub, then you can publish it to the Horizon Exchange as a "public" service in the "IBM" organization. Begin by setting up your IBM org credentials in your shell environment and then run this command:
+
+```
+    $ make service-publish
+```
+
 ## Development Environment
 
 To facilitate development of the `speedtest` Service, you may wish to use the `dev` target:
+
 ```
     $ make dev
 ```
+
 This will build the `speedtest` Service container, then mount this working directory as `/outside` within the container and run `/bin/sh` in the container.  In that shell, `cd /outside` and then you can work on the original files in persistent storage outside the container, and also run them within the context of the container.
 
