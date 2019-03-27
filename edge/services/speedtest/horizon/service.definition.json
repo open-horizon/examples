@@ -1,0 +1,20 @@
+{
+  "org": "IBM",
+  "label": "Speedtest for ${ARCH}",
+  "description": "Speedtest REST API Service",
+  "public": true,
+  "documentation": "http://github.com/open-horizon/examples/tree/master/edge/services/speedtest/TEADME.md",
+  "url": "github.com.open-horizon.examples.speedtest",
+  "version": "${VERSION}",
+  "arch": "${ARCH}",
+  "sharable": "singleton",
+  "requiredServices": [],
+  "userInput": [],
+  "deployment": {
+    "services": {
+      "speedtest": {
+        "image": "openhorizon/${ARCH}_speedtest:${VERSION}"
+      }
+    }
+  }
+}

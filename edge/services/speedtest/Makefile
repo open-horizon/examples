@@ -6,9 +6,10 @@
 #   $ make test
 #
 
-ARCH:=$(shell dpkg --print-architecture)
-
+VERSION:='1.0.0'
+ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 HOST_TEST_PORT:=5659
+TEMP_SERVICE_DEF_FILE := $(shell mktemp)
 
 all: build run
 
@@ -35,4 +36,13 @@ stop:
 clean: stop
 	-docker rmi speedtest 2>/dev/null || :
 
-.PHONY: all build dev run test exec stop clean
+push:
+	docker build -f Dockerfile.$(ARCH) -t openhorizon/$(ARCH)_speedtest:$(VERSION) .
+	docker push openhorizon/$(ARCH)_speedtest:$(VERSION)
+
+service-publish:
+	export ARCH=$(ARCH); export VERSION=$(VERSION); cat horizon/service.definition.json | envsubst > $(TEMP_SERVICE_DEF_FILE)
+	hzn exchange service publish -k ./*-private.key -K ./*-public.pem -f $(TEMP_SERVICE_DEF_FILE)
+	-rm -f $(TEMP_SERVICE_DEF_FILE)
+
+.PHONY: all build dev run test exec stop clean push service-publish
