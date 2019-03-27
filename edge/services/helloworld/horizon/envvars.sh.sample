@@ -1,9 +1,0 @@
-# Needed to run 'hzn dev' without the full edge fabric agent installed:
-export HZN_EXCHANGE_URL="https://alpha.edge-fabric.com/v1"
-
-# Needed to publish the service and pattern in the edge fabric exchange:
-export HZN_EXCHANGE_USER_AUTH="myuser:mypw"
-
-# Needed to register your edge node with the edge fabric:
-export HZN_EXCHANGE_NODE_AUTH="mydeviceid:mydevicetoken"
-

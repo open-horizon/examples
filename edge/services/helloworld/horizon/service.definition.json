@@ -4,7 +4,7 @@
     "description": "A super-simple sample Horizon service",
     "public": true,
     "documentation": "",
-    "url": "$SERVICE_URL",
+    "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
     "sharable": "multiple",
