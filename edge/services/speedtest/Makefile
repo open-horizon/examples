@@ -7,7 +7,7 @@
 #
 
 VERSION:='1.0.0'
-ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
+ARCH := $(shell hzn node list | jq .configuration.architecture)
 HOST_TEST_PORT:=5659
 TEMP_SERVICE_DEF_FILE := $(shell mktemp)
 
@@ -37,7 +37,7 @@ clean: stop
 	-docker rmi speedtest 2>/dev/null || :
 
 push:
-	docker build -f Dockerfile.$(ARCH) -t openhorizon/$(ARCH)_speedtest:$(VERSION) .
+	docker tag speedtest openhorizon/$(ARCH)_speedtest:$(VERSION)
 	docker push openhorizon/$(ARCH)_speedtest:$(VERSION)
 
 service-publish:
