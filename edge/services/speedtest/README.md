@@ -75,7 +75,7 @@ curl -sS localhost:5659/v1/speedtest | jq
 
 ## Pushing To DockerHub
 
-When you are ready, `docker login` to youor DockerHub account. Once that succeeds then you can push an appropriately-tagged image to account `openhorizon` in DockerHub with this command:
+When you are ready, `docker login` to your DockerHub account. Once that succeeds then you can push an appropriately-tagged image to account `openhorizon` in DockerHub with this command:
 
 ```
     $ make push

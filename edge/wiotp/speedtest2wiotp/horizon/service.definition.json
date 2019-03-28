@@ -1,0 +1,20 @@
+{
+  "org": "IBM",
+  "label": "Speedtest2WIoTP for ${ARCH}",
+  "description": "Speedtest2WIoTP Service",
+  "public": true,
+  "documentation": "http://github.com/open-horizon/examples/tree/master/edge/wiotp/speedtest2wiotp/oREADME.md",
+  "url": "github.com.open-horizon.examples.speedtest2wiotp",
+  "version": "${VERSION}",
+  "arch": "${ARCH}",
+  "sharable": "singleton",
+  "requiredServices": [],
+  "userInput": [],
+  "deployment": {
+    "services": {
+      "speedtest": {
+        "image": "openhorizon/${ARCH}_speedtest2wiotp:${VERSION}"
+      }
+    }
+  }
+}
