@@ -53,7 +53,7 @@ service-publish:
 
 pattern-publish:
 	export VERSION=$(VERSION); cat horizon/pattern/speedtest2wiotp.json | envsubst > $(TEMP_PATTERN_DEF_FILE)
-	hzn exchange pattern publish -k ./*-private.key -K ./*-public.pem -f $(TEMP_PATTERN_DEF_FILE)
+	hzn exchange pattern publish -k ./*-private.key -K ./*-public.pem -p speedtest2wiotp -f $(TEMP_PATTERN_DEF_FILE)
 	-rm -f $(TEMP_PATTERN_DEF_FILE)
 
 .PHONY: all build dev run test exec stop clean push service-publish pattern-publish
