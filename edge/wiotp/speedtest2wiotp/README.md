@@ -69,6 +69,12 @@ To run this container with its dependency, the `speedtest` Service, you need to 
 
 (where $ARCH is the local hardware architecture, using the Horizon name for that, which is the Go language name. Typically this will be `amd64`, `arm`, or `arm64`).
 
+For the next step, in addition to setting up ARCH, you need to setup a semver VERSION variable, e.g.:
+
+```
+    $ export VERSION='1.0.0'
+```
+
 Once that is setup, you can start `speedtest2wiotp` together with `speedtest`, by using this command:
 
 ```

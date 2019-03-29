@@ -10,12 +10,6 @@
     "sharable": "singleton",
     "matchHardware": null,
     "requiredServices": [
-        {
-            "url": "github.com.open-horizon.examples.speedtest",
-            "org": "IBM",
-            "version": "1.0.0",
-            "arch": "amd64"
-        }
     ],
     "userInput": [
         {

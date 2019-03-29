@@ -52,7 +52,7 @@ service-publish:
 	-rm -f $(TEMP_SERVICE_DEF_FILE)
 
 pattern-publish:
-	export VERSION=$(VERSION); cat horizon/pattern.definition.json | envsubst > $(TEMP_PATTERN_DEF_FILE)
+	export VERSION=$(VERSION); cat horizon/pattern/speedtest2wiotp.json | envsubst > $(TEMP_PATTERN_DEF_FILE)
 	hzn exchange pattern publish -k ./*-private.key -K ./*-public.pem -f $(TEMP_PATTERN_DEF_FILE)
 	-rm -f $(TEMP_PATTERN_DEF_FILE)
 
