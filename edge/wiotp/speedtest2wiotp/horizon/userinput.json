@@ -1,0 +1,15 @@
+{
+    "services": [
+        {
+            "org": "IBM",
+            "url": "github.com.open-horizon.examples.speedtest2wiotp",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "WIOTP_ORG": "",
+                "WIOTP_DEVICE_TYPE":  "",
+                "WIOTP_DEVICE_ID":    "",
+                "WIOTP_DEVICE_TOKEN": ""
+            }
+        }
+    ]
+}

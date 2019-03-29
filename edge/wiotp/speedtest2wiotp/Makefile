@@ -3,16 +3,15 @@
 #
 # Usage:
 #   $ make
+#       ...  then set environment variables so you can subscribe to WIoTP ...
 #   $ make test
 #
 
+# Set this "semver" VERSION value when you make code changes and re-publish
 VERSION:='1.0.0'
+
+# Derived values. No need to edit these.
 ARCH := $(shell hzn node list | jq .configuration.architecture)
-WIOTP_ORG := $(shell cat wiotp.config | jq -r '.config."wiotp-org"')
-WIOTP_API_KEYNAME := $(shell cat wiotp.config | jq -r '.config."wiotp-api-keyname"')
-WIOTP_API_TOKEN := $(shell cat wiotp.config | jq -r '.config."wiotp-api-token"')
-WIOTP_DEV_TYPE := $(shell cat wiotp.config | jq -r '.config."wiotp-device-type"')
-WIOTP_DEV_ID := $(shell cat wiotp.config | jq -r '.config."wiotp-device-id"')
 TEMP_SERVICE_DEF_FILE := $(shell mktemp)
 TEMP_PATTERN_DEF_FILE := $(shell mktemp)
 
@@ -20,6 +19,7 @@ all: build run
 
 build:
 	docker build -f Dockerfile.$(ARCH) -t speedtest2wiotp .
+	docker tag speedtest2wiotp openhorizon/$(ARCH)_speedtest2wiotp:$(VERSION)
 
 dev: build
 	-docker rm -f speedtest2wiotp 2> /dev/null || :
@@ -30,8 +30,9 @@ run:
 	docker run -d --name speedtest2wiotp -p $(HOST_TEST_PORT):80 speedtest2wiotp
 
 test:
+	: $${WIOTP_ORG:?} $${WIOTP_DEVICE_TYPE:?} $${WIOTP_DEVICE_ID:?} $${WIOTP_API_KEYNAME:?} $${WIOTP_API_TOKEN:?}   # this verifies these env vars are set
 	@echo 'Subscribing to WIoTP topic. Use "Ctrl-C" to exit...'
-	mosquitto_sub -h "$(WIOTP_ORG).messaging.internetofthings.ibmcloud.com" -p 8883 -i "a:$(WIOTP_ORG):$(WIOTP_API_KEYNAME)" -u "$(WIOTP_API_KEYNAME)" -P "$(WIOTP_API_TOKEN)" --capath /etc/ssl/certs -t "iot-2/type/$(WIOTP_DEV_TYPE)/id/$(WIOTP_DEV_ID)/evt/status/fmt/json" -d
+	mosquitto_sub -h "$(WIOTP_ORG).messaging.internetofthings.ibmcloud.com" -p 8883 -i "a:$(WIOTP_ORG):$(WIOTP_API_KEYNAME)" -u "$(WIOTP_API_KEYNAME)" -P "$(WIOTP_API_TOKEN)" --capath /etc/ssl/certs -t "iot-2/type/$(WIOTP_DEVICE_TYPE)/id/$(WIOTP_DEVICE_ID)/evt/status/fmt/json" -d | grep '^{.*' | jq
 
 exec:
 	docker exec -it speedtest2wiotp /bin/sh
@@ -43,7 +44,6 @@ clean: stop
 	-docker rmi speedtest2wiotp 2>/dev/null || :
 
 push:
-	docker tag speedtest2wiotp openhorizon/$(ARCH)_speedtest2wiotp:$(VERSION)
 	docker push openhorizon/$(ARCH)_speedtest2wiotp:$(VERSION)
 
 service-publish:

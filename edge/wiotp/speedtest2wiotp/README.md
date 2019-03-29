@@ -6,33 +6,89 @@ Interested parties with the appropriate credentials may then observe this data f
 
 ## Preconditions
 
-The standard Linux `make` tool is used to operate on this code.  Please see the local `Makefile` for additional details.
+The standard Linux `make` tool is used to operate on this code, so it must be installed. Please see the local `Makefile` for additional usage details.
 
-In addition, you must get an IBM Cloud account (free or paid) and provision a WIoTP "Organization" and within that organization create a Device Type, and an instance of that type (a Device ID and Dvice Token). To subscribe, you will also need to provision an API key name and access token. See "Using the WIoTP Web Pages" below for instructions.
+In addition, you require an IBM Cloud account (free or paid) to provision a WIoTP `Organization` and within that organization create an IoT `Device Type`, and an instance of that type (specifying a `Device ID` and `Device Token`). See "Using the WIoTP Web Pages" below for instructions.
 
-Finally, you must enter these details into the `wiotp.config` file in this directory.
+When you register an Edge Node with a pattern containing `speedtest2wiotp` you will need to provide a `userinput.json` file defining these values, e.g.:
 
-Edge Nodes that register for the corresponding pattern will also need to fill in the `horizon/userinput.json` file with appropriate credentials as well. Each Edge Node will require its own Device ID to publish.
+```
+{
+    "services": [
+        {
+            "org": "IBM",
+            "url": "github.com.open-horizon.examples.speedtest2wiotp",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "WIOTP_ORG": "theorg",
+                "WIOTP_DEVICE_TYPE":  "MyDeviceType",
+                "WIOTP_DEVICE_ID":    "MyDeviceId0",
+                "WIOTP_DEVICE_TOKEN": "MyDeviceId0Token"
+
+            }
+        }
+    ]
+}
+```
+
+Please note that each Edge Node will require its own Device ID to publish.
+
+## Local Testing Preconditions
+
+If you wish to do (optional) local testing of this service's publiation to the IBMN Cloud Watson IoT Platform you will need to install an appropriate subscription tool, and setup some credentials.
+
+The `mosquitto_sub` command (found in the popular `mosquitto-clients` package) and the `jq` utility are used for testing, so they must be install if you wish to do this.
+
+You must also provision a Watson IoT Platform API key name and access token to enable you to authenticate and view the data streams from your Edge Node devices. See "Using the WIoTP Web Pages" below for instructions.
+
+To use the `make test` target for testing, you must configure a few environment variables with your credentials, e.g.:
+
+```
+export WIOTP_ORG="theorg"
+export WIOTP_API_KEYNAME="a-theorg-thekeyname"
+export WIOTP_API_TOKEN="token-for-that-key"
+export WIOTP_DEVICE_TYPE="MyDeviceType"
+export WIOTP_DEVICE_ID="MyDeviceId0"
+```
 
 ## Building
 
-To build and tag the `speedtest2wiotp` Service docker container for the local architecture, within this directory run make with no target:
+To build and tag the `speedtest2wiotp` Service docker container for the local architecture, within this directory run `make build`:
+
 ```
-    $ make
+    $ make build
 ```
 
 ## Testing
 
-To test the `speedtest2wiotp` Service container, first build and run it, then run subscribe to the WIoTP MQTT service, e.g.:
+To run this container with its dependency, the `speedtest` Service, you need to tell Horiozn abouot the dependency:
 
 ```
-    $ make
+   $ hzn dev dependency fetch --arch=$ARCH --org IBM --url github.com.open-horizon.examples.speedtest
+```
+
+(where $ARCH is the local hardware architecture, using the Horizon name for that, which is the Go language name. Typically this will be `amd64`, `arm`, or `arm64`).
+
+Once that is setup, you can start `speedtest2wiotp` together with `speedtest`, by using this command:
+
+```
+   $ hzn dev service start -S -f horizon/userinput.json
+```
+
+Note that you must have previously setup the `userinput.json` file appropriately as described above.
+
+To verify that the `speedtest2wiotp` Service container is publishing to Watson IoT Platform, first build and run it, then you can use `make test` to subscribe to the IBM Cloud WIoTP MQTT data feed from your device, e.g.:
+
+```
     $ make test
 ```
 
+Note that you must have previously appropriately configured environment vairables for your API key credentials, etc. as described above.
+
+
 ## Pushing To DockerHub
 
-When you are ready, `docker login` to your DockerHub account. Once that succeeds then you can push an appropriately-tagged image to account `openhorizon` in DockerHub with this command:
+When you are ready to share an update, `docker login` to your DockerHub account. Once that succeeds then you can push an appropriately-tagged image to account `openhorizon` in DockerHub with this command:
 
 ```
     $ make push
@@ -48,7 +104,7 @@ Once you have managed to push the image to DockerHub, then you can publish it to
 
 ## Publishing a Pattern to the Exchange
 
-Once you have managed to publish the Service to the Exchange, you can create a corresponding "public" pattern to the Horizon Exchange in the "IBM" organization that references this Service. Begin by setting up your IBM org credentials in your shell environment and then run this command:
+Once you have managed to publish the changed Service (and any changed dependencies) to the Exchange, you can create a corresponding "public" pattern to the Horizon Exchange in the "IBM" organization that references this Service. Begin by setting up your IBM org credentials in your shell environment and then run this command:
 
 ```
     $ make pattern-publish

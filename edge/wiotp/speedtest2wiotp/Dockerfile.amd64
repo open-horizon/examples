@@ -3,4 +3,4 @@ FROM amd64/python:3-alpine
 RUN apk --no-cache add curl jq mosquitto-clients
 COPY *.sh /
 WORKDIR /
-CMD /speedtest2wiotp.sh
+CMD sh /speedtest2wiotp.sh
