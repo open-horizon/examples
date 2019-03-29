@@ -2,10 +2,80 @@
 
 ## Preconditions
 
-- Set the first section of variables in `horizon/hzn.env` to your own values.
-- Set your Horizon Exchange credentials: `export HZN_EXCHANGE_USER_AUTH="myuser:mypw"`
-- `alias hzn='source horizon/hzn.env && hzn'`   # soon this won't be needed
+- Go through the quick start guide for setting up your edge node and running the helloworld service.
+- Set the variables in `horizon/hzn.env` to your own values.
+- Set your Horizon Exchange credentials in your environment: `export HZN_EXCHANGE_USER_AUTH="myuser:mypw"`
+- `alias hzn='source horizon/hzn.env && hzn'`   # soon this will not be needed
 
-## Building and Publishing
+## Building and Publishing the Hello World Example Edge Service
 
-These instructions will be filled in soon...
+- Build the hello world docker image:
+```
+make
+```
+- Have Horizon start the service locally:
+```
+hzn dev service start -S
+```
+- See the docker container running and look at the output:
+```
+docker ps
+docker logs -f $(docker ps -q --filter name=helloworld)
+```
+- See the environment variables Horizon passes into your service container:
+```
+docker inspect $(docker ps -q --filter name=helloworld) | jq '.[0].Config.Env'
+```
+- Stop the service:
+```
+hzn dev service stop
+```
+- Create a service signing key pair (if you haven't already done so):
+```
+mkdir -p horizon/keys   # soon this will not be needed
+hzn key create -d horizon/keys IBM my@email.com
+# soon these 2 commands will not be needed:
+source horizon/hzn.env && mv horizon/keys/*-private.key $HZN_PRIVATE_KEY_FILE
+source horizon/hzn.env && mv horizon/keys/*-public.pem $HZN_PUBLIC_KEY_FILE
+```
+- Authenticate to your docker registry:
+```
+echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
+```
+- Push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+```
+# soon the -k and -K flags will not be necessary
+hzn exchange service publish -f horizon/service.definition.json -k $HZN_PRIVATE_KEY_FILE -K $HZN_PUBLIC_KEY_FILE
+hzn exchange service list
+```
+- Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+```
+# soon the -p flag will not be needed
+hzn exchange pattern publish -f horizon/pattern/pattern-helloworld.json -p pattern-helloworld-$ARCH
+hzn exchange pattern list
+```
+- Register your edge node with Horizon to use your deployment pattern (choose a node id and token):
+```
+hzn register -n mynodeid:mynodetoken $HZN_ORG_ID pattern-helloworld-$ARCH
+```
+- Look at the Horizon agreement until 1 it is finalized and then see the running container:
+```
+hzn agreement list
+docker ps
+```
+- See the helloworld service output:
+```
+# soon you will use 'hzn service log ...' for all platforms
+# For now on Linux:
+tail -f /var/log/syslog | grep helloworld
+# For now on Mac:
+docker logs -f $(docker ps -q --filter name=helloworld)
+``` 
+- Unregister your edge node, stopping the helloworld service:
+```
+hzn unregister -f
+```
+
+# Further Learning
+
+To see more Horizon features demonstrated, continue on to the cpu2msghub example.
