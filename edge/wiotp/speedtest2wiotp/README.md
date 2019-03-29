@@ -37,7 +37,7 @@ Please note that each Edge Node will require its own Device ID to publish.
 
 If you wish to do (optional) local testing of this service's publiation to the IBMN Cloud Watson IoT Platform you will need to install an appropriate subscription tool, and setup some credentials.
 
-The `mosquitto_sub` command (found in the popular `mosquitto-clients` package) and the `jq` utility are used for testing, so they must be install if you wish to do this.
+The `mosquitto_sub` command (found in the popular `mosquitto-clients` package) and the `jq` utility are used for testing, so they must be installed if you wish to do this.
 
 You must also provision a Watson IoT Platform API key name and access token to enable you to authenticate and view the data streams from your Edge Node devices. See "Using the WIoTP Web Pages" below for instructions.
 

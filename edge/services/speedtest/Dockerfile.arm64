@@ -1,5 +1,5 @@
 FROM arm64v8/python:3-alpine
-WORKDIR /usr/src/app
+WORKDIR /
 
 # Install useful dev tools
 RUN apk --no-cache --update add jq vim
