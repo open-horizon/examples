@@ -191,7 +191,5 @@ Now configure the type and size of chart you want to use, then select the Next b
 
 You should see this card appear on your board, and start reflecting your actual data values as status message are received.
 
-
-
-
+Repeat this porocess to add other cards to visualize other fields in the status event, if desired.
 
