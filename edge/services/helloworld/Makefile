@@ -4,21 +4,24 @@
 TMP_MK=horizon/hzn.env.tmp.mk
 -include $(TMP_MK)
 
-
+# Build the docker image for the current architecture
 build:
-	docker build -t $(DOCKER_IMAGE) -f ./Dockerfile.$(ARCH) .
+	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 	@rm -f $(TMP_MK)
 
+# Build the docker image for 3 architectures
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 	@rm -f $(TMP_MK)
 
+# Publish the service to the Horizon Exchange for the current architecture
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json -k $(HZN_PRIVATE_KEY_FILE) -K $(HZN_PUBLIC_KEY_FILE)
 	@rm -f $(TMP_MK)
 
+# Publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
 publish-all-arches:
 	ARCH=amd64 $(MAKE) publish-service
 	ARCH=arm $(MAKE) publish-service
@@ -27,7 +30,7 @@ publish-all-arches:
 	@rm -f $(TMP_MK)
 
 clean:
-	-docker rmi $$DOCKER_IMAGE 2> /dev/null || :
+	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
 	@rm -f $(TMP_MK)
 
 clean-all-archs:
