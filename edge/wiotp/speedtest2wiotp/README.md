@@ -193,3 +193,57 @@ You should see this card appear on your board, and start reflecting your actual 
 
 Repeat this porocess to add other cards to visualize other fields in the status event, if desired.
 
+## Notes For WIoTP Authentication
+
+When interacting with the Watson IoT Platform MQTT endpoints there are a few important points to keep in mind. This section is intended to be a small primer for using this interface.
+
+The first point is that by default you are required to use TLS to communicate with WIoTP. You can go deep into the platform interface and disable this, but it is relatively easy to instead communicate securely with the default settings. When using the `mosquitto-clients` package, as the example code here does, you just need to pass `--capath /etc/ssl/certs` as an argument to `mosquitto_pub` or `mosquitto_sub` (and of course, specify the secure port, `-p 8883`. If you will be changing the security settings and communicating without encryption, then you won't pass the certificate path, and you will use the insecure port, `-p 1883`.
+
+Another important point is that WIoTP expects devices to publish data, and applications (with API keys) to subscribe to data. Further, it expects each of these to use a different naming scheme for the MQTT "topic" they specify. Devices are expected to identify themselves (with `-i` in the mosquitto-clients) as:
+
+```
+d:org:devtype:devid
+```
+
+That is, the letter "d", followed by the WIoTP organization, device type, and device ID of the device (with all four of those fields separated by full colon characters (":").
+
+Devices are expected to authenticate by specifying the exact user `use-token-auth`, and then using the device token as the password. E.g., in `mosquitto_pub` that would be:
+
+```
+-u "use-token-auth" -P "<your-token-here>"
+```
+
+Devices are expected to publish using a topic of the form:
+
+```
+iot-2/evt/status/fmt/json
+```
+
+where `status` is an event name you have created, and `json` indicates the format of the message content.
+
+Subscribers should instead identify themselves as:
+
+```
+a:org:apikeyname
+```
+
+That is, the letter "a", followed by the WIoTP organization, then the WIoTP API key name you created (again, separated by colon characters).
+
+Subscribers are expected to authenticate using the API key name as the user, and the associated token as the password. E.g., in `mosquitto_sub` that would be:
+
+```
+u "a-theorg-thekeyname" -P `<yourpasswordhere>'
+```
+
+Notice that the API key name always starts with "a-", followed by your organization name (6 characters), followed by "-" then a series of 10 seemingly random characters that form your key name.
+
+Subscribers are expected to use a topic of the form:
+
+```
+iot-2/type/devtype/id/devid/evt/status/fmt/json
+```
+
+where "devtype" and "devid" are the device type and device ID of the device you want to subscribe to, and "status" is the event you wish to subscribe to.
+
+Following the above guidelines is what this example code does.
+
