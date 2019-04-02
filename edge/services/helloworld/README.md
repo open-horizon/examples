@@ -3,6 +3,7 @@
 ## Preconditions
 
 - Go through the quick start guide for setting up your edge node and running the helloworld service.
+- Get a docker hub id at https://hub.docker.com/ (if you don't already have one). This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.
 - Set the variables in `horizon/hzn.env` to your own values.
 - Set your Horizon Exchange credentials in your environment: `export HZN_EXCHANGE_USER_AUTH="myuser:mypw"`
 - `alias hzn='source horizon/hzn.env && hzn'`   # soon this will not be needed
