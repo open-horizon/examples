@@ -3,10 +3,21 @@
 ## Preconditions
 
 - Go through the quick start guide for setting up your edge node and running the helloworld service.
-- Get a docker hub id at https://hub.docker.com/ (if you don't already have one). This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.
-- Set the variables in `horizon/hzn.env` to your own values.
-- Set your Horizon Exchange credentials in your environment: `export HZN_EXCHANGE_USER_AUTH="myuser:mypw"`
-- `alias hzn='source horizon/hzn.env && hzn'`   # soon this will not be needed
+- Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
+```
+echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
+```
+- Set the variables in `horizon/hzn.cfg` to your own values.
+- Set your Horizon Exchange credentials and verify they are correct:
+```
+export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
+hzn exchange user list
+```
+
+Soon these steps will not be needed, but for now do them:
+- Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
+- Set the architecture: `export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')`
+- Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
 
 ## Building and Publishing the Hello World Example Edge Service
 
@@ -36,12 +47,8 @@ hzn dev service stop
 mkdir -p horizon/keys   # soon this will not be needed
 hzn key create -d horizon/keys IBM my@email.com
 # soon these 2 commands will not be needed:
-source horizon/hzn.env && mv horizon/keys/*-private.key $HZN_PRIVATE_KEY_FILE
-source horizon/hzn.env && mv horizon/keys/*-public.pem $HZN_PUBLIC_KEY_FILE
-```
-- Authenticate to your docker registry:
-```
-echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
+source horizon/hzn.cfg && mv horizon/keys/*-private.key $HZN_PRIVATE_KEY_FILE
+source horizon/hzn.cfg && mv horizon/keys/*-public.pem $HZN_PUBLIC_KEY_FILE
 ```
 - Push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
