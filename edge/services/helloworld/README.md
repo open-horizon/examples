@@ -32,6 +32,10 @@ hzn dev service start -S
 - See the docker container running and look at the output:
 ```
 docker ps
+# soon you will use 'hzn service log ...' for all platforms
+# For now on Linux:
+tail -f /var/log/syslog | grep helloworld
+# For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ```
 - See the environment variables Horizon passes into your service container:
