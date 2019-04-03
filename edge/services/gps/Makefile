@@ -1,7 +1,13 @@
 #
-# Makefile for gps
+# Makefile for gps Service container
 #
 # NOTE: Requires make to be installed, but no other build tools are required.
+#
+# To test this code:
+#   make            # build the "gps" container
+#   make gps-daemon # or, to not use GPS hardware, use: "make daemon" instead)
+#   make test       # kill it after after functional tests, or run it forever!
+#
 
 export GPS_NAME ?= gps
 export GPS_VERSION ?= 2.0.5
@@ -19,7 +25,7 @@ GPS_DEVICE_LIST ?= /dev/ttyACM0:/dev/ttyACM0:rw
 GPSD_DOCKER_DEVICE_ENTRIES := $(addprefix --volume ,$(GPS_DEVICE_LIST))
 
 # Firmware configuration (this is only used for development and testing)
-# REST server runs on port 3779 by default (test code needs to know the port)
+# REST server runs on port 31779 by default (test code needs to know the port)
 HZN_GPS_PORT ?= 31779
 # An arbitrary manually-provided location southeast of San Jose, CA, USA
 #HZN_LAT=37.0
@@ -29,7 +35,7 @@ HZN_LON ?= 0.0
 HZN_LOCATION_ACCURACY_KM ?= 10.0
 
 # The docker network used for testing
-DOCKER_TEST_NETWORK ?= gps-test
+DOCKER_TEST_NETWORK ?= gps-test-network
 
 # Transform the machine arch into some standard values: "arm", "arm64", or "amd64". Note: ppc64le already returns ppc64le, so we do not need to change that.
 SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
@@ -115,6 +121,8 @@ publish-service:
 network:
 	-docker network create $(DOCKER_TEST_NETWORK)
 
+.PHONY: dev
+dev: develop
 .PHONY: develop
 develop: network .$(IMAGE)-$(GPS_VERSION)-$(ARCH)
 	-docker rm -f $(IMAGE)
@@ -145,12 +153,13 @@ $(BINARY_TEST).amd64: $(TEST_SOURCE) $(OTHER_SOURCES)
 	docker run --rm -t --volume `pwd`:/outside golang env GOPATH=/outside $(GOOPTIONS_AMD64) sh -c "cd /outside && go get gopkg.in/go-playground/validator.v8 github.com/eclipse/paho.mqtt.golang && go build -o bin/$@ src/$(TEST_SOURCE)"
 
 # Build the automated test container
+.$(IMAGE_TEST): .$(IMAGE_TEST)-$(ARCH)
 .$(IMAGE_TEST)-$(ARCH): Dockerfile.$(ARCH).test $(BINARY_TEST).$(ARCH)
 	make $(IMAGE_TEST)-$(ARCH)
 .PHONY: $(IMAGE_TEST)-$(ARCH)
 $(IMAGE_TEST)-$(ARCH):
 	- docker rm -f $(IMAGE_TEST) 2> /dev/null || :
-	docker build -t $(REG_PATH)/$(IMAGE_TEST) -f Dockerfile.$(ARCH).test .
+	docker build -t $(IMAGE_TEST) -f Dockerfile.$(ARCH).test .
 	mkdir -p bin
 	touch bin/.$(IMAGE_TEST)-$(ARCH)
 	@echo "$(IMAGE_TEST)-$(ARCH) has been built."
@@ -184,7 +193,7 @@ develop_test:  network .$(IMAGE_TEST)
 .PHONY: test
 test:  network .$(IMAGE_TEST)
 	-docker rm -f $(IMAGE_TEST)
-	docker run --rm -t --volume `pwd`:/outside -e HZN_GPS_PORT=$(HZN_GPS_PORT) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE_TEST) --name $(IMAGE_TEST) $(IMAGE_TEST):$(GPS_VERSION)
+	docker run --rm -t --volume `pwd`:/outside -e HZN_GPS_PORT=$(HZN_GPS_PORT) --net=$(DOCKER_TEST_NETWORK) --net-alias=$(IMAGE_TEST) --name $(IMAGE_TEST) $(IMAGE_TEST):latest
 
 # Clean everything
 .PHONY: clean
