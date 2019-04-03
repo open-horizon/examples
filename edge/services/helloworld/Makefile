@@ -13,11 +13,18 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+# Soon we can use 'hzn service log ...' for all platforms
+ifeq ($(shell uname -s),Darwin)
+GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=helloworld`
+else
+GET_SVC_OUTPUT = grep helloworld /var/log/syslog
+endif
+
 # Run and verify the service
 test:
 	hzn dev service start -S
 	@echo 'Testing service...'
-	@if docker logs `docker ps -q --filter name=helloworld` | grep -q 'says: Hello'; then \
+	@if $(GET_SVC_OUTPUT) | grep -q 'says: Hello'; then \
 	  hzn dev service stop; \
 	  echo 'Service test succeeded.'; \
 	else \
