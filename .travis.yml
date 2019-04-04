@@ -36,8 +36,9 @@ before_script:
 # Build and test the example
 # try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
 script:
+  - git diff --name-only master...${TRAVIS_COMMIT}
   - cd edge/services/helloworld && make test
 
 # If this is when the PR is being merged into master, and the test was successful, then publish the example
 after_success:
-  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "$DOCKER_HUB_PASS" | docker login -u="$DOCKER_HUB_USER" --password-stdin && cd edge/services/helloworld && make publish-service; fi'
+  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then git diff --name-only master...${TRAVIS_COMMIT}; echo "$DOCKER_HUB_PASS" | docker login -u="$DOCKER_HUB_USER" --password-stdin && cd edge/services/helloworld && make publish-service; fi'
