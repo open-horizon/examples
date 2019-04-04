@@ -21,7 +21,7 @@ GET_SVC_OUTPUT = grep helloworld /var/log/syslog
 endif
 
 # Run and verify the service
-test:
+test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
 	@if $(GET_SVC_OUTPUT) | grep -q 'says: Hello'; then \
