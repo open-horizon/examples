@@ -61,6 +61,6 @@ testmake:
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.cfg.tmp.mk: horizon/hzn.cfg
-	@sed -e '/^export /d' -e "s/'//g" -e 's/"//g' $< > $@
+	@sed -e '/^export /d' -e '/^ *#/d' -e '/^ *$$/d' -e "s/'//g" -e 's/"//g' -e 's/^/export /' $< > $@
 
 .PHONY: build clean
