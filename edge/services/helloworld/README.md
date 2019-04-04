@@ -7,20 +7,30 @@
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
 ```
-- Set the variables in `horizon/hzn.cfg` to your own values.
+- Set the variable values in `horizon/hzn.cfg` to your own values.
 - Set your Horizon Exchange credentials and verify they are correct:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
-hzn exchange user list
+hzn exchange user list -o myorg
 ```
 
 Soon these steps will not be needed, but for now do them:
 - Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
-- Set the architecture: `export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')`
+- Set the architecture:
+```
+export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
+```
 - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
 
 ## Building and Publishing the Hello World Example Edge Service
 
+- Clone this repo and cd to this directory:
+```
+git clone git@github.com:open-horizon/examples.git
+cd edge/services/helloworld
+# copy it where you want to work on it
+# Soon you will be able to instead use: hzn dev service new ...
+```
 - Build the hello world docker image:
 ```
 make
