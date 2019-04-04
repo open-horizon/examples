@@ -14,12 +14,18 @@ branches:
 #before_install:
 #- sudo apt-get update
 #- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
+# Publish to staging if successful (promotion to prod is a separate process)
 env:
-  # Publish to staging if successful (promotion to prod is a separate process)
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+
 #before_script:
   # try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
+
+# Build and test the example
 script:
   - make -C edge/services/helloworld test
+
+# If this is when the PR is being merged into master, and the test was successful, then publish the example
 after_success:
   - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "$DOCKER_HUB_PASS" | docker login -u="$DOCKER_HUB_USER" --password-stdin && make -C edge/services/helloworld publish-service; fi'
