@@ -28,8 +28,8 @@ env:
 
 # Install the hzn command
 before_script:
-  - wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
-  - echo 'deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main' > /etc/apt/sources.list.d/bluehorizon.list
+  - sudo wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
+  - sudo echo 'deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main' > /etc/apt/sources.list.d/bluehorizon.list
   - sudo apt-get update -q
   - sudo apt-get install horizon-cli -y
 
