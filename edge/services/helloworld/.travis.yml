@@ -20,7 +20,7 @@ env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
 #before_script:
-  # try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
+# try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
 
 # Build and test the example
 script:
