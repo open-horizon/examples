@@ -17,18 +17,24 @@ language: minimal
 branches:
   only:
   - master
+
 #before_install:
-#- sudo apt-get update
+#- sudo apt-get update -q
 #- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
-#before_script:
-# try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
+# Install the hzn command
+before_script:
+  - wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | apt-key add -
+  - echo 'deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main' > /etc/apt/sources.list.d/bluehorizon.list
+  - sudo apt-get update -q
+  - sudo apt-get install horizon-cli -y
 
 # Build and test the example
+# try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
 script:
   - make -C edge/services/helloworld test
 
