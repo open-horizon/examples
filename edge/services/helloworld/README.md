@@ -2,7 +2,7 @@
 
 ## Preconditions for Developing Your Own Service
 
-- Go through the quick start guide for setting up your edge node and running the helloworld service.
+- First, go through the quick start guide for setting up your edge node and running the helloworld service.
 - Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
