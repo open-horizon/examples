@@ -2,7 +2,7 @@
 
 ## Preconditions for Developing Your Own Service
 
-- First, go through the quick start guide for setting up your edge node and running the helloworld service..
+- First, go through the quick start guide for setting up your edge node and running the helloworld service.
 - Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
@@ -15,19 +15,20 @@ cd edge/services/helloworld
 # Soon you will be able to instead use: hzn dev service new ...
 ```
 - Set the variable values in `horizon/hzn.cfg` to your own values.
-- Set your Horizon Exchange credentials and verify they are correct:
-```
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
-hzn exchange user list -o myorg
-```
-
-Soon these steps will not be needed, but for now do them:
-- Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
-- Set the architecture:
+- Soon these steps will not be needed, but for now do them:
+  - Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
+  - Set the architecture:
 ```
 export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 ```
-- Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
+  - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
+- As part of the quick start mentioned in the first step above, you created your Exchange user credentials and edge node credentials. Set those here in the Horizon-supported environment variables and verify them:
+```
+export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
+hzn exchange user list
+export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
+hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
+```
 
 ## Building and Publishing Your Own Version of the Hello World Example Edge Service
 
@@ -78,7 +79,7 @@ hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern (choose a node id and token):
 ```
-hzn register -n mynodeid:mynodetoken $HZN_ORG_ID pattern-helloworld-$ARCH
+hzn register $HZN_ORG_ID pattern-helloworld-$ARCH
 ```
 - Look at the Horizon agreement until 1 it is finalized and then see the running container:
 ```
