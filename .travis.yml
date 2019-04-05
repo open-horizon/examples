@@ -51,6 +51,5 @@ after_success:
   - 'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find edge/services/helloworld -v; then
     echo "Publishing helloworld..." &&
     echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
-    hzn exchange user list &&
     cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make publish-service;
     fi'
