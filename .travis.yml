@@ -38,6 +38,9 @@ before_script:
 # Note: if you export a variable in 1 cmd, it is available in subsequent cmds in that phase
 script:
   - 'echo "TRAVIS_COMMIT=$TRAVIS_COMMIT, TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE"'
+  - 'echo "DOCKER_HUB_USER=$DOCKER_HUB_USER, DOCKER_HUB_PASS=$DOCKER_HUB_PASS, HZN_EXCHANGE_USER_AUTH=$HZN_EXCHANGE_USER_AUTH"'
+  - 'echo "MY_TEST_VAR=$MY_TEST_VAR"'
+  - env
   - 'if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find edge/services/helloworld -v; then
     cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make test;
     fi'
@@ -46,7 +49,8 @@ script:
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 after_success:
   - 'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find edge/services/helloworld -v; then
-    echo "Publishing helloworld..."
-    echo "$DOCKER_HUB_PASS" | docker login -u="$DOCKER_HUB_USER" --password-stdin &&
+    echo "Publishing helloworld..." &&
+    echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
+    hzn exchange user list &&
     cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make publish-service;
     fi'
