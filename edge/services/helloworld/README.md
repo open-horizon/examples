@@ -7,6 +7,13 @@
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
 ```
+- If you are reading this from github.com (not locally), clone this repo and cd to this directory:
+```
+git clone git@github.com:open-horizon/examples.git
+cd edge/services/helloworld
+# copy it where you want to work on it, so you can commit it to your own git repo
+# Soon you will be able to instead use: hzn dev service new ...
+```
 - Set the variable values in `horizon/hzn.cfg` to your own values.
 - Set your Horizon Exchange credentials and verify they are correct:
 ```
@@ -22,15 +29,8 @@ export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e '
 ```
 - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
 
-## Building and Publishing the Hello World Example Edge Service
+## Building and Publishing Your Own Version of the Hello World Example Edge Service
 
-- Clone this repo and cd to this directory:
-```
-git clone git@github.com:open-horizon/examples.git
-cd edge/services/helloworld
-# copy it where you want to work on it
-# Soon you will be able to instead use: hzn dev service new ...
-```
 - Build the hello world docker image:
 ```
 make
