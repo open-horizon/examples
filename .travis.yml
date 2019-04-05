@@ -10,9 +10,10 @@ language: minimal
 #  slack:
 #    secure: vSzVllY4Vmt6Nf6Yl+5QDMKTEQ4jIbP/bC/LSzZFmQNlYWlDEzG1gQcPb4prh7/efjUFt+vM2lTFP7jLEkib+XiR8n4LShCl+IeRyBpiONXII4KN7O9IPTMMOpGvN/FhZFgyzRFwEvkCSuSBpOYoRGGij/wzo/mPzfJYEyGxpaRmQKEmD7xmtxXMAVWpK2L5fL6XbglEPKD7pMYUvM/WyzAMJg4JgDxOGeX7QLGdSQrTOOkUtJjiEs8WtB/fR9Gev+vwX22KrnMwZpmT9KPPi+kzwFYnfzKxHdjdsmydmBBlBS4XM8rvJL1eMyrQB2LOOW8xWUeOF03t5PfKAC6cY2h01Jdl/rx3L6Pc99ABItS3OvYcwL0HY20bz+hNI0seRMVftz7eRzMHGdQsfYXfU6hOxkovGutRoyVkS7f+m66nBaOfRh6DAlOt/H6us4WEq1zJb8SyP+S7Xm38grh+xEDIMaz8AeavhDRWyH6RQfrpxvcGbcWhURXiY7clJLgjmauGJw9H/jxkuuoIINIFjkrziRHDGj9ZxNp3JbtJfprrramMCLtHl5Ziz5Pjmcf46iZxFzNlRlW/aC5ZqQbHm5EgcNuHXHMHvzTQcnkFDrQBGaXI3sLXfaYt+1LeRwfQXGOsWSgc8lmgfcGn1Fvbj/8ykq/q1ReQFAbCvT62ZR8=
 
-#todo: use osx so we can build/test/publish for all 3 archs
+#todo: use osx so we can build/test/publish for all 3 archs, altho the docs current state: We do not currently support use of Docker on macOS
 #os:
 #  - osx
+dist: xenial
 
 branches:
   only:
@@ -36,10 +37,17 @@ before_script:
 # Build and test the example
 # try this to bail if the examples we want to test were not changed: https://github.com/dev-id/Magic-Spoiler/blob/8111a06ab6682e020169991d5e2aa4fa503d787f/preflight.sh
 script:
-  - git diff --name-only master...${TRAVIS_COMMIT}
-  - cd edge/services/helloworld && make test
+  - export MY_VAR=foobar
+  - 'echo "MY_VAR=$MY_VAR"'
+  - 'echo "TRAVIS_COMMIT=$TRAVIS_COMMIT, TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE"'
+  - git diff --name-only master...${TRAVIS_COMMIT} | ${TRAVIS_BUILD_DIR}/tools/travis-find edge/services/helloworld -v
+  - cd ${TRAVIS_BUILD_DIR}/edge/services/helloworld && make test
+  - cd ${TRAVIS_BUILD_DIR}
 
-# If this is when the PR is being merged into master, and the test was successful, then publish the example
+# If this is after the PR has been merged into master, and the test was successful, then publish the example
 after_success:
-  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "Changed files:"; git diff --name-only master...${TRAVIS_COMMIT}; env | grep TRAVIS; pwd; ls; fi'
-  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "$DOCKER_HUB_PASS" | docker login -u="$DOCKER_HUB_USER" --password-stdin && cd edge/services/helloworld && make publish-service; fi'
+  - 'if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]]; then
+    echo "Publishing helloworld..."
+    echo "$DOCKER_HUB_PASS" | docker login -u="$DOCKER_HUB_USER" --password-stdin &&
+    cd ${TRAVIS_BUILD_DIR}edge/services/helloworld && make publish-service;
+    fi'

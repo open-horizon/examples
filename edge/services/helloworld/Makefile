@@ -43,14 +43,14 @@ test: build
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json -k $(HZN_PRIVATE_KEY_FILE) -K $(HZN_PUBLIC_KEY_FILE)
 
-# Build, run and verify, if test succeeds then publish
+# Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
 
 # Publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
 publish-all-arches:
-	ARCH=amd64 $(MAKE) publish-service
-	ARCH=arm $(MAKE) publish-service
-	ARCH=arm64 $(MAKE) publish-service
+	ARCH=amd64 $(MAKE) build-test-publish
+	ARCH=arm $(MAKE) build-test-publish
+	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern/pattern-helloworld-all-arches.json -p pattern-helloworld
 
 clean:
