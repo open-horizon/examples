@@ -55,9 +55,8 @@ echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
 git clone git@github.com:open-horizon/examples.git
 cd edge/services/helloworld
 # copy it where you want to work on it, so you can commit it to your own git repo
-# Soon you will be able to instead use: hzn dev service new ...
+# Soon you will be able to instead use: hzn dev service new -s <service-name> -v <version> -i <image>
 ```
-    - Soon you will be able to instead use: `hzn dev service new -s <service-name> -v <version> -i <image>`
 - If you have the HZN_ORG_ID environment variable set from previous work, unset it:
 ```
 unset HZN_ORG_ID
@@ -65,11 +64,11 @@ unset HZN_ORG_ID
 - Set the variable values in `horizon/hzn.cfg` to your own values.
 - Soon these steps will not be needed, but for now do them:
     - Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
+    - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
     - Set the architecture:
 ```
 export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 ```
-    - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
 - As part of the quick start mentioned in the first step above, you created your Exchange user credentials and edge node credentials. Set those here in the Horizon-supported environment variables and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
@@ -163,4 +162,4 @@ To see more Horizon features demonstrated, continue on to the cpu2msghub example
 ```
 make publish-all-arches
 ```
-    - Note: building all architectures works on mac os x, and can be made to work on ubuntu via: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation
+Note: building all architectures works on mac os x, and can be made to work on ubuntu via: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation
