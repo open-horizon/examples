@@ -57,6 +57,7 @@ cd edge/services/helloworld
 # copy it where you want to work on it, so you can commit it to your own git repo
 # Soon you will be able to instead use: hzn dev service new ...
 ```
+  - Soon you will be able to instead use: `hzn dev service new -s <service-name> -v <version> -i <image>`
 - If you have the HZN_ORG_ID environment variable set from previous work, unset it:
 ```
 unset HZN_ORG_ID
