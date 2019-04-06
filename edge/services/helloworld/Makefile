@@ -46,7 +46,7 @@ publish-service:
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
 
-# Publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
+# Build/test/publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
 publish-all-arches:
 	ARCH=amd64 $(MAKE) build-test-publish
 	ARCH=arm $(MAKE) build-test-publish
