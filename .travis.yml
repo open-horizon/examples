@@ -10,7 +10,6 @@ language: minimal
 #  slack:
 #    secure: vSzVllY4Vmt6Nf6Yl+5QDMKTEQ4jIbP/bC/LSzZFmQNlYWlDEzG1gQcPb4prh7/efjUFt+vM2lTFP7jLEkib+XiR8n4LShCl+IeRyBpiONXII4KN7O9IPTMMOpGvN/FhZFgyzRFwEvkCSuSBpOYoRGGij/wzo/mPzfJYEyGxpaRmQKEmD7xmtxXMAVWpK2L5fL6XbglEPKD7pMYUvM/WyzAMJg4JgDxOGeX7QLGdSQrTOOkUtJjiEs8WtB/fR9Gev+vwX22KrnMwZpmT9KPPi+kzwFYnfzKxHdjdsmydmBBlBS4XM8rvJL1eMyrQB2LOOW8xWUeOF03t5PfKAC6cY2h01Jdl/rx3L6Pc99ABItS3OvYcwL0HY20bz+hNI0seRMVftz7eRzMHGdQsfYXfU6hOxkovGutRoyVkS7f+m66nBaOfRh6DAlOt/H6us4WEq1zJb8SyP+S7Xm38grh+xEDIMaz8AeavhDRWyH6RQfrpxvcGbcWhURXiY7clJLgjmauGJw9H/jxkuuoIINIFjkrziRHDGj9ZxNp3JbtJfprrramMCLtHl5Ziz5Pjmcf46iZxFzNlRlW/aC5ZqQbHm5EgcNuHXHMHvzTQcnkFDrQBGaXI3sLXfaYt+1LeRwfQXGOsWSgc8lmgfcGn1Fvbj/8ykq/q1ReQFAbCvT62ZR8=
 
-#todo: use osx so we can build/test/publish for all 3 archs, altho the docs current state: We do not currently support use of Docker on macOS
 #os:
 #  - osx
 dist: xenial
@@ -19,6 +18,8 @@ branches:
   only:
   - master
 
+#todo: for multi-arch builds see: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation , https://dev.to/zeerorg/build-multi-arch-docker-images-on-travis-5428
+#  We can not use osx so because the docs currently state: "We do not currently support use of Docker on macOS"
 #before_install:
 #- sudo apt-get update -q
 #- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
@@ -35,7 +36,7 @@ before_script:
   - sudo apt-get install horizon-cli -y
 
 # Build and test the example
-# Note: if you export a variable in 1 cmd, it is available in subsequent cmds in that phase
+# Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
   - 'if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find edge/services/helloworld -v; then
     cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make test;
@@ -43,7 +44,7 @@ script:
   - cd $TRAVIS_BUILD_DIR
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
-#todo: publishing the service from travis does not work, because we need the service private key to sign it.
+#todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
 #after_success:
 #  - 'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find edge/services/helloworld -v; then
 #    echo "Publishing helloworld..." &&
