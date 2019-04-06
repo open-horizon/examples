@@ -126,7 +126,7 @@ hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern:
 ```
-hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $$HZN_ORG_ID pattern-helloworld-$ARCH
+hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $HZN_ORG_ID pattern-helloworld-$ARCH
 ```
 - Look at the Horizon agreement until 1 it is finalized and then see the running container:
 ```
