@@ -154,6 +154,7 @@ To see more Horizon features demonstrated, continue on to the cpu2msghub example
 
 - Do the steps in the Preconditions section above, except:
   - export `HZN_EXCHANGE_URL` to the staging instance
+  - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
 - Increment `SERVICE_VERSION` in `horizon/hzn/cfg`
 - Make the files that `HZN_PRIVATE_KEY_FILE` and `HZN_PUBLIC_KEY_FILE` point to actually be symbolic links to the common keys we use to sign all of our examples.
