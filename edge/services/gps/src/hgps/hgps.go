@@ -41,28 +41,35 @@ import (
 )
 
 // DEBUG:
-//   0 : No debug output
+//   0 : No debug output from this module
 //   1 : Trace all state changes
 //   2 : Also dump full state at each state change
 //   3 : Also show location obfuscation and altitude discovery
-// const DEBUG = 0
+const DEBUG = 0
+
+// How long to delay between retries when seeking the public IP address
+const GET_PUBLIC_IP_RETRY_SEC = 10
+
+// How long to delay between retries for location estimate from IP address
+const LOC_ESTIMATE_RETRY_SEC = 10
 
 type SourceType string
+
 const (
-	MANUAL SourceType = "Manual"
+	MANUAL    SourceType = "Manual"
 	ESTIMATED SourceType = "Estimated"
 	SEARCHING SourceType = "Searching"
-	GPS SourceType = "GPS"
+	GPS       SourceType = "GPS"
 )
 
 // JSON struct for location data
 type LocationData struct {
-	Latitude   float64 `json:"latitude" description:"Location latitude"`
-	Longitude  float64 `json:"longitude" description:"Location longitude"`
-	ElevationM float64 `json:"elevation" description:"Location elevation in meters"`
-	AccuracyKM float64 `json:"accuracy_km" description:"Location accuracy in kilometers"`
-	LocSource  SourceType  `json:"loc_source" description:"Location source (one of: Manual, Estimated, GPS, or Searching)"`
-	LastUpdate int64   `json:"loc_last_update" description:"Time of most recent location update (UTC)."`
+	Latitude   float64    `json:"latitude" description:"Location latitude"`
+	Longitude  float64    `json:"longitude" description:"Location longitude"`
+	ElevationM float64    `json:"elevation" description:"Location elevation in meters"`
+	AccuracyKM float64    `json:"accuracy_km" description:"Location accuracy in kilometers"`
+	LocSource  SourceType `json:"loc_source" description:"Location source (one of: Manual, Estimated, GPS, or Searching)"`
+	LastUpdate int64      `json:"loc_last_update" description:"Time of most recent location update (UTC)."`
 }
 
 // JSON struct for satellite data
@@ -72,11 +79,11 @@ type SatellitesData struct {
 
 // JSON struct for data about a single satellite
 type SatelliteData struct {
-	PRN        float64  `json:"PRN"  description:"PRN ID of the satellite. 1-63 are GNSS satellites, 64-96 are GLONASS satellites, 100-164 are SBAS satellites"`
-	Az         float64  `json:"az"   description:"Azimuth, degrees from true north."`
-	El         float64  `json:"el"   description:"Elevation in degrees."`
-	Ss         float64  `json:"ss"   description:"Signal strength in dB."`
-	Used       bool     `json:"used" description:"Used in current solution? (SBAS/WAAS/EGNOS satellites may be flagged used if the solution has corrections from them, but not all drivers make this information available.)
+	PRN  float64 `json:"PRN"  description:"PRN ID of the satellite. 1-63 are GNSS satellites, 64-96 are GLONASS satellites, 100-164 are SBAS satellites"`
+	Az   float64 `json:"az"   description:"Azimuth, degrees from true north."`
+	El   float64 `json:"el"   description:"Elevation in degrees."`
+	Ss   float64 `json:"ss"   description:"Signal strength in dB."`
+	Used bool    `json:"used" description:"Used in current solution? (SBAS/WAAS/EGNOS satellites may be flagged used if the solution has corrections from them, but not all drivers make this information available.)
 "`
 }
 
@@ -145,17 +152,17 @@ func (h *GpsCache) SetLocationAccuracyInKm(accuracy_km float64) {
 func (h *GpsCache) SetSatellites(report *gpsdc.SKYReport) {
 	sats := report.Satellites
 	h.mutex.Lock()
-	if logutil.GPS_DEBUG > 0 {
+	if DEBUG > 0 {
 		logutil.LogDebug("SetSatellites(%d satellites found):", len(sats))
-		for _, sat := range(sats) {
+		for _, sat := range sats {
 			logutil.LogDebug("  PRN:%.1f, Az=%.1f, El=%.1f, Ss=%.1f, Used=%v", sat.PRN, sat.Az, sat.El, sat.Ss, sat.Used)
 		}
 	}
 
 	// Clear the existing slice, then fill it from the gosdc data
 	h.data.Satellites = nil
-	for _, sat := range(sats) {
-		var one SatelliteData;
+	for _, sat := range sats {
+		var one SatelliteData
 		one.PRN = sat.PRN
 		one.Az = sat.Az
 		one.El = sat.El
@@ -229,7 +236,7 @@ func (h *GpsCache) GetConfiguration() (config string) {
 // Return true if lat and lon have been set yet
 func (h *GpsCache) IsLocationSet() (isSet bool) {
 	h.mutex.RLock()
-	isSet = ( h.data.Location.Latitude != 0 && h.data.Location.Longitude != 0 )
+	isSet = (h.data.Location.Latitude != 0 && h.data.Location.Longitude != 0)
 	h.mutex.RUnlock()
 	return
 }
@@ -280,8 +287,22 @@ func (h *GpsCache) GetAsJSON() (json_bytes []byte) {
 
 // Estimate node location using its public IP address for geo-location
 func (h *GpsCache) EstimateLocation() (lat float64, lon float64, err error) {
-	ip_address := get_public_address()
+	err, ip_address := get_public_address()
+	for nil != err {
+		logutil.Logf("%v\n", err)
+		logutil.Logf("INFO: Pausing for %d seconds before retrying public address...\n", GET_PUBLIC_IP_RETRY_SEC)
+		time.Sleep(time.Duration(GET_PUBLIC_IP_RETRY_SEC) * time.Second)
+		err, ip_address = get_public_address()
+	}
+	logutil.Logf("INFO: Discovered IP address: %v\n", ip_address)
 	lat, lon, err = get_location_from_ip_address(ip_address)
+	for nil != err {
+		logutil.Logf("%v\n", err)
+		logutil.Logf("INFO: Pausing for %d seconds before retrying location estimate...\n", LOC_ESTIMATE_RETRY_SEC)
+		time.Sleep(time.Duration(LOC_ESTIMATE_RETRY_SEC) * time.Second)
+		lat, lon, err = get_location_from_ip_address(ip_address)
+	}
+	logutil.Logf("INFO: Estimated location: lat=%f, lon=%f\n", lat, lon)
 	return
 }
 
@@ -289,7 +310,9 @@ func (h *GpsCache) EstimateLocation() (lat float64, lon float64, err error) {
 // Please note that this routine expects that a lock is already held on the
 // passed GpsCache object!
 func print(h *GpsCache) {
-	if logutil.GPS_DEBUG < 2 { return }
+	if DEBUG < 2 {
+		return
+	}
 	j, _ := json.Marshal(h.data)
 	var formatted bytes.Buffer
 	_ = json.Indent(&formatted, j, "DEBUG: ", "  ")
@@ -316,7 +339,7 @@ func obfuscate_lat_lon(lat float64, lon float64, accuracy_km float64) (obfuscate
 		random_distance_kilometers := accuracy_km * r.Float64()
 		random_bearing_degrees := 360.0 * r.Float64()
 		obfuscated_location = actual_location.PointAtDistanceAndBearing(random_distance_kilometers, random_bearing_degrees)
-		if logutil.GPS_DEBUG > 2 {
+		if DEBUG > 2 {
 			logutil.LogDebug("Obfuscating: From: (lat=%f,lon=%f), To: (lat=%f,lon=%f)\n", lat, lon, obfuscated_location.Lat(), obfuscated_location.Lng())
 		}
 	}
@@ -358,7 +381,7 @@ func get_elevation_in_meters(lat float64, lon float64) (elevation_m float64) {
 		return
 	}
 	elevation_m = e
-	if logutil.GPS_DEBUG > 2 {
+	if DEBUG > 2 {
 		logutil.LogDebug("Discovered altitude for (lat=%f,lon=%f): %f meters\n", lat, lon, elevation_m)
 	}
 	return
@@ -369,24 +392,27 @@ func get_elevation_in_meters(lat float64, lon float64) (elevation_m float64) {
 // address due to the firewall, but it is convenient to use the public IP
 // address to estimate location when no other source of location data is
 // available.  This function is hard-coded to use "http://ifconfig.co".
-// It will likely need to be rewritten if it is changed to use a different
-// provider.
-func get_public_address() (ip_address string) {
-        // NOTE: Using 'https' sometimes fails with a 509 due to
+// It will need to be rewritten if we change to using a different provider.
+func get_public_address() (err error, ip_address string) {
+	err = nil
+	// NOTE: Using 'https' sometimes fails with a 509 due to
 	// certificate errors.  So using 'http' is more reliable.
-        resp, err := http.Get("http://ifconfig.co")
-        if err != nil {
-                return fmt.Sprintf("Error from ifconfig.co: %v", err)
-        }
-        defer resp.Body.Close()
-        body, err := ioutil.ReadAll(resp.Body)
+	provider_url := "http://ifconfig.co"
+	resp, rest_err := http.Get(provider_url)
+	if rest_err != nil {
+		ip_address = ""
+		err = errors.New(fmt.Sprintf("ERROR: REST call to %s failed: %v", provider_url, rest_err))
+		return
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
 	// Parse out the IP address from the body
-        ip_address = string(body[:len(body)-1])
-        return
+	ip_address = string(body[:len(body)-1])
+	return
 }
 
 type IPGPSCoordinates struct {
-	Latitude float64 `json:"latitude"`
+	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	// there are many more fields, but we don't care about them
 }
@@ -396,7 +422,7 @@ type IPGPSCoordinates struct {
 // (after which it returns HTTP 403 responses).  See "http://freegeoip.net/".
 func get_location_from_ip_address(ip_address string) (lat float64, lon float64, err error) {
 	apikey := "166f0d44636d9ed71c6a01530f687fdb"
-	url := "http://api.ipstack.com/"+ip_address+"?access_key="+apikey+"&format=1"
+	url := "http://api.ipstack.com/" + ip_address + "?access_key=" + apikey + "&format=1"
 	resp, rest_err := http.Get(url)
 	if rest_err != nil {
 		err = errors.New(fmt.Sprintf("ERROR: Request to %s failed: %v", url, rest_err))
@@ -405,47 +431,20 @@ func get_location_from_ip_address(ip_address string) (lat float64, lon float64, 
 	defer resp.Body.Close()
 	httpCode := resp.StatusCode
 	if httpCode != 200 {
-		err = errors.New(fmt.Sprintf("ERROR: Badd http code %d from %s\n", httpCode, url))
+		err = errors.New(fmt.Sprintf("ERROR: Bad http code %d from %s\n", httpCode, url))
 		return
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Printf("Response from %s:\n%s\n", url, string(body))
+	if DEBUG > 2 {
+		logutil.LogDebug("Response from %s:\n%s\n", url, string(body))
+	}
 	coordinates := IPGPSCoordinates{}
 	err = json.Unmarshal(body, &coordinates)
 	if err != nil {
 		err = errors.New(fmt.Sprintf("ERROR: failed to unmarshal body response from %s: %v", url, err))
+		return
 	}
 	lat = coordinates.Latitude
 	lon = coordinates.Longitude
 	return
-
-	/* This API endpoint has been deprecated...
-	resp, rest_err := http.Get("http://freegeoip.net/csv/" + ip_address)
-	if rest_err != nil {
-	err = errors.New(fmt.Sprintf("ERROR: Request to http://freegeoip.net/csv/%s failed (%v).", rest_err))
-	return
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	lines := strings.Split(string(body), ",")
-	fmt.Printf("LINES: %v\n", lines)
-	fmt.Printf("LINE[8]: %v\n", lines[8])
-	fmt.Printf("LINE[9]: %v\n", lines[9])
-	// Parse out the latitude and longitude, and convert to float64
-    lat_str := string(lines[8][:len(lines[8])-1])
-	lat, lat_err := strconv.ParseFloat(lat_str, 64)
-	if nil != lat_err {
-		err = errors.New(fmt.Sprintf("ERROR: Unable to parse lat from http://freegeoip.net/csv/%s: lat: \"%s\", error: %v.", lat_str, lat_err))
-		return
-	}
-    lon_str := string(lines[9][:len(lines[9])-1])
-	lon, lon_err := strconv.ParseFloat(lon_str, 64)
-	if nil != lon_err {
-		err = errors.New(fmt.Sprintf("ERROR: Unable to parse lon from http://freegeoip.net/csv/%s: lon: \"%s\", error: %v.", lon_str, lon_err))
-		return
-	}
-	err = nil
-		return
-	*/
 }
-

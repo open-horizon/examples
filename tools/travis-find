@@ -1,0 +1,25 @@
+#!/bin/bash
+# Read a list of filenames from stdin looking for a match to the given pattern 
+
+if [[ -z "$1" ]]; then
+    echo "Usage: git diff --name-only commit1...commit2 | $0 <path-pattern> [-v]"
+    echo "  Returns: exit status 0 if found, 1 if not"
+    exit
+fi
+
+pathPattern="$1"
+VERBOSE="$2"
+
+if [[ -n "$VERBOSE" ]]; then echo "Searching stdin files for '$pathPattern'"; fi
+while read line
+do
+    if [[ -n "$VERBOSE" ]]; then echo "$line"; fi
+    if [[ $line == ${pathPattern}* ]]; then
+        if [[ -n "$VERBOSE" ]]; then echo "'$line' matched '$pathPattern'"; fi
+        exit 0
+    fi
+done < /dev/stdin
+
+# Did not find the pattern
+if [[ -n "$VERBOSE" ]]; then echo "No match found for '$pathPattern'"; fi
+exit 1
