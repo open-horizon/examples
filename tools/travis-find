@@ -1,5 +1,5 @@
 #!/bin/bash
-# Read a list of filenames from from stdin looking for a match to the given pattern 
+# Read a list of filenames from stdin looking for a match to the given pattern 
 
 if [[ -z "$1" ]]; then
     echo "Usage: git diff --name-only commit1...commit2 | $0 <path-pattern> [-v]"

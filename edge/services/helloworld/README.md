@@ -3,12 +3,12 @@
 ## Using the Hello World Example Edge Service
 
 - First, go through the "Try It" page "Installing Horizon Software On Your Edge Machine" to set up your edge node.
-- Get an IBM cloud account (and for now have your org created in exchange)
+- Get an IBM cloud account (and for now have your org created in the exchange)
 - Set your exchange org:
 ```
 export HZN_ORG_ID="<yourorg>"
 ```
-- Set your exchange credentials in the Horizon-supported environment variable and verify it:
+- Set your exchange user credentials in the Horizon-supported environment variable and verify it:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
@@ -23,7 +23,7 @@ hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
 ```
 hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $HZN_ORG_ID IBM/pattern-helloworld
 ```
-- Look at the Horizon agreement until 1 it is finalized and then see the running container:
+- Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
@@ -43,6 +43,8 @@ hzn unregister -f
 
 ## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Example Edge Service
 
+If you want to create your own Horizon edge service, follow the next 2 sections to copy the hello world example and start modifying it.
+
 ### Preconditions for Developing Your Own Service
 
 - First, go through the steps in the section above to run the IBM helloworld service on an edge node.
@@ -57,7 +59,7 @@ cd edge/services/helloworld
 # copy it where you want to work on it, so you can commit it to your own git repo
 # Soon you will be able to instead use: hzn dev service new -s <service-name> -v <version> -i <image>
 ```
-- If you have the HZN_ORG_ID environment variable set from previous work, unset it:
+- If you have the HZN_ORG_ID environment variable set from previous work, unset it (this value will now come from `horizon/hzn.cfg`):
 ```
 unset HZN_ORG_ID
 ```
@@ -69,7 +71,7 @@ unset HZN_ORG_ID
 ```
 export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
 ```
-- As part of the quick start mentioned in the first step above, you created your Exchange user credentials and edge node credentials. Set those here in the Horizon-supported environment variables and verify them:
+- As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
@@ -79,11 +81,13 @@ hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
 
 ### Building and Publishing Your Own Version of the Hello World Example Edge Service
 
+- Edit `service.sh`, for example changing "Hello" to "Hey there"
+    - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 - Build the hello world docker image:
 ```
 make
 ```
-- Have Horizon start the service locally:
+- Test the service by having Horizon start it locally:
 ```
 hzn dev service start -S
 ```
@@ -112,7 +116,7 @@ hzn key create -d horizon/keys IBM my@email.com
 source horizon/hzn.cfg && mv horizon/keys/*-private.key $HZN_PRIVATE_KEY_FILE
 source horizon/hzn.cfg && mv horizon/keys/*-public.pem $HZN_PUBLIC_KEY_FILE
 ```
-- Push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+- Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 # soon the -k and -K flags will not be necessary
 hzn exchange service publish -f horizon/service.definition.json -k $HZN_PRIVATE_KEY_FILE -K $HZN_PUBLIC_KEY_FILE
@@ -128,7 +132,7 @@ hzn exchange pattern list
 ```
 hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $HZN_ORG_ID pattern-helloworld-$ARCH
 ```
-- Look at the Horizon agreement until 1 it is finalized and then see the running container:
+- Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
@@ -148,7 +152,7 @@ hzn unregister -f
 
 ## Further Learning
 
-To see more Horizon features demonstrated, continue on to the cpu2msghub example.
+To see more Horizon features demonstrated, continue on to the [cpu2msghub example](../../msghub/cpu2msghub).
 
 ## Process for the Horizon Development Team to Make Updates to the Helloworld Service
 

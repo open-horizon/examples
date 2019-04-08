@@ -63,10 +63,11 @@ clean-all-archs:
 
 # Just to experiment with make
 testmake:
-	@echo "testmake: $(DOCKER_IMAGE_BASE)"
+	@echo "testmake makefile variable: $(DOCKER_IMAGE_BASE)"
+	@echo "testmake environment variable: $$DOCKER_IMAGE_BASE"
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.cfg.tmp.mk: horizon/hzn.cfg
-	@sed -e '/^export /d' -e '/^ *#/d' -e '/^ *$$/d' -e "s/'//g" -e 's/"//g' -e 's/^/export /' $< > $@
+	@ cat $< | ../../../tools/cfg2mk > $@
 
 .PHONY: build clean
