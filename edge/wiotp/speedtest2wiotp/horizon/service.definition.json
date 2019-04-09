@@ -1,0 +1,45 @@
+{
+    "org": "IBM",
+    "label": "Speedtest2WIoTP for ${ARCH}",
+    "description": "Speedtest2WIoTP Service",
+    "public": true,
+    "documentation": "http://github.com/open-horizon/examples/tree/master/edge/wiotp/speedtest2wiotp/README.md",
+    "url": "github.com.open-horizon.examples.speedtest2wiotp",
+    "version": "${VERSION}",
+    "arch": "${ARCH}",
+    "sharable": "singleton",
+    "matchHardware": null,
+    "requiredServices": [
+    ],
+    "userInput": [
+        {
+            "name": "WIOTP_ORG",
+            "label": "Your organization ID from the IBM Watson IoT Platform.",
+            "type": "string"
+        },
+        {
+            "name": "WIOTP_DEVICE_TYPE",
+            "label": "Your IBM Watson IoT Platform Device Type for this Edge Node.",
+            "type": "string"
+        },
+        {
+            "name": "WIOTP_DEVICE_ID",
+            "label": "Your IBM Watson IoT Platform Device ID for this Edge Node.",
+            "type": "string"
+        },
+        {
+            "name": "WIOTP_DEVICE_TOKEN",
+            "label": "Your IBM Watson IoT Platform authentication token for this Edge Node.",
+            "type": "string"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "speedtest2wiotp": {
+                "image": "openhorizon/${ARCH}_speedtest2wiotp:${VERSION}"
+            }
+        }
+    },
+    "deploymentSignature": "",
+    "imageStore": null
+}

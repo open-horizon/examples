@@ -1,0 +1,37 @@
+{
+  "label": "Speedtest2WIoTP Pattern for all architectures",
+  "description": "Speedtest2WIoTP Pattern for all architectures",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "github.com.open-horizon.examples.speedtest2wiotp",
+      "serviceOrgid": "IBM",
+      "serviceArch": "amd64",
+      "serviceVersions": [
+        {
+          "version": "${VERSION}"
+        }
+      ]
+    },
+    {
+      "serviceUrl": "github.com.open-horizon.examples.speedtest2wiotp",
+      "serviceOrgid": "IBM",
+      "serviceArch": "arm",
+      "serviceVersions": [
+        {
+          "version": "${VERSION}"
+        }
+      ]
+    },
+    {
+      "serviceUrl": "github.com.open-horizon.examples.speedtest2wiotp",
+      "serviceOrgid": "IBM",
+      "serviceArch": "arm64",
+      "serviceVersions": [
+        {
+          "version": "${VERSION}"
+        }
+      ]
+    }
+  ]
+}
