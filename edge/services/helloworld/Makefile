@@ -3,6 +3,9 @@
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.cfg.tmp.mk
 
+# Default ARCH to the architecture of this machines (as horizon/golang describes it)
+export ARCH ?= $(shell hzn architecture)
+
 # Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -41,7 +44,7 @@ test: build
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json -k $(HZN_PRIVATE_KEY_FILE) -K $(HZN_PUBLIC_KEY_FILE)
+	hzn exchange service publish -O -f horizon/service.definition.json -k ~/.hzn/keys/service.private.key -K ~/.hzn/keys/service.public.pem
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
@@ -51,7 +54,7 @@ publish-all-arches:
 	ARCH=amd64 $(MAKE) build-test-publish
 	ARCH=arm $(MAKE) build-test-publish
 	ARCH=arm64 $(MAKE) build-test-publish
-	hzn exchange pattern publish -f horizon/pattern-all-arches.json -p pattern-helloworld
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
@@ -70,4 +73,4 @@ testmake:
 horizon/.hzn.cfg.tmp.mk: horizon/hzn.cfg
 	@ cat $< | ../../../tools/cfg2mk > $@
 
-.PHONY: build clean
+.PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs testmake

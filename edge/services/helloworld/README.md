@@ -17,7 +17,7 @@ hzn exchange user list
 ```
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
-hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
+hzn exchange node confirm
 ```
 - Register your edge node with Horizon to use the helloworld pattern:
 ```
@@ -67,16 +67,12 @@ unset HZN_ORG_ID
 - Soon these steps will not be needed, but for now do them:
     - Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
     - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
-    - Set the architecture:
-```
-export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
-```
 - As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
-hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
+hzn exchange node confirm
 ```
 
 ### Building and Publishing Your Own Version of the Hello World Example Edge Service
@@ -110,27 +106,27 @@ hzn dev service stop
 ```
 - Create a service signing key pair (if you haven't already done so):
 ```
-mkdir -p horizon/keys   # soon this will not be needed
-hzn key create -d horizon/keys IBM my@email.com
+# soon this mkdir will not be needed
+mkdir -p ~/.hzn/keys
+hzn key create -d ~/.hzn/keys IBM my@email.com
 # soon these 2 commands will not be needed:
-source horizon/hzn.cfg && mv horizon/keys/*-private.key $HZN_PRIVATE_KEY_FILE
-source horizon/hzn.cfg && mv horizon/keys/*-public.pem $HZN_PUBLIC_KEY_FILE
+source horizon/hzn.cfg && mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
+source horizon/hzn.cfg && mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
 ```
 - Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 # soon the -k and -K flags will not be necessary
-hzn exchange service publish -f horizon/service.definition.json -k $HZN_PRIVATE_KEY_FILE -K $HZN_PUBLIC_KEY_FILE
+hzn exchange service publish -f horizon/service.definition.json -k ~/.hzn/keys/service.private.key -K ~/.hzn/keys/service.public.pem
 hzn exchange service list
 ```
 - Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
-# soon the -p flag will not be needed
-hzn exchange pattern publish -f horizon/pattern.json -p pattern-helloworld-$ARCH
+hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern:
 ```
-hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $HZN_ORG_ID pattern-helloworld-$ARCH
+hzn register -p pattern-${SERVICE_NAME}-$ARCH
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
@@ -161,7 +157,7 @@ To see more Horizon features demonstrated, continue on to the [cpu2msghub exampl
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
 - Increment `SERVICE_VERSION` in `horizon/hzn/cfg`
-- Make the files that `HZN_PRIVATE_KEY_FILE` and `HZN_PUBLIC_KEY_FILE` point to actually be symbolic links to the common keys we use to sign all of our examples.
+- Make `~/.hzn/keys/service.private.key` and `~/.hzn/keys/service.public.pem` actually be symbolic links to the common keys we use to sign all of our examples.
 - Build, test, and publish for all architectures:
 ```
 make publish-all-arches
