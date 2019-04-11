@@ -125,7 +125,7 @@ hzn exchange service list
 - Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
 # soon the -p flag will not be needed
-hzn exchange pattern publish -f horizon/pattern-helloworld.json -p pattern-helloworld-$ARCH
+hzn exchange pattern publish -f horizon/pattern.json -p pattern-helloworld-$ARCH
 hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern:
