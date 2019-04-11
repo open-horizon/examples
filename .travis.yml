@@ -20,15 +20,29 @@ branches:
 
 #todo: for multi-arch builds see: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation , https://dev.to/zeerorg/build-multi-arch-docker-images-on-travis-5428
 #  We can not use osx so because the docs currently state: "We do not currently support use of Docker on macOS"
-#before_install:
-#- sudo apt-get update -q
-#- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+#addons:
+#  apt:
+#    update: true
+#    packages:
+#    - qemu
+#    - qemu-user-static
+#    - binfmt-support
+#    - dpkg-cross
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
 # Install the hzn command
+#todo: change this to:
+#addons:
+#  apt:
+#    update: true
+#    sources:
+#    - sourceline: deb [arch=amd64,armhf,arm64,ppc64el] http://pkg.bluehorizon.network/linux/ubuntu xenial-updates main
+#      key_url: 'http://pkg.bluehorizon.network/bluehorizon.network-public.key'
+#    packages:
+#    - horizon-cli
 before_script:
   - wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | sudo apt-key add -
   - echo "deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main" | sudo tee -a /etc/apt/sources.list

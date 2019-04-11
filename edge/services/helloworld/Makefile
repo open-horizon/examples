@@ -51,7 +51,7 @@ publish-all-arches:
 	ARCH=amd64 $(MAKE) build-test-publish
 	ARCH=arm $(MAKE) build-test-publish
 	ARCH=arm64 $(MAKE) build-test-publish
-	hzn exchange pattern publish -f horizon/pattern-helloworld-all-arches.json -p pattern-helloworld
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json -p pattern-helloworld
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
