@@ -6,8 +6,6 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it)
 export ARCH ?= $(shell hzn architecture)
 
-FOO=~/pkg
-
 # Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -70,9 +68,6 @@ clean-all-archs:
 testmake:
 	@echo "testmake makefile variable: $(DOCKER_IMAGE_BASE)"
 	@echo "testmake environment variable: $$DOCKER_IMAGE_BASE"
-	@echo "FOO=$(FOO)"
-	ls $(FOO)
-	@echo "ARCH=$(ARCH)"
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.cfg.tmp.mk: horizon/hzn.cfg
