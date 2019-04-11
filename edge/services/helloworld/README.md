@@ -126,7 +126,7 @@ hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern:
 ```
-hzn register -p pattern-${SERVICE_NAME}-$ARCH
+hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture)
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
