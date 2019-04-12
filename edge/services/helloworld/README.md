@@ -52,20 +52,17 @@ If you want to create your own Horizon edge service, follow the next 2 sections 
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
 ```
-- If you are reading this from github.com (not locally), clone this repo and cd to this directory:
-```
-git clone git@github.com:open-horizon/examples.git
-cd edge/services/helloworld
-# copy it where you want to work on it, so you can commit it to your own git repo
-# Soon you will be able to instead use: hzn dev service new -s <service-name> -v <version> -i <image>
-```
-- If you have the HZN_ORG_ID environment variable set from previous work, unset it (this value will now come from `horizon/hzn.cfg`):
+- If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.cfg`):
 ```
 unset HZN_ORG_ID
 ```
-- Set the variable values in `horizon/hzn.cfg` to your own values.
+- Cd to the directory in which you want to create your new service and then:
+```
+hzn dev service new -o <org-id> -s <service-name> -i <docker-image-base>
+# E.g.:  hzn dev service new -o bp@someemail.com -s bp.helloworld -i brucemp/bp.helloworld
+```
 - Soon these steps will not be needed, but for now do them:
-    - Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
+    - `source horizon/hzn.cfg`
     - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
 - As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
@@ -110,8 +107,8 @@ hzn dev service stop
 mkdir -p ~/.hzn/keys
 hzn key create -d ~/.hzn/keys IBM my@email.com
 # soon these 2 commands will not be needed:
-source horizon/hzn.cfg && mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
-source horizon/hzn.cfg && mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
+mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
+mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
 ```
 - Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
