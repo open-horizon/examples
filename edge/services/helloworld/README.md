@@ -17,7 +17,7 @@ hzn exchange user list
 ```
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
-hzn exchange node confirm
+hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
 ```
 - Register your edge node with Horizon to use the helloworld pattern:
 ```
@@ -67,12 +67,16 @@ unset HZN_ORG_ID
 - Soon these steps will not be needed, but for now do them:
     - Enable `hzn` to read `horizon/hzn.cfg`: `alias hzn='source horizon/hzn.cfg && hzn'`
     - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
+    - Set the architecture:
+```
+export ARCH=$(uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
+```
 - As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
-hzn exchange node confirm
+hzn exchange node list ${HZN_EXCHANGE_NODE_AUTH%%:*}
 ```
 
 ### Building and Publishing Your Own Version of the Hello World Example Edge Service
@@ -110,8 +114,8 @@ hzn dev service stop
 mkdir -p ~/.hzn/keys
 hzn key create -d ~/.hzn/keys IBM my@email.com
 # soon these 2 commands will not be needed:
-source horizon/hzn.cfg && mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
-source horizon/hzn.cfg && mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
+mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
+mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
 ```
 - Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
@@ -121,12 +125,13 @@ hzn exchange service list
 ```
 - Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
-hzn exchange pattern publish -f horizon/pattern.json
+# soon the -p flag will not be needed
+hzn exchange pattern publish -f horizon/pattern.json -p pattern-helloworld-$ARCH
 hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern:
 ```
-hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture)
+hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $HZN_ORG_ID pattern-helloworld-$ARCH
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
