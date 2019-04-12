@@ -3,6 +3,7 @@
         {
             "org": "$HZN_ORG_ID",
             "url": "$SERVICE_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
             "variables": {
                 /* "HW_WHO": "Fred" */
             }
