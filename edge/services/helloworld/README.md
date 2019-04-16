@@ -110,22 +110,23 @@ hzn dev service stop
 ```
 - Create a service signing key pair (if you haven't already done so):
 ```
-mkdir -p horizon/keys   # soon this will not be needed
-hzn key create -d horizon/keys IBM my@email.com
+# soon this mkdir will not be needed
+mkdir -p ~/.hzn/keys
+hzn key create -d ~/.hzn/keys IBM my@email.com
 # soon these 2 commands will not be needed:
-source horizon/hzn.cfg && mv horizon/keys/*-private.key $HZN_PRIVATE_KEY_FILE
-source horizon/hzn.cfg && mv horizon/keys/*-public.pem $HZN_PUBLIC_KEY_FILE
+mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
+mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
 ```
 - Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 # soon the -k and -K flags will not be necessary
-hzn exchange service publish -f horizon/service.definition.json -k $HZN_PRIVATE_KEY_FILE -K $HZN_PUBLIC_KEY_FILE
+hzn exchange service publish -f horizon/service.definition.json -k ~/.hzn/keys/service.private.key -K ~/.hzn/keys/service.public.pem
 hzn exchange service list
 ```
 - Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
 # soon the -p flag will not be needed
-hzn exchange pattern publish -f horizon/pattern/pattern-helloworld.json -p pattern-helloworld-$ARCH
+hzn exchange pattern publish -f horizon/pattern.json -p pattern-helloworld-$ARCH
 hzn exchange pattern list
 ```
 - Register your edge node with Horizon to use your deployment pattern:
@@ -161,7 +162,7 @@ To see more Horizon features demonstrated, continue on to the [cpu2msghub exampl
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
 - Increment `SERVICE_VERSION` in `horizon/hzn/cfg`
-- Make the files that `HZN_PRIVATE_KEY_FILE` and `HZN_PUBLIC_KEY_FILE` point to actually be symbolic links to the common keys we use to sign all of our examples.
+- Make `~/.hzn/keys/service.private.key` and `~/.hzn/keys/service.public.pem` actually be symbolic links to the common keys we use to sign all of our examples.
 - Build, test, and publish for all architectures:
 ```
 make publish-all-arches
