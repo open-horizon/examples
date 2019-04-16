@@ -1,0 +1,16 @@
+FROM arm32v7/python:3.6-alpine
+
+RUN apt-get update \
+    && apt-get install -y curl ca-certificates wget jq bc python3 python3-pip python3-dev g++ sox libatlas-base-dev python3-pyaudio kafkacat swig alsa alsa-tools flac \
+    && pip3 install --no-cache --upgrade watson-developer-cloud>=2.8.0 pyaudio SpeechRecognition \
+    && rm -rf /var/lib/apt/lists/* 
+
+COPY model/* /model/
+COPY resources/* /resources/
+COPY *.so /
+COPY *.py /
+
+COPY asound.conf /etc/asound.conf
+
+WORKDIR /
+CMD [ "python3", "./watson.py" ]
