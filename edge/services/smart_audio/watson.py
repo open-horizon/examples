@@ -8,8 +8,8 @@ import sys
 import tempfile
 import snowboydecoder
 
-msghub_username = "Op4ZSU677JYZXOPH"
-msghub_password = "NRwvOEdv2SnzpNBmOTEH17Aj8PWDuuzv"
+msghub_username = "*****"
+msghub_password = "*****"
 msghub_broker_url = "kafka03-prod02.messagehub.services.us-south.bluemix.net:9093,kafka02-prod02.messagehub.services.us-south.bluemix.net:9093,kafka04-prod02.messagehub.services.us-south.bluemix.net:9093,kafka05-prod02.messagehub.services.us-south.bluemix.net:9093,kafka01-prod02.messagehub.services.us-south.bluemix.net:9093"
 msghub_topic = "zhangl_us.ibm.com.IBM_cpu2msghub"
 
@@ -19,7 +19,7 @@ interrupted = False
 stopwordlist = ['the', 'a', 'for', 'of', 'on', 'at', 'as', 'are', 'am', 'is', 'before', 'but', 'do', 'by', 'in', 'with']
 
 speech_to_text = SpeechToTextV1(
-    iam_apikey='sJ114oFoiwcXr0mINCLAi3K6GlUFLsIsZR21NcBIMT8l',
+    iam_apikey='*****',
     url='https://stream.watsonplatform.net/speech-to-text/api'
 )
 print("start...", flush=True) 
