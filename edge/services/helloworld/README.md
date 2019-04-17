@@ -21,7 +21,7 @@ hzn exchange node confirm
 ```
 - Register your edge node with Horizon to use the helloworld pattern:
 ```
-hzn register -n "$HZN_EXCHANGE_NODE_AUTH" $HZN_ORG_ID IBM/pattern-helloworld
+hzn register -p IBM/pattern-ibm.helloworld
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
