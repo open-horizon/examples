@@ -44,7 +44,7 @@ test: build
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json -k ~/.hzn/keys/service.private.key -K ~/.hzn/keys/service.public.pem
+	hzn exchange service publish -O -f horizon/service.definition.json -k ~/.hzn/keys/service.private.key -K ~/.hzn/keys/service.public.pem
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
@@ -54,7 +54,7 @@ publish-all-arches:
 	ARCH=amd64 $(MAKE) build-test-publish
 	ARCH=arm $(MAKE) build-test-publish
 	ARCH=arm64 $(MAKE) build-test-publish
-	hzn exchange pattern publish -f horizon/pattern-all-arches.json -p pattern-helloworld
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
