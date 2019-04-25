@@ -8,19 +8,27 @@ import sys
 import tempfile
 import snowboydecoder
 
-msghub_username = "*****"
-msghub_password = "*****"
-msghub_broker_url = "kafka03-prod02.messagehub.services.us-south.bluemix.net:9093,kafka02-prod02.messagehub.services.us-south.bluemix.net:9093,kafka04-prod02.messagehub.services.us-south.bluemix.net:9093,kafka05-prod02.messagehub.services.us-south.bluemix.net:9093,kafka01-prod02.messagehub.services.us-south.bluemix.net:9093"
-msghub_topic = "zhangl_us.ibm.com.IBM_cpu2msghub"
+mqtt_host = os.environ['MQTT_HOST']   #"zhangl.mqtt"
+mqtt_port = os.environ['MQTT_PORT'] #1883
+mqtt_topic = os.environ['MQTT_TOPIC'] #"zhangl_mqtt_topic"
 
-remove_stopword = True
+remove_stopword = False
+remove_stopword_string = os.environ['REMOVE_SW']
+if remove_stopword_string.lower() == "true":
+    remove_stopword = True
+
+stt_iam_apikey = os.environ['STT_IAM_APIKEY']
+stt_url = os.environ['STT_URL']
+
+print("envs: ")
+print("mqtt_host: %s, mqtt_port: %s, mqtt_topic: %s, remove_stopword: %s, stt_iam_apikey: %s, stt_url: %s" %(mqtt_host, mqtt_port, mqtt_topic, remove_stopword, stt_iam_apikey, stt_url) )
+
 interrupted = False
-
 stopwordlist = ['the', 'a', 'for', 'of', 'on', 'at', 'as', 'are', 'am', 'is', 'before', 'but', 'do', 'by', 'in', 'with']
 
 speech_to_text = SpeechToTextV1(
-    iam_apikey='*****',
-    url='https://stream.watsonplatform.net/speech-to-text/api'
+    iam_apikey=stt_iam_apikey,
+    url=stt_url
 )
 print("start...", flush=True) 
 
@@ -56,13 +64,9 @@ def call_speech_to_text(name):
                     text = transcript
                 print(text, flush=True)
                 
-                # sending to kafka
-                j = json.dumps({"text": text})
-                print("json: " + j + ", sending json to kafka topic: " + msghub_topic, flush=True)
-                _, fn = tempfile.mkstemp(dir='.')
-                with open(fn, 'w') as f:
-                    json.dump(j, f)
-                cmd = "cat %s | kafkacat -P -b %s -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=%s -X sasl.password=%s -t %s"%(fn, msghub_broker_url, msghub_username, msghub_password, msghub_topic)
+                #sending to mqtt
+                cmd = "mosquitto_pub -d -h %s -p %s -t %s -m \"%s\""%(mqtt_host, mqtt_port, mqtt_topic, text)
+                print("publish to mqtt using command: " + cmd, flush=True)
                 os.system(cmd)
     except WatsonApiException as ex:
         print("Method failed with status code " + str(ex.code) + ": " + ex.message, flush=True)

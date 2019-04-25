@@ -4,7 +4,14 @@
             "org": "$HZN_ORG_ID",
             "url": "$SERVICE_NAME",
             "versionRange": "[0.0.0,INFINITY)",
-            "variables": {}
+            "variables": {
+                "MQTT_HOST": "$MQTT_HOST",
+                "MQTT_PORT": "$MQTT_PORT",
+                "MQTT_TOPIC": "$MQTT_TOPIC",
+                "REMOVE_SW": true,
+                "STT_IAM_APIKEY": "$STT_IAM_APIKEY",
+                "STT_URL": "$STT_URL"
+            }
         }
     ]
 }

@@ -1,0 +1,10 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "$SERVICE_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {}
+        }
+    ]
+}

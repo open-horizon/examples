@@ -7,17 +7,65 @@
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
-    "sharable": "multiple",
-    "requiredServices": [],
-    "userInput": [],
+    "sharable": "exclusive",
+    "matchHardware": null,
+    "requiredServices": [
+        {
+            "url": "zhangl.mqtt",
+            "org": "zhangl@us.ibm.com",
+            "version": "0.0.1",
+            "arch": "arm"
+        }
+    ],
+    "userInput": [
+        {
+            "name": "MQTT_HOST",
+            "label": "The MQTT host to send text",
+            "type": "string",
+            "defaultValue": "zhangl.mqtt"
+        },
+        {
+            "name": "MQTT_PORT",
+            "label": "The MQTT port number to send text",
+            "type": "string",
+            "defaultValue": "1883"
+        },
+        {
+            "name": "MQTT_TOPIC",
+            "label": "The MQTT topic to send text",
+            "type": "string",
+            "defaultValue": "zhangl_mqtt_topic"
+        },
+        {
+            "name": "REMOVE_SW",
+            "label": "The flag to indicate if apply stopword removal to text before sending to MQTT",
+            "type": "boolean",
+            "defaultValue": "true"
+        },
+        {
+            "name": "STT_IAM_APIKEY",
+            "label": "The API key to use IBM Speech-To-Text service",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "STT_URL",
+            "label": "The url to use IBM Speech-To-Text service",
+            "type": "string",
+            "defaultValue": "https://stream.watsonplatform.net/speech-to-text/api"
+        }
+    ],
     "deployment": {
         "services": {
             "$SERVICE_NAME": {
+                "devices": [
+                    "/dev/snd:/dev/snd"
+                ],
                 "image": "${DOCKER_IMAGE_BASE}_${ARCH}:${SERVICE_VERSION}",
-                "devices":["/dev/snd:/dev/snd"],
-                "privileged": true,
-                "restart": "always"
+                "privileged": true
             }
         }
-    }
+    },
+    "deploymentSignature": "",
+    "imageStore": null
 }

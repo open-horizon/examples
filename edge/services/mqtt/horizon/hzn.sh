@@ -7,14 +7,14 @@
 HZN_ORG_ID=zhangl@us.ibm.com
 
 # An identifier for your service that is unique in your org
-SERVICE_NAME=zhangl.smartaudio
+SERVICE_NAME=zhangl.mqtt
 
 # The current version of your service you are building/publishing
-SERVICE_VERSION=0.0.3
+SERVICE_VERSION=0.0.1
 
 # Change openhorizon to your docker hub id from https://hub.docker.com/ .
 # ARCH and SERVICE_VERSION will be added to this when used.
-DOCKER_IMAGE_BASE=lelejessica0313/smart_audio
+DOCKER_IMAGE_BASE=lelejessica0313/lily_mqtt
 ARCH=arm
 
 # Where to store your service signing keys. Only need to change these if you want to store them somewhere else.

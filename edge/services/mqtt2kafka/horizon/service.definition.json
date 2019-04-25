@@ -1,0 +1,50 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "zhangl - A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "exclusive",
+    "matchHardware": null,
+    "requiredServices": [
+        {
+            "url": "zhangl.mqtt",
+            "org": "zhangl@us.ibm.com",
+            "version": "0.0.1",
+            "arch": "arm"
+        }
+    ],
+    "userInput": [
+        {
+            "name": "MSGHUB_API_KEY",
+            "label": "The API key to use when sending message to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_BROKER_URL",
+            "label": "The broker url to use when sending message to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_TOPIC",
+            "label": "The topic to use when sending message to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": ""
+        }
+    ],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_${ARCH}:${SERVICE_VERSION}",
+                "privileged": true
+            }
+        }
+    },
+    "deploymentSignature": "",
+    "imageStore": null
+}

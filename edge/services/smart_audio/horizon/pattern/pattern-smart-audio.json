@@ -12,6 +12,17 @@
           "version": "$SERVICE_VERSION"
         }
       ]
+    },
+    {
+      "serviceUrl": "zhangl.mqtt2kafka",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "$ARCH",
+      "serviceVersions": [
+        {
+          "version": "0.0.2"
+        }
+      ]
     }
+
   ]
 }
