@@ -1,0 +1,92 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "zhangl - A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "exclusive",
+    "matchHardware": null,
+    "requiredServices": [
+        {
+            "url": "zhangl.mqtt",
+            "org": "zhangl@us.ibm.com",
+            "version": "0.0.1",
+            "arch": "arm"
+        },
+        {
+            "url": "zhangl.stopwordremoval",
+            "org": "zhangl@us.ibm.com",
+            "version": "0.0.2",
+            "arch": "arm"
+        }
+    ],
+    "userInput": [
+        {
+            "name": "MQTT_HOST",
+            "label": "The MQTT host to send text",
+            "type": "string",
+            "defaultValue": "zhangl.mqtt"
+        },
+        {
+            "name": "MQTT_PORT",
+            "label": "The MQTT port number to send text",
+            "type": "string",
+            "defaultValue": "1883"
+        },
+        {
+            "name": "MQTT_SEND_TOPIC",
+            "label": "The MQTT topic to send text",
+            "type": "string",
+            "defaultValue": "zhangl_mqtt_send_topic"
+        },
+        {
+            "name": "MQTT_RECEIVE_TOPIC",
+            "label": "The MQTT topic to receive text",
+            "type": "string",
+            "defaultValue": "zhangl_mqtt_topic"
+        },
+        {
+            "name": "STT_IAM_APIKEY",
+            "label": "The API key to use IBM Speech-To-Text service",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "STT_URL",
+            "label": "The url to use IBM Speech-To-Text service",
+            "type": "string",
+            "defaultValue": "https://stream.watsonplatform.net/speech-to-text/api"
+        },
+        {
+            "name": "REMOVE_SW",
+            "label": "The flag to indicate if use stopword removal service",
+            "type": "string",
+            "defaultValue": "true"
+        },
+        {
+            "name": "SW_HOST",
+            "label": "host name of stopword removal service",
+            "type": "string",
+            "defaultValue": "127.0.0.1"
+        },
+        {
+            "name": "SW_PORT",
+            "label": "port number of stopword removal service",
+            "type": "string",
+            "defaultValue": "5002"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_${ARCH}:${SERVICE_VERSION}",
+                "privileged": true
+            }
+        }
+    },
+    "deploymentSignature": "",
+    "imageStore": null
+}

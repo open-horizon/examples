@@ -1,0 +1,20 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "$SERVICE_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "MQTT_HOST": "$MQTT_HOST",
+                "MQTT_PORT": "$MQTT_PORT",
+                "MQTT_SEND_TOPIC": "$MQTT_SEND_TOPIC",
+                "MQTT_RECEIVE_TOPIC": "$MQTT_RECEIVE_TOPIC",
+                "STT_IAM_APIKEY": "$STT_IAM_APIKEY",
+                "STT_URL": "$STT_URL",
+                "REMOVE_SW": "true",
+                "SW_HOST": "$SW_HOST",
+                "SW_PORT": "$SW_PORT"
+            }
+        }
+    ]
+}

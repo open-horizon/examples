@@ -1,0 +1,30 @@
+{
+    "org": "zhangl@us.ibm.com",
+    "label": "zhangl.mqtt for arm",
+    "description": "zhangl - A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "zhangl.mqtt",
+    "version": "0.0.1",
+    "arch": "arm",
+    "sharable": "singleton",
+    "matchHardware": {},
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "zhangl.mqtt": {
+                "image": "lelejessica0313/lily_mqtt_arm@sha256:fa083b0e43fed9e4e0c3939186241444f2eef24a27ed902c82df57ffcfe1849c",
+                "ports": [
+                    {
+                        "HostIP": "0.0.0.0",
+                        "HostPort": "1883:1883/tcp"
+                    }
+                ],
+                "privileged": true
+            }
+        }
+    },
+    "deploymentSignature": "",
+    "imageStore": {}
+}

@@ -1,0 +1,30 @@
+{
+    "org": "zhangl@us.ibm.com",
+    "label": "zhangl.stopwordremoval for arm",
+    "description": "zhangl - A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "zhangl.stopwordremoval",
+    "version": "0.0.2",
+    "arch": "arm",
+    "sharable": "singleton",
+    "matchHardware": {},
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "zhangl.stopwordremoval": {
+                "image": "lelejessica0313/stopword_removal_arm@sha256:26c1c6b294e9938f52b9ac7f668f9c17d57ddac1d76500ac66af62c5d1f7e7c2",
+                "ports": [
+                    {
+                        "HostIP": "0.0.0.0",
+                        "HostPort": "5002:5002/tcp"
+                    }
+                ],
+                "privileged": true
+            }
+        }
+    },
+    "deploymentSignature": "",
+    "imageStore": {}
+}
