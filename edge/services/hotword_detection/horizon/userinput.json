@@ -1,0 +1,15 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "$SERVICE_NAME",
+            "versionRange": "[0.0.0,INFINITY)",
+            "variables": {
+                "MQTT_HOST": "$MQTT_HOST",
+                "MQTT_PORT": "$MQTT_PORT",
+                "MQTT_AUDIO_TOPIC": "$MQTT_AUDIO_TOPIC",
+                "AUDIO_FORMAT": "$AUDIO_FORMAT"
+            }
+        }
+    ]
+}
