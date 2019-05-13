@@ -112,9 +112,9 @@ hzn exchange service list
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
-- Register your edge node with Horizon to use your deployment pattern:
+- Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
 ```
-hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture)
+hzn register -p pattern-SERVICE_NAME-$(hzn architecture)
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
