@@ -1,0 +1,1 @@
+This directory contains files for general users to use this service after it has been published to the Horizon exchange.
