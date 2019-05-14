@@ -32,7 +32,7 @@ docker ps
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep helloworld
+tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ``` 
@@ -41,7 +41,7 @@ docker logs -f $(docker ps -q --filter name=helloworld)
 hzn unregister -f
 ```
 
-## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Example Edge Service
+## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Edge Service
 
 If you want to create your own Horizon edge service, follow the next 2 sections to copy the hello world example and start modifying it.
 
@@ -86,7 +86,7 @@ hzn dev service start -S
 docker ps
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep helloworld
+tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ```
@@ -100,7 +100,7 @@ hzn dev service stop
 ```
 - Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
 ```
-hzn key create IBM my@email.com
+hzn key create <my-company> <my-email>
 ```
 - Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
@@ -125,7 +125,7 @@ docker ps
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep helloworld
+tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ``` 
@@ -145,7 +145,7 @@ To see more Horizon features demonstrated, continue on to the [cpu2msghub exampl
     - Do **not** run `hzn dev service new ...` (use the git files in this directory instead)
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
-- Increment `SERVICE_VERSION` in `horizon/hzn/cfg`
+- Increment `SERVICE_VERSION` in `horizon/hzn.json`
 - Make `~/.hzn/keys/service.private.key` and `~/.hzn/keys/service.public.pem` actually be symbolic links to the common keys we use to sign all of our examples.
 - Build, test, and publish for all architectures:
 ```

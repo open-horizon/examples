@@ -1,6 +1,6 @@
 # Make targets for building the IBM example helloworld edge service
 
-# This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
+# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk
 
 # Default ARCH to the architecture of this machines (as horizon/golang describes it)
@@ -33,6 +33,7 @@ endif
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
+	sleep 1
 	@if $(GET_SVC_OUTPUT) | grep -q 'says: Hello'; then \
 	  hzn dev service stop; \
 	  echo 'Service test succeeded.'; \
@@ -68,4 +69,4 @@ clean-all-archs:
 horizon/.hzn.json.tmp.mk: horizon/hzn.json
 	@ hzn util configconv -f $< > $@
 
-.PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs testmake
+.PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs

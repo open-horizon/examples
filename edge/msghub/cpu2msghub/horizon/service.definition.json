@@ -1,33 +1,45 @@
 {
     "org": "$HZN_ORG_ID",
-    "label": "$CPU2MSGHUB_NAME for $ARCH",
+    "label": "$SERVICE_NAME for $ARCH",
     "description": "Sample Horizon service that repeatedly reads the CPU load and GPS location, and sends it to IBM Message Hub",
     "public": true,
-    "documentation": "https://console.test.cloud.ibm.com/docs/services/edge-fabric/poc/cpu.html",
-    "url": "$MYDOMAIN.$CPU2MSGHUB_NAME",
-    "version": "$CPU2MSGHUB_VERSION",
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/msghub/cpu2msghub/README.md",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
     "sharable": "multiple",
     "requiredServices": [
         {
-            "url": "$MYDOMAIN.$CPU_NAME",
+            "url": "github.com.open-horizon.examples.cpu",
             "org": "IBM",
-            "version": "$CPU_VERSION",
+            "version": "1.2.2",
             "arch": "$ARCH"
         },
         {
-            "url": "$MYDOMAIN.$GPS_NAME",
+            "url": "github.com.open-horizon.examples.gps",
             "org": "IBM",
-            "version": "$GPS_VERSION",
+            "version": "2.0.5",
             "arch": "$ARCH"
         }
     ],
     "userInput": [
         {
             "name": "MSGHUB_API_KEY",
-            "label": "The API key to use when sending message to your instance of IBM Message Hub",
+            "label": "The API key to use when sending messages to your instance of IBM Message Hub",
             "type": "string",
             "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_BROKER_URL",
+            "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_TOPIC",
+            "label": "The topic to use when sending messages to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": "cpu2msghub"
         },
         {
             "name": "SAMPLE_SIZE",
@@ -62,11 +74,8 @@
     ],
     "deployment": {
         "services": {
-            "cpu2msghub": {
-                "environment": [
-                    "MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL"
-                ],
-                "image": "$DOCKER_HUB_ID/${ARCH}_$CPU2MSGHUB_NAME:$CPU2MSGHUB_VERSION"
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION"
             }
         }
     }
