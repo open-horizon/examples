@@ -21,13 +21,14 @@ export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
-- Deploy (or get access to) an instance of IBM Event Streams (aka Message Hub) in the IBM Cloud that the cpu2msghub sample can send its data to. In the Event Streams UI, go to the `Service credentials` tab, create new credentials, and use the following values to set these environment variables:
+- Deploy (or get access to) an instance of IBM Event Streams (aka Message Hub) in the IBM Cloud that the cpu2msghub sample can send its data to. In the Event Streams UI, go to the `Service credentials` tab, create new credentials, and use the following values to `export` these environment variables:
     - Set `MSGHUB_API_KEY` to the value of `api_key`
     - Set `MSGHUB_ADMIN_URL` to the value of `kafka_admin_url`
     - Set `MSGHUB_BROKER_URL` to all of the values in `kafka_brokers_sasl` separated by commas
 - Create the `cpu2msghub` topic in your event streams instance:
 ```
-MSGHUB_TOPIC=cpu2msghub curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $MSGHUB_API_KEY" -d "{ \"name\": \"$MSGHUB_TOPIC\", \"partitions\": 2 }" $MSGHUB_ADMIN_URL/admin/topics
+export MSGHUB_TOPIC=cpu2msghub
+curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $MSGHUB_API_KEY" -d "{ \"name\": \"$MSGHUB_TOPIC\", \"partitions\": 2 }" $MSGHUB_ADMIN_URL/admin/topics
 ```
 - Verify the `cpu2msghub` topic is now in your event streams instance:
 ```
@@ -46,7 +47,11 @@ hzn register -p IBM/pattern-ibm.cpu2msghub -f userinput.json
 hzn agreement list
 docker ps
 ```
-- See the cpu2msghub service output:
+- On any machine, install `kafkacat`, then subscribe to the msg hub topic to see the json data that cpu2msghub is sending:
+```
+kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
+```
+- (Optional) To see the cpu2msghub service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
@@ -154,6 +159,10 @@ hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.js
 ```
 hzn agreement list
 docker ps
+```
+- On any machine, subscribe to the msg hub topic to see the json data that cpu2msghub is sending:
+```
+kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
 ```
 - See the cpu2msghub service output:
 ```
