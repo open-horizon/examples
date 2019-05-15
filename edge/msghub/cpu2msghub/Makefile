@@ -59,9 +59,10 @@ publish-all-arches:
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Create a topic in msg hub for cpu2msghub to send data to
+MSGHUB_TOPIC ?= cpu2msghub
 msghub-topic:
 	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
-	MSGHUB_TOPIC=cpu2msghub curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $(MSGHUB_API_KEY)" -d "{ \"name\": \"$$MSGHUB_TOPIC\", \"partitions\": 2 }" $(MSGHUB_ADMIN_URL)/admin/topics
+	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$MSGHUB_API_KEY" -d "{ \"name\": \"$(MSGHUB_TOPIC)\", \"partitions\": 2 }" $$MSGHUB_ADMIN_URL/admin/topics
 
 # List the topics currently in msg hub
 msghub-topic-list:
