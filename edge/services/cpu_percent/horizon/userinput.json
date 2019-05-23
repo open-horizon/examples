@@ -1,11 +1,11 @@
 {
-    "global": [],
     "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "$MYDOMAIN.$CPU_NAME",
-            "versionRange": "[0.0.0,INFINITY)",
-            "variables": {}
+            "url": "$SERVICE_NAME",
+            "variables": {
+                /* "HW_WHO": "Fred" */
+            }
         }
     ]
 }
