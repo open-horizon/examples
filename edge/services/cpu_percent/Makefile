@@ -15,12 +15,6 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# In travis can only read syslog via sudo
-ifeq ($(TRAVIS),true)
-SYSLOG_SUDO = sudo
-else
-SYSLOG_SUDO =
-endif
 # Soon we can use 'hzn service log ...' for all platforms
 ifeq ($(shell uname -s),Darwin)
 GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=cpu`
