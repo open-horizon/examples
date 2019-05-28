@@ -1,0 +1,8 @@
+{
+    "HZN_ORG_ID": "IBM",
+    "MetadataVars": {
+        "DOCKER_IMAGE_BASE": "openhorizon/cpu",
+        "SERVICE_NAME": "cpu",
+        "SERVICE_VERSION": "1.2.3"
+    }
+}
