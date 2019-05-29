@@ -1,74 +1,84 @@
-# Transform the machine arch into some standard values: "arm", "arm64", or "amd64"
-SYSTEM_ARCH := $(shell uname -m | sed -e 's/aarch64.*/arm64/' -e 's/x86_64.*/amd64/' -e 's/armv.*/arm/')
+# Make targets for building the IBM sample cpu2msghub edge service
 
-# To build for an arch different from the current system, set this env var to 1 of the values in the comment above
-export ARCH ?= $(SYSTEM_ARCH)
+# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
+-include horizon/.hzn.json.tmp.mk
 
-# These variables can be overridden from the environment
-export CPU2MSGHUB_NAME ?= cpu2msghub
-export CPU2MSGHUB_VERSION ?= 1.2.5
-# the required services - make sure these versions are up to date!
-export CPU_NAME ?= cpu
-export CPU_VERSION ?= 1.2.2
-export GPS_NAME ?= gps
-export GPS_VERSION ?= 2.0.5
-DOCKER_NAME ?= $(ARCH)_$(CPU2MSGHUB_NAME)
-export DOCKER_HUB_ID ?= openhorizon
-export MYDOMAIN ?= github.com.open-horizon.examples
+# Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
+export ARCH ?= $(shell hzn architecture)
 
-default: all
-
-all: build run check
-
+# Build the docker image for the current architecture
 build:
 ifeq (,$(findstring amd64,$(ARCH)))
 	mkdir -p tmp/$(ARCH)
 	cp ../../../tools/kafkacat/$(ARCH)/*.rsa.pub ../../../tools/kafkacat/$(ARCH)/kafkacat-*.apk tmp/$(ARCH)
 endif
-	docker build -t $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 ifeq (,$(findstring amd64,$(ARCH)))
 	rm -f tmp/$(ARCH)/*.rsa.pub tmp/$(ARCH)/kafkacat-*.apk
 endif
 
-run:
-	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
-	docker run -d --name $(DOCKER_NAME) -e SAMPLE_SIZE=5 -e SAMPLE_INTERVAL=1 -e MOCK=true -e VERBOSE=1 -e PUBLISH=false --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION)
+# Build the docker image for 3 architectures
+build-all-arches:
+	ARCH=amd64 $(MAKE) build
+	ARCH=arm $(MAKE) build
+	ARCH=arm64 $(MAKE) build
 
-check:
-	docker logs -f $(DOCKER_NAME)
+# Soon we can use 'hzn service log ...' for all platforms
+ifeq ($(shell uname -s),Darwin)
+GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=cpu2msghub`
+else
+GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep cpu2msghub[[] /var/log/syslog
+endif
 
-stop:
-	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
+# Run and verify the service
+test: build
+	hzn dev service start -S
+	@echo 'Testing service...'
+	sleep 20  # may have to increase this time depending on the speed of your machine
+	@if $(GET_SVC_OUTPUT) | grep -q 'echo {"nodeID":'; then \
+	  hzn dev service stop; \
+	  echo 'Service test succeeded.'; \
+	else \
+	  hzn dev service stop; \
+	  echo 'Service test failed!'; \
+	  false; \
+	fi
 
-# Targets for using the hzn dev environment
-hznbuild: build
-	hzn dev dependency fetch -p ../../services/cpu_percent/horizon
-	hzn dev dependency fetch -p ../../services/gps/horizon
-	hzn dev service verify
+# Publish the service to the Horizon Exchange for the current architecture
+publish-service:
+	hzn exchange service publish -f horizon/service.definition.json
 
-hznstart: hznbuild
-	hzn dev service start
+# Build, run and verify, if test succeeds then publish (for the current architecture)
+build-test-publish: build test publish-service
 
-hznstop:
-	hzn dev service stop
+# Build/test/publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
+publish-all-arches:
+	ARCH=amd64 $(MAKE) build-test-publish
+	ARCH=arm $(MAKE) build-test-publish
+	ARCH=arm64 $(MAKE) build-test-publish
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-# Push the docker image to the registry. You must have write access to the docker hub openhorizon user
-docker-push: build
-	docker push $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION)
+# Create a topic in msg hub for cpu2msghub to send data to
+MSGHUB_TOPIC ?= cpu2msghub
+msghub-topic:
+	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
+	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$MSGHUB_API_KEY" -d "{ \"name\": \"$(MSGHUB_TOPIC)\", \"partitions\": 2 }" $$MSGHUB_ADMIN_URL/admin/topics
 
-# Create/update the metadata in the exchange for this service
-publish-service: build publish-service-only
-publish-service-only:
-	: $${HZN_EXCHANGE_USER_AUTH:?} $${PRIVATE_KEY_FILE:?} $${PUBLIC_KEY_FILE:?}   # this verifies these env vars are set
-	hzn exchange service publish -k $$PRIVATE_KEY_FILE -K $$PUBLIC_KEY_FILE -f horizon/service.definition.json
-
-# Create/update the deployment pattern for a set of edge nodes
-publish-pattern:
-	: $${HZN_ORG_ID:?} $${HZN_EXCHANGE_USER_AUTH:?}   # this verifies these env vars are set
-	hzn exchange pattern publish -p $$CPU2MSGHUB_NAME -f horizon/pattern/cpu2msghub.json
+# List the topics currently in msg hub
+msghub-topic-list:
+	@: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
+	@curl -sS -H "X-Auth-Token: $$MSGHUB_API_KEY" $$MSGHUB_ADMIN_URL/admin/topics | jq -r ".[] | .name"
 
 clean:
-	-docker rm -f $(DOCKER_NAME) 2> /dev/null || :
-	-docker rmi $(DOCKER_HUB_ID)/$(DOCKER_NAME):$(CPU2MSGHUB_VERSION) 2> /dev/null || :
+	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
 
-.PHONY: default all build run check stop hznbuild hznstart hznstop publish-service publish-service-only publish-pattern clean
+clean-all-archs:
+	ARCH=amd64 $(MAKE) clean
+	ARCH=arm $(MAKE) clean
+	ARCH=arm64 $(MAKE) clean
+
+# This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
+horizon/.hzn.json.tmp.mk: horizon/hzn.json
+	@ hzn util configconv -f $< > $@
+
+.PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs

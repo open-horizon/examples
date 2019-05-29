@@ -32,7 +32,7 @@ docker ps
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep helloworld
+tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ``` 
@@ -41,7 +41,7 @@ docker logs -f $(docker ps -q --filter name=helloworld)
 hzn unregister -f
 ```
 
-## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Example Edge Service
+## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Edge Service
 
 If you want to create your own Horizon edge service, follow the next 2 sections to copy the hello world example and start modifying it.
 
@@ -52,7 +52,7 @@ If you want to create your own Horizon edge service, follow the next 2 sections 
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
 ```
-- If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.cfg`):
+- If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.json`):
 ```
 unset HZN_ORG_ID
 ```
@@ -61,9 +61,6 @@ unset HZN_ORG_ID
 hzn dev service new -o <org-id> -s <service-name> -i <docker-image-base>
 # E.g.:  hzn dev service new -o bp@someemail.com -s bp.helloworld -i brucemp/bp.helloworld
 ```
-- Soon these steps will not be needed, but for now do them:
-    - `source horizon/hzn.cfg`
-    - Set the exchange URL: `export HZN_EXCHANGE_URL=https://alpha.edge-fabric.com/v1`
 - As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
@@ -89,7 +86,7 @@ hzn dev service start -S
 docker ps
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep helloworld
+tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ```
@@ -101,19 +98,13 @@ docker inspect $(docker ps -q --filter name=helloworld) | jq '.[0].Config.Env'
 ```
 hzn dev service stop
 ```
-- Create a service signing key pair (if you haven't already done so):
+- Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
 ```
-# soon this mkdir will not be needed
-mkdir -p ~/.hzn/keys
-hzn key create -d ~/.hzn/keys IBM my@email.com
-# soon these 2 commands will not be needed:
-mv ~/.hzn/keys/*-private.key ~/.hzn/keys/service.private.key
-mv ~/.hzn/keys/*-public.pem ~/.hzn/keys/service.public.pem
+hzn key create <my-company> <my-email>
 ```
 - Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
-# soon the -k and -K flags will not be necessary
-hzn exchange service publish -f horizon/service.definition.json -k ~/.hzn/keys/service.private.key -K ~/.hzn/keys/service.public.pem
+hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
 - Publish your edge node deployment pattern in the Horizon Exchange and see it there:
@@ -121,9 +112,9 @@ hzn exchange service list
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
-- Register your edge node with Horizon to use your deployment pattern:
+- Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
 ```
-hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture)
+hzn register -p pattern-SERVICE_NAME-$(hzn architecture)
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
@@ -134,7 +125,7 @@ docker ps
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep helloworld
+tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ``` 
@@ -149,11 +140,12 @@ To see more Horizon features demonstrated, continue on to the [cpu2msghub exampl
 
 ## Process for the Horizon Development Team to Make Updates to the Helloworld Service
 
-- Do the steps in the Preconditions section above, except:
+- Do the steps in the Preconditions section above, **except**:
     - export `HZN_EXCHANGE_URL` to the staging instance
+    - Do **not** run `hzn dev service new ...` (use the git files in this directory instead)
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
-- Increment `SERVICE_VERSION` in `horizon/hzn/cfg`
+- Increment `SERVICE_VERSION` in `horizon/hzn.json`
 - Make `~/.hzn/keys/service.private.key` and `~/.hzn/keys/service.public.pem` actually be symbolic links to the common keys we use to sign all of our examples.
 - Build, test, and publish for all architectures:
 ```
