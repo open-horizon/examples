@@ -10,7 +10,7 @@ This service takes no input values.
 
 Other Horizon services can use the CPU Percent service by requiring it in its own service definition, and then in its code accessing the CPU Percent REST APIs with the URL:
 ```
-http://cpu:8347/v1/<api-from-the-list-below>
+http://ibm.cpu:80/v1/<api-from-the-list-below>
 ```
 
 ### **API:** GET /cpu
@@ -35,7 +35,7 @@ body:
 
 #### Example:
 ```
-curl -sS -w "%{http_code}" http://cpu:8347/v1/cpu | jq .
+curl -sS -w "%{http_code}" http://ibm.cpu:80/v1/cpu | jq .
 {
   "cpu": 5.05
 }
