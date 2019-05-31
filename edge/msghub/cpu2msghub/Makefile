@@ -58,6 +58,12 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
+icp-publish:
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
+
 # Create a topic in msg hub for cpu2msghub to send data to
 MSGHUB_TOPIC ?= cpu2msghub
 msghub-topic:
