@@ -35,7 +35,7 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 
 # new target for icp exchange to run on startup to publish only
-icp-publish:
+publish-only:
 	ARCH=amd64 $(MAKE) publish-service
 	ARCH=arm $(MAKE) publish-service
 	ARCH=arm64 $(MAKE) publish-service

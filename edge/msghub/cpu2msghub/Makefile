@@ -58,7 +58,7 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-icp-publish:
+publish-only:
 	ARCH=amd64 $(MAKE) publish-service
 	ARCH=arm $(MAKE) publish-service
 	ARCH=arm64 $(MAKE) publish-service

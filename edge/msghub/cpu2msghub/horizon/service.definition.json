@@ -27,13 +27,13 @@
             "name": "MSGHUB_API_KEY",
             "label": "The API key to use when sending messages to your instance of IBM Message Hub",
             "type": "string",
-            "defaultValue": "$MSGHUB_API_KEY"
+            "defaultValue": ""
         },
         {
             "name": "MSGHUB_BROKER_URL",
             "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub",
             "type": "string",
-            "defaultValue": "$MSGHUB_BROKER_URL"
+            "defaultValue": ""
         },
         {
             "name": "MSGHUB_TOPIC",
