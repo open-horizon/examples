@@ -10,13 +10,13 @@
     "sharable": "multiple",
     "requiredServices": [
         {
-            "url": "github.com.open-horizon.examples.cpu",
+            "url": "ibm.cpu",
             "org": "IBM",
             "version": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         },
         {
-            "url": "github.com.open-horizon.examples.gps",
+            "url": "ibm.gps",
             "org": "IBM",
             "version": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
@@ -45,13 +45,13 @@
             "name": "SAMPLE_SIZE",
             "label": "the number of samples to read before calculating the average",
             "type": "int",
-            "defaultValue": "6"
+            "defaultValue": "5"
         },
         {
             "name": "SAMPLE_INTERVAL",
             "label": "the number of seconds between samples",
             "type": "int",
-            "defaultValue": "5"
+            "defaultValue": "2"
         },
         {
             "name": "MOCK",
@@ -69,7 +69,7 @@
             "name": "VERBOSE",
             "label": "log everything that happens",
             "type": "string",
-            "defaultValue": "0"
+            "defaultValue": "1"
         }
     ],
     "deployment": {

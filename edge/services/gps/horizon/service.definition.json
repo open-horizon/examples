@@ -1,19 +1,50 @@
 {
   "org": "$HZN_ORG_ID",
-  "label": "GPS for $ARCH",
+  "label": "$SERVICE_NAME for $ARCH",
   "description": "Provides the edge node location via a REST API from a GPS sensor, environment variables, or the IP address",
   "public": true,
   "documentation": "https://console.test.cloud.ibm.com/docs/services/edge-fabric/poc/cpu.html",
-  "url": "$MYDOMAIN.$GPS_NAME",
-  "version": "$GPS_VERSION",
+  "url": "$SERVICE_NAME",
+  "version": "$SERVICE_VERSION",
   "arch": "$ARCH",
   "sharable": "singleton",
   "requiredServices": [],
-  "userInput": [],
+  "userInput": [
+    {
+      "name": "HZN_GPS_PORT",
+      "label": "REST API port",
+      "type": "int",
+      "defaultValue": "80"
+    },
+    {
+      "name": "HZN_USE_GPS",
+      "label": "Use GPS hardware, or not",
+      "type": "boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "HZN_LAT",
+      "label": "Manually user-specified North latitude, or 0.0 when using other means",
+      "type": "float",
+      "defaultValue": "0.0"
+    },
+    {
+      "name": "HZN_LON",
+      "label": "Manually user-specified East longitude, or 0.0 when using other means",
+      "type": "float",
+      "defaultValue": "0.0"
+    },
+    {
+      "name": "HZN_LOCATION_ACCURACY_KM",
+      "label": "Manually user-specified radial distance for obfuscation. Ignored if HZN_USE_GPS is true..",
+      "type": "float",
+      "defaultValue": "0.0"
+    }
+  ],
   "deployment": {
     "services": {
-      "gps": {
-        "image": "$DOCKER_HUB_ID/${ARCH}_$GPS_NAME:$GPS_VERSION",
+      "$SERVICE_NAME": {
+        "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
         "privileged": true,
         "devices": [
           "/dev/bus/usb/001/001:/dev/bus/usb/001/001"

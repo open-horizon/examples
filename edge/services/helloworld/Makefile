@@ -57,6 +57,12 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
+# new target for icp exchange to run on startup to publish only
+publish-only:
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
+
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
 
