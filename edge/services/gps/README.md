@@ -1,57 +1,120 @@
-# Horizon GPS REST Service
+# Horizon GPS Service
 
-The shared "gps" service REST API provides location data
-(i.e., latitude, longitude, elevation) which has either been
-statically provided by the owner, or derived from the device's IP address,
-or may have been provided by GPS hardware when available.  The source of
-the location data is configured by means of well-known variables that are
-expected to be set in the process environment of the `gps` container when
-it is run by the Horizon infrastructure.
+The GPS service provides location coordinates and satellite data to other Horizon services.
 
-## Preconditions
+## Input Values
 
-The standard Linux `make` tool is used to operate on this code.  Please see the local `Makefile` for additional details.  The standard Horizon image does not include `make`, so you will want to install make as follows:
+These values can be passed to the GPS service thru the `global` section of the input file given to `hzn register`:
 ```
-    $ apt-get install make
-```
-
-## Building
-
-To build and tag the `gps` service docker container for the local architecture, go to this directory and run make with no target:
-```
-    $ make
+  "global": [
+    {
+      "type": "LocationAttributes",
+      "variables": {
+        "lat": 45.421530,     /* this is passed to each container as HZN_LAT */
+        "lon": -75.697193,    /* this is passed to each container as HZN_LON */
+        "use_gps": false,    /* true if you have, and want to use, an attached GPS sensor. Passed to each container as HZN_USE_GPS. */
+        "location_accuracy_km": 0.0   /* Make the node location inaccurate by this number of KM to protect privacy. */
+      }
+    }
+  ],
 ```
 
-## Testing
+If you don't specify the values above, the GPS service will default to using the edge node's public IP to estimate its location.
 
-To test the `gps` service container, build it, run it as a daemon for testing purposes, then finally run the test program.  Execute these commands from this directory to accomplish that:
-```
-    $ make
-    $ make daemon
-    $ make test
-```
+## RESTful API
 
-## Publishing to the Horizon Docker Registry
-
-To publish the `gps` service docker container (for this local architecture) to the Docker Hub registry, and create the defintion for it in the Horizon Exchange:
+Other Horizon services can use the GPS service by requiring it in its own service definition, and then in its code accessing the GPS REST APIs with the URL:
 ```
-    $ make
-    $ make exchange-publish
+http://ibm.gps:80/v1/<api-from-the-list-below>
 ```
 
-## Development and Test Development
+### **API:** GET /gps/location
+---
 
-To facilitate development of the `gps` service, use the `develop` target:
-```
-    $ make develop
-```
-This will build the `gps` service container, then mount this working directory and run `/bin/sh` in that container.  In that shell, `cd /outside` and then you can work on the original files here outside the container, and run them in the context of the container.
+#### Parameters:
+none
 
-Similarly, to facilitate development of the test container for the `gps` service, use the `develop-test` target:
+#### Response:
+
+code: 
+* 200 -- success
+* other http codes TBD
+
+body:
+
+
+| Name | Type | Description |
+| ---- | ---- | ---------------- |
+| latitude | float | the latitude of the current location |
+| longitude | float | the longitude of the current location |
+| elevation | float | the elevation of the current location in meters |
+| accuracy_km | float | the location accuracy in kilometers |
+| loc_source | string | one of: Manual, Estimated, GPS, or Searching |
+| loc_last_update | float | the timestamp the location was read (UTC) |
+
+
+#### Example:
 ```
-    $ make develop-test
+curl -sS -w "%{http_code}" http://ibm.gps:80/v1/gps/location | jq .
+{
+  "latitude": 42.052577333,
+  "longitude": -73.960314,
+  "elevation": 33,
+  "accuracy_km": 0,
+  "loc_source": "GPS",
+  "loc_last_update": 1498070507
+}
+200
 ```
-This will build the test container, then mount this working directory and run `/bin/bash` in that container.  In that shell, `cd /outside` and then you can work on the original test code files here outside the container, and run them in the context of the container.
+
+### **API:** GET /gps/satellites
+---
+
+#### Parameters:
+none
+
+#### Response:
+
+code: 
+* 200 -- success
+* other http codes TBD
+
+body:
+
+
+| Name | Type | Description |
+| ---- | ---- | ---------------- |
+| satellites | json | array of data for satellites |
+| satellites.PRN | int | PRN ID of the satellite. 1-63 are GNSS satellites, 64-96 are GLONASS satellites, 100-164 are SBAS satellites |
+| satellites.az | int | azimuth, degrees from true north |
+| satellites.el | int | elevation in degrees |
+| satellites.ss | int | signal strength in dB |
+| satellites.used | int | used in current location solution? (SBAS/WAAS/EGNOS satellites may be flagged used if the solution has corrections from them, but not all drivers make this information available) |
+
+
+#### Example:
+```
+curl -sS -w "%{http_code}" http://ibm.gps:80/v1/gps/satellites | jq .
+{
+  "satellites": [
+    {
+      "PRN": 1,
+      "az": 63,
+      "el": 58,
+      "ss": 23,
+      "used": true
+    },
+    {
+      "PRN": 3,
+      "az": 125,
+      "el": 20,
+      "ss": 27,
+      "used": true
+    },
+    ...
+  ]
+}
+```
 
 ## Debugging
 

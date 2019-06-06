@@ -1,0 +1,8 @@
+{
+    "HZN_ORG_ID": "IBM",
+    "MetadataVars": {
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.gps",
+        "SERVICE_NAME": "ibm.gps",
+        "SERVICE_VERSION": "2.0.7"
+    }
+}

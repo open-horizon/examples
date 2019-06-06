@@ -27,13 +27,12 @@ echo "Optional environment variables (or default values): SAMPLE_INTERVAL=$SAMPL
 if [[ "$PUBLISH" == "true" ]]; then
   echo "Checking for required environment variables for publishing to IBM Message Hub:"
   checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
-  checkRequiredEnvVar "HZN_PATTERN"      # automatically passed in by Horizon
   checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon
+  checkRequiredEnvVar "MSGHUB_TOPIC"
   checkRequiredEnvVar "MSGHUB_API_KEY"
   checkRequiredEnvVar "MSGHUB_BROKER_URL"
   MSGHUB_USERNAME="${MSGHUB_API_KEY:0:16}"
   MSGHUB_PASSWORD="${MSGHUB_API_KEY:16}"
-  MSGHUB_TOPIC="${MSGHUB_TOPIC:-$HZN_ORGANIZATION.$HZN_PATTERN}"
   # The only special chars allowed in the topic are: -._
   MSGHUB_TOPIC="${MSGHUB_TOPIC//[@#%()+=:,<>]/_}"
   # Tranlating the slashes does not work in the above bash substitute in alpine, so use tr
@@ -64,7 +63,7 @@ while true; do
     output='{"cpu":'$(date +%S)'} 200'
     curlrc=0
   else
-    output=$(curl -sS -w %{http_code} "http://cpu:8347/v1/cpu")
+    output=$(curl -sS -w %{http_code} "http://ibm.cpu:80/v1/ibm.cpu")
     curlrc=$?     # save this before it gets overwritten
   fi
   httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
@@ -89,7 +88,7 @@ while true; do
         output='{"lat":0.0,"lon":0.0,"alt":0.0} 200'
         curlrc=0
       else
-        output=$(curl -sS -w %{http_code} "http://gps:31779/v1/gps/location")
+        output=$(curl -sS -w %{http_code} "http://ibm.gps:80/v1/gps/location")
         curlrc=$?     # save this before it gets overwritten
       fi
       httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code

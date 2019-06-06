@@ -1,45 +1,57 @@
 {
     "org": "$HZN_ORG_ID",
-    "label": "$CPU2MSGHUB_NAME for $ARCH",
+    "label": "$SERVICE_NAME for $ARCH",
     "description": "Sample Horizon service that repeatedly reads the CPU load and GPS location, and sends it to IBM Message Hub",
     "public": true,
-    "documentation": "https://console.test.cloud.ibm.com/docs/services/edge-fabric/poc/cpu.html",
-    "url": "$MYDOMAIN.$CPU2MSGHUB_NAME",
-    "version": "$CPU2MSGHUB_VERSION",
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/msghub/cpu2msghub/README.md",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
     "sharable": "multiple",
     "requiredServices": [
         {
-            "url": "$MYDOMAIN.$CPU_NAME",
+            "url": "ibm.cpu",
             "org": "IBM",
-            "version": "$CPU_VERSION",
+            "version": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         },
         {
-            "url": "$MYDOMAIN.$GPS_NAME",
+            "url": "ibm.gps",
             "org": "IBM",
-            "version": "$GPS_VERSION",
+            "version": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         }
     ],
     "userInput": [
         {
             "name": "MSGHUB_API_KEY",
-            "label": "The API key to use when sending message to your instance of IBM Message Hub",
+            "label": "The API key to use when sending messages to your instance of IBM Message Hub",
             "type": "string",
             "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_BROKER_URL",
+            "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_TOPIC",
+            "label": "The topic to use when sending messages to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": "cpu2msghub"
         },
         {
             "name": "SAMPLE_SIZE",
             "label": "the number of samples to read before calculating the average",
             "type": "int",
-            "defaultValue": "6"
+            "defaultValue": "5"
         },
         {
             "name": "SAMPLE_INTERVAL",
             "label": "the number of seconds between samples",
             "type": "int",
-            "defaultValue": "5"
+            "defaultValue": "2"
         },
         {
             "name": "MOCK",
@@ -57,16 +69,13 @@
             "name": "VERBOSE",
             "label": "log everything that happens",
             "type": "string",
-            "defaultValue": "0"
+            "defaultValue": "1"
         }
     ],
     "deployment": {
         "services": {
-            "cpu2msghub": {
-                "environment": [
-                    "MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL"
-                ],
-                "image": "$DOCKER_HUB_ID/${ARCH}_$CPU2MSGHUB_NAME:$CPU2MSGHUB_VERSION"
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION"
             }
         }
     }
