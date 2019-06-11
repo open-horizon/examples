@@ -17,7 +17,6 @@
 # Build stage 0: Go compilation
 
 FROM arm64v8/golang:alpine
-#FROM arm64v8/golang:1.9-alpine
 
 RUN apk --no-cache update && apk add git
 RUN apk add gcc musl musl-dev

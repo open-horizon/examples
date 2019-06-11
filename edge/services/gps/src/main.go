@@ -162,7 +162,7 @@ import (
 //   1 : Trace GPS monitor fix status
 const DEBUG = 1
 
-var DEV_FILE_PATTERNS = []string{"/dev/ttyACM*", "/dev/ttyAMA*", "/dev/cu.usb*", "/dev/tty.usb*"}
+var DEV_FILE_PATTERNS = []string{"/dev/ttyACM*", "/dev/ttyAMA*"}
 
 // Configuration environment variable names
 const (
