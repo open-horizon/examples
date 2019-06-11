@@ -162,7 +162,7 @@ import (
 //   1 : Trace GPS monitor fix status
 const DEBUG = 1
 
-var DEV_FILE_PATTERNS = []string{"/dev/ttyACM*", "/dev/ttyAMA*"}
+var DEV_FILE_PATTERNS = []string{"/dev/ttyACM*", "/dev/ttyAMA*", "/dev/cu.usb*", "/dev/tty.usb*"}
 
 // Configuration environment variable names
 const (
@@ -212,9 +212,9 @@ func runCmd(commandString string, args ...string) error {
 
 // Connect to the gpsd socket using the monitor library, then loop forever
 func run_gps_monitor(cache *hgps.GpsCache) {
-
 	logutil.Log("Looking for GPS device file...")
 	var devFile string
+	var estimate int = 0
 	searchInterval := 5 	// seconds
 	logEvery := 100    // searches
 	searchNum := logEvery   // start it off at the limit so we log the 1st failure
@@ -224,10 +224,29 @@ func run_gps_monitor(cache *hgps.GpsCache) {
 			logutil.Logf("Found GPS device file %v", devFile)
 			break
 		}
+
 		// can not start gpsd because no sensor. If we have already stored the static location, we can serve that for now
 		if !cache.IsLocationSet() {
 			logutil.Log("ERROR: Did not find a GPS /dev file that we support. Can not fall back to location from specified environment variables, because they were not set. Exiting.")
-			os.Exit(2)
+			
+			// Since the default is to use the gps hardware, when it's not found (perhaps on mac)
+			// the program will then fall back on the estimated coordinated from IP address
+			lat, lon, err := cache.EstimateLocation()
+			
+			if nil != err {
+				logutil.Logf("Houston, we have a problem...")
+				logutil.Logf("ERROR: Did not find a GPS /dev file that we support and location estimation using public IP address failed.")
+				os.Exit(2)
+			}
+
+			envutil.Cfg.LAT = lat
+			envutil.Cfg.LON = lon
+			envutil.Cfg.LOCATION_ACCURACY_KM = DEFAULT_LOCATION_ACCURACY_KM
+			
+			cache.SetLocation(envutil.Cfg.LAT, envutil.Cfg.LON, -1.0)
+			cache.SetLocationSource(hgps.ESTIMATED)
+			estimate = 1
+			break
 		}
 		if searchNum >= logEvery {
 			logutil.Logf("Did not find a GPS /dev file that we support. Will continue to look every %v seconds, and serve location from the specified environment variables for now...", searchInterval)
@@ -247,8 +266,9 @@ func run_gps_monitor(cache *hgps.GpsCache) {
 			os.Exit(2)
 		}
 	}
-
-	cache.SetLocationSource(hgps.SEARCHING)
+	if (estimate != 1){
+		cache.SetLocationSource(hgps.SEARCHING)
+	}
 	logutil.Logf("CACHE: %s", cache.GetConfiguration())
 
 	logutil.Log("Starting GPS monitor...")
@@ -399,7 +419,7 @@ func main() {
 		// Interact with gpsd and continuously cache its location data
 		go run_gps_monitor(cache)
 	}
-
+	
 	// Set up a signal handler for a cleaner exit on SIGINT
 	sig_channel := make(chan os.Signal, 1)
 	signal.Notify(sig_channel, syscall.SIGINT)

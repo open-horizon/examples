@@ -25,9 +25,15 @@ endif
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 1
-	curl -sS -w "%{http_code}" http://ibm.cpu:80/v1/cpu | jq .
-	hzn dev service stop
+	sleep 5
+	@if $(GET_SVC_OUTPUT); then \
+		hzn dev service stop; \
+		echo 'Service test succeeded.'; \
+	else \
+		hzn dev service stop; \
+		echo 'Service test failed!'; \
+		false; \
+	fi
 
 # Create/update the metadata in the exchange for this service
 publish-service:
@@ -42,11 +48,15 @@ publish-all-arches:
 	ARCH=arm $(MAKE) build-test-publish
 	ARCH=arm64 $(MAKE) build-test-publish
 
-# new target for icp exchange to run on startup to publish only
+# target for script - overwrite and pull insitead of push docker image
+publish-service-overwrite:
+	hzn exchange service publish -O -P -f horizon/service.definition.json
+
+# new target for new exchange to run on startup to publish only
 publish-only:
-	ARCH=amd64 $(MAKE) publish-service
-	ARCH=arm $(MAKE) publish-service
-	ARCH=arm64 $(MAKE) publish-service
+	ARCH=amd64 $(MAKE) publish-service-overwrite
+	ARCH=arm $(MAKE) publish-service-overwrite
+	ARCH=arm64 $(MAKE) publish-service-overwrite
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
