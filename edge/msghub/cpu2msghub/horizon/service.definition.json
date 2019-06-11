@@ -12,13 +12,13 @@
         {
             "url": "ibm.cpu",
             "org": "IBM",
-            "version": "1.2.5",
+            "version": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         },
         {
             "url": "ibm.gps",
             "org": "IBM",
-            "version": "2.0.7",
+            "version": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         }
     ],
