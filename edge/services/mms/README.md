@@ -31,7 +31,7 @@ docker build -t "${DOCKER_IMAGE_BASE}_$(hzn architecture):${SERVICE_VERSION}" .
 
 ## Running In Development Mode
 
-- Use the developer tool to run the container with a local development instance of the Cloud Sync Server (CSS). Normally, in production, you will use the CSS in the IBM Cloud, but during development it is convenient to have a dedicated and private "dev CSS" instance you can use. So we will show that approach here first.
+- Use the developer tool to run the container with a local development instance of the Model Management Service (MMS). Normally, in production, you will use the MMS in the IBM Public Cloud, or ICP, but during development it is convenient to have a dedicated and private "dev MMS" instance you can use. So we will show that approach here first.
 
 ```
 hzn dev service start
@@ -55,7 +55,7 @@ Jun  7 16:04:04 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4
 ...
 ```
 
-That is, the output should identify your Edge Node, and the message should be, "**Hello!**". This is how the Service is initially configured. Now let's use the "dev CSS" to send something to the Edge Sync Service (ESS) that the container is monitoring. In a **host**  shell, run this:
+That is, the output should identify your Edge Node, and the message should be, "**Hello!**". This is how the Service is initially configured. Now let's use the "dev MMS" to send something through the MMS to the Service container running on the Edge Node. In a **host**  shell, run this:
 
 ```
 echo 'Goodbye!' | ./dev-css-write.sh example-type id-0
@@ -71,10 +71,10 @@ Jun  7 16:04:26 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4
 ```
 
 - Notice the the message changed to "**Goodbye!**".
-- You can send other messages and watch them being picked up. Just make be to change the object id from `id-0` above to something else each time you send. E.g.:
+- You can send other messages and watch the updated versions being picked up. E.g.:
 
 ```
-echo 'Something Random' | ./dev-css-write.sh example-type id-1
+echo 'Something Random' | ./dev-css-write.sh example-type id-0
 echo 'Rubber Duck' | ./dev-css-write.sh example-type whatever-you-like-here
 ```
 
@@ -125,15 +125,14 @@ tail -f /var/log/syslog | grep mms[[]
 docker logs -f $(docker ps -q --filter name=mms)
 ``` 
 
-- While watching the output logs from the container, use the production CSS to send a new message to your Service:
+- While watching the output logs from the container, use the production MMS to send a new message to your Service:
 
 ```
 echo 'Goodbye!' | ./prod-css-write.sh example-type id-0
 ```
 
 - Again, observe the `mms` Service output (to see the message change to, "**Goodbye!**" as it did during development):
-- As before, you can send again, just be sure to change the object id from `id-0` above to something new each time you send.
-- Be aware that if you send things in rapid succession, they may arrive out of order.
+- Be aware that if you send things in rapid succession using different IDs, they may arrive out of order.
 - Unregister your edge node, stopping the mms service:
 
 ```

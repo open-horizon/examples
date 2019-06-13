@@ -32,6 +32,10 @@ version="1.0.0"
 description=""
 
 # Which Edge Nodes to target ("" is the wildcard for all IDs/types)
+# Normally you will set the `destinationType` to the pattern name you
+# used to register your nodes (without the organization prefix). That
+# way the object will only be sent to those Edge Nodes that are
+# registered with that specific pattern.
 destinationID=""
 destinationType=""
 
