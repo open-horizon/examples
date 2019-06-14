@@ -4,12 +4,11 @@
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(shell hzn architecture)
 
-# These variables can be overridden from the environment
-PORT_NUM ?= 80
-
+# Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
+# Build the docker image for 3 architectures
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
 	ARCH=arm $(MAKE) build
@@ -22,24 +21,32 @@ else
 GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep cpu /var/log/syslog
 endif
 
-# Run and tes service
+# Run and verify the service
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
 	sleep 1
-	curl -sSL http://localhost:$(PORT_NUM)/v1/cpu | jq .
+	curl -sS -w "%{http_code}" http://ibm.cpu:80/v1/cpu | jq .
 	hzn dev service stop
 
 # Create/update the metadata in the exchange for this service
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json
 
+# Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
 
+# Build/test/publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
 publish-all-arches:
 	ARCH=amd64 $(MAKE) build-test-publish
 	ARCH=arm $(MAKE) build-test-publish
 	ARCH=arm64 $(MAKE) build-test-publish
+
+# new target for icp exchange to run on startup to publish only
+publish-only:
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
