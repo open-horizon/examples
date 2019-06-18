@@ -34,7 +34,7 @@ endif
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 20  # may have to increase this time depending on the speed of your machine
+	sleep 60  # may have to increase this time depending on the speed of your machine
 	@if $(GET_SVC_OUTPUT) | grep -q 'echo {"nodeID":'; then \
 	  hzn dev service stop; \
 	  echo 'Service test succeeded.'; \
@@ -58,10 +58,15 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
+# target for script - overwrite and pull insitead of push docker image
+publish-service-overwrite:
+	hzn exchange service publish -O -P -f horizon/service.definition.json
+
+# new target for new exchange to run on startup to publish only
 publish-only:
-	ARCH=amd64 $(MAKE) publish-service
-	ARCH=arm $(MAKE) publish-service
-	ARCH=arm64 $(MAKE) publish-service
+	ARCH=amd64 $(MAKE) publish-service-overwrite
+	ARCH=arm $(MAKE) publish-service-overwrite
+	ARCH=arm64 $(MAKE) publish-service-overwrite
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Create a topic in msg hub for cpu2msghub to send data to
