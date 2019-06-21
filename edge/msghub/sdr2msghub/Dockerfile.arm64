@@ -1,5 +1,3 @@
-#FROM arm64v8/golang:1.12-stretch as go_build # STUCK on 7/20
-#FROM arm64v8/golang:1.11-stretch as go_build # STUCK on 13/20
 FROM arm64v8/golang:1.10-stretch as go_build
 
 RUN apt-get update && apt-get install -y \
