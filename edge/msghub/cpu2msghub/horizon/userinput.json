@@ -7,6 +7,7 @@
                 "MOCK": false,
                 "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
                 "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
+                "MSGHUB_CERT_ENCODED": "$MSGHUB_CERT_ENCODED",
                 "PUBLISH": true,
                 "SAMPLE_INTERVAL": 2,
                 "SAMPLE_SIZE": 5,
