@@ -12,13 +12,13 @@
         {
             "url": "ibm.cpu",
             "org": "IBM",
-            "version": "[0.0.0,INFINITY)",
+            "versionRange": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         },
         {
             "url": "ibm.gps",
             "org": "IBM",
-            "version": "[0.0.0,INFINITY)",
+            "versionRange": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         }
     ],
@@ -34,6 +34,12 @@
             "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub",
             "type": "string",
             "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_CERT_ENCODED",
+            "label": "The base64-encoded self-signed certificate to use when sending messages to your ICP instance of IBM Event Streams. Not needed for IBM Cloud Event Streams.",
+            "type": "string",
+            "defaultValue": "-"
         },
         {
             "name": "MSGHUB_TOPIC",
