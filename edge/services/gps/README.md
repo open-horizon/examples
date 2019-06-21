@@ -4,22 +4,7 @@ The GPS service provides location coordinates and satellite data to other Horizo
 
 ## Input Values
 
-These values can be passed to the GPS service thru the `global` section of the input file given to `hzn register`:
-```
-  "global": [
-    {
-      "type": "LocationAttributes",
-      "variables": {
-        "lat": 45.421530,     /* this is passed to each container as HZN_LAT */
-        "lon": -75.697193,    /* this is passed to each container as HZN_LON */
-        "use_gps": false,    /* true if you have, and want to use, an attached GPS sensor. Passed to each container as HZN_USE_GPS. */
-        "location_accuracy_km": 0.0   /* Make the node location inaccurate by this number of KM to protect privacy. */
-      }
-    }
-  ],
-```
-
-If you don't specify the values above, the GPS service will default to using the edge node's public IP to estimate its location.
+This service takes no input values. By default, this service will try to use gps hardware. If it is not found, the location will be estimated using the edge node's public IP address. 
 
 ## RESTful API
 

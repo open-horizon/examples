@@ -221,5 +221,5 @@ func main() {
 	http.HandleFunc("/audio/", makeAudioHandler(&fake))
 	http.HandleFunc("/power", powerHandler)
 	http.HandleFunc("/freqs", freqsHandler)
-	log.Fatal(http.ListenAndServe(":5427", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }

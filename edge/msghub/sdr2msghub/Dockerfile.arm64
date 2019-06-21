@@ -1,14 +1,16 @@
-FROM arm64v8/golang:1.10 as go_build
+#FROM arm64v8/golang:1.12-stretch as go_build # STUCK on 7/20
+#FROM arm64v8/golang:1.11-stretch as go_build # STUCK on 13/20
+FROM arm64v8/golang:1.10-stretch as go_build
 
 RUN apt-get update && apt-get install -y \
   curl \
   git \
-  lame \
-  libmp3lame-dev
+  lame 
 
 RUN curl -L \
-  "http://1dd40.http.dal05.cdn.softlayer.net/arm_artifacts/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
+  "https://s3-us-west-2.amazonaws.com/content-isaacleonard.com/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
   tar -C /usr/local -xz
+
 ENV LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
 
 # go deps for tf
@@ -19,6 +21,7 @@ RUN mkdir -p ${GOPATH}/src/github.com/tensorflow/ && \
 RUN cd ${GOPATH}/src/github.com/tensorflow/tensorflow && git checkout v1.6.0
 
 RUN go get github.com/Shopify/sarama
+RUN apt-get install libmp3lame-dev
 RUN go get github.com/viert/lame
 
 COPY msghub/sdr2msghub/main.go /
@@ -35,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   lame
 
 RUN curl -L \
-"http://1dd40.http.dal05.cdn.softlayer.net/arm_artifacts/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
+"https://s3-us-west-2.amazonaws.com/content-isaacleonard.com/libtensorflow-cpu-linux-arm64-1.6.0-rc1.tar.gz" | \
   tar -C /usr/local -xz
 ENV LD_LIBRARY_PATH=/usr/local/lib
 

@@ -207,7 +207,7 @@ type locationData struct {
 }
 
 func getGPS() (location locationData, err error) {
-	resp, err := http.Get("http://" + gpshostname + ":31779/v1/gps/location")
+	resp, err := http.Get("http://" + gpshostname + ":80/v1/gps/location")
 	if err != nil {
 		panic(err)
 	}
@@ -247,8 +247,8 @@ func rawToB64Mp3(rawBytes []byte) (b64Bytes string) {
 }
 
 // the default hostname if not overridden
-var hostname string = "sdr"
-var gpshostname string = "gps"
+var hostname string = "ibm.sdr"
+var gpshostname string = "ibm.gps"
 
 func main() {
 	alt_addr := os.Getenv("RTLSDR_ADDR")

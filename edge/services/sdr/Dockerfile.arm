@@ -9,10 +9,10 @@ RUN git checkout rpc
 RUN patch -p1 </tmp/never_close.patch
 RUN patch -p1 </tmp/signal_hack.patch
 
-RUN mkdir build && cd build && cmake ../ && make && make install
+RUN mkdir build && cd build && cmake ../ -DINSTALL_UDEV_RULES=ON -DDETACH_KERNEL_DRIVER=ON && make && make install
 RUN ls /usr/local/bin/rtl_*
 
-FROM arm32v6/golang:1.10.0-alpine as go_build
+FROM arm32v6/golang:1.9-alpine as go_build
 RUN apk --no-cache add git
 RUN go get github.com/hajimehoshi/go-mp3
 COPY main.go /
@@ -20,7 +20,7 @@ COPY rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/
 COPY bbcfake/bbcfake.go /go/src/github.com/open-horizon/examples/edge/services/sdr/bbcfake/bbcfake.go
 ARG version=0.0.2
 ENV MIC_VERSION $version
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo --ldflags "-X main.version=${MIC_VERSION}" -o /bin/rtlsdrd /main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -a -installsuffix cgo --ldflags "-X main.version=${MIC_VERSION}" -o /bin/rtlsdrd /main.go
 
 FROM arm32v6/alpine:latest
 RUN apk --no-cache add alsa-utils libusb ca-certificates

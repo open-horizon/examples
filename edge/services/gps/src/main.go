@@ -227,7 +227,7 @@ func run_gps_monitor(cache *hgps.GpsCache) {
 
 		// can not start gpsd because no sensor. If we have already stored the static location, we can serve that for now
 		if !cache.IsLocationSet() {
-			logutil.Log("ERROR: Did not find a GPS /dev file that we support. Can not fall back to location from specified environment variables, because they were not set. Exiting.")
+			logutil.Log("ERROR: Did not find a GPS /dev file that we support. Will attempt to estimate coordinates using IP address.")
 			
 			// Since the default is to use the gps hardware, when it's not found (perhaps on mac)
 			// the program will then fall back on the estimated coordinated from IP address

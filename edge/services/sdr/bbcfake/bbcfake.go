@@ -22,7 +22,8 @@ func downsample(input []byte) (out []byte) {
 
 // DownloadAndSplit fetches audio from a URL and returns a slice of chunks.
 func DownloadAndSplit(url string) (chunks [][]byte, err error) {
-	resp, err := http.Get(url)
+	//resp, err := http.Get(url)
+	resp, err := http.Get("https:" + url)
 	if err != nil {
 		return
 	}
@@ -31,7 +32,6 @@ func DownloadAndSplit(url string) (chunks [][]byte, err error) {
 	if err != nil {
 		return
 	}
-	defer d.Close()
 
 	var buf = make([]byte, 512)
 
@@ -63,6 +63,7 @@ func uniqueStrings(inputs []string) (set map[string]bool) {
 // ListMp3Urls links the urls in the page
 func ListMp3Urls(url string) (urls map[string]bool, err error) {
 	resp, err := http.Get(url)
+	//resp, err := http.Get("https:" + url)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -70,7 +71,8 @@ func ListMp3Urls(url string) (urls map[string]bool, err error) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	r, err := regexp.Compile("https://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download/proto/https/vpid/([a-z]|[0-9]){8}.mp3")
+	//r, err := regexp.Compile("https://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download/proto/https/vpid/([a-z]|[0-9]){8}.mp3")
+	r, err := regexp.Compile("//open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download/proto/https/vpid/([a-z]|[0-9]){8}.mp3")
 	if err != nil {
 		fmt.Println(err)
 	}
