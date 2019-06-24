@@ -66,6 +66,7 @@ publish-only:
 	ARCH=amd64 $(MAKE) publish-service-overwrite
 	ARCH=arm $(MAKE) publish-service-overwrite
 	ARCH=arm64 $(MAKE) publish-service-overwrite
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :

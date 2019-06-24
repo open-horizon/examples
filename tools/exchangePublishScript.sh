@@ -6,6 +6,9 @@ repository="https://github.com/open-horizon/examples.git"
 # text file containing servies and patterns to publish
 input="$(dirname $0)/blessedSamples.txt"
 
+topDir=$(pwd)
+echo $topDir
+
 git clone "$repository"
 
 # read in blessedSamples.txt which contains the services and patterns to publish
@@ -19,17 +22,12 @@ do
         else
             echo "Error publishing."
         fi
-        cd ../../../../
+        cd $topDir
 
     else
         echo "Error finding service dirsctory $line" 1>&2
-        #echo `pwd`
 
     fi
 
-    #echo "$line"
-
 done < "$input"
-
-echo `pwd`
 
