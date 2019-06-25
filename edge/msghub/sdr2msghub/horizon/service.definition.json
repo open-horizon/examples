@@ -1,23 +1,24 @@
 {
     "org": "$HZN_ORG_ID",
-    "label": "$SDR2MSGHUB_NAME for $ARCH",
+    "label": "$SERVICE_NAME for $ARCH",
     "description": "Sample Horizon service that sends 30 second clips of FM radio rich in speech to IBM Message Hub",
     "public": true,
-    "url": "$MYDOMAIN.$SDR2MSGHUB_NAME",
-    "version": "$SDR2MSGHUB_VERSION",
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/msghub/sdr2msghub/README.md",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
     "sharable": "multiple",
     "requiredServices": [
         {
-            "url": "$MYDOMAIN.$SDR_NAME",
+            "url": "ibm.gps",
             "org": "IBM",
-            "version": "$SDR_VERSION",
+            "versionRange": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         },
         {
-            "url": "$MYDOMAIN.$GPS_NAME",
+            "url": "ibm.sdr",
             "org": "IBM",
-            "version": "$GPS_VERSION",
+            "versionRange": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         }
     ],
@@ -29,6 +30,18 @@
             "defaultValue": ""
         },
         {
+            "name": "MSGHUB_BROKER_URL",
+            "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": ""
+        },
+        {
+            "name": "MSGHUB_TOPIC",
+            "label": "The topic to use when sending messages to your instance of IBM Message Hub",
+            "type": "string",
+            "defaultValue": "sdr-audio"
+        },
+        {
             "name": "VERBOSE",
             "label": "log everything that happens",
             "type": "string",
@@ -37,12 +50,8 @@
     ],
     "deployment": {
         "services": {
-            "sdr2msghub": {
-                "environment": [
-                    "MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL",
-                    "MSGHUB_TOPIC=sdr-audio"
-                ],
-                "image": "$DOCKER_HUB_ID/${ARCH}_$SDR2MSGHUB_NAME:$SDR2MSGHUB_VERSION"
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION"
             }
         }
     }

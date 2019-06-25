@@ -1,5 +1,4 @@
-cpu_percent
-gps
-helloworld
-
-cpu2msghub
+examples/edge/services/cpu_percent
+examples/edge/services/gps
+examples/edge/services/helloworld
+examples/edge/msghub/cpu2msghub
