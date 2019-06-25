@@ -7,7 +7,7 @@ repository="https://github.com/open-horizon/examples.git"
 input="$(dirname $0)/blessedSamples.txt"
 
 topDir=$(pwd)
-echo $topDir
+error=0
 
 git clone "$repository"
 
@@ -17,17 +17,25 @@ do
     # each $line contains the path to any service or pattern that needs to be published
     if cd $line; then
         echo `pwd`
-        if echo `make publish-only`; then
+        if make publish-only; then
             echo ""
         else
-            echo "Error publishing."
+            echo "\n*** Error publishing $line *** \n"
+            error=1
         fi
         cd $topDir
 
     else
-        echo "Error finding service dirsctory $line" 1>&2
-
+        echo "\n*** Error finding service directory $line *** \n" 1>&2
+        error=1
     fi
 
 done < "$input"
 
+
+# clean up if no errors
+if [ $error != 0 ]; then
+    echo "\n*** Errors were encountered when publishing, examples repo was not deleted *** \n"
+else
+    rm -f -r examples/
+fi
