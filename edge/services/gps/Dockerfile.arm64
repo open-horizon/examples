@@ -19,6 +19,7 @@
 FROM arm64v8/golang:alpine
 
 RUN apk --no-cache update && apk add git
+RUN apk add gcc musl musl-dev
 
 RUN mkdir -p /build/bin
 COPY src /build/src

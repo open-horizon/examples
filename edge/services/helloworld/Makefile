@@ -57,11 +57,16 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
+# target for script - overwrite and pull insitead of push docker image
+publish-service-overwrite:
+	hzn exchange service publish -O -P -f horizon/service.definition.json
+
 # new target for icp exchange to run on startup to publish only
 publish-only:
-	ARCH=amd64 $(MAKE) publish-service
-	ARCH=arm $(MAKE) publish-service
-	ARCH=arm64 $(MAKE) publish-service
+	ARCH=amd64 $(MAKE) publish-service-overwrite
+	ARCH=arm $(MAKE) publish-service-overwrite
+	ARCH=arm64 $(MAKE) publish-service-overwrite
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
