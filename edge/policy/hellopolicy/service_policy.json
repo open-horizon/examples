@@ -1,0 +1,7 @@
+{
+  "properties": [
+  ],
+  "constraints": [
+    "model == \"Whatsit ULTRA\" OR model == \"Thingamajig ULTRA\""
+  ]
+}
