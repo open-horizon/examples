@@ -3,6 +3,6 @@
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.cpu2msghub",
         "SERVICE_NAME": "ibm.cpu2msghub",
-        "SERVICE_VERSION": "1.4.0"
+        "SERVICE_VERSION": "1.4.1"
     }
 }
