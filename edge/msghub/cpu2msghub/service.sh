@@ -31,6 +31,8 @@ SAMPLE_SIZE="${SAMPLE_SIZE:-10}"    # the number of cpu samples to read before c
 PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to IBM Message Hub
 MOCK="${MOCK:-false}"     # if "true", just pretend to call the cpu service REST API
 VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
+CPU_URL="${CPU_URL:-http://ibm.cpu:80/v1/ibm.cpu}"
+GPS_URL="${GPS_URL:-http://ibm.gps:80/v1/gps/location}"
 
 echo "Optional environment variables (or default values): SAMPLE_INTERVAL=$SAMPLE_INTERVAL, SAMPLE_SIZE=$SAMPLE_SIZE, PUBLISH=$PUBLISH, MOCK=$MOCK"
 
@@ -69,18 +71,17 @@ while true; do
     output='{"cpu":'$(date +%S)'} 200'
     curlrc=0
   else
-    output=$(curl -sS -w %{http_code} "http://ibm.cpu:80/v1/ibm.cpu")
+    if [[ "$VERBOSE" == 1 ]]; then echo " Calling REST API ${CPU_URL}..."; fi
+    output=$(curl -sS -w %{http_code} --connect-timeout 5 "$CPU_URL")
     curlrc=$?     # save this before it gets overwritten
   fi
   httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
-  json="${output%?[0-9][0-9][0-9]}"   # for the output, get all but the newline and 3 digits of http code
 
-  if [[ "$curlrc" != 0 ]]; then
-    echo "Warning: Curl command to the local cpu service returned exit code $curlrc, will try again next interval."
-  elif [[ "$httpcode" != 200 ]]; then
-    echo "Warning: HTTP code $httpcode from the local cpu service REST API, will try again next interval."
+  if [[ "$curlrc" != 0  || "$httpcode" != 200 || ${#output} -lt 5 ]]; then
+    echo "Warning: the cpu curl cmd failed with exit code $curlrc, HTTP code $httpcode, or returned no data. Will try again next interval"
   else
     # Accumulate the CPU usage and calculate the average after obtaining all samples.
+    json="${output%?[0-9][0-9][0-9]}"   # for the output, get all but the 3 digits of http code
     cpuusage=$(echo $json | jq '.cpu')
     if [[ "$VERBOSE" == 1 ]]; then echo " Interval $samplecount cpu: $cpuusage"; fi
     sum=$(echo $sum + $cpuusage | bc)
@@ -94,15 +95,16 @@ while true; do
         output='{"lat":0.0,"lon":0.0,"alt":0.0} 200'
         curlrc=0
       else
-        output=$(curl -sS -w %{http_code} "http://ibm.gps:80/v1/gps/location")
+        if [[ "$VERBOSE" == 1 ]]; then echo " Calling REST API ${GPS_URL}..."; fi
+        output=$(curl -sS -w %{http_code} --connect-timeout 5 "$GPS_URL")
         curlrc=$?     # save this before it gets overwritten
       fi
       httpcode=${output:$((${#output}-3))}    # the last 3 chars are the http code
-      if [[ "$curlrc" != 0 || "$httpcode" != 200 ]]; then
-        echo "Warning: the gps curl cmd failed with exit code $curlrc, HTTP code $httpcode. Will try again next interval"
+      if [[ "$curlrc" != 0 || "$httpcode" != 200 || ${#output} -lt 5 ]]; then
+        echo "Warning: the gps curl cmd failed with exit code $curlrc, HTTP code $httpcode, or returned no data. Will try again next interval"
         loc='{"lat":0.0,"lon":0.0,"alt":0.0}'
       else
-        json="${output%?[0-9][0-9][0-9]}"   # for the output, get all but the newline and 3 digits of http code
+        json="${output%?[0-9][0-9][0-9]}"   # for the output, get all but the 3 digits of http code
         loc=$(echo $json | jq -c '{ lat: .latitude, lon: .longitude, alt: .elevation }')
       fi
 
