@@ -177,7 +177,7 @@ You will need all of these things to follow through the steps above.
 
 The IBM Watson IoT Platform provides some free visualization tools for your data streams. This section will show you how to configure visualization "cards" for the Dowload Speed, Upload Speed, and Latency/Ping Delay data in the Speedtest data stream, similar to those shown below:
 
-![cards](https://github.com/open-horizon/examples/tree/master/edge/wiotp/speedtest/cards.png "Cards in a WIoTP Board")
+![cards](https://github.com/open-horizon/examples/blob/master/edge/wiotp/speedtest2wiotp/cards.png "Cards in a WIoTP Board")
 
 Begin by hovering over the top icon in the left menu and select BOARDS. Then select the "+ Create New Board" button. Give the board a name (e.g., "SpeedTest"), and optionally, a description. Select the options lou wish (e.g., to add this board to your favorites and navbar). The select the Next button.
 
