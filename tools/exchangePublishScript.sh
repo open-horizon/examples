@@ -7,10 +7,10 @@ unset HZN_ORG_ID
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
-curl https://raw.githubusercontent.com/open-horizon/examples/master/tools/blessedSamples.txt -O
+#curl https://raw.githubusercontent.com/open-horizon/examples/master/tools/blessedSamples.txt -O
 
 # text file containing servies and patterns to publish
-input="$(dirname $0)/blessedSamples.txt"
+input="$(dirname $0)/examples/tools/blessedSamples.txt"
 
 topDir=$(pwd)
 error=0
@@ -44,5 +44,5 @@ if [ $error != 0 ]; then
     echo "\n*** Errors were encountered when publishing, examples repo was not deleted *** \n"
 else
     rm -f -r examples/
-    rm blessedSamples.txt
+    #rm blessedSamples.txt
 fi
