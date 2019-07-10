@@ -1,7 +1,13 @@
 #!/bin/sh
 
+# if the org id is set locally we don't want to override the IBM org of these samples
+unset HZN_ORG_ID
+
 # git repository to clone
 repository="https://github.com/open-horizon/examples.git"
+
+# text file containing servies and patterns to publish
+curl https://raw.githubusercontent.com/open-horizon/examples/master/tools/blessedSamples.txt -O
 
 # text file containing servies and patterns to publish
 input="$(dirname $0)/blessedSamples.txt"
@@ -38,4 +44,5 @@ if [ $error != 0 ]; then
     echo "\n*** Errors were encountered when publishing, examples repo was not deleted *** \n"
 else
     rm -f -r examples/
+    rm blessedSamples.txt
 fi
