@@ -6,6 +6,10 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
 export ARCH ?= $(shell hzn architecture)
 
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='echo {"nodeID":'
+export TIME_OUT:=60
+
 # Build the docker image for the current architecture
 build:
 ifeq (,$(findstring amd64,$(ARCH)))
@@ -23,15 +27,33 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+
+
+############################ WILL REMOVE IF test TARGET IS OKAYED ###########################
 # Soon we can use 'hzn service log ...' for all platforms
 ifeq ($(shell uname -s),Darwin)
 GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=cpu2msghub`
 else
 GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep cpu2msghub[[] /var/log/syslog
 endif
+############################################################################################
 
-# Run and verify the service
-test: build
+
+
+# new testing method
+test:
+	hzn dev service start -S
+	@echo 'Testing service...'
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) $(ARCH) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; }
+
+
+
+############################ WILL REMOVE IF test TARGET IS OKAYED ###########################
+old-test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
 	sleep 60  # may have to increase this time depending on the speed of your machine
@@ -43,6 +65,9 @@ test: build
 	  echo 'Service test failed!'; \
 	  false; \
 	fi
+############################################################################################
+
+
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
