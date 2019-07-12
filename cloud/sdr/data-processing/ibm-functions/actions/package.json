@@ -10,7 +10,8 @@
 		"lodash": "^4.17.11",
 		"pg": "^7.4.3",
 		"promise": "^8.0.1",
-		"watson-developer-cloud": "^3.7.0"
+		"watson-developer-cloud": "^3.7.0",
+        "lodash": ">=4.17.13"
 	},
 	"repository": {},
 	"engines": {
