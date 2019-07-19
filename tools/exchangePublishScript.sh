@@ -1,10 +1,13 @@
 #!/bin/sh
 
+# if the org id is set locally we don't want to override the IBM org of these samples
+unset HZN_ORG_ID
+
 # git repository to clone
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
-input="$(dirname $0)/blessedSamples.txt"
+input="$(dirname $0)/examples/tools/blessedSamples.txt"
 
 topDir=$(pwd)
 error=0
