@@ -27,7 +27,7 @@ else
 fi
 
 ####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
-eval "$command" | while read line; do
+$command | while read line; do
     # MATCH was found
     if grep -q -m 1 "$match" <<< "$line"; then
         exit 0

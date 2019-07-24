@@ -27,7 +27,7 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# new testing method
+# Run and verify the service
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'

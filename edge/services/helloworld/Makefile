@@ -6,6 +6,10 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it)
 export ARCH ?= $(shell hzn architecture)
 
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='says: Hello'
+export TIME_OUT:=30
+
 # Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -16,32 +20,15 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# In travis can only read syslog via sudo
-ifeq ($(TRAVIS),true)
-SYSLOG_SUDO = sudo
-else
-SYSLOG_SUDO =
-endif
-# Soon we can use 'hzn service log ...' for all platforms
-ifeq ($(shell uname -s),Darwin)
-GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=helloworld`
-else
-GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep helloworld /var/log/syslog
-endif
-
 # Run and verify the service
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 1
-	@if $(GET_SVC_OUTPUT) | grep -q 'says: Hello'; then \
-	  hzn dev service stop; \
-	  echo 'Service test succeeded.'; \
-	else \
-	  hzn dev service stop; \
-	  echo 'Service test failed!'; \
-	  false; \
-	fi
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; }
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
