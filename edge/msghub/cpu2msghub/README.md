@@ -4,8 +4,7 @@ For details about using this service, see [cpu2msghub.md](cpu2msghub.md).
 
 ## Using the CPU To IBM Message Hub Edge Service
 
-- First, go through the "Try It" page "Installing Horizon Software On Your Edge Machine" to set up your edge node.
-- Get an IBM cloud account (and for now have your org created in the exchange)
+- Before following the steps in this section, install the Horizon agent on your edge device and point it to your Horizon exchange. Also get an API key that is associated with your Horizon instance.
 - Set your exchange org:
 ```
 export HZN_ORG_ID="<yourorg>"
