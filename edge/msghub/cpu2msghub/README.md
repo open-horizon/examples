@@ -1,8 +1,8 @@
-# Horizon CPU To IBM Message Hub Service
+# Horizon CPU To IBM Event Streams Service
 
 For details about using this service, see [cpu2msghub.md](cpu2msghub.md).
 
-## Using the CPU To IBM Message Hub Edge Service
+## Using the CPU To IBM Event Streams Edge Service
 
 - Before following the steps in this section, install the Horizon agent on your edge device and point it to your Horizon exchange. Also get an API key that is associated with your Horizon instance.
 - Set your exchange org:
@@ -59,7 +59,7 @@ docker logs -f $(docker ps -q --filter name=cpu2msghub)
 hzn unregister -f
 ```
 
-## First-Time Edge Service Developer - Building and Publishing Your Own Version of the CPU To IBM Message Hub Edge Service
+## First-Time Edge Service Developer - Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
 
 If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the cpu2msghub example and start modifying it.
 
@@ -85,7 +85,7 @@ cp -a examples/edge/msghub/cpu2msghub ~/myservice     # or wherever
 cd ~/myservice
 ```
 - Set the values in `horizon/hzn.json` to your own values.
-- As part of the above section "Using the CPU To IBM Message Hub Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
+- As part of the above section "Using the CPU To IBM Event Streams Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
@@ -103,7 +103,7 @@ echo MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL
 make msghub-topic-list
 ```
 
-### Building and Publishing Your Own Version of the CPU To IBM Message Hub Edge Service
+### Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
 
 - Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
