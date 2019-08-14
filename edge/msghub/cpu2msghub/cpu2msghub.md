@@ -1,6 +1,6 @@
-# Horizon CPU To IBM Message Hub Service
+# Horizon CPU To IBM Event Streams Service
 
-Repeatedly queries the edge node's CPU percentage from the CPU Percent service and the GPS location from the GPS service, and then sends both to the IBM Message Hub. The topic is sends to is: `cpu2msghub` (can be overridden)
+Repeatedly queries the edge node's CPU percentage from the CPU Percent service and the GPS location from the GPS service, and then sends both to the IBM Event Streams. The topic is sends to is: `cpu2msghub` (can be overridden)
 
 ## Input Values
 
@@ -9,8 +9,8 @@ The following input values **must** be given to this service in the input file g
 
 | Name | Required? | Type | Description |
 | ---- | --------- | ---- | ---------------- |
-| MSGHUB_API_KEY | yes | string | the API key of the IBM Message Hub instance you are sending data to |
-| MSGHUB_BROKER_URL | yes | string | The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub |
+| MSGHUB_API_KEY | yes | string | the API key of the IBM Event Streams instance you are sending data to |
+| MSGHUB_BROKER_URL | yes | string | The comma-separated list of URLs to use when sending messages to your instance of IBM Event Streams |
 
 
 These **optional** input values can be overridden:
@@ -18,9 +18,9 @@ These **optional** input values can be overridden:
 
 | Name | Required? | Type | Description |
 | ---- | --------- | ---- | ---------------- |
-| MSGHUB_TOPIC | yes | string | The topic to use when sending messages to your instance of IBM Message Hub |
+| MSGHUB_TOPIC | yes | string | The topic to use when sending messages to your instance of IBM Event Streams |
 | MOCK | no | boolean | default is false. If true, send fake data instead of querying the cpu and gps services |
-| PUBLISH | no | boolean | default is true. If false, do not send data to message hub, only print it to the log |
+| PUBLISH | no | boolean | default is true. If false, do not send data to Event Streams, only print it to the log |
 | SAMPLE_INTERVAL | no | integer | default is 5. How often (in seconds) to query the cpu percent. (The gps location is queried every SAMPLE_INTERVAL * SAMPLE_SIZE seconds.)  |
 | VERBOSE | no | integer | default is 10. The number of cpu samples to read before calculating and publishing the cpu average and gps coordinates |
 
