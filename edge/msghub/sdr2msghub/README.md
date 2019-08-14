@@ -1,8 +1,8 @@
-# Horizon SDR To IBM Message Hub Service
+# Horizon SDR To IBM Event Streams Service
 
 For details about using this service, see [sdr2msghub.md](sdr2msghub.md).
 
-## Using the SDR To IBM Message Hub Edge Service
+## Using the SDR To IBM Event Streams Edge Service
 
 - First, go through the "Try It" page "Installing Horizon Software On Your Edge Machine" to set up your edge node.
 - Get an IBM cloud account (and for now have your org created in the exchange)
@@ -21,7 +21,7 @@ export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
-- Deploy (or get access to) an instance of IBM Event Streams (aka Message Hub) in the IBM Cloud that the sdr2msghub sample can send its data to. In the Event Streams UI, go to the `Service credentials` tab, create new credentials, and use the following values to `export` these environment variables:
+- Deploy (or get access to) an instance of IBM Event Streams in the IBM Cloud that the sdr2msghub sample can send its data to. In the Event Streams UI, go to the `Service credentials` tab, create new credentials, and use the following values to `export` these environment variables:
     - Set `MSGHUB_API_KEY` to the value of `api_key`
     - Set `MSGHUB_ADMIN_URL` to the value of `kafka_admin_url`
     - Set `MSGHUB_BROKER_URL` to all of the values in `kafka_brokers_sasl` separated by commas
@@ -64,7 +64,7 @@ docker logs -f $(docker ps -q --filter name=sdr2msghub)
 hzn unregister -f
 ```
 
-## First-Time Edge Service Developer - Building and Publishing Your Own Version of the SDR To IBM Message Hub Edge Service
+## First-Time Edge Service Developer - Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
 
 If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the sdr2msghub example and start modifying it.
 
@@ -90,7 +90,7 @@ cp -a examples/edge/msghub/sdr2msghub ~/myservice     # or wherever
 cd ~/myservice
 ```
 - Set the values in `horizon/hzn.json` to your own values.
-- As part of the above section "Using the SDR To IBM Message Hub Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
+- As part of the above section "Using the SDR To IBM Event Streams Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
@@ -108,7 +108,7 @@ echo MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL
 make msghub-topic-list
 ```
 
-### Building and Publishing Your Own Version of the SDR To IBM Message Hub Edge Service
+### Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
 
 - Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
