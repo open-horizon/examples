@@ -1,7 +1,7 @@
 {
   "name": "pattern-${SERVICE_NAME}-$ARCH",
   "label": "Edge $SERVICE_NAME Service Pattern for $ARCH",
-  "description": "Pattern for $SERVICE_NAME sending cpu and gps info to the IBM Message Hub for $ARCH",
+  "description": "Pattern for $SERVICE_NAME sending cpu and gps info to the IBM Event Streams for $ARCH",
   "public": true,
   "services": [
     {

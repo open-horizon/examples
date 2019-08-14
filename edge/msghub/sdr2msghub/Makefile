@@ -69,13 +69,13 @@ publish-only:
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-# Create a topic in msg hub for cpu2msghub to send data to
+# Create a topic in Event Streams for cpu2msghub to send data to
 MSGHUB_TOPIC ?= sdr2msghub
 msghub-topic:
 	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
 	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$MSGHUB_API_KEY" -d "{ \"name\": \"$(MSGHUB_TOPIC)\", \"partitions\": 2 }" $$MSGHUB_ADMIN_URL/admin/topics
 
-# List the topics currently in msg hub
+# List the topics currently in Event Streams
 msghub-topic-list:
 	@: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
 	@curl -sS -H "X-Auth-Token: $$MSGHUB_API_KEY" $$MSGHUB_ADMIN_URL/admin/topics | jq -r ".[] | .name"

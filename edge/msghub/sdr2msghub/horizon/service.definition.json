@@ -1,7 +1,7 @@
 {
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME for $ARCH",
-    "description": "Sample Horizon service that sends 30 second clips of FM radio rich in speech to IBM Message Hub",
+    "description": "Sample Horizon service that sends 30 second clips of FM radio rich in speech to IBM Event Streams",
     "public": true,
     "documentation": "https://github.com/open-horizon/examples/blob/master/edge/msghub/sdr2msghub/README.md",
     "url": "$SERVICE_NAME",
@@ -25,19 +25,19 @@
     "userInput": [
         {
             "name": "MSGHUB_API_KEY",
-            "label": "The API key to use when sending message to your instance of IBM Message Hub",
+            "label": "The API key to use when sending message to your instance of IBM Event Streams",
             "type": "string",
             "defaultValue": ""
         },
         {
             "name": "MSGHUB_BROKER_URL",
-            "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Message Hub",
+            "label": "The comma-separated list of URLs to use when sending messages to your instance of IBM Event Streams",
             "type": "string",
             "defaultValue": ""
         },
         {
             "name": "MSGHUB_TOPIC",
-            "label": "The topic to use when sending messages to your instance of IBM Message Hub",
+            "label": "The topic to use when sending messages to your instance of IBM Event Streams",
             "type": "string",
             "defaultValue": "sdr-audio"
         },
