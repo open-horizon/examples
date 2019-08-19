@@ -31,8 +31,7 @@ A sample `services` section of the input file given to `hzn register`:
     "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "https://$MYDOMAIN/service-$CPU2MSGHUB_NAME",
-            "versionRange": "[0.0.0,INFINITY)",
+            "url": "$SERVICE_NAME",
             "variables": {
                 "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
                 "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
