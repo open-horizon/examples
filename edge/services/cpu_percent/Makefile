@@ -4,6 +4,10 @@
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(shell hzn architecture)
 
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='"cpu":'
+export TIME_OUT:=20
+
 # Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -14,26 +18,16 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# Soon we can use 'hzn service log ...' for all platforms
-ifeq ($(shell uname -s),Darwin)
-GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=cpu`
-else
-GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep cpu /var/log/syslog
-endif
-
-# Run and verify the service
+# new testing method
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 5
-	@if $(GET_SVC_OUTPUT); then \
-		hzn dev service stop; \
-		echo 'Service test succeeded.'; \
-	else \
-		hzn dev service stop; \
-		echo 'Service test failed!'; \
-		false; \
-	fi
+	./serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; }
+
 
 # Create/update the metadata in the exchange for this service
 publish-service:
