@@ -13,10 +13,10 @@ contID=`docker ps -aqf "name=$name"`
 
 ####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
 while true; do
-    # MATCH was found
-
+    # exec into container and curl service
     line=`docker exec -it $contID curl http://$name:80/v1`
 
+    # MATCH was found
     if grep -q -m 1 "$match" <<< "$line"; then
         exit 0
 
