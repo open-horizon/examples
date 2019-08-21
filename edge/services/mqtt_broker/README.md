@@ -2,10 +2,6 @@
 
 The MQTT Broker service provides an mqtt broker and publisher for inter-container commmunication. 
 
-## Input Values
-
-This service takes no input values.
-
 ### **API:** 
 ---
 
