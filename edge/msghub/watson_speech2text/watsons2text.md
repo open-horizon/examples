@@ -25,13 +25,13 @@ These **optional** input values can be overridden:
 | ---- | --------- | ---- | ---------------- |
 | MQTT_HOST | yes | string | Default is ibm.mqtt. MQTT broker name | 
 | MQTT_PORT | yes | string | Default is 1883. MQTT broker port | 
-| MQTT_HWD_WST | yes | string | Default is mqtt_hwd_wst. Communication from hotworddetct to watsons2text | 
+| MQTT_HWD_WST | yes | string | Default is mqtt_hwd_wst. Communication from hotworddetect to watsons2text | 
 | MQTT_WST_EVST | yes | string | Default is mqtt_wst_evst. Communication from watsons2text to mqtt2kafka | 
 | REMOVE_SW | yes | string | Flag to enable stopwordremoval service | 
-| SW_HOST | yes | string | Default is 127.0.0.1 - Name of stop word removal endpoint (ibm.stopwordremoval) |  
+| SW_HOST | yes | string | Default is ibm.stopwordremoval - Name of stop word removal endpoint | 
 | SW_PORT | yes | string | Default is 5002. Port stop word removal WSGI server is listening on | 
 | MQTT_WST_EVST | yes | string | Communication from watsons2text to mqtt2kafka | 
-| MSGHUB_TOPIC | yes | string | Defauly is "myeventstreams." The topic to use when sending messages to your instance of IBM Event Streams |
+| MSGHUB_TOPIC | yes | string | The topic to use when sending messages to your instance of IBM Event Streams |
 
 
 #### Example:
@@ -61,7 +61,8 @@ A sample `services` section of the input file given to `hzn register`:
                 "MQTT_WST_EVST": "$MQTT_WST_EVST",
                 "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
                 "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
-                "MSGHUB_TOPIC": "$MSGHUB_TOPIC"
+                "MSGHUB_TOPIC": "$MSGHUB_TOPIC",
+                "MSGHUB_CERT_ENCODED": "$MSGHUB_CERT_ENCODED"
             }
         }
     ]
