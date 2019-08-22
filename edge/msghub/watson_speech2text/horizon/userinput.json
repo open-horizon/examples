@@ -2,7 +2,7 @@
     "services": [
         {
             "org": "$HZN_ORG_ID",
-            "url": "$SERVICE_NAME",
+            "url": "ibm.watsons2text",
             "variables": {
                 "MQTT_HOST": "$MQTT_HOST",
                 "MQTT_HWD_WST": "$MQTT_HWD_WST",
@@ -16,7 +16,7 @@
             }
         },
         {
-            "org": "major-peacock-icp-cluster",
+            "org": "$HZN_ORG_ID",
             "url": "ibm.mqtt2kafka",
             "variables": {
                 "MQTT_WST_EVST": "$MQTT_WST_EVST",

@@ -23,7 +23,7 @@ hzn exchange node confirm
 - Deploy (or get access to) an instance of IBM Event Streams that the watsons2text sample can send its data to. Ensure that the topic `watsons2text ` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
     - `MSGHUB_API_KEY`
     - `MSGHUB_BROKER_URL`
-    - `MSGHUB_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private) due to differences in the `base64` command set this variable as follows depending on the machine you're using.
+    - `MSGHUB_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private) due to differences in the `base64` command set this variable as follows based on the platform you're using:
         - On Linux: `MSGHUB_CERT_ENCODED=“$(cat $MSGHUB_CERT_FILE| base64 -w 0)”`
 	    - On Mac: `MSGHUB_CERT_ENCODED="$(cat $MSGHUB_CERT_FILE| base64)"`
     - `MSGHUB_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
@@ -38,7 +38,7 @@ wget https://github.com/open-horizon/examples/raw/master/edge/msghub/watsons2tex
 ```
 - Register your edge node with Horizon to use the watsons2text pattern:
 ```
-hzn register -p IBM/pattern-ibm.watsons2text -f userinput.json
+hzn register -p IBM/pattern-ibm.watsons2text-arm -f userinput.json
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
@@ -52,7 +52,8 @@ docker ps
   ```
   - If using IBM Event Streams in IBM Cloud Private:
   ```
-  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t watsons2text  ```
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC
+  ```
 - (Optional) To see the watsons2text service output:
 ```
 # On Linux:
