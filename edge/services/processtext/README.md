@@ -1,5 +1,5 @@
 
-# Horizon Offline Voice Assistant Example Edge Service
+# Horizon Offline Voice Assistant Example Edge Service for Raspberry Pi
 
 ## Using the Offline Voice Assistant Example Edge Service
 
@@ -39,7 +39,7 @@ tail -f /var/log/syslog | grep OVA
 hzn unregister -f
 ```
 
-## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Edge Service
+## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Offline Voice Assistant Edge Service
 
 If you want to create your own Horizon edge service, follow the next 2 sections to copy the Offline Voice Assistant Example Edge Service and start modifying it.
 
@@ -69,7 +69,7 @@ hzn exchange node confirm
 
 ### Building and Publishing Your Own Version of the Offline Voice Assistant Example Edge Service
 
-- Build the hello world docker image:
+- Build the processtext docker image:
 ```
 make
 ```
@@ -83,8 +83,6 @@ docker ps
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
 tail -f /var/log/syslog | grep OVA
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=ibm.processtext)
 ```
 - See the environment variables Horizon passes into your service container:
 ```
@@ -132,7 +130,7 @@ hzn unregister -f
 
 To see more Horizon features demonstrated, continue on to the [cpu2msghub example](../../msghub/cpu2msghub).
 
-## Process for the Horizon Development Team to Make Updates to the Helloworld Service
+## Process for the Horizon Development Team to Make Updates to the Offline Voice Assistant Service
 
 - Do the steps in the Preconditions section above, **except**:
     - export `HZN_EXCHANGE_URL` to the staging instance
