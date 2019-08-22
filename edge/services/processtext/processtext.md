@@ -26,7 +26,7 @@ Once the service begins to run it will prompt you to say a command with the foll
 
 If the audio clip is successfully recorded and sent to the audio2text service you will see:
 ```
-OVA]:STARTING AUDIO 2 TEXT SERVICE
+[OVA]:STARTING AUDIO 2 TEXT SERVICE
 [OVA]:Test.wav file is created!!
 [OVA]:Wav file is converted to base64encoded file
 [OVA]:SENT AUDIO DATA TO AUDIO 2 TEXT SERVICE
