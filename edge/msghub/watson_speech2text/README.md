@@ -34,7 +34,7 @@ hzn exchange node confirm
 
 - Get the user input file for the watsons2text sample:
 ```
-wget https://github.com/open-horizon/examples/raw/master/edge/msghub/watsons2text/horizon/userinput.json
+wget https://github.com/open-horizon/examples/raw/master/edge/msghub/watson_speech2text/horizon/userinput.json
 ```
 - Register your edge node with Horizon to use the watsons2text pattern:
 ```
@@ -84,28 +84,24 @@ unset HZN_ORG_ID
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
-- Copy the `watsons2text ` dir to where you will start development of your new service:
+- Copy the `watson_speech2text` dir to where you will start development of your new service:
 ```
-cp -a examples/edge/msghub/watsons2text ~/myservice     # or wherever
+cp -a examples/edge/msghub/watson_speech2text ~/myservice     # or wherever
 cd ~/myservice
 ```
 - Set the values in `horizon/hzn.json` to your own values.
-- As part of the above section "Using the CPU To IBM Event Streams Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
+- As part of the above section "Using the IBM Watson Speech to Text to IBM Event Streams Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node confirm
 ```
-- Verify that these environment variables are still set from when you used the existing cpu2msghub sample earlier in this document:
+- Verify that these environment variables are still set from when you used the existing watsons2text sample earlier in this document:
 ```
 echo MSGHUB_API_KEY=$MSGHUB_API_KEY
 echo MSGHUB_ADMIN_URL=$MSGHUB_ADMIN_URL
 echo MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL
-```
-- Verify the `watsons2text ` topic is now in your event streams instance:
-```
-make msghub-topic-list
 ```
 
 ### Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
@@ -129,7 +125,7 @@ tail -f /var/log/syslog | grep watsons2text[[]
 ```
 - See the environment variables Horizon passes into your service container:
 ```
-docker inspect $(docker ps -q --filter name= watsons2text) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=watsons2text) | jq '.[0].Config.Env'
 ```
 - Stop the service:
 ```
@@ -158,10 +154,15 @@ hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.js
 hzn agreement list
 docker ps
 ```
-- On any machine, subscribe to the msg hub topic to see the json data that watsons2text is sending:
-```
-kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
-```
+- On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the msg hub topic to see the json data that watsons2text is sending:
+  - If using IBM Event Streams in IBM Cloud:
+  ```
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
+  ```
+  - If using IBM Event Streams in IBM Cloud Private:
+  ```
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC
+  ```
 - See the watsons2text service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
