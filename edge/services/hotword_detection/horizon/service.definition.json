@@ -1,0 +1,56 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "zhangl - A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "exclusive",
+    "requiredServices": [
+        {
+            "url": "ibm.mqtt",
+            "org": "major-peacock-icp-cluster",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        }
+    ],
+    "userInput": [
+        {
+            "name": "MQTT_HOST",
+            "label": "The MQTT host to send text",
+            "type": "string",
+            "defaultValue": "ibm.mqtt"
+        },
+        {
+            "name": "MQTT_PORT",
+            "label": "The MQTT port number to send text",
+            "type": "string",
+            "defaultValue": "1883"
+        },
+        {
+            "name": "MQTT_HWD_WST",
+            "label": "The MQTT topic to send audio data",
+            "type": "string",
+            "defaultValue": "mqtt_hwd_wst"
+        },
+        {
+            "name": "AUDIO_FORMAT",
+            "label": "the audio output format",
+            "type": "string",
+            "defaultValue": "flac"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "devices": [
+                    "/dev/snd:/dev/snd"
+                ],
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "privileged": true
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "org": "major-peacock-icp-cluster",
+    "label": "ibm.mqtt",
+    "description": "Service to revice and send data to MQTT",
+    "public": true,
+    "documentation": "",
+    "url": "ibm.mqtt",
+    "version": "1.0.1",
+    "arch": "arm",
+    "sharable": "singleton",
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "ibm.mqtt": {
+                "image": "openhorizon/ibm.mqtt_arm@sha256:19ea04e1ee4db6f1887395f42d79b74d872fbb4074f8266d571cd092ae417f1b",
+                "ports": [
+                    {
+                        "HostIP": "0.0.0.0",
+                        "HostPort": "1883:1883/tcp"
+                    }
+                ]
+            }
+        }
+    }
+}

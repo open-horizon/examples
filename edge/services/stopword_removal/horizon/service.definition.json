@@ -1,0 +1,27 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "zhangl - A super-simple sample Horizon service",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "singleton",
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "privileged": true,
+                "ports": [
+                    {
+                        "HostPort": "5002:5002/tcp",
+                        "HostIP": "0.0.0.0"
+                    }
+                ]
+            }
+        }
+    }
+}
