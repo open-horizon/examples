@@ -24,8 +24,8 @@ hzn exchange node confirm
     - `MSGHUB_API_KEY`
     - `MSGHUB_BROKER_URL`
     - `MSGHUB_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private) due to differences in the `base64` command set this variable as follows depending on the machine you're using.
-        - Raspberry Pi: MSGHUB_CERT_ENCODED=“$(cat $MSGHUB_CERT_FILE| base64 -w 0)”
-	    - Mac: MSGHUB_CERT_ENCODED="$(cat $MSGHUB_CERT_FILE| base64)"
+        - On Linux: `MSGHUB_CERT_ENCODED=“$(cat $MSGHUB_CERT_FILE| base64 -w 0)”`
+	    - On Mac: `MSGHUB_CERT_ENCODED="$(cat $MSGHUB_CERT_FILE| base64)"`
     - `MSGHUB_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
 
 - Deploy (or get access to) an instance of IBM Speech to Text that the watsons2text sample can send its data to. Ensure that the Speech to Text service is created. Using information from the Speech to Text UI, `export` these environment variables:
