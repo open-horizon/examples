@@ -8,8 +8,6 @@ echo "[OVA]:Test.wav file is created!!"
 base64 test.wav | tr -d \\n > encodeddata
 echo "[OVA]:Wav file is converted to base64encoded file"
 
-aplay test.wav
-
 #publish to mqtt listenaudio topic
 mosquitto_pub -h ibm.mqtt -t ova/audioheard -f encodeddata
 echo "[OVA]:SENT AUDIO DATA TO AUDIO 2 TEXT SERVICE"
