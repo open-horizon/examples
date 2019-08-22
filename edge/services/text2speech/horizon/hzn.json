@@ -1,0 +1,8 @@
+{
+    "HZN_ORG_ID": "major-peacock-icp-cluster",
+    "MetadataVars": {
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.text2speech",
+        "SERVICE_NAME": "ibm.text2speech",
+        "SERVICE_VERSION": "1.0.1"
+    }
+}

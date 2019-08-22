@@ -1,0 +1,49 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME",
+    "description": "Process text commands",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "singleton",
+    "requiredServices": [
+        {
+            "url": "ibm.mqtt",
+            "org": "major-peacock-icp-cluster",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "ibm.voice2audio",
+            "org": "major-peacock-icp-cluster",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "ibm.audio2text",
+            "org": "major-peacock-icp-cluster",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "ibm.text2speech",
+            "org": "major-peacock-icp-cluster",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        }
+    ],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "devices": [
+                    "/dev/snd:/dev/snd"
+                ],
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "privileged": true
+            }
+        }
+    }
+}
