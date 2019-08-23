@@ -31,9 +31,10 @@ publish-service-overwrite:
 publish-pattern:
 	hzn exchange pattern publish -f horizon/pattern.json
 
+# new target for new exchange to run on startup to publish only
 publish-only: publish-service-overwrite
 
-publish: build test publish-service
+publish: test publish-service
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :

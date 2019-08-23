@@ -33,7 +33,7 @@ publish-pattern:
 
 publish-only: publish-service-overwrite publish-pattern
 
-publish: build test publish-service publish-pattern
+publish: test publish-service publish-pattern
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
