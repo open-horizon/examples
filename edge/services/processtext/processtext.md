@@ -15,6 +15,7 @@ Sends either the text output of the executed command or "I don't understand what
 ## Using the Horizon Offline Voice Assistant Service 
 
 In order to get the most out of this service you will need be watching the output using the command:
+
 `tail -f /var/log/syslog | grep OVA` 
 
 Once the service begins to run it will prompt you to say a command with the following message:
