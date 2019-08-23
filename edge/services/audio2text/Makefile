@@ -15,7 +15,7 @@ build:
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+	./serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
