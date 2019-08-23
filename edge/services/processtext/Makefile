@@ -5,7 +5,7 @@
 export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
-export MATCH:='[OVA]:STARING PROCESSTEXT SERVICE'
+export MATCH:='[OVA]'
 export TIME_OUT:=30
 
 build:
@@ -32,6 +32,8 @@ publish-pattern:
 	hzn exchange pattern publish -f horizon/pattern.json
 
 publish-only: publish-service-overwrite publish-pattern
+
+publish: build test publish-service publish-pattern
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
