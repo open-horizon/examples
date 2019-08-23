@@ -25,7 +25,7 @@ def clean_text(environ, start_response):
     start_response(status, response_headers)
     return [response_body]
 
-print("stropwordremoval running...")
+print("stopwordremoval running...")
 
 httpd = make_server(
     '0.0.0.0', 5002, clean_text)
