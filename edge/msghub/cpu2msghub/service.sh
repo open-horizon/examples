@@ -28,7 +28,7 @@ checkrc() {
 # Environment variables that can optionally be set, or default
 SAMPLE_INTERVAL="${SAMPLE_INTERVAL:-5}"    # how often (in seconds) to query the cpu (the gps location is queried every SAMPLE_INTERVAL * SAMPLE_SIZE seconds)
 SAMPLE_SIZE="${SAMPLE_SIZE:-10}"    # the number of cpu samples to read before calculating and publishing the cpu average and gps coordinates
-PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to IBM Message Hub
+PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to IBM Event Streams
 MOCK="${MOCK:-false}"     # if "true", just pretend to call the cpu service REST API
 VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
 CPU_URL="${CPU_URL:-http://ibm.cpu:80/v1/ibm.cpu}"
@@ -38,7 +38,7 @@ echo "Optional environment variables (or default values): SAMPLE_INTERVAL=$SAMPL
 
 # When this service is running in standalone mode, there are no required env vars.
 if [[ "$PUBLISH" == "true" ]]; then
-  echo "Checking for required environment variables for publishing to IBM Message Hub:"
+  echo "Checking for required environment variables for publishing to IBM Event Streams:"
   checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
   checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon
   checkRequiredEnvVar "MSGHUB_TOPIC"

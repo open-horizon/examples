@@ -38,7 +38,7 @@ hzn register -p IBM/pattern-ibm.cpu2msghub -f userinput.json
 hzn agreement list
 docker ps
 ```
-- On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the msg hub topic to see the json data that cpu2msghub is sending:
+- On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2msghub is sending:
   - If using IBM Event Streams in IBM Cloud:
   ```
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
@@ -155,7 +155,7 @@ hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.js
 hzn agreement list
 docker ps
 ```
-- On any machine, subscribe to the msg hub topic to see the json data that cpu2msghub is sending:
+- On any machine, subscribe to the Event Streams topic to see the json data that cpu2msghub is sending:
 ```
 kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
 ```
