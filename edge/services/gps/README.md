@@ -101,19 +101,3 @@ curl -sS -w "%{http_code}" http://ibm.gps:80/v1/gps/satellites | jq .
 }
 ```
 
-## Debugging
-
-To debug the gps service, you can connect directly to the servcie from any shell on the host as follows:
-```
-    export gps_ip=`docker inspect gps | grep IPAddress | tail -1 | sed 's/.*: "//;s/",//'`
-    curl -s http://$gps_ip:31779/v1/gps | jq
-```
-
-If the gpsd daemon (not locally developed code) is suspect, you can debug it by using docker exec to make a shell in the gps micorservice container, and then connecting to the gpsd socket:
-```
-    docker exec -it gps /bin/sh
-    telnet localhost 2947
-    ?WATCH={"enable":true,"json":true}
-    e
-```
-`e` is the exit command.  The WATCH command will stream the data until you stop it.  You can Google for more info on the *gpsd wire protocol*.
