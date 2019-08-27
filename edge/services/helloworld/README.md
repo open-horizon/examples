@@ -171,7 +171,7 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 - To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example:
 
 ```
-hzn exchange business addpolicy -f horizon/businesspolicy.json bizPolicy1
+hzn exchange business addpolicy -f horizon/business_policy.json bizPolicy1
 ```
 
 - Once that competes, you can look at the results with the following command, substituting your own org id:
@@ -181,6 +181,24 @@ hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
 
 - The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
+Look at the Horizon agreement until it is finalized and then see the running container:
+```
+hzn agreement list
+docker ps
+```
+
+- See the helloworld service output:
+```
+# soon you will use 'hzn service log ...' for all platforms
+# For now on Linux:
+tail -f /var/log/syslog | grep helloworld[[]
+# For now on Mac:
+docker logs -f $(docker ps -q --filter name=helloworld)
+```
+- Unregister your edge node, stopping the helloworld service:
+```
+hzn unregister -f
+```
 
 ## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Edge Service
 

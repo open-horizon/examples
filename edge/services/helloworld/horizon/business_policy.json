@@ -2,9 +2,9 @@
   "label": "",
   "description": "",
   "service": {
-    "name": "helloworld",
+    "name": "ibm.helloworld",
     "org": "major-peacock-icp-cluster",
-    "arch": "*",
+    "arch": "amd64",
     "serviceVersions": [
       {
         "version": "1.0.0",
@@ -21,7 +21,7 @@
   "userInput": [
     {
       "serviceOrgid": "major-peacock-icp-cluster",
-      "serviceUrl": "helloworld",
+      "serviceUrl": "ibm.helloworld",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {
