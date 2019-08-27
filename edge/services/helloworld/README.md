@@ -42,7 +42,61 @@ hzn unregister -f
 
 ## Using the Hello World Example Edge Service as a Policy
 
+- The Horizon Policy mechanism offers an alternative to using Deployment Patterns. Policies provide much finer control over agreement forming between Horizon Agents on Edge Nodes, and the Horizon AgBots. It also provides a greater separation of concerns, allowing Edge Nodes owners, Service code developers, and Business owners to each independently articulate their own Policies. There are therefore three types of Horizon Policies:
 
+1. Node Policy (provided at registration time by the node owner)
+
+2. Service Policy (may be applied to a published Service in the Exchange)
+
+3. Business Policy (which approximately corresponds to a Deployment Pattern)
+
+#### Node Policy 
+
+- As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
+
+- Make sure your Edge Node is not registered by running:
+
+```
+hzn unregister -f
+```
+
+- Now let's register using the `node_policy.json` file in this example. It contains:
+
+```
+{
+  "properties": [
+    { "name": "model", "value": "Thingamajig ULTRA" },
+    { "name": "serial", "value": 9123456 },
+    { "name": "configuration", "value": "Mark-II-PRO" }
+  ],
+  "constraints": [
+  ]
+}
+```
+
+- It provides values for three `properties` (`model`, `serial`, and `configuration`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
+
+- Register using this command:
+
+```
+hzn register --policy node_policy.json
+```
+
+- When the registration completes, use the following command to review the Node Policy:
+```
+hzn policy list
+```
+
+- Notice that in addition to the three properties stated in the node_policy.json file, Horizon has added a few more (openhorizon.cpu, openhorizon.arch, and openhorizon.memory). Horizon provides this additional information automatically and these properties may be used in any of your Policy constraints.
+
+#### Service Policy 
+
+
+
+
+
+
+#### Business Policy 
 
 
 
