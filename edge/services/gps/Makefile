@@ -26,12 +26,31 @@ build-all-arches:
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
+<<<<<<< Updated upstream
 	./serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+=======
+<<<<<<< Updated upstream
+	sleep 5
+	@if $(GET_SVC_OUTPUT); then \
+		hzn dev service stop; \
+		echo 'Service test succeeded.'; \
+	else \
+		hzn dev service stop; \
+		echo 'Service test failed!'; \
+		false; \
+	fi
+=======
+	../../../tools/curlServiceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+>>>>>>> Stashed changes
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
 		echo "*** Service test failed! ***"; }
 
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 # Create/update the metadata in the exchange for this service
 publish-service:
