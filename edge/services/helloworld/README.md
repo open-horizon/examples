@@ -176,8 +176,8 @@ hzn exchange business addpolicy -f horizon/businesspolicy.json bizPolicy1
 
 - Once that competes, you can look at the results with the following command, substituting your own org id:
 ```
-hzn exchange business listpolicy major-peacock-icp-cluster/biz1
-``
+hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
+```
 
 - The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
