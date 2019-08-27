@@ -50,7 +50,7 @@ hzn unregister -f
 
 3. Business Policy (which approximately corresponds to a Deployment Pattern)
 
-#### Node Policy 
+### Node Policy 
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
@@ -60,7 +60,7 @@ hzn unregister -f
 hzn unregister -f
 ```
 
-- Now let's register using the `node_policy.json` file in this example. It contains:
+- Now let's register using the `horizon/node_policy.json` file:
 
 ```
 {
@@ -89,14 +89,40 @@ hzn policy list
 
 - Notice that in addition to the three properties stated in the node_policy.json file, Horizon has added a few more (openhorizon.cpu, openhorizon.arch, and openhorizon.memory). Horizon provides this additional information automatically and these properties may be used in any of your Policy constraints.
 
-#### Service Policy 
+### Service Policy 
 
+- Like the other two Policy types, Service Policy contains a set of properties and a set of constraints. The properties of a Service Policy could state characteristics of the Service code that Node Policy authors or Business Policy authors may find relevant. The constraints of a Service Policy can be used to restrict where this Service can be run. The Service developer could, for example, assert that this Service requires a particular hardware setup such as CPU/GPU constraints, memory constraints, specific sensors, actuators or other peripheral devices required, etc.
 
+- Now let's attach this Service Policy to the helloworld Service previously published using the `horizon/service_policy.json` file:
 
+```
+{
+  "properties": [
+  ],
+  "constraints": [
+    "model == \"Whatsit ULTRA\" OR model == \"Thingamajig ULTRA\""
+  ]
+}
+```
 
+- Note this simple Service Policy doesn't provide any properties, but it does have a constraint. This example constraint is one that a Service developer might add, stating that their Service must only run on the models named Whatsit ULTRA or Thingamajig ULTRA. If you recall the Node Policy we used above, the model property was set to Thingamajig ULTRA, so this Service should be compatible with our Edge Node.
 
+- To attach the example Service policy to this service, use the following command (substituting your service name):
 
-#### Business Policy 
+```
+hzn exchange service addpolicy -f service_policy.json <published-helloworld-service-name>
+```
+
+Once that completes, you can look at the results with the following command:
+
+```
+hzn exchange service listpolicy <published-helloworld-service-name>
+```
+- Notice that Horizon has again automatically added some additional properties to your Policy. These generated property values can be used in constraints in Node Policies and Business Policies.
+
+- Now that we have set up the Policies for an Edge Node and the Policies for a published Service, we can move on to the final step of defining a Business Policy to tie them all together and cause software to be automatically deployed on your Edge Node.
+
+### Business Policy 
 
 
 
