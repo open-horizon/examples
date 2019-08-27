@@ -40,6 +40,13 @@ docker logs -f $(docker ps -q --filter name=helloworld)
 hzn unregister -f
 ```
 
+## Using the Hello World Example Edge Service as a Policy
+
+
+
+
+
+
 ## First-Time Edge Service Developer - Building and Publishing Your Own Version of the Hello World Edge Service
 
 If you want to create your own Horizon edge service, follow the next 2 sections to copy the hello world example and start modifying it.
