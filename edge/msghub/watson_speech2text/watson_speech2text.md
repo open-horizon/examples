@@ -2,9 +2,13 @@
 
 Service listens for hot work "Watson," once detected it captures an audio clip that is sent to an instance of Speech to Text, optionally removing stop words if user input is se to "true," then the transcribed text is send to the IBM Event Streams. The topic is sends to is: `myeventstreams` (can be overridden)
 
-This services depends on four lower level services: mqtt, mqtt2kafka, hotword_detection, and stopword_removal. The hotword detection service is constantly listening for "Watson" and upon detection it will record a clip of audio and send it via the mqtt broker to the watson_speecdh2text service. 
+This services depends on four lower level services: `mqtt`, `mqtt2kafka`, `hotword_detection`, and `stopword_removal`. The hotword detection service is constantly listening for "Watson" and upon detection it will record a clip of audio and send it via the mqtt broker to the watson_speecdh2text service. 
 
 Watson_speecdh2text relies on the IBM Speech to Text service which requires an API Key and url to convert the audio clip to text. Once the audio clip is converted to text it will be passed to stopword_removal (if the environment variable REMOVE_SW is set to "true"), which is running as a WSGI server, where common stop words are removed and sent back to watson_speecdh2text. Finally, again via the mqtt broker, the text is sent to mqtt2kafka where it will be sent to IBM Event Streams. 
+
+## Hardware Requirements 
+
+This service was developed on, and designed for use with, a Raspberry Pi. For best results it is recommended to use a TROND External USB Audio Adapter Sound Cars.
 
 ## Input Values
 
