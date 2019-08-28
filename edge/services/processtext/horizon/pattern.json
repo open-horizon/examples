@@ -1,8 +1,8 @@
 {
   "name": "pattern-${SERVICE_NAME}-$ARCH",
   "label": "Edge $SERVICE_NAME Service Pattern for $ARCH",
-  "description": "Pattern for $SERVICE_NAME sending cpu and gps info to the IBM Message Hub for $ARCH",
-  "public": false,
+  "description": "Pattern for $SERVICE_NAME, the Offline Voice Assistant",
+  "public": true,
   "services": [
     {
       "serviceUrl": "$SERVICE_NAME",

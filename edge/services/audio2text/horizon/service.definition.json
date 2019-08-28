@@ -3,7 +3,7 @@
     "label": "$SERVICE_NAME",
     "description": "Audio to Text service",
     "public": true,
-    "documentation": "",
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/audio2text/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
@@ -11,7 +11,7 @@
     "requiredServices": [
         {
             "url": "ibm.mqtt",
-            "org": "major-peacock-icp-cluster",
+            "org": "IBM",
             "versionRange": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         }

@@ -1,5 +1,5 @@
 {
-    "HZN_ORG_ID": "major-peacock-icp-cluster",
+    "HZN_ORG_ID": "IBM",
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.voice2audio",
         "SERVICE_NAME": "ibm.voice2audio",
