@@ -1,9 +1,9 @@
 {
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME for $ARCH",
-    "description": "zhangl - A super-simple sample Horizon service",
+    "description": "Sample Horizon service that receives data via MQTT broker and sends it to IBM Event Streams",
     "public": true,
-    "documentation": "",
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/mqtt2kafka/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",
     "arch": "$ARCH",
@@ -11,7 +11,7 @@
     "requiredServices": [
         {
             "url": "ibm.mqtt",
-            "org": "major-peacock-icp-cluster",
+            "org": "IBM",
             "versionRange": "[0.0.0,INFINITY)",
             "arch": "$ARCH"
         }

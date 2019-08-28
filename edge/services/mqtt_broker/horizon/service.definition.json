@@ -3,7 +3,7 @@
     "label": "$SERVICE_NAME for $ARCH",
     "description": "An mqtt broker and publisher for inter-container commmunication",
     "public": true,
-    "documentation": "",
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/mqtt_broker/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",
     "arch": "$ARCH",

@@ -1,5 +1,5 @@
 {
-    "HZN_ORG_ID": "major-peacock-icp-cluster",
+    "HZN_ORG_ID": "IBM",
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.watsons2text",
         "SERVICE_NAME": "ibm.watsons2text",
