@@ -8,7 +8,7 @@ Watson_speecdh2text relies on the IBM Speech to Text service which requires an A
 
 ## Hardware Requirements 
 
-This service was developed on, and designed for use with, a Raspberry Pi. For best results it is recommended to use a TROND External USB Audio Adapter Sound Cars.
+This service was developed on, and designed for use with, a Raspberry Pi. For best results it is recommended to use a TROND External USB Audio Adapter Sound Card.
 
 ## Input Values
 
