@@ -10,7 +10,7 @@ The `watsons2text` service relies on the IBM Speech to Text service which requir
 
 This service was developed on, and designed for use with, a Raspberry Pi. For best results it is recommended to use a TROND External USB Audio Adapter Sound Card.
 
-## Input Values
+## Input Values for watsons2text service
 
 The following input values **must** be given to this service in the input file given to `hzn register`:
 
@@ -32,6 +32,16 @@ These **optional** input values can be overridden:
 | REMOVE_SW | yes | string | Flag to enable stopwordremoval service | 
 | SW_HOST | yes | string | Default is ibm.stopwordremoval - Name of stop word removal endpoint | 
 | SW_PORT | yes | string | Default is 5002. Port stop word removal WSGI server is listening on | 
+
+## Input Values mqtt2kafka service
+
+| Name | Required? | Type | Description |
+| ---- | --------- | ---- | ---------------- |
+| MQTT_WST_EVST | yes | string | Default is "mqtt_wst_evst". MQTT topic this service is subscribed to | 
+| MSGHUB_API_KEY | yes | string | The API key of the IBM Event Streams instance you are sending data to |
+| MSGHUB_BROKER_URL | yes | string | The comma-separated list of URLs to use when sending messages to your instance of IBM Event Streams |
+| MSGHUB_TOPIC | yes | string | Default is "myeventstreams". The topic to use when sending messages to your instance of IBM Event Streams |
+| MSGHUB_CERT_ENCODED | no | string | Default is "-". The base64-encoded self-signed certificate to use when sending messages to your ICP instance of  IBM Event Streams. Not needed for IBM Cloud Event Streams |
 
 
 #### Example:
