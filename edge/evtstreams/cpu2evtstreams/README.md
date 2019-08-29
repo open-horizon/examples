@@ -1,6 +1,6 @@
 # Horizon CPU To IBM Event Streams Service
 
-For details about using this service, see [cpu2msghub.md](cpu2msghub.md).
+For details about using this service, see [cpu2evtstreams.md](cpu2evtstreams.md).
 
 ## Using the CPU To IBM Event Streams Edge Service
 
@@ -20,52 +20,52 @@ export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
-- Deploy (or get access to) an instance of IBM Event Streams that the cpu2msghub sample can send its data to. Ensure that the topic `cpu2msghub` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
-    - `MSGHUB_API_KEY`
-    - `MSGHUB_BROKER_URL`
-    - `MSGHUB_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private)
-    - `MSGHUB_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
-- Get the user input file for the cpu2msghub sample:
+- Deploy (or get access to) an instance of IBM Event Streams that the cpu2evtstreams sample can send its data to. Ensure that the topic `cpu2evtstreams` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
+    - `EVTSTREAMS_API_KEY`
+    - `EVTSTREAMS_BROKER_URL`
+    - `EVTSTREAMS_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private)
+    - `EVTSTREAMS_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
+- Get the user input file for the cpu2evtstreams sample:
 ```
-wget https://github.com/open-horizon/examples/raw/master/edge/msghub/cpu2msghub/horizon/use/userinput.json
+wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
-- Register your edge node with Horizon to use the cpu2msghub pattern:
+- Register your edge node with Horizon to use the cpu2evtstreams pattern:
 ```
-hzn register -p IBM/pattern-ibm.cpu2msghub -f userinput.json
+hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
 ```
-- On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2msghub is sending:
+- On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
   - If using IBM Event Streams in IBM Cloud:
   ```
-  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
   ```
   - If using IBM Event Streams in IBM Cloud Private:
   ```
-  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t cpu2msghub
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MEVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
   ```
-- (Optional) To see the cpu2msghub service output:
+- (Optional) To see the cpu2evtstreams service output:
 ```
 # On Linux:
-tail -f /var/log/syslog | grep cpu2msghub[[]
+tail -f /var/log/syslog | grep cpu2evtstreams[[]
 # On Mac:
-docker logs -f $(docker ps -q --filter name=cpu2msghub)
+docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 ``` 
-- Unregister your edge node, stopping the cpu2msghub service:
+- Unregister your edge node, stopping the cpu2evtstreams service:
 ```
 hzn unregister -f
 ```
 
 ## First-Time Edge Service Developer - Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
 
-If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the cpu2msghub example and start modifying it.
+If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the cpu2evtstreams example and start modifying it.
 
 ### Preconditions for Developing Your Own Service
 
-- First, go through the steps in the section above to run the IBM cpu2msghub service on an edge node.
+- First, go through the steps in the section above to run the IBM cpu2evtstreams service on an edge node.
 - Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
@@ -79,9 +79,9 @@ unset HZN_ORG_ID
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
-- Copy the `cpu2msghub` dir to where you will start development of your new service:
+- Copy the `cpu2evtstreams` dir to where you will start development of your new service:
 ```
-cp -a examples/edge/msghub/cpu2msghub ~/myservice     # or wherever
+cp -a examples/edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
 - Set the values in `horizon/hzn.json` to your own values.
@@ -92,22 +92,22 @@ hzn exchange user list
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node confirm
 ```
-- Verify that these environment variables are still set from when you used the existing cpu2msghub sample earlier in this document:
+- Verify that these environment variables are still set from when you used the existing cpu2evtstreams sample earlier in this document:
 ```
-echo MSGHUB_API_KEY=$MSGHUB_API_KEY
-echo MSGHUB_ADMIN_URL=$MSGHUB_ADMIN_URL
-echo MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL
+echo EVTSTREAMS_API_KEY=$EVTSTREAMS_API_KEY
+echo EVTSTREAMS_ADMIN_URL=$EVTSTREAMS_ADMIN_URL
+echo EVTSTREAMS_BROKER_URL=$EVTSTREAMS_BROKER_URL
 ```
-- Verify the `cpu2msghub` topic is now in your event streams instance:
+- Verify the `cpu2evtstreams ` topic is now in your event streams instance:
 ```
-make msghub-topic-list
+make evtstreams-topic-list
 ```
 
 ### Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
 
 - Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
-- Build the cpu2msghub docker image:
+- Build the cpu2evtstreams docker image:
 ```
 make
 ```
@@ -120,13 +120,13 @@ hzn dev service start -S
 docker ps
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep cpu2msghub[[]
+tail -f /var/log/syslog | grep cpu2evtstreams[[]
 # For now on Mac:
-docker logs -f $(docker ps -q --filter name=cpu2msghub)
+docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 ```
 - See the environment variables Horizon passes into your service container:
 ```
-docker inspect $(docker ps -q --filter name=cpu2msghub) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
 ```
 - Stop the service:
 ```
@@ -155,28 +155,28 @@ hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.js
 hzn agreement list
 docker ps
 ```
-- On any machine, subscribe to the Event Streams topic to see the json data that cpu2msghub is sending:
+- On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
 ```
-kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
+kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
 ```
-- See the cpu2msghub service output:
+- See the cpu2evtstreams service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep cpu2msghub[[]
+tail -f /var/log/syslog | grep cpu2evtstreams[[]
 # For now on Mac:
-docker logs -f $(docker ps -q --filter name=cpu2msghub)
+docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 ``` 
-- Unregister your edge node, stopping the cpu2msghub service:
+- Unregister your edge node, stopping the cpu2evtstreams service:
 ```
 hzn unregister -f
 ```
 
-## Process for the Horizon Development Team to Make Updates to the Cpu2msghub Service
+## Process for the Horizon Development Team to Make Updates to the Cpu2evtstreams Service
 
 - Do the steps in the Preconditions section above, **except**:
     - export `HZN_EXCHANGE_URL` to the staging instance
-    - Do **not** copy the cpu2msghub directory (use the git files in this directory instead)
+    - Do **not** copy the cpu2evtstreams directory (use the git files in this directory instead)
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
 - Increment `SERVICE_VERSION` in `horizon/hzn.json`

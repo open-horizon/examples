@@ -1,0 +1,12 @@
+{
+    "services": [
+        {
+            "org": "IBM",
+            "url": "ibm.cpu2evtstreams",
+            "variables": {
+                "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
+                "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL"
+            }
+        }
+    ]
+}
