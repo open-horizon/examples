@@ -1,13 +1,13 @@
 {
-  "label": "",
-  "description": "",
+  "label": "$SERVICE_NAME Business Policy for $ARCH",
+  "description": "A super-simple sample Horizon Business Policy",
   "service": {
-    "name": "ibm.helloworld",
-    "org": "major-peacock-icp-cluster",
-    "arch": "amd64",
+    "name": "$SERVICE_NAME",
+    "org": "$HZN_ORG_ID",
+    "arch": "$ARCH",
     "serviceVersions": [
       {
-        "version": "1.0.0",
+        "version": "$SERVICE_VERSION",
         "priority":{}
       }
     ]
@@ -20,8 +20,8 @@
   ],
   "userInput": [
     {
-      "serviceOrgid": "major-peacock-icp-cluster",
-      "serviceUrl": "ibm.helloworld",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {

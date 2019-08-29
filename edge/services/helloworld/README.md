@@ -132,13 +132,15 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 
 ```
 {
+  "label": "$SERVICE_NAME Business Policy for $ARCH",
+  "description": "A super-simple sample Horizon Business Policy",
   "service": {
-    "name": "helloworld",
-    "org": "major-peacock-icp-cluster",
-    "arch": "*",
+    "name": "$SERVICE_NAME",
+    "org": "$HZN_ORG_ID",
+    "arch": "$ARCH",
     "serviceVersions": [
       {
-        "version": "1.0.0",
+        "version": "$SERVICE_VERSION",
         "priority":{}
       }
     ]
@@ -151,8 +153,8 @@ hzn exchange service listpolicy <published-helloworld-service-name>
   ],
   "userInput": [
     {
-      "serviceOrgid": "major-peacock-icp-cluster",
-      "serviceUrl": "helloworld",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {
