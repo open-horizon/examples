@@ -40,7 +40,7 @@ hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json
 hzn agreement list
 docker ps
 ```
-7 On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
+8. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
   - If using IBM Event Streams in IBM Cloud:
   ```
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
@@ -49,14 +49,14 @@ docker ps
   ```
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MEVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
   ```
-8. (Optional) To see the cpu2evtstreams service output:
+9. (Optional) To see the cpu2evtstreams service output:
 ```
 # On Linux:
 tail -f /var/log/syslog | grep cpu2evtstreams[[]
 # On Mac:
 docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 ``` 
-9. Unregister your edge node, stopping the cpu2evtstreams service:
+10.. Unregister your edge node, stopping the cpu2evtstreams service:
 ```
 hzn unregister -f
 ```
