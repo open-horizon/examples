@@ -3,31 +3,31 @@
 ## Using the Hello World Example Edge Service
 
 - Before following the steps in this section, install the Horizon agent on your edge device and point it to your Horizon exchange. Also get an API key that is associated with your Horizon instance.
-- Set your exchange org:
+1. Set your exchange org:
 ```
 export HZN_ORG_ID="<yourorg>"
 ```
-- Set your exchange user credentials in the Horizon-supported environment variable and verify it:
+2. Set your exchange user credentials in the Horizon-supported environment variable and verify it:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
 ```
-- Choose a id and token for your edge node, create it, and verify it:
+3. Choose a id and token for your edge node, create it, and verify it:
 ```
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
-- Register your edge node with Horizon to use the helloworld pattern:
+4. Register your edge node with Horizon to use the helloworld pattern:
 ```
 hzn register -p IBM/pattern-ibm.helloworld
 ```
-- Look at the Horizon agreement until it is finalized and then see the running container:
+5. Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
 ```
-- See the helloworld service output:
+6. See the helloworld service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
@@ -35,7 +35,7 @@ tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ``` 
-- Unregister your edge node, stopping the helloworld service:
+7. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
@@ -54,7 +54,7 @@ hzn unregister -f
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-- Make sure your Edge Node is not registered by running:
+1. Make sure your Edge Node is not registered by running:
 
 ```
 hzn unregister -f
@@ -76,13 +76,14 @@ hzn unregister -f
 
 - It provides values for three `properties` (`model`, `serial`, and `configuration`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
 
-- Register using this command:
+2. Register your Node Policy using this command:
 
 ```
 hzn register --policy horizon/node_policy.json
 ```
 
-- When the registration completes, use the following command to review the Node Policy:
+3. When the registration completes, use the following command to review the Node Policy:
+
 ```
 hzn policy list
 ```
@@ -107,13 +108,13 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
 
-- To attach the example Service policy to this service, use the following command (substituting your service name):
+1. To attach the example Service policy to this service, use the following command (substituting your service name):
 
 ```
 hzn exchange service addpolicy -f horizon/service_policy.json <published-helloworld-service-name>
 ```
 
-Once that completes, you can look at the results with the following command:
+2. Once that completes, you can look at the results with the following command:
 
 ```
 hzn exchange service listpolicy <published-helloworld-service-name>
@@ -170,20 +171,21 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 
 - At the bottom, the userInput section has the same purpose as the horizon/userinput.json files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-- To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
+1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
 
 ```
 hzn exchange business addpolicy -f horizon/business_policy.json bizPolicy1
 ```
 
-- Once that competes, you can look at the results with the following command, substituting your own org id:
+2. Once that competes, you can look at the results with the following command, substituting your own org id:
+
 ```
 hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
 ```
 
 - The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
-Look at the Horizon agreement until it is finalized and then see the running container:
+3. Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
@@ -197,7 +199,7 @@ tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ```
-- Unregister your edge node, stopping the helloworld service:
+4. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
