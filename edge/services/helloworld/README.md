@@ -191,7 +191,7 @@ hzn agreement list
 docker ps
 ```
 
-- See the helloworld service output:
+4. See the helloworld service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
@@ -199,7 +199,7 @@ tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ```
-4. Unregister your edge node, stopping the helloworld service:
+5. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
@@ -210,21 +210,21 @@ If you want to create your own Horizon edge service, follow the next 2 sections 
 
 ### Preconditions for Developing Your Own Service
 
-- First, go through the steps in the section above to run the IBM helloworld service on an edge node.
-- Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
+1. First, go through the steps in the section above to run the IBM helloworld service on an edge node.
+2. Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
 ```
-- If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.json`):
+3. If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.json`):
 ```
 unset HZN_ORG_ID
 ```
-- Cd to the directory in which you want to create your new service and then:
+4. Cd to the directory in which you want to create your new service and then:
 ```
 hzn dev service new -o <org-id> -s <service-name> -i <docker-image-base>
 # E.g.:  hzn dev service new -o bp@someemail.com -s bp.helloworld -i brucemp/bp.helloworld
 ```
-- As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
+5. As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
 export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
 hzn exchange user list
@@ -234,17 +234,17 @@ hzn exchange node confirm
 
 ### Building and Publishing Your Own Version of the Hello World Example Edge Service
 
-- Edit `service.sh`, for example changing "Hello" to "Hey there"
+1. Edit `service.sh`, for example changing "Hello" to "Hey there"
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
-- Build the hello world docker image:
+2. Build the hello world docker image:
 ```
 make
 ```
-- Test the service by having Horizon start it locally:
+3. Test the service by having Horizon start it locally:
 ```
 hzn dev service start -S
 ```
-- See the docker container running and look at the output:
+4. See the docker container running and look at the output:
 ```
 docker ps
 # soon you will use 'hzn service log ...' for all platforms
@@ -253,38 +253,38 @@ tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ```
-- See the environment variables Horizon passes into your service container:
+5. See the environment variables Horizon passes into your service container:
 ```
 docker inspect $(docker ps -q --filter name=helloworld) | jq '.[0].Config.Env'
 ```
-- Stop the service:
+6. Stop the service:
 ```
 hzn dev service stop
 ```
-- Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
+7. Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
 ```
 hzn key create <my-company> <my-email>
 ```
-- Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+8. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
-- Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+9. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
-- Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
+10. Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
 ```
 hzn register -p pattern-SERVICE_NAME-$(hzn architecture)
 ```
-- Look at the Horizon agreement until it is finalized and then see the running container:
+11. Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
 ```
-- See the helloworld service output:
+12. See the helloworld service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
@@ -292,7 +292,7 @@ tail -f /var/log/syslog | grep helloworld[[]
 # For now on Mac:
 docker logs -f $(docker ps -q --filter name=helloworld)
 ``` 
-- Unregister your edge node, stopping the helloworld service:
+13. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
