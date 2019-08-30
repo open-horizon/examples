@@ -9,9 +9,9 @@ The following input values **must** be given to this service in the input file g
 
 | Name | Required? | Type | Description |
 | ---- | --------- | ---- | ---------------- |
-| MSGHUB_API_KEY | yes | string | the API key of the IBM Event Streams instance you are sending data to |
-| MSGHUB_BROKER_URL | yes | string | The comma-separated list of URLs to use when sending messages to your instance of IBM Event Streams |
-| MSGHUB_TOPIC | yes | string | The topic to use when sending messages to your instance of IBM Event Streams |
+| EVTSTREAMS_API_KEY | yes | string | the API key of the IBM Event Streams instance you are sending data to |
+| EVTSTREAMS_BROKER_URL | yes | string | The comma-separated list of URLs to use when sending messages to your instance of IBM Event Streams |
+| EVTSTREAMS_TOPIC | yes | string | The topic to use when sending messages to your instance of IBM Event Streams |
 
 These **optional** input values can be overridden:
 
@@ -28,8 +28,8 @@ A sample `services` section of the input file given to `hzn register`:
             "org": "$HZN_ORG_ID",
             "url": "$SERVICE_NAME",
             "variables": {
-                "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
-                "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
+                "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
+                "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL",
             }
         }
     ]

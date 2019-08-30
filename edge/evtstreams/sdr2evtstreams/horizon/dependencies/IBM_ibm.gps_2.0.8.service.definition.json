@@ -1,0 +1,55 @@
+{
+    "org": "IBM",
+    "label": "ibm.gps for amd64",
+    "description": "Provides the edge node location via a REST API from a GPS sensor, environment variables, or the IP address",
+    "public": true,
+    "documentation": "",
+    "url": "ibm.gps",
+    "version": "2.0.8",
+    "arch": "amd64",
+    "sharable": "singleton",
+    "requiredServices": [],
+    "userInput": [
+        {
+            "name": "HZN_GPS_PORT",
+            "label": "REST API port",
+            "type": "int",
+            "defaultValue": "80"
+        },
+        {
+            "name": "HZN_USE_GPS",
+            "label": "Use GPS hardware, or not",
+            "type": "boolean",
+            "defaultValue": "true"
+        },
+        {
+            "name": "HZN_LAT",
+            "label": "Manually user-specified North latitude, or 0.0 when using other means",
+            "type": "float",
+            "defaultValue": "0.0"
+        },
+        {
+            "name": "HZN_LON",
+            "label": "Manually user-specified East longitude, or 0.0 when using other means",
+            "type": "float",
+            "defaultValue": "0.0"
+        },
+        {
+            "name": "HZN_LOCATION_ACCURACY_KM",
+            "label": "Manually user-specified radial distance for obfuscation. Ignored if HZN_USE_GPS is true..",
+            "type": "float",
+            "defaultValue": "0.0"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "ibm.gps": {
+                "devices": [
+                    "/dev/bus/usb/001/001:/dev/bus/usb/001/001"
+                ],
+                "image": "openhorizon/ibm.gps_amd64@sha256:9635516a9f5cc30de34ad001bcec0f4033402bb9692435e1cc08bb85afc429fe",
+                "privileged": true
+            }
+        }
+    }
+}

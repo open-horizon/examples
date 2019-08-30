@@ -1,0 +1,21 @@
+{
+    "org": "IBM",
+    "label": "ibm.sdr for amd64",
+    "description": "Provides a REST API to capture 30 second clips of FM radio",
+    "public": true,
+    "documentation": "",
+    "url": "ibm.sdr",
+    "version": "1.0.0",
+    "arch": "amd64",
+    "sharable": "exclusive",
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "ibm.sdr": {
+                "image": "openhorizon/ibm.sdr_amd64@sha256:6cc93b21697cb7dbde99141e166d48af51f72dfb5e6788e72377a4c2451e70fe",
+                "privileged": true
+            }
+        }
+    }
+}

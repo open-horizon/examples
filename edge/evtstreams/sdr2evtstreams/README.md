@@ -1,6 +1,6 @@
 # Horizon SDR To IBM Event Streams Service
 
-For details about using this service, see [sdr2msghub.md](sdr2msghub.md).
+For details about using this service, see [sdr2evtstreams.md](sdr2evtstreams.md).
 
 ## Using the SDR To IBM Event Streams Edge Service
 
@@ -21,56 +21,56 @@ export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
-- Deploy (or get access to) an instance of IBM Event Streams in the IBM Cloud that the sdr2msghub sample can send its data to. In the Event Streams UI, go to the `Service credentials` tab, create new credentials, and use the following values to `export` these environment variables:
-    - Set `MSGHUB_API_KEY` to the value of `api_key`
-    - Set `MSGHUB_ADMIN_URL` to the value of `kafka_admin_url`
-    - Set `MSGHUB_BROKER_URL` to all of the values in `kafka_brokers_sasl` separated by commas
-- Create the `sdr2msghub` topic (sdr-audio) in your event streams instance:
+- Deploy (or get access to) an instance of IBM Event Streams in the IBM Cloud that the sdr2evtstreams sample can send its data to. In the Event Streams UI, go to the `Service credentials` tab, create new credentials, and use the following values to `export` these environment variables:
+    - Set `EVTSTREAMS_API_KEY` to the value of `api_key`
+    - Set `EVTSTREAMS_ADMIN_URL` to the value of `kafka_admin_url`
+    - Set `EVTSTREAMS_BROKER_URL` to all of the values in `kafka_brokers_sasl` separated by commas
+- Create the `sdr2evtstreams` topic (sdr-audio) in your event streams instance:
 ```
-export MSGHUB_TOPIC=sdr-audio
-curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $MSGHUB_API_KEY" -d "{ \"name\": \"$MSGHUB_TOPIC\", \"partitions\": 2 }" $MSGHUB_ADMIN_URL/admin/topics
+export EVTSTREAMS_TOPIC=sdr-audio
+curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $EVTSTREAMS_API_KEY" -d "{ \"name\": \"$EVTSTREAMS_TOPIC\", \"partitions\": 2 }" $EVTSTREAMS_ADMIN_URL/admin/topics
 ```
 - Verify the `sdr-audio` topic is now in your event streams instance:
 ```
-curl -sS -H "X-Auth-Token: $MSGHUB_API_KEY" $MSGHUB_ADMIN_URL/admin/topics | jq -r ".[] | .name"
+curl -sS -H "X-Auth-Token: $EVTSTREAMS_API_KEY" $EVTSTREAMS_ADMIN_URL/admin/topics | jq -r ".[] | .name"
 ```
-- Get the user input file for the sdr2msghub sample:
+- Get the user input file for the sdr2evtstreams sample:
 ```
-wget https://github.com/open-horizon/examples/raw/master/edge/msghub/sdr2msghub/horizon/use/userinput.json
+wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/sdr2evtstreams/horizon/use/userinput.json
 ```
-- Register your edge node with Horizon to use the sdr2msghub pattern:
+- Register your edge node with Horizon to use the sdr2evtstreams pattern:
 ```
-hzn register -p IBM/pattern-ibm.sdr2msghub -f userinput.json
+hzn register -p IBM/pattern-ibm.sdr2evtstreams -f userinput.json
 ```
 - Look at the Horizon agreement until it is finalized and then see the running container:
 ```
 hzn agreement list
 docker ps
 ```
-- On any machine, install `kafkacat`, then subscribe to the Event Streams topic to see the json data that sdr2msghub is sending:
+- On any machine, install `kafkacat`, then subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
 ```
-kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
+kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
 ```
-- (Optional) To see the sdr2msghub service output:
+- (Optional) To see the sdr2evtstreams service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep sdr2msghub[[]
+tail -f /var/log/syslog | grep sdr2evtstreams[[]
 # For now on Mac:
-docker logs -f $(docker ps -q --filter name=sdr2msghub)
+docker logs -f $(docker ps -q --filter name=sdr2evtstreams)
 ``` 
-- Unregister your edge node, stopping the sdr2msghub service:
+- Unregister your edge node, stopping the sdr2evtstreams service:
 ```
 hzn unregister -f
 ```
 
 ## First-Time Edge Service Developer - Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
 
-If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the sdr2msghub example and start modifying it.
+If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the sdr2evtstreams example and start modifying it.
 
 ### Preconditions for Developing Your Own Service
 
-- First, go through the steps in the section above to run the IBM sdr2msghub service on an edge node.
+- First, go through the steps in the section above to run the IBM sdr2evtstreams service on an edge node.
 - Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
 echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
@@ -84,9 +84,9 @@ unset HZN_ORG_ID
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
-- Copy the `sdr2msghub` dir to where you will start development of your new service:
+- Copy the `sdr2evtstreams` dir to where you will start development of your new service:
 ```
-cp -a examples/edge/msghub/sdr2msghub ~/myservice     # or wherever
+cp -a examples/edge/evtstreams/sdr2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
 - Set the values in `horizon/hzn.json` to your own values.
@@ -97,22 +97,22 @@ hzn exchange user list
 export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
 hzn exchange node confirm
 ```
-- Verify that these environment variables are still set from when you used the existing sdr2msghub sample earlier in this document:
+- Verify that these environment variables are still set from when you used the existing sdr2evtstreams sample earlier in this document:
 ```
-echo MSGHUB_API_KEY=$MSGHUB_API_KEY
-echo MSGHUB_ADMIN_URL=$MSGHUB_ADMIN_URL
-echo MSGHUB_BROKER_URL=$MSGHUB_BROKER_URL
+echo EVTSTREAMS_API_KEY=$EVTSTREAMS_API_KEY
+echo EVTSTREAMS_ADMIN_URL=$EVTSTREAMS_ADMIN_URL
+echo EVTSTREAMS_BROKER_URL=$EVTSTREAMS_BROKER_URL
 ```
-- Verify the `sdr2msghub` topic is now in your event streams instance:
+- Verify the `sdr2evtstreams` topic is now in your event streams instance:
 ```
-make msghub-topic-list
+make evtstreams-topic-list
 ```
 
 ### Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
 
 - Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
-- Build the sdr2msghub docker image:
+- Build the sdr2evtstreams docker image:
 ```
 make
 ```
@@ -125,13 +125,13 @@ hzn dev service start -S
 docker ps
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep sdr2msghub[[]
+tail -f /var/log/syslog | grep sdr2evtstreams[[]
 # For now on Mac:
-docker logs -f $(docker ps -q --filter name=sdr2msghub)
+docker logs -f $(docker ps -q --filter name=sdr2evtstreams)
 ```
 - See the environment variables Horizon passes into your service container:
 ```
-docker inspect $(docker ps -q --filter name=sdr2msghub) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=sdr2evtstreams) | jq '.[0].Config.Env'
 ```
 - Stop the service:
 ```
@@ -160,28 +160,28 @@ hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.js
 hzn agreement list
 docker ps
 ```
-- On any machine, subscribe to the Event Streams topic to see the json data that sdr2msghub is sending:
+- On any machine, subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
 ```
-kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${MSGHUB_API_KEY:0:16} -X sasl.password=${MSGHUB_API_KEY:16} -t $MSGHUB_TOPIC
+kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
 ```
-- See the sdr2msghub service output:
+- See the sdr2evtstreams service output:
 ```
 # soon you will use 'hzn service log ...' for all platforms
 # For now on Linux:
-tail -f /var/log/syslog | grep sdr2msghub[[]
+tail -f /var/log/syslog | grep sdr2evtstreams[[]
 # For now on Mac:
-docker logs -f $(docker ps -q --filter name=sdr2msghub)
+docker logs -f $(docker ps -q --filter name=sdr2evtstreams)
 ``` 
-- Unregister your edge node, stopping the sdr2msghub service:
+- Unregister your edge node, stopping the sdr2evtstreams service:
 ```
 hzn unregister -f
 ```
 
-## Process for the Horizon Development Team to Make Updates to the sdr2msghub Service
+## Process for the Horizon Development Team to Make Updates to the sdr2evtstreams Service
 
 - Do the steps in the Preconditions section above, **except**:
     - export `HZN_EXCHANGE_URL` to the staging instance
-    - Do **not** copy the sdr2msghub directory (use the git files in this directory instead)
+    - Do **not** copy the sdr2evtstreams directory (use the git files in this directory instead)
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
 - Increment `SERVICE_VERSION` in `horizon/hzn.json`
