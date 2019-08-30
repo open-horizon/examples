@@ -56,7 +56,7 @@ tail -f /var/log/syslog | grep cpu2evtstreams[[]
 # On Mac:
 docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 ``` 
-10.. Unregister your edge node, stopping the cpu2evtstreams service:
+10. Unregister your edge node, stopping the cpu2evtstreams service:
 ```
 hzn unregister -f
 ```
