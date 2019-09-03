@@ -47,7 +47,7 @@ docker ps
   ```
   - If using IBM Event Streams in IBM Cloud Private:
   ```
-  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MEVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
   ```
 9. (Optional) To see the cpu2evtstreams service output:
 ```
@@ -199,7 +199,7 @@ hzn exchange service listpolicy <published-cpu2evtstreams-service-name>
 
 - At the bottom, the userInput section has the same purpose as the horizon/userinput.json files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams, which will by default be taken from the environment variables themselves.
 
-1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
+1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (cpu2evtstreamsPolicy in this example):
 
 ```
 hzn exchange business addpolicy -f horizon/business_policy.json cpu2evtstreamsPolicy
