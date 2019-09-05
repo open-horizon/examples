@@ -1,0 +1,49 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME",
+    "description": "Sample Horizon service that acts as an Offline Voice Assistant",
+    "public": true,
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/processtext/README.md",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "singleton",
+    "requiredServices": [
+        {
+            "url": "ibm.mqtt",
+            "org": "IBM",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "ibm.voice2audio",
+            "org": "IBM",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "ibm.audio2text",
+            "org": "IBM",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        },
+        {
+            "url": "ibm.text2speech",
+            "org": "IBM",
+            "versionRange": "[0.0.0,INFINITY)",
+            "arch": "$ARCH"
+        }
+    ],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "devices": [
+                    "/dev/snd:/dev/snd"
+                ],
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "privileged": true
+            }
+        }
+    }
+}
