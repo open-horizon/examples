@@ -60,13 +60,10 @@ publish-business-policy:
 publish-only:
 	ARCH=amd64 $(MAKE) publish-service-overwrite
 	ARCH=amd64 $(MAKE) publish-service-policy
-	ARCH=amd64 $(MAKE) publish-business-policy
 	ARCH=arm $(MAKE) publish-service-overwrite
 	ARCH=arm $(MAKE) publish-service-policy
-	ARCH=arm $(MAKE) publish-business-policy
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	ARCH=arm64 $(MAKE) publish-service-policy
-	ARCH=arm64 $(MAKE) publish-business-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
