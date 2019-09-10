@@ -41,20 +41,20 @@ if [[ "$PUBLISH" == "true" ]]; then
   echo "Checking for required environment variables for publishing to IBM Event Streams:"
   checkRequiredEnvVar "HZN_ORGANIZATION"      # automatically passed in by Horizon
   checkRequiredEnvVar "HZN_DEVICE_ID"      # automatically passed in by Horizon
-  checkRequiredEnvVar "MSGHUB_TOPIC"
-  checkRequiredEnvVar "MSGHUB_API_KEY"
-  checkRequiredEnvVar "MSGHUB_BROKER_URL"
-  MSGHUB_USERNAME="${MSGHUB_API_KEY:0:16}"
-  MSGHUB_PASSWORD="${MSGHUB_API_KEY:16}"
+  checkRequiredEnvVar "EVTSTREAMS_TOPIC"
+  checkRequiredEnvVar "EVTSTREAMS_API_KEY"
+  checkRequiredEnvVar "EVTSTREAMS_BROKER_URL"
+  EVTSTREAMS_USERNAME="${EVTSTREAMS_API_KEY:0:16}"
+  EVTSTREAMS_PASSWORD="${EVTSTREAMS_API_KEY:16}"
   # The only special chars allowed in the topic are: -._
-  MSGHUB_TOPIC="${MSGHUB_TOPIC//[@#%()+=:,<>]/_}"
+  EVTSTREAMS_TOPIC="${EVTSTREAMS_TOPIC//[@#%()+=:,<>]/_}"
   # Tranlating the slashes does not work in the above bash substitute in alpine, so use tr
-  MSGHUB_TOPIC=$(echo "$MSGHUB_TOPIC" | tr / _)
-  echo "Will publish to topic: $MSGHUB_TOPIC"
-  if [[ -n "$MSGHUB_CERT_ENCODED" && "$MSGHUB_CERT_ENCODED" != "-" ]]; then
+  EVTSTREAMS_TOPIC=$(echo "$EVTSTREAMS_TOPIC" | tr / _)
+  echo "Will publish to topic: $EVTSTREAMS_TOPIC"
+  if [[ -n "$EVTSTREAMS_CERT_ENCODED" && "$EVTSTREAMS_CERT_ENCODED" != "-" ]]; then
     # They are using an instance of Event Streams deployed in ICP, because it needs a self-signed cert
-    MSGHUB_CERT_FILE=/tmp/es-cert.pem
-    echo "$MSGHUB_CERT_ENCODED" | base64 -d > $MSGHUB_CERT_FILE
+    EVTSTREAMS_CERT_FILE=/tmp/es-cert.pem
+    echo "$EVTSTREAMS_CERT_ENCODED" | base64 -d > $EVTSTREAMS_CERT_FILE
     checkrc $? "decode cert"
   fi
 fi
@@ -112,15 +112,15 @@ while true; do
       #echo "avg: $json"
 
       if [[ "$PUBLISH" == "true" ]]; then
-        if [[ -n "$MSGHUB_CERT_FILE" ]]; then
+        if [[ -n "$EVTSTREAMS_CERT_FILE" ]]; then
           # Send data to ICP Event Streams
-          echo "echo $json | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC"
-          echo "$json" | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC
+          echo "echo $json | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC"
+          echo "$json" | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
           checkrc $? "kafkacat" "continue"
         else
           # Send data to IBM Cloud Event Streams
-          echo "echo $json | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC"
-          echo "$json" | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC
+          echo "echo $json | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$EVTSTREAMS_USERNAME -X sasl.password=$EVTSTREAMS_PASSWORD -t $EVTSTREAMS_TOPIC"
+          echo "$json" | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$EVTSTREAMS_USERNAME -X sasl.password=$EVTSTREAMS_PASSWORD -t $EVTSTREAMS_TOPIC
           checkrc $? "kafkacat" "continue"
         fi
       else

@@ -1,4 +1,4 @@
-# Make targets for building the IBM sample cpu2msghub edge service
+# Make targets for building the IBM sample cpu2evtstreams edge service
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk
@@ -63,16 +63,16 @@ publish-only:
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-# Create a topic in Event Streams for cpu2msghub to send data to
-MSGHUB_TOPIC ?= cpu2msghub
-msghub-topic:
-	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
-	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$MSGHUB_API_KEY" -d "{ \"name\": \"$(MSGHUB_TOPIC)\", \"partitions\": 2 }" $$MSGHUB_ADMIN_URL/admin/topics
+# Create a topic in Event Streams for cpu2evtstreams to send data to
+EVTSTREAMS_TOPIC ?= cpu2evtstreams
+evtstreams-topic:
+	: $${EVTSTREAMS_API_KEY:?} $${EVTSTREAMS_ADMIN_URL:?}
+	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$EVTSTREAMS_API_KEY" -d "{ \"name\": \"$(EVTSTREAMS_TOPIC)\", \"partitions\": 2 }" $$EVTSTREAMS_ADMIN_URL/admin/topics
 
 # List the topics currently in Event Streams
-msghub-topic-list:
-	@: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
-	@curl -sS -H "X-Auth-Token: $$MSGHUB_API_KEY" $$MSGHUB_ADMIN_URL/admin/topics | jq -r ".[] | .name"
+evtstreams-topic-list:
+	@: $${EVTSTREAMS_API_KEY:?} $${EVTSTREAMS_ADMIN_URL:?}
+	@curl -sS -H "X-Auth-Token: $$EVTSTREAMS_API_KEY" $$EVTSTREAMS_ADMIN_URL/admin/topics | jq -r ".[] | .name"
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
