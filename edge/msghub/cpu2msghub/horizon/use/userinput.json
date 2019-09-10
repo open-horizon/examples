@@ -1,0 +1,13 @@
+{
+    "services": [
+        {
+            "org": "IBM",
+            "url": "ibm.cpu2msghub",
+            "variables": {
+                "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
+                "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
+                "MSGHUB_CERT_ENCODED": "$MSGHUB_CERT_ENCODED"
+            }
+        }
+    ]
+}

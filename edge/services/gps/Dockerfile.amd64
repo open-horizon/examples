@@ -39,7 +39,7 @@ RUN env GOPATH=/build GOOPTIONS_AMD64='CGO_ENABLED=0 GOOS=linux GOARCH=amd64' go
 FROM alpine:latest
 
 # Install the gpsd daemon, and the certs needed to use https services
-RUN apk update && apk add gpsd --no-cache ca-certificates
+RUN apk update && apk add gpsd curl --no-cache ca-certificates
 
 # Copy in the server binary from stage 0 of the build (above)
 COPY --from=0 /build/bin/amd64_gps /gps
