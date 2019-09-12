@@ -4,7 +4,7 @@
 unset HZN_ORG_ID
 
 # git branch/repository to clone
-branch="-b v3.2.0"
+branch="-b master"
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
