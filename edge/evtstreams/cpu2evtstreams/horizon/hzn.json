@@ -1,0 +1,8 @@
+{
+    "HZN_ORG_ID": "IBM",
+    "MetadataVars": {
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.cpu2evtstreams",
+        "SERVICE_NAME": "ibm.cpu2evtstreams",
+        "SERVICE_VERSION": "1.4.2"
+    }
+}
