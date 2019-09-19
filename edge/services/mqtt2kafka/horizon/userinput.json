@@ -1,0 +1,15 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "$SERVICE_NAME",
+            "variables": {
+                "MQTT_WST_EVST": "$MQTT_WST_EVST",
+                "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
+                "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
+                "MSGHUB_TOPIC": "$MSGHUB_TOPIC",
+                "MSGHUB_CERT_ENCODED": "$MSGHUB_CERT_ENCODED"
+            }
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "An mqtt broker and publisher for inter-container commmunication",
+    "public": true,
+    "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/mqtt_broker/README.md",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "singleton",
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "$SERVICE_NAME": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "privileged": true,
+                "ports": [
+                    {
+                        "HostPort": "1883:1883/tcp",
+                        "HostIP": "0.0.0.0"
+                    }
+                ]
+            }
+        }
+    }
+}

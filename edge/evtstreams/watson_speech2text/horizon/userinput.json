@@ -1,0 +1,30 @@
+{
+    "services": [
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "ibm.watsons2text",
+            "variables": {
+                "MQTT_HOST": "$MQTT_HOST",
+                "MQTT_HWD_WST": "$MQTT_HWD_WST",
+                "MQTT_PORT": "$MQTT_PORT",
+                "MQTT_WST_EVST": "$MQTT_WST_EVST",
+                "REMOVE_SW": "$REMOVE_SW",
+                "STT_IAM_APIKEY": "$STT_IAM_APIKEY",
+                "STT_URL": "$STT_URL",
+                "SW_HOST": "$SW_HOST",
+                "SW_PORT": "$SW_PORT"
+            }
+        },
+        {
+            "org": "$HZN_ORG_ID",
+            "url": "ibm.mqtt2kafka",
+            "variables": {
+                "MQTT_WST_EVST": "$MQTT_WST_EVST",
+                "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
+                "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL",
+                "MSGHUB_CERT_ENCODED": "$MSGHUB_CERT_ENCODED",
+                "MSGHUB_TOPIC": "$MSGHUB_TOPIC"
+            }
+        }
+    ]
+}
