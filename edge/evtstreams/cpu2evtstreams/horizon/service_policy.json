@@ -1,0 +1,7 @@
+{
+    "properties": [],
+    "constraints": [
+        "model == \"Mac\" OR model == \"Pi3B\"", 
+        "os == \"Mojave\""
+    ]
+}

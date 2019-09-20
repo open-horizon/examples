@@ -1,0 +1,14 @@
+{
+    "properties": [
+        {
+            "name": "model", "value": "Mac"
+        },
+        {
+            "name": "year", "value": "2018"
+        },
+        {
+            "name": "os", "value": "Mojave"
+        }
+    ],
+    "constraints": []
+}
