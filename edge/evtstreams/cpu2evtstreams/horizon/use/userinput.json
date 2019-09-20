@@ -6,7 +6,7 @@
             "variables": {
                 "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
                 "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL",
-                "MSGHUB_CERT_ENCODED": "$MSGHUB_CERT_ENCODED"
+                "EVTSTREAMS_CERT_ENCODED": "$EVTSTREAMS_CERT_ENCODED"
             }
         }
     ]
