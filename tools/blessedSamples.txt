@@ -1,1 +1,4 @@
+examples/edge/services/cpu_percent
+examples/edge/services/gps
+examples/edge/services/helloworld
 examples/edge/evtstreams/cpu2evtstreams
