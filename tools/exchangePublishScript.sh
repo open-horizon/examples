@@ -20,8 +20,8 @@ if [ -z $EVTSTREAMS_API_KEY ]; then
     echo ""
     echo "EVTSTREAM_* variables for IBM Event Streams are not set. Exporting default values."
     echo ""
-    export EVTSTREAMS_API_KEY=""
-    export EVTSTREAMS_BROKER_URL=""
+    export EVTSTREAMS_API_KEY="-"
+    export EVTSTREAMS_BROKER_URL="-"
     export EVTSTREAMS_CERT_ENCODED="-"
     echo $EVTSTREAMS_CERT_ENCODED
     echo ""
