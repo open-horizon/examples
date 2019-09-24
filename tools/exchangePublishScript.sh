@@ -23,6 +23,8 @@ if [ -z $EVTSTREAMS_API_KEY ]; then
     export EVTSTREAMS_API_KEY="-"
     export EVTSTREAMS_BROKER_URL="-"
     export EVTSTREAMS_CERT_ENCODED="-"
+    echo $EVTSTREAMS_API_KEY
+    echo $EVTSTREAMS_BROKER_URL
     echo $EVTSTREAMS_CERT_ENCODED
     echo ""
 fi
