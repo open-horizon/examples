@@ -16,12 +16,14 @@ error=0
 git clone $branch $repository
 
 # Check if EVTSTREAM_* env vars are empty, and give default values if so
-if [ -z $EVTSTREAMS_ ]; then
+if [ -z $EVTSTREAMS_API_KEY ]; then
     echo ""
-    echo "EVTSTREAM_* variables for IBM Event Streams are not set. Providing default values."
+    echo "EVTSTREAM_* variables for IBM Event Streams are not set. Exporting default values."
     echo ""
-    export EVTSTREAMS_API_KEY="Some default value"
-    echo $EVTSTREAMS_API_KEY
+    export EVTSTREAMS_API_KEY=""
+    export EVTSTREAMS_BROKER_URL=""
+    export EVTSTREAMS_CERT_ENCODED="-"
+    echo $EVTSTREAMS_CERT_ENCODED
     echo ""
 fi
 
