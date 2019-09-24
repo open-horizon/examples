@@ -15,6 +15,16 @@ error=0
 
 git clone $branch $repository
 
+# Check if EVTSTREAM_* env vars are empty, and give default values if so
+if [ -z $EVTSTREAMS_ ]; then
+    echo ""
+    echo "EVTSTREAM_* variables for IBM Event Streams are not set. Providing default values."
+    echo ""
+    EVTSTREAMS_API_KEY="Some default value"
+    echo $EVTSTREAMS_API_KEY
+    echo ""
+fi
+
 # read in blessedSamples.txt which contains the services and patterns to publish
 while IFS= read -r line
 do
