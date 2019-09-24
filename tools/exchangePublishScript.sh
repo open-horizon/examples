@@ -20,7 +20,7 @@ if [ -z $EVTSTREAMS_ ]; then
     echo ""
     echo "EVTSTREAM_* variables for IBM Event Streams are not set. Providing default values."
     echo ""
-    EVTSTREAMS_API_KEY="Some default value"
+    export EVTSTREAMS_API_KEY="Some default value"
     echo $EVTSTREAMS_API_KEY
     echo ""
 fi
