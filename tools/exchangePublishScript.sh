@@ -15,17 +15,6 @@ error=0
 
 git clone $branch $repository
 
-# Check if EVTSTREAM_* env vars are empty, and give default values if so
-if [ -z $EVTSTREAMS_API_KEY ]; then
-    export EVTSTREAMS_API_KEY="-"
-fi
-if [ -z $EVTSTREAMS_BROKER_URL ]; then
-    export EVTSTREAMS_BROKER_URL="-"
-fi
-if [ -z $EVTSTREAMS_CERT_ENCODED ]; then
-    export EVTSTREAMS_CERT_ENCODED="-"
-fi
-
 # read in blessedSamples.txt which contains the services and patterns to publish
 while IFS= read -r line
 do
