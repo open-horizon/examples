@@ -96,13 +96,18 @@ hzn unregister -f
 
 - It provides values for three `properties` (`model`, `year`, and `os`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
 
-2. Register your Node Policy using this command:
+2. Get the user input file for the cpu2evtstreams sample:
+```
+wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
+```
+
+3. Register your Node Policy using this command:
 
 ```
-hzn register --policy horizon/node_policy.json
+hzn register --policy horizon/node_policy.json -f userinput.json
 ```
 
-3. When the registration completes, use the following command to review the Node Policy:
+4. When the registration completes, use the following command to review the Node Policy:
 
 ```
 hzn policy list
@@ -172,32 +177,14 @@ hzn exchange service listpolicy <published-cpu2evtstreams-service-name>
     "os == \"Mojave\"",
     "model == \"Mac\" OR model == \"Pi3B\""
   ],
-  "userInput": [
-    {
-      "serviceOrgid": "$HZN_ORG_ID",
-      "serviceUrl": "$SERVICE_NAME",
-      "serviceVersionRange": "[0.0.0,INFINITY)",
-      "inputs": [
-        {
-          "name": "EVTSTREAMS_API_KEY",
-          "value": "$EVTSTREAMS_API_KEY"
-        },
-        {
-          "name": "EVTSTREAMS_BROKER_URL",
-          "value": "$EVTSTREAMS_BROKER_URL"
-        },
-        {
-          "name": "EVTSTREAMS_CERT_ENCODED",
-          "value": "$EVTSTREAMS_CERT_ENCODED"
-        }
-      ]
+  "userInput": []
     }
   ]
 }
 ```
 - This simple example of a Business Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `horizon/node_policy.json` file, so this Business Policy should successfully deploy our Service onto the Edge Node.
 
-- At the bottom, the userInput section has the same purpose as the horizon/userinput.json files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams, which will by default be taken from the environment variables themselves.
+- At the bottom, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams. Though, for this example we have left the `userInput` section blank and will use the same `userinput.json` file we used before during pattern registration. 
 
 1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (cpu2evtstreamsPolicy in this example):
 
