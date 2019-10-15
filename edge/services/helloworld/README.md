@@ -22,12 +22,17 @@ hzn exchange node confirm
 ```
 hzn register -p IBM/pattern-ibm.helloworld
 ```
-5. Look at the Horizon agreement until it is finalized and then see the running container:
+5. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
-6. See the helloworld service output: \
+
+6. Once the agreement is made, list the docker container edge service that has been started as a result:
+``` 
+sudo docker ps
+```
+
+7. See the helloworld service output: 
 
 	on **Linux**:
 	```
@@ -39,7 +44,7 @@ docker ps
 	docker logs -f $(docker ps -q --filter name=helloworld)
 	``` 
 
-7. Unregister your edge node, stopping the helloworld service:
+78 Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
@@ -189,13 +194,17 @@ hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
 
 - The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
-3. Look at the Horizon agreement until it is finalized and then see the running container:
+3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
 
-4. See the helloworld service output:
+4. Once the agreement is made, list the docker container edge service that has been started as a result:
+``` 
+sudo docker ps
+```
+
+5. See the helloworld service output:
 
 	on **Linux**:
 	```
@@ -207,7 +216,7 @@ docker ps
 	docker logs -f $(docker ps -q --filter name=helloworld)
 	``` 
 
-5. Unregister your edge node, stopping the helloworld service:
+6. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
@@ -290,12 +299,18 @@ hzn exchange pattern list
 ```
 hzn register -p pattern-SERVICE_NAME-$(hzn architecture)
 ```
-11. Look at the Horizon agreement until it is finalized and then see the running container:
+
+11. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
-12. See the helloworld service output:
+
+12. Once the agreement is made, list the docker container edge service that has been started as a result:
+``` 
+sudo docker ps
+```
+
+13. See the helloworld service output:
 
 	on **Linux**:
 	```
@@ -307,7 +322,7 @@ docker ps
 	docker logs -f $(docker ps -q --filter name=helloworld)
 	``` 
 
-13. Unregister your edge node, stopping the helloworld service:
+14. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
