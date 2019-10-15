@@ -27,7 +27,8 @@ hzn register -p IBM/pattern-ibm.helloworld
 hzn agreement list
 docker ps
 ```
-6. See the helloworld service output:
+6. See the helloworld service output: \
+
 	on **Linux**:
 	```
 	tail -f /var/log/syslog | grep helloworld[[]
@@ -195,13 +196,17 @@ docker ps
 ```
 
 4. See the helloworld service output:
-```
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
-```
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
 5. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
@@ -248,14 +253,17 @@ make
 hzn dev service start -S
 ```
 4. See the docker container running and look at the output:
-```
-docker ps
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
-```
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
 5. See the environment variables Horizon passes into your service container:
 ```
 docker inspect $(docker ps -q --filter name=helloworld) | jq '.[0].Config.Env'
@@ -288,13 +296,17 @@ hzn agreement list
 docker ps
 ```
 12. See the helloworld service output:
-```
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
-``` 
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
 13. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
