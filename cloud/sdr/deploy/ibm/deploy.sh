@@ -29,29 +29,29 @@ DB_INSTANCE_PLAN="Standard"
 DB_INSTANCE_RETRY=20
 DB_INSTANCE_TIMEOUT=60*20
 DB_NAME="sdr"
-DB_SQL='CREATE DATABASE '$DB_NAME'; \l \dt \c '$DB_NAME' \\CREATE TABLE globalnouns( 
-		noun TEXT PRIMARY KEY NOT NULL, 
-		sentiment DOUBLE PRECISION NOT NULL, 
-		numberofmentions BIGINT NOT NULL, 
-		timeupdated timestamp with time zone); 
-	CREATE TABLE nodenouns( 
-		noun TEXT NOT NULL, 
-		edgenode TEXT NOT NULL, 
-		sentiment DOUBLE PRECISION NOT NULL, 
-		numberofmentions BIGINT NOT NULL, 
-		timeupdated timestamp with time zone, 
-		PRIMARY KEY(noun, edgenode)); 
-	CREATE TABLE stations( 
-		edgenode TEXT NOT NULL, 
-		frequency REAL NOT NULL, 
-		numberofclips BIGINT NOT NULL, 
-		dataqualitymetric REAL, 
-		timeupdated timestamp with time zone, 
-		PRIMARY KEY(edgenode, frequency)); 
-	CREATE TABLE edgenodes( 
-		edgenode TEXT PRIMARY KEY NOT NULL, 
-		latitude REAL NOT NULL, 
-		longitude REAL NOT NULL, 
+DB_SQL='CREATE DATABASE '$DB_NAME'; \l \dt \c '$DB_NAME' \\CREATE TABLE globalnouns(
+		noun TEXT PRIMARY KEY NOT NULL,
+		sentiment DOUBLE PRECISION NOT NULL,
+		numberofmentions BIGINT NOT NULL,
+		timeupdated timestamp with time zone);
+	CREATE TABLE nodenouns(
+		noun TEXT NOT NULL,
+		edgenode TEXT NOT NULL,
+		sentiment DOUBLE PRECISION NOT NULL,
+		numberofmentions BIGINT NOT NULL,
+		timeupdated timestamp with time zone,
+		PRIMARY KEY(noun, edgenode));
+	CREATE TABLE stations(
+		edgenode TEXT NOT NULL,
+		frequency REAL NOT NULL,
+		numberofclips BIGINT NOT NULL,
+		dataqualitymetric REAL,
+		timeupdated timestamp with time zone,
+		PRIMARY KEY(edgenode, frequency));
+	CREATE TABLE edgenodes(
+		edgenode TEXT PRIMARY KEY NOT NULL,
+		latitude REAL NOT NULL,
+		longitude REAL NOT NULL,
 		timeupdated timestamp with time zone);'
 
 # functions
@@ -101,7 +101,7 @@ where:
 	-u= | --uninstall=[component]			- uninstall [component]
 
 Example: ./deploy.sh --install=all
-	
+
 EndOfMessage
 	echo "Supported components are: "
 	for i in "${components[@]}"; do echo -n "${i} "; done
@@ -306,7 +306,7 @@ function deploy_es_(){
 		echo `now` "Current topic(s) on $MH_INSTANCE:"
 		curl -s -H 'Accept: application/json' -H 'X-Auth-Token: '"$api_key" \
 				"${admin_url}"/admin/topics/
-	fi 
+	fi
 	echo `now` "Finished creation $MH_INSTANCE instance with $MH_SDR_TOPIC topic, $MH_SDR_TOPIC_PARTIONS partition(s)"
 	echo `now` "Current Event Streams instances:"
 	ibmcloud -q service list | grep messagehub || :
@@ -428,7 +428,7 @@ function deploy_func_(){
 	echo `now` "Current functions entities:"
 	ibmcloud -q fn list
 	echo `now` "Creating bindings for $MH_INSTANCE_CREDS credentials from $MH_INSTANCE Event Streams instance and functions"
-	ibmcloud fn package refresh
+	#ibmcloud fn package refresh
 	if [ $? -eq 0 ]; then
 		echo `now` "Successfully created bindings"
 	else
@@ -559,33 +559,31 @@ function teardown_func_(){
 # Deploy UI application
 function deploy_ui_(){
 	echo `now` "Creating UI application"
-	
+
 	echo `now` "Creating $UI_APP_ID_INSTANCE App ID instance with the $UI_APP_ID_INSTANCE_PLAN plan for $UI_APP_NAME UI application"
 	echo `now` "Current App ID instances:"
 	ibmcloud resource service-instances --service-name appid
 	## check if an app id instance is created, if not, create one
-	if [[ $(ibmcloud resource service-instances --service-name appid --output JSON | \
-			jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE") ]]; then
+	if [[ $(ibmcloud resource service-instances --service-name appid --output JSON | jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE") ]]; then
 		echo `now` "There is $UI_APP_ID_INSTANCE App ID instance created already, skipping its creation..."
 	else
 		echo `now` "Found no App ID instance $UI_APP_ID_INSTANCE with $UI_APP_ID_INSTANCE_PLAN plan, creating..."
 		ibmcloud resource service-instance-create "$UI_APP_ID_INSTANCE" appid "$UI_APP_ID_INSTANCE_PLAN" "$UI_APP_ID_INSTANCE_LOCATION"
 		ibmcloud resource service-instances --service-name appid
 	fi
-	
+
 	# alias for the App ID service
 	echo `now` "Creating alias $UI_APP_ID_INSTANCE_ALIAS for $UI_APP_ID_INSTANCE..."
 	echo `now` "Current aliases for $UI_APP_ID_INSTANCE:"
 	ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE"
-	if [[ $(ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE" --output JSON | \
-		jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
+	if [[ $(ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE" --output JSON |  grep "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
 		echo `now` "There is $UI_APP_ID_INSTANCE_ALIAS App ID alias instance for $UI_APP_ID_INSTANCE created already, skipping its creation..."
 	else
 		echo `now` "Found no $UI_APP_ID_INSTANCE_ALIAS alias for $UI_APP_ID_INSTANCE App ID instance, creating..."
 		ibmcloud resource service-alias-create "$UI_APP_ID_INSTANCE_ALIAS" --instance-name "$UI_APP_ID_INSTANCE"
 		ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE"
 	fi
-	
+
 	# creating credentials for managing and configuring our App ID instance
 	echo `now` "Creating credentials $UI_APP_ID_INSTANCE_ALIAS_CREDS for $UI_APP_ID_INSTANCE_ALIAS alias"
 	echo `now` "Current credentials for $UI_APP_ID_INSTANCE_ALIAS:"
@@ -610,28 +608,28 @@ function deploy_ui_(){
 		"https://iam.bluemix.net/identity/token" | jq -r '.access_token')"
 
 	echo `now` "Configuring identity providers on $UI_APP_ID_INSTANCE App ID instance..."
-	
+
 	echo `now` "Disabling Facebook identity provider..."
 	curl -s -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' \
 		--header "Authorization: Bearer $token" \
 		-d '{"isActive": false}' ${managementUrl}/config/idps/facebook > /dev/null
-	
+
 	echo `now` "Disabling Google identity provider..."
 	curl -s -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' \
 		--header "Authorization: Bearer $token" \
 		-d '{"isActive": false}' ${managementUrl}/config/idps/google > /dev/null
-	
+
 	echo `now` "Disabling anonymous identity provider..."
 	curl -s -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' \
 		--header "Authorization: Bearer $token" \
 		-d '{"anonymousAccess":{"enabled":false}}' ${managementUrl}/config/tokens > /dev/null
-	
+
 	echo `now` "Configuring Cloud Directory Identity provider..."
 	curl -s -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' \
 		--header "Authorization: Bearer $token" \
 		-d '{"config":{"selfServiceEnabled":true,"interactions":{"identityConfirmation":{"accessMode":"OFF","methods":["email"]},"welcomeEnabled":false,"resetPasswordEnabled":false,"resetPasswordNotificationEnable":false},"identityField":"email","signupEnabled":false},"isActive":true}' \
 		${managementUrl}/config/idps/cloud_directory > /dev/null
-	
+
 	echo `now` "Registering application $UI_APP_NAME on $UI_APP_ID_INSTANCE App ID instance"
 	echo `now` "Current registered applications on $UI_APP_ID_INSTANCE App ID instance:"
 	curl -s -X GET --header 'Accept: application/json' --header "Authorization: Bearer $token" ${managementUrl}/applications | \
@@ -664,7 +662,7 @@ function deploy_ui_(){
 	 	-e "s|\"secret\": \"{secret of service from app id}\",|\"secret\": \""$ui_app_secret"\",|" \
 	 	-e "s|\"tenantId\": \"{tenantId from app id}\"|\"tenantId\": \""$ui_app_tenantId"\"|" \
 	 	"${UI_SRC_PATH}/localdev-config.json"
-	
+
 	## adding a user
 	echo `now` "Adding $UI_APP_USER user to $UI_APP_ID_INSTANCE App ID instance"
 	if [[ $(curl -s -X GET --header 'Accept: application/json' --header "Authorization: Bearer $token" ${managementUrl}/cloud_directory/Users | \
@@ -680,11 +678,11 @@ function deploy_ui_(){
 
 	echo `now` "Current applications:"
 	ibmcloud -q app list
-	
+
 	echo `now` "Updating $UI_APP_NAME client configuration file with the Mapbox token"
 	cp "${UI_SRC_PATH}/client/src/config/settings.template.js" "${UI_SRC_PATH}/client/src/config/settings.js"
 	sed -i.bak "s|exports.MAPBOX_TOKEN = .*|exports.MAPBOX_TOKEN = '"$MAPBOX_TOKEN"'|" "${UI_SRC_PATH}/client/src/config/settings.js"
-	
+
 	echo `now` "Updating $UI_APP_NAME configuration file with the $DB_NAME DB information and random number"
 	cp "${UI_SRC_PATH}/server/config/settings.template.js" "${UI_SRC_PATH}/server/config/settings.js"
 	db_response="$(ibmcloud service key-show "$DB_INSTANCE" "$DB_INSTANCE_CREDS" | sed -n '3!p' | sed -n '1!p' )"
@@ -697,7 +695,7 @@ function deploy_ui_(){
 
 	echo `now` "Building SDR UI app - $UI_APP_NAME..."
 	(cd "${UI_SRC_PATH}/client" && npm install && npm run build)
-	
+
 	if [[ $(ibmcloud -q cf apps | cut -d' ' -f1 | sed '1,4d' | grep -Fx "$UI_APP_NAME") ]]; then
 	  	echo `now` "There is $UI_APP_NAME UI application created already, syncing changes..."
 	  	cd "$UI_SRC_PATH" && ibmcloud -q cf push "$UI_APP_NAME"
@@ -705,7 +703,7 @@ function deploy_ui_(){
 	  	echo `now` "Found no $UI_APP_NAME UI application, creating..."
 	  	cd "$UI_SRC_PATH" && ibmcloud -q cf push "$UI_APP_NAME" --no-start
 	fi
-	
+
 	echo `now` "Current applications:"
 	ibmcloud -q cf apps
 
@@ -740,14 +738,14 @@ teardown_ui_(){
 	echo `now` "Deleting $UI_APP_NAME UI application"
 	echo `now` "Waiting $WAIT_RESPONSE seconds..."
 	sleep $WAIT_RESPONSE
-	
+
 	echo `now` "Deleting $UI_APP_ID_INSTANCE App ID instance..."
 	echo `now` "Current App ID instances:"
 	ibmcloud resource service-instances --service-name appid
 	## if there's an app id instance, we can check for alias, binding and its creds
 	if [[ $(ibmcloud resource service-instances --service-name appid --output JSON | \
 			jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE") ]]; then
-		
+
 		# if there's an alias we can check for binging and its creds
 		if [[ $(ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE" --output JSON | \
 			jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
@@ -772,7 +770,7 @@ teardown_ui_(){
 			else
 				echo `now` "Found no $UI_APP_ID_INSTANCE_ALIAS_CREDS, skipping..."
 			fi
-			
+
 			echo `now` "Deleting alias $UI_APP_ID_INSTANCE_ALIAS for $UI_APP_ID_INSTANCE..."
 			echo `now` "Current aliases for $UI_APP_ID_INSTANCE:"
 			ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE"
@@ -789,7 +787,7 @@ teardown_ui_(){
 	else
 		echo `now` "Found no App ID instance $UI_APP_ID_INSTANCE with $UI_APP_ID_INSTANCE_PLAN plan, skipping..."
 	fi
-	
+
 	# deleting the UI app
 	echo `now` "Current applications:"
 	ibmcloud -q cf apps
@@ -802,7 +800,7 @@ teardown_ui_(){
 	  	echo `now` "There is no $UI_APP_NAME UI application, skipping..."
 	fi
 	echo `now` "Finished deleting $UI_APP_NAME UI application"
-		
+
 }
 
 # Create Watson Speech-To-Text instance

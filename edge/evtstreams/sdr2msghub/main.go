@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
+	"github.com/open-horizon/examples/edge/evtstreams/sdr2msghub/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/viert/lame"
