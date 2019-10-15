@@ -28,13 +28,16 @@ hzn agreement list
 docker ps
 ```
 6. See the helloworld service output:
-```
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
-``` 
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
 7. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
