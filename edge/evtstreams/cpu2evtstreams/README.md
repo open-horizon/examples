@@ -285,7 +285,7 @@ echo EVTSTREAMS_API_KEY=$EVTSTREAMS_API_KEY
 echo EVTSTREAMS_ADMIN_URL=$EVTSTREAMS_ADMIN_URL
 echo EVTSTREAMS_BROKER_URL=$EVTSTREAMS_BROKER_URL
 ```
-9. Verify the `cpu2evtstreams ` topic is now in your event streams instance:
+9. Verify the `cpu2evtstreams` topic is now in your event streams instance:
 ```
 make evtstreams-topic-list
 ```
