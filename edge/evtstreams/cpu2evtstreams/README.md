@@ -7,16 +7,16 @@ For details about using this service, see [cpu2evtstreams.md](cpu2evtstreams.md)
 - Before following the steps in this section, install the Horizon agent on your edge device and point it to your Horizon exchange. Also get an API key that is associated with your Horizon instance.
 1. Set your exchange org:
 ```
-export HZN_ORG_ID="<yourorg>"
+export HZN_ORG_ID="PUT-YOUR-CLUSTER-NAME-HERE"
 ```
 2. Set your exchange user credentials in the Horizon-supported environment variable and verify it:
 ```
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
+export HZN_EXCHANGE_USER_AUTH="iamapikey:PUT-YOUR-API-KEY-HERE"
 hzn exchange user list
 ```
 3. Choose a id and token for your edge node, create it, and verify it:
 ```
-export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
+export HZN_EXCHANGE_NODE_AUTH="PUT-ANY-NODE-ID-HERE:PUT-ANY-NODE-TOKEN-HERE"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
@@ -24,8 +24,8 @@ hzn exchange node confirm
     - `EVTSTREAMS_API_KEY`
     - `EVTSTREAMS_BROKER_URL`
     - `EVTSTREAMS_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private) due to differences in the base64 command set this variable as follows based on the platform you're using:
-        - On Linux: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE| base64 -w 0)”`
-        - On Mac: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE| base64)”`
+        - On Linux: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64 -w 0)”`
+        - On Mac: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64)”`
     - `EVTSTREAMS_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
 5. Get the user input file for the cpu2evtstreams sample:
 ```
