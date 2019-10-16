@@ -1,11 +1,11 @@
 # SDR service API
 
-Assuming that `sdr` is the host name:
+Assuming that `ibm.sdr` is the host name:
 
 ## `/freqs`
 Get a list of the frequencies of strong radio stations.
 
-`curl sdr:80/freqs`
+`curl ibm.sdr:80/freqs`
 
 Example response:
 If the SDR hardware is present it will return a list of string FM stations.
@@ -16,6 +16,6 @@ If the SDR hardware is not present or can not be used for some reason it will re
 
 ## /audio/<freq>
 Get a 30 second chunk of raw audio.
-`curl sdr:80/audio/99100000`
+`curl ibm.sdr:80/audio/99100000`
 
-`curl sdr:80/audio/99100000 | aplay -r 16000 -f S16_LE -t raw -c 1`
+`curl ibm.sdr:80/audio/99100000 | aplay -r 16000 -f S16_LE -t raw -c 1`
