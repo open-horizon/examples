@@ -44,7 +44,7 @@ sudo docker ps
 	docker logs -f $(docker ps -q --filter name=helloworld)
 	``` 
 
-78 Unregister your edge node, stopping the helloworld service:
+8. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
