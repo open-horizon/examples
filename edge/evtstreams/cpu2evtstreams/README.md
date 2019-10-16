@@ -296,15 +296,21 @@ make
 ```
 hzn dev service start -S
 ```
-4. See the docker container running and look at the output:
-```
-docker ps
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep cpu2evtstreams[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
-```
+
+4. See the cpu2evtstreams service output:
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep cpu2evtstreams[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name= cpu2evtstreams)
+	``` 
+
+
+
 5. See the environment variables Horizon passes into your service container:
 ```
 docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
