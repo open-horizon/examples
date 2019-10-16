@@ -53,7 +53,7 @@ sudo docker ps
   ```
   - If using IBM Event Streams in IBM Cloud Private:
   ```
-  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
   ```
 10. See the cpu2evtstreams service output:
 
@@ -249,30 +249,36 @@ If you want to create your own Horizon edge service, based on this example, foll
 1. First, go through the steps in the section above to run the IBM cpu2evtstreams service on an edge node.
 2. Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
-echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
+echo 'DOCKER-PASSWORD' | docker login -u DOCKER-HUB-ID --password-stdin
 ```
+
 3. If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.json`):
 ```
 unset HZN_ORG_ID
 ```
+
 4. Clone this git repo:
 ```
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
+
 5. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
 ```
 cp -a examples/edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
+
 6. Set the values in `horizon/hzn.json` to your own values.
+
 7. As part of the above section "Using the CPU To IBM Event Streams Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
+export HZN_EXCHANGE_USER_AUTH="iamapikey:PUT-YOUR-API-KEY-HERE"
 hzn exchange user list
-export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
+export HZN_EXCHANGE_NODE_AUTH="PUT-ANY-NODE-ID-HERE:PUT-ANY-NODE-TOKEN-HERE"
 hzn exchange node confirm
 ```
+
 8. Verify that these environment variables are still set from when you used the existing cpu2evtstreams sample earlier in this document:
 ```
 echo EVTSTREAMS_API_KEY=$EVTSTREAMS_API_KEY
@@ -297,7 +303,12 @@ make
 hzn dev service start -S
 ```
 
-4. See the cpu2evtstreams service output:
+4. Check that the container is running:
+```
+sudo docker ps 
+```
+
+5. See the cpu2evtstreams service output:
 
 	on **Linux**:
 	```
@@ -310,54 +321,58 @@ hzn dev service start -S
 	``` 
 
 
-
-5. See the environment variables Horizon passes into your service container:
+6. See the environment variables Horizon passes into your service container:
 ```
 docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
 ```
-6. Stop the service:
+7. Stop the service:
 ```
 hzn dev service stop
 ```
-7. Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
+8. Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
 ```
 hzn key create <my-company> <my-email>
 ```
-8. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+9. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
-9. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+10. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
-10. Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
+11. Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
 ```
 hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.json
 ```
 
 
 
-11. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+12. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
 ```
 
-12. Once the agreement is made, list the docker container edge service that has been started as a result:
+13. Once the agreement is made, list the docker container edge service that has been started as a result:
 ``` 
 sudo docker ps
 ```
 
 
 
-13. On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
-```
-kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
-```
+14. On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
+  - If using IBM Event Streams in IBM Cloud:
+  ```
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
+  ```
+  - If using IBM Event Streams in IBM Cloud Private:
+  ```
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
+  ```
 
-14. See the cpu2evtstreams service output:
+15. See the cpu2evtstreams service output:
 
 	on **Linux**:
 	```
@@ -371,7 +386,7 @@ kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.ve
 
 
 
-15. Unregister your edge node, stopping the cpu2evtstreams service:
+16. Unregister your edge node, stopping the cpu2evtstreams service:
 ```
 hzn unregister -f
 ```
