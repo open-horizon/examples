@@ -62,9 +62,10 @@ sudo docker ps
   ```
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC
   ```
-10 See the watsons2text service output:
+10. See the watsons2text service output:
 
 	on **Linux**:
+
 	```
 	tail -f /var/log/syslog | grep watsons2text[[]
 	```
