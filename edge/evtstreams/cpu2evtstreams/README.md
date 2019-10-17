@@ -64,7 +64,7 @@ sudo docker ps
 
 	on **Mac**:
 	```
-	docker logs -f $(docker ps -q --filter name= cpu2evtstreams)
+	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 	``` 
 
 11. Unregister your edge node, stopping the cpu2evtstreams service:
@@ -317,7 +317,7 @@ sudo docker ps
 
 	on **Mac**:
 	```
-	docker logs -f $(docker ps -q --filter name= cpu2evtstreams)
+	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 	``` 
 
 
@@ -381,7 +381,7 @@ sudo docker ps
 
 	on **Mac**:
 	```
-	docker logs -f $(docker ps -q --filter name= cpu2evtstreams)
+	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 	``` 
 
 
