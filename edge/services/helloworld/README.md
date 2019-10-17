@@ -5,16 +5,16 @@
 - Before following the steps in this section, install the Horizon agent on your edge device and point it to your Horizon exchange. Also get an API key that is associated with your Horizon instance.
 1. Set your exchange org:
 ```
-export HZN_ORG_ID="<yourorg>"
+export HZN_ORG_ID="PUT-YOUR-CLUSTER-NAME-HERE"
 ```
 2. Set your exchange user credentials in the Horizon-supported environment variable and verify it:
 ```
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
+export HZN_EXCHANGE_USER_AUTH="iamapikey:PUT-YOUR-API-KEY-HERE"
 hzn exchange user list
 ```
 3. Choose a id and token for your edge node, create it, and verify it:
 ```
-export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
+export HZN_EXCHANGE_NODE_AUTH="PUT-ANY-NODE-ID-HERE:PUT-ANY-NODE-TOKEN-HERE"
 hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
@@ -22,20 +22,29 @@ hzn exchange node confirm
 ```
 hzn register -p IBM/pattern-ibm.helloworld
 ```
-5. Look at the Horizon agreement until it is finalized and then see the running container:
+5. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
-6. See the helloworld service output:
-```
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
+
+6. Once the agreement is made, list the docker container edge service that has been started as a result:
 ``` 
-7. Unregister your edge node, stopping the helloworld service:
+sudo docker ps
+```
+
+7. See the helloworld service output: 
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
+8. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
@@ -185,21 +194,29 @@ hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
 
 - The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
-3. Look at the Horizon agreement until it is finalized and then see the running container:
+3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
 
-4. See the helloworld service output:
+4. Once the agreement is made, list the docker container edge service that has been started as a result:
+``` 
+sudo docker ps
 ```
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
-```
-5. Unregister your edge node, stopping the helloworld service:
+
+5. See the helloworld service output:
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
+6. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```
@@ -213,8 +230,9 @@ If you want to create your own Horizon edge service, follow the next 2 sections 
 1. First, go through the steps in the section above to run the IBM helloworld service on an edge node.
 2. Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
 ```
-echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
+echo 'DOCKER-PASSWORD' | docker login -u DOCKER-HUB-ID --password-stdin
 ```
+
 3. If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.json`):
 ```
 unset HZN_ORG_ID
@@ -224,11 +242,12 @@ unset HZN_ORG_ID
 hzn dev service new -o <org-id> -s <service-name> -i <docker-image-base>
 # E.g.:  hzn dev service new -o bp@someemail.com -s bp.helloworld -i brucemp/bp.helloworld
 ```
+
 5. As part of the above section "Using the Hello World Example Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
 ```
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
+export HZN_EXCHANGE_USER_AUTH="iamapikey:PUT-YOUR-API-KEY-HERE"
 hzn exchange user list
-export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
+export HZN_EXCHANGE_NODE_AUTH="PUT-ANY-NODE-ID-HERE:PUT-ANY-NODE-TOKEN-HERE"
 hzn exchange node confirm
 ```
 
@@ -244,55 +263,74 @@ make
 ```
 hzn dev service start -S
 ```
-4. See the docker container running and look at the output:
+
+4. Check that the container is running:
 ```
-docker ps
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
+sudo docker ps 
 ```
-5. See the environment variables Horizon passes into your service container:
+
+5. See the docker container running and look at the output:
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
+6. See the environment variables Horizon passes into your service container:
 ```
 docker inspect $(docker ps -q --filter name=helloworld) | jq '.[0].Config.Env'
 ```
-6. Stop the service:
+7. Stop the service:
 ```
 hzn dev service stop
 ```
-7. Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
+8. Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
 ```
 hzn key create <my-company> <my-email>
 ```
-8. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+9. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
-9. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+10. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
-10. Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
+11. Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
 ```
 hzn register -p pattern-SERVICE_NAME-$(hzn architecture)
 ```
-11. Look at the Horizon agreement until it is finalized and then see the running container:
+
+12. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
-12. See the helloworld service output:
-```
-# soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep helloworld[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=helloworld)
+
+13. Once the agreement is made, list the docker container edge service that has been started as a result:
 ``` 
-13. Unregister your edge node, stopping the helloworld service:
+sudo docker ps
+```
+
+14. See the helloworld service output:
+
+	on **Linux**:
+	```
+	tail -f /var/log/syslog | grep helloworld[[]
+	```
+
+	on **Mac**:
+	```
+	docker logs -f $(docker ps -q --filter name=helloworld)
+	``` 
+
+15. Unregister your edge node, stopping the helloworld service:
 ```
 hzn unregister -f
 ```

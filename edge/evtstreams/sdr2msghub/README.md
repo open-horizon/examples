@@ -36,7 +36,7 @@ curl -sS -H "X-Auth-Token: $MSGHUB_API_KEY" $MSGHUB_ADMIN_URL/admin/topics | jq 
 ```
 - Get the user input file for the sdr2msghub sample:
 ```
-wget https://github.com/open-horizon/examples/raw/master/edge/msghub/sdr2msghub/horizon/use/userinput.json
+wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/sdr2msghub/horizon/use/userinput.json
 ```
 - Register your edge node with Horizon to use the sdr2msghub pattern:
 ```
