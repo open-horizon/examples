@@ -138,8 +138,8 @@ func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 func connect(topic string) (conn msghubConn, err error) {
 	conn.Topic = topic
 	apiKey := getEnv("MSGHUB_API_KEY")
-	username := apiKey[:16]
-	password := apiKey[16:]
+	username := "token"
+	password := apiKey
 	brokerStr := getEnv("MSGHUB_BROKER_URL")
 	brokers := strings.Split(brokerStr, ",")
 	config := sarama.NewConfig()

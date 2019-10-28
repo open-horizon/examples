@@ -261,22 +261,44 @@ function teardown_nlu_(){
 function deploy_es_(){
 	echo `now` "Creating Event Streams instance $MH_INSTANCE"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || :
-	if [[ $(ibmcloud -q service list | grep messagehub | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE") ]]; then
+	if [[ $(ibmcloud resource service-instances | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE") ]]; then
 	 	echo `now` "There is $MH_INSTANCE Event Streams instance created already, skipping its creation..."
 	else
 	 	echo `now` "Found no Event Streams instance $MH_INSTANCE, creating..."
-	 	ibmcloud -q service create messagehub standard "$MH_INSTANCE"
-	 	ibmcloud -q service list | grep messagehub || :
+	 	ibmcloud resource service-instance-create "$MH_INSTANCE" messagehub standard "$LOCATION"
+	 	ibmcloud resource service-instances | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE" || :
 	fi
-	echo `now` "Creating credentials $MH_INSTANCE_CREDS for $MH_INSTANCE"
-	echo `now` "Current credentials for $MH_INSTANCE:"
+
+	echo `now` "Creating alias for $MH_INSTANCE as $MH_INSTANCE..."
+	ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
+	
+
+	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | grep "$MH_INSTANCE") ]]; then
+		echo `now` "There is $MH_INSTANCE Event Streams alias instance for $MH_INSTANCE created already, skipping its creation..."
+	else
+		echo `now` "Found no $MH_INSTANCE alias for $MH_INSTANCE Event Streams instance, creating..."
+		ibmcloud resource service-alias-create "$MH_INSTANCE" --instance-name "$MH_INSTANCE"
+		ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
+	fi
+
+	echo `now` "Creating credentials $MH_INSTANCE_CREDS for $MH_INSTANCE alias"
+	echo `now` "Current credentials for $MH_INSTANCE alias:"
 	ibmcloud -q service keys "$MH_INSTANCE" | sed -n '3!p' | sed -n '1!p'
 	if [[ $(ibmcloud service keys "$MH_INSTANCE" | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE_CREDS") ]]; then
 	 	echo `now` "There is $MH_INSTANCE_CREDS credentials for Event Streams $MH_INSTANCE created, skipping its creation..."
 	else
 	 	echo `now` "Found no $MH_INSTANCE_CREDS, creating..."
 	 	ibmcloud service key-create "$MH_INSTANCE" "$MH_INSTANCE_CREDS"
+	fi
+
+	echo `now` "Creating credentials $MH_INSTANCE_CREDS for $MH_INSTANCE"
+	echo `now` "Current credentials for $MH_INSTANCE:"
+	# ibmcloud resource service-keys | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE_CREDS"
+	if [[ $(ibmcloud resource service-keys | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE_CREDS") ]]; then
+	 	echo `now` "There is $MH_INSTANCE_CREDS credentials for Event Streams $MH_INSTANCE created, skipping its creation..."
+	else
+	 	echo `now` "Found no $MH_INSTANCE_CREDS, creating..."
+	 	ibmcloud resource service-key-create "$MH_INSTANCE_CREDS" Manager --instance-name "$MH_INSTANCE"
 	fi
 	while [ true ] ; do
 	 	response="$(ibmcloud service key-show "$MH_INSTANCE" "$MH_INSTANCE_CREDS" | sed -n '3!p' | sed -n '1!p')"
@@ -291,12 +313,15 @@ function deploy_es_(){
 	 		break
 	 	fi
 	done
+
 	echo `now` "Creating $MH_SDR_TOPIC with $MH_SDR_TOPIC_PARTIONS partitions on $MH_INSTANCE"
-	response="$(ibmcloud service key-show "$MH_INSTANCE" "$MH_INSTANCE_CREDS" | sed -n '3!p' | sed -n '1!p')"
-	admin_url="$(echo "$response" | jq -r '.kafka_admin_url')"
-	api_key="$(echo "$response" | jq -r '.api_key')"
-	if [[ $(curl -s -H 'Accept: application/json' -H 'X-Auth-Token: '"$api_key" "${admin_url}"/admin/topics/ | \
-		jq -c '.[] | select(.name | . and contains('"\"$MH_SDR_TOPIC\""'))') ]]; then
+	response="$(ibmcloud resource service-key "$MH_INSTANCE_CREDS" --output JSON)"
+	admin_url="$(echo "$response" | jq -r '.[] .credentials.kafka_admin_url')"
+	api_key="$(echo "$response" | jq -r '.[] .credentials.api_key')"
+
+	ibmcloud es init --instance-name $MH_INSTANCE
+
+	if [[ $(ibmcloud es topics | grep $MH_SDR_TOPIC) ]]; then
 	 	echo `now` "$MH_SDR_TOPIC topic is already created on $MH_INSTANCE"
 	else
 	 	echo `now` "Found no $MH_SDR_TOPIC, creating..."
@@ -309,7 +334,7 @@ function deploy_es_(){
 	fi
 	echo `now` "Finished creation $MH_INSTANCE instance with $MH_SDR_TOPIC topic, $MH_SDR_TOPIC_PARTIONS partition(s)"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || :
+	ibmcloud resource service-instances || :
 }
 
 # Delete Event Streams instance
