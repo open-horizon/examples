@@ -271,7 +271,7 @@ function deploy_es_(){
 
 	echo `now` "Creating alias for $MH_INSTANCE as $MH_INSTANCE..."
 	ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
-	
+
 
 	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | grep "$MH_INSTANCE") ]]; then
 		echo `now` "There is $MH_INSTANCE Event Streams alias instance for $MH_INSTANCE created already, skipping its creation..."
@@ -453,7 +453,7 @@ function deploy_func_(){
 	echo `now` "Current functions entities:"
 	ibmcloud -q fn list
 	echo `now` "Creating bindings for $MH_INSTANCE_CREDS credentials from $MH_INSTANCE Event Streams instance and functions"
-	#ibmcloud fn package refresh
+	ibmcloud fn package refresh
 	if [ $? -eq 0 ]; then
 		echo `now` "Successfully created bindings"
 	else
