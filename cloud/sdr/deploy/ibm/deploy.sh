@@ -11,6 +11,7 @@ MH_INSTANCE_CREDS="${MH_INSTANCE}-credentials"
 MH_SDR_TOPIC="sdr-audio"
 MH_SDR_TOPIC_PARTIONS=2
 MH_RESPONSE_RETRY=5
+LOCATION="us-south"
 
 # watson speech-to-text service
 STT_INSTANCE="${SERVICE_PREFIX}-speech-to-text"
@@ -149,6 +150,8 @@ function check_prereqs(){
 	: "${UI_APP_USER:?UI_APP_USER is not set or empty}"
 	: "${UI_APP_PASSWORD:?UI_APP_PASSWORD is not set or empty}"
 	: "${MAPBOX_TOKEN:?MAPBOX_TOKEN is not set or empty}"
+	ibmcloud target --cf
+	ibmcloud target -g default
 	echo `now` "All prerequisites are met"
 	echo "============================================================="
 }
@@ -271,7 +274,7 @@ function deploy_es_(){
 
 	echo `now` "Creating alias for $MH_INSTANCE as $MH_INSTANCE..."
 	ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
-	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | grep "$MH_INSTANCE") ]]; then
+	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" --output JSON | sed -n '1!p' | jq -r '.[].name' | grep -Fx "$MH_INSTANCE") ]]; then
 		echo `now` "There is $MH_INSTANCE Event Streams alias instance for $MH_INSTANCE created already, skipping its creation..."
 	else
 		echo `now` "Found no $MH_INSTANCE alias for $MH_INSTANCE Event Streams instance, creating..."
@@ -352,7 +355,7 @@ function teardown_es_(){
 
 	echo `now` "Deleting alias for $MH_INSTANCE as $MH_INSTANCE..."
 	ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
-	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | grep "$MH_INSTANCE") ]]; then
+	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | sed -n '1!p' | grep -Fx "$MH_INSTANCE") ]]; then
 		echo `now` "Found $MH_INSTANCE Event Streams alias, deleting..."
 		ibmcloud resource service-alias-delete "$MH_INSTANCE" --instance-name "$MH_INSTANCE"
 	else
@@ -360,16 +363,26 @@ function teardown_es_(){
 	fi
 	ibmcloud resource service-aliases 
 
+	echo `now` "Deleting $MH_INSTANCE_CREDS for $MH_INSTANCE"
+	if [[ $(ibmcloud resource service-keys | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE_CREDS") ]]; then
+		echo `now` "Found $MH_INSTANCE_CREDS credentials for $MH_INSTANCE, deleting..."
+		ibmcloud resource service-key-delete "$MH_INSTANCE_CREDS" -f
+	else
+	 	echo `now` "There is no $MH_INSTANCE_CREDS credentials for $MH_INSTANCE to delete, skipping..."
+	fi
+
+
+
 	echo `now` "Deleting $MH_INSTANCE..."
-	if [[ $(ibmcloud -q service list | grep messagehub | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE") ]]; then
+	if [[ $(ibmcloud resource service-instances | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE") ]]; then
 	 	echo `now` "Found $MH_INSTANCE, deleting..."
-	 	ibmcloud service delete "$MH_INSTANCE" -f
+	 	ibmcloud resource service-instance-delete "$MH_INSTANCE" -f
 	else
 	 	echo `now` "Found no $MH_INSTANCE Event Streams instance, skipping..."
 	fi
 	echo `now` "Finished deleting $MH_INSTANCE and its credentials $MH_INSTANCE_CREDS"
 	echo `now` "Current Event Streams instances:"
-	ibmcloud -q service list | grep messagehub || :
+	ibmcloud resource service-instances || :
 }
 
 # Create and configure Compose for PostgreSQL instance
@@ -610,7 +623,7 @@ function deploy_ui_(){
 	echo `now` "Creating alias $UI_APP_ID_INSTANCE_ALIAS for $UI_APP_ID_INSTANCE..."
 	echo `now` "Current aliases for $UI_APP_ID_INSTANCE:"
 	ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE"
-	if [[ $(ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE" --output JSON |  grep "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
+	if [[ $(ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE" --output JSON | sed -n '1!p' | jq -r '.[].name' | grep -Fx "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
 		echo `now` "There is $UI_APP_ID_INSTANCE_ALIAS App ID alias instance for $UI_APP_ID_INSTANCE created already, skipping its creation..."
 	else
 		echo `now` "Found no $UI_APP_ID_INSTANCE_ALIAS alias for $UI_APP_ID_INSTANCE App ID instance, creating..."
@@ -782,7 +795,7 @@ teardown_ui_(){
 
 		# if there's an alias we can check for binging and its creds
 		if [[ $(ibmcloud resource service-aliases --instance-name "$UI_APP_ID_INSTANCE" --output JSON | \
-			jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
+			sed -n '1!p' | jq -r 'select (.!=null) | .[].name' | grep -Fx "$UI_APP_ID_INSTANCE_ALIAS") ]]; then
 			echo `now` "Found $UI_APP_ID_INSTANCE_ALIAS, checking if there's bindings and its creds to delete..."
 			echo `now` "Deleting binding with $UI_APP_ID_INSTANCE_ALIAS alias for $UI_APP_NAME application"
 			echo `now` "Current bindings for $UI_APP_ID_INSTANCE_ALIAS alias:"
