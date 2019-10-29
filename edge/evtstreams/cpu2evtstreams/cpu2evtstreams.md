@@ -20,10 +20,10 @@ These **optional** input values can be overridden:
 | ---- | --------- | ---- | ---------------- |
 | EVTSTREAMS_TOPIC | yes | string | Default is `cpu2evtstreams`. The topic to use when sending messages to your instance of IBM Event Streams |
 | EVTSTREAMS_CERT_ENCODED | no | string | Default is `-`. The base64-encoded self-signed certificate to use when sending messages to your ICP instance of IBM Event Streams. Not needed for IBM Cloud Event Streams. |
-| MOCK | no | boolean | default is false. If true, send fake data instead of querying the cpu and gps services |
+| MOCK | no | boolean | default is `false`. If true, send fake data instead of querying the cpu and gps services |
 | PUBLISH | no | boolean | default is true. If false, do not send data to Event Streams, only print it to the log |
-| SAMPLE_INTERVAL | no | integer | default is 5. How often (in seconds) to query the cpu percent. (The gps location is queried every SAMPLE_INTERVAL * SAMPLE_SIZE seconds.)  |
-| VERBOSE | no | integer | default is 10. The number of cpu samples to read before calculating and publishing the cpu average and gps coordinates |
+| SAMPLE_INTERVAL | no | integer | default is `5`. How often (in seconds) to query the cpu percent. (The gps location is queried every SAMPLE_INTERVAL * SAMPLE_SIZE seconds.)  |
+| VERBOSE | no | integer | default is `1`. The number of cpu samples to read before calculating and publishing the cpu average and gps coordinates |
 
 
 #### Example:
