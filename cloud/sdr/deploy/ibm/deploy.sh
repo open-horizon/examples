@@ -271,8 +271,6 @@ function deploy_es_(){
 
 	echo `now` "Creating alias for $MH_INSTANCE as $MH_INSTANCE..."
 	ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
-
-
 	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | grep "$MH_INSTANCE") ]]; then
 		echo `now` "There is $MH_INSTANCE Event Streams alias instance for $MH_INSTANCE created already, skipping its creation..."
 	else
@@ -351,6 +349,17 @@ function teardown_es_(){
 	else
 	 	echo `now` "There is no $MH_INSTANCE_CREDS credentials for $MH_INSTANCE to delete, skipping..."
 	fi
+
+	echo `now` "Deleting alias for $MH_INSTANCE as $MH_INSTANCE..."
+	ibmcloud resource service-aliases --instance-name "$MH_INSTANCE"
+	if [[ $(ibmcloud resource service-aliases --instance-name "$MH_INSTANCE" | grep "$MH_INSTANCE") ]]; then
+		echo `now` "Found $MH_INSTANCE Event Streams alias, deleting..."
+		ibmcloud resource service-alias-delete "$MH_INSTANCE" --instance-name "$MH_INSTANCE"
+	else
+		echo `now` "Found no $MH_INSTANCE alias for $MH_INSTANCE Event Streams instance, skipping..."
+	fi
+	ibmcloud resource service-aliases 
+
 	echo `now` "Deleting $MH_INSTANCE..."
 	if [[ $(ibmcloud -q service list | grep messagehub | cut -d' ' -f1 | grep -Fx "$MH_INSTANCE") ]]; then
 	 	echo `now` "Found $MH_INSTANCE, deleting..."
