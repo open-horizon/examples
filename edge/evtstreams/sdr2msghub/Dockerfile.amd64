@@ -23,8 +23,8 @@ RUN go get github.com/viert/lame
 
 
 
-COPY msghub/sdr2msghub/main.go /
-COPY msghub/sdr2msghub/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib/audiolib.go
+COPY evtstreams/sdr2msghub/main.go /
+COPY evtstreams/sdr2msghub/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/evtstreams/sdr2msghub/audiolib/audiolib.go
 COPY services/sdr/rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib/clientlib.go
 RUN go build -o /bin/data_broker /main.go
 
@@ -41,7 +41,7 @@ RUN curl -L \
   tar -C /usr/local -xz
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
-COPY msghub/sdr2msghub/model.pb /model.pb
+COPY evtstreams/sdr2msghub/model.pb /model.pb
 
 COPY --from=go_build /bin/data_broker /bin/data_broker
 

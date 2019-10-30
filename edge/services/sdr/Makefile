@@ -4,6 +4,10 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it)
 export ARCH ?= $(shell hzn architecture)
 
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='starting rtl_rpcd'
+export TIME_OUT:=20
+
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
@@ -12,28 +16,15 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# Soon we can use 'hzn service log ...' for all platforms
-ifeq ($(shell uname -s),Darwin)
-GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=sdr`
-else
-GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep sdr /var/log/syslog
-endif
-
-run:
-	docker run -it --rm --privileged $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION)
-
+# new testing method
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 1
-	@if $(GET_SVC_OUTPUT) | grep 'starting rtl_rpcd'; then \
-		hzn dev service stop; \
-		echo 'Service test succeeded.'; \
-	else \
-		hzn dev service stop; \
-		echo 'Service test failed!'; \
-		false; \
-	fi
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; }
 
 # Create/update the metadata in the exchange for this service
 publish-service:

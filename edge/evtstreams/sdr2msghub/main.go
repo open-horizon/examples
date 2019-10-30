@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
+	"github.com/open-horizon/examples/edge/evtstreams/sdr2msghub/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/viert/lame"
@@ -138,8 +138,8 @@ func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 func connect(topic string) (conn msghubConn, err error) {
 	conn.Topic = topic
 	apiKey := getEnv("MSGHUB_API_KEY")
-	username := apiKey[:16]
-	password := apiKey[16:]
+	username := "token"
+	password := apiKey
 	brokerStr := getEnv("MSGHUB_BROKER_URL")
 	brokers := strings.Split(brokerStr, ",")
 	config := sarama.NewConfig()
