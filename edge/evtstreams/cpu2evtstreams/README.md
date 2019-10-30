@@ -358,7 +358,6 @@ sudo docker ps
 
 
 14. On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
-  - If using IBM Event Streams in IBM Cloud:
   ```
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
   ```
