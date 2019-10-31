@@ -6,7 +6,7 @@ A simple example of using and creating a Horizon edge service.
 - [Using the Hello World Example Edge Service with Deployment Pattern](#using-helloworld-pattern)
 - [Using the Hello World Example Edge Service with Deployment Policy](#using-helloworld-policy)
 - [Creating Your Own Hello World Edge Service](CreateService.md)
-- Further Learning - to see more Horizon features demonstrated, continue on to the [cpu2msghub example](../../evtstreams/cpu2evtstreams).
+- Further Learning - to see more Horizon features demonstrated, continue on to the [cpu2evtstreams example](../../evtstreams/cpu2evtstreams).
 
 ## <a id=preconditions></a> Preconditions for Using the Hello World Example Edge Service
 
