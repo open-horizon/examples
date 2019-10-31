@@ -112,17 +112,10 @@ while true; do
       #echo "avg: $json"
 
       if [[ "$PUBLISH" == "true" ]]; then
-        if [[ -n "$EVTSTREAMS_CERT_FILE" ]]; then
-          # Send data to ICP Event Streams
-          echo "echo $json | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC"
-          echo "$json" | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
-          checkrc $? "kafkacat" "continue"
-        else
-          # Send data to IBM Cloud Event Streams
-          echo "echo $json | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$EVTSTREAMS_USERNAME -X sasl.password=$EVTSTREAMS_PASSWORD -t $EVTSTREAMS_TOPIC"
-          echo "$json" | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$EVTSTREAMS_USERNAME -X sasl.password=$EVTSTREAMS_PASSWORD -t $EVTSTREAMS_TOPIC
-          checkrc $? "kafkacat" "continue"
-        fi
+        # Send data to Event Streams
+        echo "echo $json | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC"
+        echo "$json" | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
+        checkrc $? "kafkacat" "continue"
       else
         echo "$json"
       fi
