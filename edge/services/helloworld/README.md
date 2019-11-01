@@ -1,6 +1,6 @@
 # Horizon Hello World Example Edge Service
 
-A simple example of using and creating a Horizon edge service.
+This is a simple example of using and creating a Horizon edge service.
 
 - [Preconditions for Using the Hello World Example Edge Service](#preconditions)
 - [Using the Hello World Example Edge Service with Deployment Pattern](#using-helloworld-pattern)
@@ -29,7 +29,7 @@ export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
 hzn exchange user list
 ```
 
-5. Choose an id and token for your edge node, create it, and verify it:
+5. Choose an ID and token for your edge node, create it, and verify it:
 
 ```bash
 export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
@@ -51,7 +51,7 @@ hzn register -p IBM/pattern-ibm.helloworld
 hzn agreement list
 ```
 
-3. Once the agreement is made, list the docker container edge service that has been started as a result:
+3. After the agreement is made, list the docker container edge service that has been started as a result:
 
 ``` bash
 sudo docker ps
@@ -71,7 +71,7 @@ sudo docker ps
   sudo docker logs -f $(sudo docker ps -q --filter name=helloworld)
   ```
 
-5. Unregister your edge node, stopping the helloworld service:
+5. Unregister your edge node (which will also stop the myhelloworld service):
 
 ```bash
 hzn unregister -f
@@ -208,7 +208,7 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 
 - This simple example of a Business Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `horizon/node_policy.json` file, so this Business Policy should successfully deploy our Service onto the Edge Node.
 
-- At the bottom, the userInput section has the same purpose as the horizon/userinput.json files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
+- At the end, the userInput section has the same purpose as the horizon/userinput.json files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
 1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
 
@@ -216,7 +216,7 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 hzn exchange business addpolicy -f horizon/business_policy.json bizPolicy1
 ```
 
-2. Once that competes, you can look at the results with the following command, substituting your own org id:
+2. Once that competes, you can look at the results with the following command, substituting your own org ID:
 
 ```bash
 hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
@@ -230,7 +230,7 @@ hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
 hzn agreement list
 ```
 
-4. Once the agreement is made, list the docker container edge service that has been started as a result:
+4. After the agreement is made, list the docker container edge service that has been started as a result:
 
 ```bash
 sudo docker ps
@@ -250,7 +250,7 @@ sudo docker ps
   sudo docker logs -f $(sudo docker ps -q --filter name=helloworld)
   ```
 
-6. Unregister your edge node, stopping the helloworld service:
+6. Unregister your edge node (which will also stop the myhelloworld service):
 
 ```bash
 hzn unregister -f
