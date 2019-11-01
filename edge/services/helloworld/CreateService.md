@@ -1,10 +1,10 @@
 # Creating Your Own Hello World Edge Service
 
-Follow these steps to create your first simple Horizon edge service.
+Follow the steps in this page to create your first simple Horizon edge service.
 
 ## Preconditions for Developing Your Own Service
 
-1. If you haven't already done so, go through the steps in these sections:
+1. If you have not already done so, complete the steps in these sections:
 
   - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
   - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-helloworld-pattern)
@@ -14,7 +14,7 @@ Follow these steps to create your first simple Horizon edge service.
   - Open the Docker **Preferences** dialog
   - Uncheck **Securely store Docker logins in macOS keychain**
 
-3. Get a docker hub id at https://hub.docker.com/ , if you don't already have one. Log in to Docker Hub using your Docker Hub ID:
+3. If you do not already have a docker ID, obtain one at https://hub.docker.com/ . Log in to Docker Hub using your Docker Hub ID:
 
   ```bash
   export DOCKER_HUB_ID="<dockerhubid>"
@@ -37,7 +37,7 @@ Follow these steps to create your first simple Horizon edge service.
   hzn key create "<x509-org>" "<x509-cn>"
   ```
 
-  Where `<x509-org>` is your company name, and `<x509-cn>` is typically set to your email address.
+  where `<x509-org>` is your company name, and `<x509-cn>` is typically set to your email address.
 
 5. Install `git` and `jq`:
 
@@ -65,7 +65,7 @@ Follow these steps to create your first simple Horizon edge service.
 
 2. Edit `service.sh` and change something simple, for example change "Hello" to "Hey there"
 
-  Note: this service is a shell script for brevity, but you can write your service in any language.
+  Note: This service is a shell script for brevity, but you can write your service in any language.
 
 3. Build the service docker image:
 
@@ -85,7 +85,7 @@ Follow these steps to create your first simple Horizon edge service.
   sudo docker ps
   ```
 
-6. See the environment variables Horizon passes into your service container:
+6. Display the environment variables Horizon passes into your service container:
 
   ```bash
   sudo docker inspect $(sudo docker ps -q --filter name=myhelloworld) | jq '.[0].Config.Env'
@@ -111,14 +111,14 @@ Follow these steps to create your first simple Horizon edge service.
   hzn dev service stop
   ```
 
-9. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+9. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
 
   ```bash
   hzn exchange service publish -f horizon/service.definition.json
   hzn exchange service list
   ```
 
-10. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+10. Publish and view your edge node deployment pattern in the Horizon Exchange:
 
   ```bash
   hzn exchange pattern publish -f horizon/pattern.json
@@ -137,7 +137,7 @@ Follow these steps to create your first simple Horizon edge service.
   hzn agreement list
   ```
 
-13. Once the agreement is made, list the docker container edge service that has been started as a result:
+13. After the agreement is made, list the docker container edge service that has been started as a result:
 
   ```bash
   sudo docker ps
@@ -157,7 +157,7 @@ Follow these steps to create your first simple Horizon edge service.
   sudo docker logs -f $(sudo docker ps -q --filter name=myhelloworld)
   ```
 
-15. Unregister your edge node, stopping the myhelloworld service:
+15. Unregister your edge node (which will also stop the myhelloworld service):
 
   ```bash
   hzn unregister -f
