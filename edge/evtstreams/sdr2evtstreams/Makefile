@@ -6,6 +6,10 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
 export ARCH ?= $(shell hzn architecture)
 
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='found new station:'
+export TIME_OUT:=20
+
 # Build the docker image for the current architecture
 build: main.go
 ifeq (,$(findstring amd64,$(ARCH)))
@@ -23,26 +27,15 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# Soon we can use 'hzn service log ...' for all platforms
-ifeq ($(shell uname -s),Darwin)
-GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=sdr2evtstreams`
-else
-GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep sdr2evtstreams[[] /var/log/syslog
-endif
-
-# Run and verify the service
+# new testing method
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 20  # may have to increase this time depending on the speed of your machine
-	@if $(GET_SVC_OUTPUT) | grep 'found new station:'; then \
-	  hzn dev service stop; \
-	  echo 'Service test succeeded.'; \
-	else \
-	  hzn dev service stop; \
-	  echo 'Service test failed!'; \
-	  false; \
-	fi
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; }
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
