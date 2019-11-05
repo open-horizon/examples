@@ -56,47 +56,17 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
 ## <a id=building-your-own-sdr2evtstreams-pattern></a> Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
 
-If you want to create your own Horizon edge service, based on this example, follow the next 2 sections to copy the sdr2evtstreams example and start modifying it.
-
-### Preconditions for Developing Your Own Service
-
-1. First, go through the steps in the section above to run the IBM sdr2evtstreams service on an edge node.
-2. Get a docker hub id at https://hub.docker.com/ , if you don't already have one. (This example is set up to store the docker image in docker hub, but by modifying DOCKER_IMAGE_BASE you can store it in another registry.) Login to the docker registry using your id:
-```
-echo 'mydockerpw' | docker login -u mydockehubid --password-stdin
-```
-3. If you have the HZN_ORG_ID environment variable set from previous work, unset it (in a moment this value will now come from `horizon/hzn.json`):
-```
-unset HZN_ORG_ID
-```
-4. Clone this git repo:
+1. Clone this git repo:
 ```
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
-5. Copy the `sdr2evtstreams` dir to where you will start development of your new service:
+2. Copy the `sdr2evtstreams` dir to where you will start development of your new service:
 ```
 cp -a examples/edge/evtstreams/sdr2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
-6. Set the values in `horizon/hzn.json` to your own values.
-7. As part of the above section "Using the SDR To IBM Event Streams Edge Service", you created your Exchange user credentials and edge node credentials. Ensure they are set and verify them:
-```
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<myapikey>"
-hzn exchange user list
-export HZN_EXCHANGE_NODE_AUTH="<mynodeid>:<mynodetoken>"
-hzn exchange node confirm
-```
-8. Verify that these environment variables are still set from when you used the existing sdr2evtstreams sample earlier in this document:
-```
-echo EVTSTREAMS_API_KEY=$EVTSTREAMS_API_KEY
-echo EVTSTREAMS_ADMIN_URL=$EVTSTREAMS_ADMIN_URL
-echo EVTSTREAMS_BROKER_URL=$EVTSTREAMS_BROKER_URL
-```
-9. Verify the `sdr2evtstreams` topic is now in your event streams instance:
-```
-make evtstreams-topic-list
-```
+3. Set the values in `horizon/hzn.json` to your own values.
 
 ### Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
 
