@@ -1,6 +1,6 @@
 # Process for the Horizon Development Team to Make Updates to the CPU To IBM Event Streams Service
 
-- Do the steps in the [README.md Preconditions](#preconditions) section, **except**:
+- Do the steps in the [README.md Preconditions](README.md#preconditions) section, **except**:
     - export `HZN_EXCHANGE_URL` to the staging instance
     - Do **not** copy the cpu2evtstreams directory (use the git files in this directory instead)
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org

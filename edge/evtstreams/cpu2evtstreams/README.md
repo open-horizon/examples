@@ -1,8 +1,8 @@
 # Horizon CPU To IBM Event Streams Service
 
-This is a simple example of using and creating a Horizon edge service.
+This example illustrates a more realistic Horizon edge service by including additional aspects of typical edge services. 
 
-- [Preconditions for Using the SDR To IBM Event Streams Example Edge Service](#preconditions)
+- [Preconditions for Using the CPU To IBM Event Streams Example Edge Service](#preconditions)
 
 - [Using the CPU To IBM Event Streams Example Edge Service with Deployment Pattern](#using-cpu2evtstreams-pattern)
 
@@ -15,7 +15,7 @@ This is a simple example of using and creating a Horizon edge service.
 
 ## <a id=preconditions></a> Preconditions for Using the CPU To IBM Event Streams Example Edge Service
 
-If you haven't done so already, you must do these steps before proceeding with the helloworld example:
+If you haven't done so already, you must do these steps before proceeding with the cpu2evtstreams example:
 
 1. Install the Horizon management infrastructure (exchange and agbot).
 
@@ -42,56 +42,41 @@ hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
 
+6. Deploy (or get access to) an instance of IBM Event Streams that the cpu2evtstreams sample can send its data to. Ensure that the topic `cpu2evtstreams` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
+    - `EVTSTREAMS_API_KEY`
+    - `EVTSTREAMS_BROKER_URL`
+    - `EVTSTREAMS_CERT_ENCODED` **(if using IBM Event Streams in IBM Cloud Private)** due to differences in the base64 command set this variable as follows based on the platform you're using:
+        - on **Linux**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64 -w 0)”`
+        - on **Mac**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64)”`
+    - `EVTSTREAMS_CERT_FILE` **(if using IBM Event Streams in IBM Cloud Private)**
+
 
 ## <a id=using-cpu2evtstreams-pattern></a> Using the CPU To IBM Event Streams Edge Service
 
-- Before following the steps in this section, install the Horizon agent on your edge device and point it to your Horizon exchange. Also get an API key that is associated with your Horizon instance.
-1. Set your exchange org:
-```
-export HZN_ORG_ID=<your-cluster-name>
-```
-2. Set your exchange user credentials in the Horizon-supported environment variable and verify it:
-```
-export HZN_EXCHANGE_USER_AUTH=iamapikey:<your-API-key>
-hzn exchange user list
-```
-3. Choose a id and token for your edge node, create it, and verify it:
-```
-export HZN_EXCHANGE_NODE_AUTH=<any-node-id>:<any-node-token>
-hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
-hzn exchange node confirm
-```
-4. Deploy (or get access to) an instance of IBM Event Streams that the cpu2evtstreams sample can send its data to. Ensure that the topic `cpu2evtstreams` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
-    - `EVTSTREAMS_API_KEY`
-    - `EVTSTREAMS_BROKER_URL`
-    - `EVTSTREAMS_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private) due to differences in the base64 command set this variable as follows based on the platform you're using:
-        - On Linux: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64 -w 0)”`
-        - On Mac: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64)”`
-    - `EVTSTREAMS_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
-5. Get the user input file for the cpu2evtstreams sample:
+1. Get the user input file for the cpu2evtstreams sample:
 ```
 wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
-6. Register your edge node with Horizon to use the cpu2evtstreams pattern:
+2. Register your edge node with Horizon to use the cpu2evtstreams pattern:
 ```
 hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json
 ```
 
-7. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
 ```
 
-8. Once the agreement is made, list the docker container edge service that has been started as a result:
+4. Once the agreement is made, list the docker container edge service that has been started as a result:
 ``` 
 sudo docker ps
 ```
 
-9. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
+5. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
   ```
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
   ```
-10. See the cpu2evtstreams service output:
+6. See the cpu2evtstreams service output:
 
 	on **Linux**:
 	```
@@ -103,7 +88,7 @@ sudo docker ps
 	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
 	``` 
 
-11. Unregister your edge node, stopping the cpu2evtstreams service:
+7. Unregister your edge node, stopping the cpu2evtstreams service:
 ```
 hzn unregister -f
 ```
