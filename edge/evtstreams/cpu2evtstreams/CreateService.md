@@ -122,9 +122,9 @@ hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 
-13. Register your edge node with Horizon to use your deployment pattern (substitute `SERVICE_NAME` for the value you specified in the `horizon/hzn.json` file):
+13. Register your edge node with Horizon to use your deployment pattern (substitute <service-name> for the `SERVICE_NAME` you specified in the `horizon/hzn.json` file):
 ```
-hzn register -p pattern--$(hzn architecture) -f horizon/userinput.json
+hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
 ```
 
 14. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
