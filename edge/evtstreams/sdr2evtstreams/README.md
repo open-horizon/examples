@@ -1,6 +1,6 @@
 # Horizon SDR To IBM Event Streams Service
 
-This is a simple example of using and creating a Horizon edge service.
+This example illustrates a more realistic Horizon edge service by including additional aspects of typical edge services.
 
 - [Preconditions for Using the SDR To IBM Event Streams Example Edge Service](#preconditions)
 
@@ -13,7 +13,7 @@ This is a simple example of using and creating a Horizon edge service.
 
 ## <a id=preconditions></a> Preconditions for Using the SDR To IBM Event Streams Example Edge Service
 
-If you haven't done so already, you must do these steps before proceeding with the helloworld example:
+If you haven't done so already, you must do these steps before proceeding with the sdr2evtstreams example:
 
 1. Install the Horizon management infrastructure (exchange and agbot).
 
