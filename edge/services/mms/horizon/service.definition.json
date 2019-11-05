@@ -15,7 +15,7 @@
             "$SERVICE_NAME": {
                 "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
                 "privileged": false,
-		"binds": [ "/root/examples/edge/services/ss:/outside:rw" ]
+		"binds": [ "$PWD/ss:/outside:rw" ]
             }
         }
     }

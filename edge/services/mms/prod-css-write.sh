@@ -3,14 +3,14 @@
 # Create a new "objectID" (of a specified "objectType" at a specified "version)
 # in the production (cloud) CSS.
 
-# User must have `HZN_CSS_URL` set in their environment
-if [ -z "$HZN_CSS_URL" ]; then
-    echo "ERROR: \"HZN_CSS_URL\" must contain the cloud CSS URL."
+# User must have `HZN_FSS_CSSURL` set in their environment
+if [ -z "$HZN_FSS_CSSURL" ]; then
+    echo "ERROR: \"HZN_FSS_CSSURL\" must contain the cloud CSS URL."
     exit 1
 fi
 
 # Local CSS REST API endpoint (i.e., the base URL) -- NOTE: use `http`!
-CSS_ENDPOINT="${HZN_CSS_URL}/api/v1"
+CSS_ENDPOINT="${HZN_FSS_CSSURL}/api/v1"
 
 # User must have `HZN_ORG_ID` and `HZN_EXCHANGE_USER_AUTH` set too
 if [ -z "$HZN_ORG_ID" ]; then
