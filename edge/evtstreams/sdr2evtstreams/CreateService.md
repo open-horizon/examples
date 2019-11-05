@@ -1,6 +1,6 @@
 # Creating Your Own SDR To IBM Event Streams Edge Service
 
-Follow the steps in this page to create your first simple Horizon edge service.
+Follow the steps in this page to create your SDR To IBM Event Streams Edge Service.
 
 ## Preconditions for Developing Your Own Service
 
