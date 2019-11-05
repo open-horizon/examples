@@ -42,10 +42,10 @@ hzn exchange node confirm
 6. Deploy (or get access to) an instance of IBM Event Streams that the sdr2evtstreams sample can send its data to. Ensure that the topic `sdr-audio` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
     - `EVTSTREAMS_API_KEY`
     - `EVTSTREAMS_BROKER_URL`
-    - `EVTSTREAMS_CERT_ENCODED` (if using IBM Event Streams in IBM Cloud Private) due to differences in the base64 command set this variable as follows based on the platform you're using:
+    - `EVTSTREAMS_CERT_ENCODED` **(if using IBM Event Streams in IBM Cloud Private)** due to differences in the base64 command set this variable as follows based on the platform you're using:
         - on **Linux**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64 -w 0)”`
         - on **Mac**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64)”`
-    - `EVTSTREAMS_CERT_FILE` (if using IBM Event Streams in IBM Cloud Private)
+    - `EVTSTREAMS_CERT_FILE` **(if using IBM Event Streams in IBM Cloud Private)**
 
 
 ## <a id=using-sdr2evtstreams-pattern></a> Using the SDR To IBM Event Streams Edge Service
@@ -69,7 +69,7 @@ sudo docker ps
 
 5. On any machine, install `kafkacat`, then subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
 ```
-kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=${EVTSTREAMS_API_KEY:0:16} -X sasl.password=${EVTSTREAMS_API_KEY:16} -t $EVTSTREAMS_TOPIC
+kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
 ```
 
 6. See the sdr2evtstreams service output:

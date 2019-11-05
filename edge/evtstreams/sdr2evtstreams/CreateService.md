@@ -61,31 +61,34 @@ Follow the steps in this page to create your first simple Horizon edge service.
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
+
 2. Copy the `sdr2evtstreams` dir to where you will start development of your new service:
 ```
 cp -a examples/edge/evtstreams/sdr2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
+
 3. Set the values in `horizon/hzn.json` to your own values.
 
-### Building and Publishing Your Own Version of the SDR To IBM Event Streams Edge Service
-
-1. Edit `main.go` however you want.
+4. Edit `main.go` however you want.
     - Note: this service is written in go, but you can write your service in any language.
-2. Build the sdr2evtstreams docker image:
+
+5. Build the sdr2evtstreams docker image:
 ```
 make
 ```
-3. Test the service by having Horizon start it locally:
+
+6. Test the service by having Horizon start it locally:
 ```
 hzn dev service start -S
 ```
-4. Check that the containers are running:
+
+7. Check that the containers are running:
 ```
 sudo docker ps
 ```
 
-5. See the sdr2evtstreams service output:
+8. See the sdr2evtstreams service output:
 
 	on **Linux**:
 	```
@@ -97,43 +100,49 @@ sudo docker ps
 	docker logs -f $(docker ps -q --filter name=sdr2evtstreams)
 	```
 
-6. See the environment variables Horizon passes into your service container:
+9. See the environment variables Horizon passes into your service container:
 ```
 docker inspect $(docker ps -q --filter name=sdr2evtstreams) | jq '.[0].Config.Env'
 ```
-7. Stop the service:
+
+10. Stop the service:
 ```
 hzn dev service stop
 ```
-8. Create a service signing key pair in `~/.hzn/keys/` (if you haven't already done so):
-```
-hzn key create <my-company> <my-email>
-```
-9. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+
+11. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
-10. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+
+12. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
-11. Register your edge node with Horizon to use your deployment pattern (substitute for `SERVICE_NAME` the value you specified above for `hzn dev service new -s`):
+
+13. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
 ```
-hzn register -p pattern-SERVICE_NAME-$(hzn architecture) -f horizon/userinput.json
+hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
 ```
-12. Look at the Horizon agreement until it is finalized and then see the running container:
+
+14. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```
 hzn agreement list
-docker ps
 ```
-13. On any machine, subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
+
+15. Once the agreement is made, list the docker container edge service that has been started as a result:
+``` 
+sudo docker ps
+```
+
+16. On any machine, subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
 ```
 kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
 ```
 
-14. See the sdr2evtstreams service output:
+17. See the sdr2evtstreams service output:
 
 	on **Linux**:
 	```
@@ -145,7 +154,7 @@ kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.ve
 	docker logs -f $(docker ps -q --filter name=sdr2evtstreams)
 	``` 
 
-15. Unregister your edge node, stopping the sdr2evtstreams service:
+18. Unregister your edge node, stopping the sdr2evtstreams service:
 ```
 hzn unregister -f
 ```
