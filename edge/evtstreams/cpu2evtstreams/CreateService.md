@@ -122,7 +122,7 @@ hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 
-13. Register your edge node with Horizon to use your deployment pattern (substitute <service-name> for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
+13. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
 ```
 hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
 ```
