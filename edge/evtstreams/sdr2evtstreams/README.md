@@ -48,7 +48,7 @@ hzn exchange node confirm
     - `EVTSTREAMS_CERT_FILE` **(if using IBM Event Streams in IBM Cloud Private)**
 
 
-## <a id=using-sdr2evtstreams-pattern></a> Using the SDR To IBM Event Streams Edge Service
+## <a id=using-sdr2evtstreams-pattern></a> Using the SDR To IBM Event Streams Edge Service with Deployment Pattern
 
 1. Get the user input file for the sdr2evtstreams sample:
 ```
