@@ -12,18 +12,18 @@ checkrc() {
 }
 
 
-if [[ -z "${MSGHUB_API_KEY}" ]]; then
-    echo "MSGHUB_API_KEY not set: ${MSGHUB_API_KEY}"
+if [[ -z "${EVTSTREAMS_API_KEY}" ]]; then
+    echo "EVTSTREAMS_API_KEY not set: ${EVTSTREAMS_API_KEY}"
     exit 1
 fi
 
-if [[ -z "${MSGHUB_BROKER_URL}" ]]; then
-    echo "MSGHUB_BROKER_URL not set: ${MSGHUB_BROKER_URL}"
+if [[ -z "${EVTSTREAMS_BROKER_URL}" ]]; then
+    echo "EVTSTREAMS_BROKER_URL not set: ${EVTSTREAMS_BROKER_URL}"
     exit 1
 fi
 
-if [[ -z "${MSGHUB_TOPIC}" ]]; then
-    echo "MSGHUB_TOPIC not set: ${MSGHUB_TOPIC}"
+if [[ -z "${EVTSTREAMS_TOPIC}" ]]; then
+    echo "EVTSTREAMS_TOPIC not set: ${EVTSTREAMS_TOPIC}"
     exit 1
 fi
 
@@ -32,14 +32,12 @@ if [[ -z "${MQTT_WST_EVST}" ]]; then
     exit 1
 fi
 
-MSGHUB_USERNAME="${MSGHUB_API_KEY:0:16}"
-MSGHUB_PASSWORD="${MSGHUB_API_KEY:16}"
-echo "Will publish to kafka topic: ${MSGHUB_TOPIC}"
+echo "Will publish to kafka topic: ${EVTSTREAMS_TOPIC}"
 
-if [[ -n "$MSGHUB_CERT_ENCODED" && "$MSGHUB_CERT_ENCODED" != "-" ]]; then
+if [[ -n "$EVTSTREAMS_CERT_ENCODED" && "$EVTSTREAMS_CERT_ENCODED" != "-" ]]; then
     # They are using an instance of Event Streams deployed in ICP, because it needs a self-signed cert
-    MSGHUB_CERT_FILE=/tmp/es-cert.pem
-    echo "$MSGHUB_CERT_ENCODED" | base64 -d > $MSGHUB_CERT_FILE
+    EVTSTREAMS_CERT_FILE=/tmp/es-cert.pem
+    echo "$EVTSTREAMS_CERT_ENCODED" | base64 -d > $EVTSTREAMS_CERT_FILE
     checkrc $? "decode cert"
 fi
 
@@ -51,17 +49,9 @@ mosquitto_sub -h ibm.mqtt -p 1883 -t ${MQTT_WST_EVST} | while read; do
 	    KAFKA_JSON='{"nodeID":"'$HZN_DEVICE_ID'","text":"'${REPLY}'"}'
 	    echo "json to send to kafka: ${KAFKA_JSON}"
 
-        if [[ -n "$MSGHUB_CERT_FILE"  ]]; then
-            # Send data to ICP Event Streams
-            echo "echo ${KAFKA_JSON} | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC"
-            echo "${KAFKA_JSON}" | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$MSGHUB_API_KEY -X ssl.ca.location=$MSGHUB_CERT_FILE -t $MSGHUB_TOPIC
-
-        else
-            # Send data to IBM Cloud Event Streams
-            echo "echo ${KAFKA_JSON} | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC"
-
-            echo "${KAFKA_JSON}" | kafkacat -P -b $MSGHUB_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=$MSGHUB_USERNAME -X sasl.password=$MSGHUB_PASSWORD -t $MSGHUB_TOPIC
-        fi
+            # Send data to IBM Event Streams
+            echo "echo ${KAFKA_JSON} | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC"
+            echo "${KAFKA_JSON}" | kafkacat -P -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
 
         sleep 1
     fi
