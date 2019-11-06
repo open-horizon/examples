@@ -6,8 +6,8 @@ Follow the steps in this page to create your own CPU To IBM Event Streams Edge S
 
 1. If you have not already done so, complete the steps in these sections:
 
-  - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
-  - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-cpu2evtstreams-pattern)
+  - [Preconditions for Using the CPU To IBM Event Streams Example Edge Service](README.md#preconditions)
+  - [Using the CPU To IBM Event Streams Example Edge Service with Deployment Pattern](README.md#using-cpu2evtstreams-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 
