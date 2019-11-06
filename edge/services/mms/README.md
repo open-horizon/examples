@@ -6,7 +6,7 @@ This is a simple example of using the Horizon Model Management Service (MMS).
 - [Preconditions for Using the MMS Example Edge Service](#preconditions)
 - [Using the MMS Example Edge Service with Deployment Pattern](#using-mms-pattern)
 - [More MMS Details](#mms-deets)
-- [Creating Your Own Hello World Edge Service](CreateService.md)
+- [Creating Your Own MMS Edge Service](CreateService.md)
 
 
 ## <a id=introduction></a> Introduction

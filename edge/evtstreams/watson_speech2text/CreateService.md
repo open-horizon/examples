@@ -1,13 +1,13 @@
-# Creating Your Own CPU To IBM Event Streams Edge Service
+# Creating Your Own Watson Speech to Text to IBM Event Streams Edge Service for Raspberry Pi
 
-Follow the steps in this page to create your own CPU To IBM Event Streams Edge Service.
+Follow the steps in this page to create your Watson Speech to Text to IBM Event Streams Edge Service.
 
 ## Preconditions for Developing Your Own Service
 
 1. If you have not already done so, complete the steps in these sections:
 
-  - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
-  - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-cpu2evtstreams-pattern)
+  - [Preconditions for Using the Watson Speech to Text to IBM Event Streams Example Edge Service](README.md#preconditions)
+  - [Using the SDR To IBM Event Streams Edge Service with Deployment Pattern](README.md#using-watsons2text-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 
@@ -41,120 +41,104 @@ Follow the steps in this page to create your own CPU To IBM Event Streams Edge S
 
 5. Install `git` and `jq`:
 
-  On **Linux**:
-
   ```bash
   sudo apt install -y git jq
   ```
 
-  On **macOS**:
 
-  ```bash
-  brew install git jq
-  ```
-
-## <a id=build-publish-your-cpu> Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
-
+## <a id=build-publish-your-wst> Building and Publishing Your Own Version of the Watson Speech to Text to IBM Event Streams Service
 
 1. Clone this git repo:
-```
+
+```bash
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
 
-2. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
+2. Copy the `watson_speech2text` dir to where you will start development of your new service:
+
 ```
-cp -a examples/edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
+cp -a examples/edge/evtstreams/watson_speech2text ~/myservice     # or wherever
 cd ~/myservice
 ```
 
 3. Set the values in `horizon/hzn.json` to your own values.
 
-4. Edit `service.sh` however you want.
+4. Edit `watsonspeech2text.py` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
+5. Build the watsons2text docker image:
 
-5. Build the cpu2evtstreams docker image:
-```
+```bash
 make
 ```
 
 6. Test the service by having Horizon start it locally:
-```
+```bash
 hzn dev service start -S
 ```
-
 7. Check that the container is running:
-```
+```bash
 sudo docker ps 
 ```
 
-8. See the cpu2evtstreams service output:
+8. See the watsons2text service output:
 
-	on **Linux**:
+	```bash
+	tail -f /var/log/syslog | grep watsons2text[[]
 	```
-	tail -f /var/log/syslog | grep cpu2evtstreams[[]
-	```
-
-	on **Mac**:
-	```
-	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
-	``` 
 
 9. See the environment variables Horizon passes into your service container:
-```
-docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
+```bash
+docker inspect $(docker ps -q --filter name=watsons2text) | jq '.[0].Config.Env'
 ```
 
 10. Stop the service:
-```
+```bash
 hzn dev service stop
 ```
 
 11. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
-```
+```bash
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
 
 12. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
-```
+```bash
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 
 13. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
-```
+```bash
 hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
 ```
 
 14. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
-```
+```bash
 hzn agreement list
 ```
 
 15. Once the agreement is made, list the docker container edge service that has been started as a result:
-``` 
+```bash
 sudo docker ps
 ```
 
-16. On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
-```
+
+16. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that watsons2text is sending:
+
+```bash
 kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
 ```
 
-17. See the cpu2evtstreams service output:
 
-	on **Linux**:
-	```
-	tail -f /var/log/syslog | grep cpu2evtstreams[[]
-	```
+17. See the watsons2text service output:
+```bash
+tail -f /var/log/syslog | grep watsons2text[[]
+``` 
 
-	on **Mac**:
-	```
-	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
-	``` 
-
-18. Unregister your edge node, stopping the cpu2evtstreams service:
-```
+18. Unregister your edge node, stopping the watsons2text service:
+```bash
 hzn unregister -f
 ```
+
