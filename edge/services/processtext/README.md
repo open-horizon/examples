@@ -36,7 +36,7 @@ hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
 
-## <a id=using-processtext-pattern></a> Using the Offline Voice Assistant Example Edge Service
+## <a id=using-processtext-pattern></a> Using the Offline Voice Assistant Example Edge Service with Deployment Pattern
 
 1. Register your edge node with Horizon to use the processtext pattern:
 ```

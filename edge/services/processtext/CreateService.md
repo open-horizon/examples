@@ -1,4 +1,4 @@
-# Creating Your Own Offline Voice Assistant Edge Service
+# Creating Your Own Offline Voice Assistant Edge Service for Raspberry Pi
 
 Follow the steps in this page to create your own Offline Voice Assistant Horizon edge service.
 
@@ -69,7 +69,7 @@ cd ~/myservice
 
 3. Set the values in `horizon/hzn.json` to your own values.
 
-4. Edit `processtext .sh` however you want.
+4. Edit `processtext.sh` however you want.
     - Note: This service is a shell script for brevity, but you can write your service in any language.
 
 5. Build the processtext docker image:

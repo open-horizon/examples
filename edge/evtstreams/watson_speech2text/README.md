@@ -11,7 +11,7 @@ This example illustrates a more realistic Horizon edge service by including addi
 - For details about using this service, see [watson_speech2text.md](watson_speech2text.md).
 
 
-## <a id=preconditions></a> Preconditions for Using the CPU To IBM Event Streams Example Edge Service
+## <a id=preconditions></a> Preconditions for Using the Watson Speech to Text to IBM Event Streams Example Edge Service
 
 If you haven't done so already, you must do these steps before proceeding with the watsons2text example:
 
@@ -53,7 +53,7 @@ hzn exchange node confirm
     - `STT_URL`
 
 
-## <a id=using-cpu2evtstreams-pattern></a> Using the IBM Watson Speech to Text to IBM Event Streams Service
+## <a id=using-watsons2text-pattern></a> Using the IBM Watson Speech to Text to IBM Event Streams Service with Deployment Pattern
 
 1. Get the user input file for the watsons2text sample:
 
