@@ -23,7 +23,7 @@ RUN apt-get install libmp3lame-dev
 RUN go get github.com/viert/lame
 
 COPY evtstreams/sdr2evtstreams/main.go /
-COPY evtstreams/sdr2evtstreams/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/evtstreams/sdrevtstreams/audiolib/audiolib.go
+COPY evtstreams/sdr2evtstreams/audiolib/audiolib.go /go/src/github.com/open-horizon/examples/edge/evtstreams/sdr2evtstreams/audiolib/audiolib.go
 COPY services/sdr/rtlsdrclientlib/clientlib.go /go/src/github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib/clientlib.go
 RUN go build -o /bin/data_broker /main.go
 

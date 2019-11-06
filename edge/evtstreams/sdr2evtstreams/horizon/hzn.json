@@ -3,6 +3,6 @@
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.sdr2evtstreams",
         "SERVICE_NAME": "ibm.sdr2evtstreams",
-        "SERVICE_VERSION": "1.0.0"
+        "SERVICE_VERSION": "1.0.1"
     }
 }
