@@ -93,7 +93,7 @@ sudo docker ps
 hzn unregister -f
 ```
 
-## <a id=using-cpu2evtstreams-policy></a> Using the CPU To IBM Event Streams Service as a Policy
+## <a id=using-cpu2evtstreams-policy></a> Using the CPU To IBM Event Streams Service with Deployment Policy
 
 - The Horizon Policy mechanism offers an alternative to using Deployment Patterns. Policies provide much finer control over agreement forming between Horizon Agents on Edge Nodes, and the Horizon AgBots. It also provides a greater separation of concerns, allowing Edge Nodes owners, Service code developers, and Business owners to each independently articulate their own Policies. There are therefore three types of Horizon Policies:
 
