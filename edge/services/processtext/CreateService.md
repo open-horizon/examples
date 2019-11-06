@@ -7,7 +7,7 @@ Follow the steps in this page to create your own Offline Voice Assistant Horizon
 1. If you have not already done so, complete the steps in these sections:
 
   - [Preconditions for Using the Offline Voice Assistant Example Edge Service](README.md#preconditions)
-  - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-processtext-pattern)
+  - [Using the Offline Voice Assistant Example Edge Service with Deployment Pattern](README.md#using-processtext-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 

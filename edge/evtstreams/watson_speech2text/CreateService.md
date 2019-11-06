@@ -7,7 +7,7 @@ Follow the steps in this page to create your Watson Speech to Text to IBM Event 
 1. If you have not already done so, complete the steps in these sections:
 
   - [Preconditions for Using the Watson Speech to Text to IBM Event Streams Example Edge Service](README.md#preconditions)
-  - [Using the SDR To IBM Event Streams Edge Service with Deployment Pattern](README.md#using-watsons2text-pattern)
+  - [Using the Watson Speech to Text to IBM Event Streams Edge Service with Deployment Pattern](README.md#using-watsons2text-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 

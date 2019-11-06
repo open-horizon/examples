@@ -1,10 +1,10 @@
-# Process for the Horizon Development Team to Make Updates to the Offline Voice Assistant Service
+# Process for the Horizon Development Team to Make Updates to the Watson Speech to Text to IBM Event Streams Service
 
 The instructions for the open-horizon developers that are maintaining this example code are:
 
 - Perform the steps in the [README.md Preconditions](README.md#preconditions) section, **except**:
     - export `HZN_EXCHANGE_URL` to the staging instance
-    - Do **not** copy the processtext directory (use the git files in this directory instead)
+    - Do **not** copy the watson_speech2text directory (use the git files in this directory instead)
     - export `HZN_EXCHANGE_USER_AUTH` to your credentials in the IBM org
 - Make whatever code changes are necessary
 - Increment `SERVICE_VERSION` in `horizon/hzn.json`
