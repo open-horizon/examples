@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/open-horizon/examples/edge/evtstreams/sdr2msghub/audiolib"
+	"github.com/open-horizon/examples/edge/evtstreams/sdr2evtstreams/audiolib"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/viert/lame"
@@ -117,7 +117,7 @@ func newModel(path string) (m model, err error) {
 	return
 }
 
-type msghubConn struct {
+type evtstreamsConn struct {
 	Producer sarama.SyncProducer
 	Topic    string
 }
@@ -135,19 +135,19 @@ func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 	return nil
 }
 
-func connect(topic string) (conn msghubConn, err error) {
+func connect(topic string) (conn evtstreamsConn, err error) {
 	conn.Topic = topic
-	apiKey := getEnv("MSGHUB_API_KEY")
+	apiKey := getEnv("EVTSTREAMS_API_KEY")
 	username := "token"
 	password := apiKey
-	brokerStr := getEnv("MSGHUB_BROKER_URL")
+	brokerStr := getEnv("EVTSTREAMS_BROKER_URL")
 	brokers := strings.Split(brokerStr, ",")
 	config := sarama.NewConfig()
 	err = populateConfig(config, username, password, apiKey)
 	if err != nil {
 		return
 	}
-	fmt.Println("now connecting to msghub")
+	fmt.Println("now connecting to evtstreams")
 	conn.Producer, err = sarama.NewSyncProducer(brokers, config)
 	fmt.Println("done trying to connect")
 	if err != nil {
@@ -156,7 +156,7 @@ func connect(topic string) (conn msghubConn, err error) {
 	return
 }
 
-func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
+func (conn *evtstreamsConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
 	// as AudioMsg implements the sarama.Encoder interface, we can pass it directly to ProducerMessage.
 	msg := &sarama.ProducerMessage{Topic: conn.Topic, Key: nil, Value: audioMsg}
 	partition, offset, err := conn.Producer.SendMessage(msg)
@@ -278,13 +278,13 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("model loaded")
-	topic := getEnv("MSGHUB_TOPIC")
+	topic := getEnv("EVTSTREAMS_TOPIC")
 	fmt.Printf("using topic %s\n", topic)
 	conn, err := connect(topic)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("connected to msghub")
+	fmt.Println("connected to evtstreams")
 	// create a map to hold the goodness for each station we have ever oberved.
 	// This map will grow as long as the program lives
 	stationGoodness := map[float32]float32{}
@@ -370,7 +370,7 @@ func main() {
 						ContentType:   "audio/mpeg",
 						Origin:        sdr_origin,
 					}
-					// and publish it to msghub
+					// and publish it to evtstreams
 					err = conn.publishAudio(msg)
 					if err != nil {
 						fmt.Println(err)
