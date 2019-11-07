@@ -14,8 +14,7 @@
         "services": {
             "$SERVICE_NAME": {
                 "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
-                "privileged": false,
-		"binds": [ "$PWD/ss:/outside:rw" ]
+                "privileged": false
             }
         }
     }
