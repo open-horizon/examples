@@ -6,8 +6,8 @@ Follow the steps in this page to create your own Horizon MMS example service.
 
 1. If you have not already done so, complete the steps in these sections:
 
-  - [Preconditions for Using the MMSExample Edge Service](README.md#preconditions)
-  - [Using the MMS Example Edge Service with Deployment Pattern](README.md#using-MMS-pattern)
+  - [Preconditions for Using the MMS Example Edge Service](README.md#preconditions)
+  - [Using the MMS Example Edge Service with Deployment Pattern](README.md#using-mms-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 
@@ -53,10 +53,8 @@ Follow the steps in this page to create your own Horizon MMS example service.
   brew install git jq
   ```
 
-## <a id=build-publish-your-hw> Building and Publishing Your Own Hello World Example Edge Service
+## <a id=build-publish-your-mms> Building and Publishing Your Own Version of the MMS Edge Service
 
-
-## Building and Publishing Your Own Version of the CPU To IBM Event Streams Edge Service
 - Use the developer tool to run the container with a local development instance of the Model Management Service (MMS). Normally, in production, you will use the MMS in the IBM Public Cloud, or ICP, but during development it is convenient to have a dedicated and private "dev MMS" instance you can use. So we will show that approach here first.
 
 1. Clone this git repo:
