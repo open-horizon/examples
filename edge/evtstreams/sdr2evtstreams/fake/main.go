@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/audiolib"
+	"github.com/open-horizon/examples/edge/evtstreams/sdr2evtstreams/audiolib"
 )
 
-type msghubConn struct {
+type evtstreamsConn struct {
 	Producer sarama.SyncProducer
 	Topic    string
 }
@@ -31,12 +31,12 @@ func populateConfig(config *sarama.Config, user, pw, apiKey string) error {
 	return nil
 }
 
-func connect(topic string) (conn msghubConn, err error) {
+func connect(topic string) (conn evtstreamsConn, err error) {
 	conn.Topic = topic
-	apiKey := getEnv("MSGHUB_API_KEY")
+	apiKey := getEnv("EVTSTREAMS_API_KEY")
 	username := apiKey[:16]
 	password := apiKey[16:]
-	brokerStr := getEnv("MSGHUB_BROKER_URL")
+	brokerStr := getEnv("EVTSTREAMS_BROKER_URL")
 	brokers := strings.Split(brokerStr, ",")
 	config := sarama.NewConfig()
 	err = populateConfig(config, username, password, apiKey)
@@ -50,8 +50,8 @@ func connect(topic string) (conn msghubConn, err error) {
 	return
 }
 
-// func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
-func (conn *msghubConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
+// func (conn *evtstreamsConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
+func (conn *evtstreamsConn) publishAudio(audioMsg *audiolib.AudioMsg) (err error) {
 	// as AudioMsg implements the sarama.Encoder interface, we can pass it directly to ProducerMessage.
 	msg := &sarama.ProducerMessage{Topic: conn.Topic, Key: nil, Value: audioMsg}
 	partition, offset, err := conn.Producer.SendMessage(msg)
@@ -83,21 +83,21 @@ func getEnv(keys ...string) (val string) {
 
 func main() {
 	devID := getEnv("HZN_ORG_ID", "HZN_ORGANIZATION") + "/" + getEnv("HZN_DEVICE_ID")
-	mockAudio := "../../services/sdr/mock_audio.mp3" // if running it from the Makefile in edge/msghub/sdr2msghub
+	mockAudio := "../../services/sdr/mock_audio.mp3" // if running it from the Makefile in edge/evtstreams/sdr2evtstreams
 	audioBytes, err := ioutil.ReadFile(mockAudio)
 	if err != nil {
-		audioBytes, err = ioutil.ReadFile("../" + mockAudio) // if running it via go run in edge/msghub/sdr2msghub/fake
+		audioBytes, err = ioutil.ReadFile("../" + mockAudio) // if running it via go run in edge/evtstreams/sdr2evtstreams/fake
 		if err != nil {
 			panic(err)
 		}
 	}
-	topic := getEnv("MSGHUB_TOPIC")
+	topic := getEnv("EVTSTREAMS_TOPIC")
 	fmt.Printf("using topic %s\n", topic)
 	conn, err := connect(topic)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("connected to msghub")
+	fmt.Println("connected to evtstreams")
 	msg := &audiolib.AudioMsg{
 		Audio:         base64.StdEncoding.EncodeToString(audioBytes),
 		Ts:            time.Now().Unix(),

@@ -1,7 +1,7 @@
 {
   "name": "pattern-$SERVICE_NAME",
   "label": "Edge $SERVICE_NAME Service Pattern for all architectures",
-  "description": "Pattern for $SERVICE_NAME sending cpu and gps info to the IBM Event Streams",
+  "description": "Pattern for $SERVICE_NAME that sends 30 second clips of FM radio rich in speech to IBM Event Streams",
   "public": true,
   "services": [
     {

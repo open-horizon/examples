@@ -1,10 +1,14 @@
-# Make targets for building the IBM sample sdr2msghub edge service
+# Make targets for building the IBM sample sdr2evtstreams edge service
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk
 
 # Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
 export ARCH ?= $(shell hzn architecture)
+
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='found new station:'
+export TIME_OUT:=20
 
 # Build the docker image for the current architecture
 build: main.go
@@ -23,26 +27,15 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
-# Soon we can use 'hzn service log ...' for all platforms
-ifeq ($(shell uname -s),Darwin)
-GET_SVC_OUTPUT = docker logs `docker ps -q --filter name=sdr2msghub`
-else
-GET_SVC_OUTPUT = $(SYSLOG_SUDO) grep sdr2msghub[[] /var/log/syslog
-endif
-
-# Run and verify the service
+# new testing method
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	sleep 20  # may have to increase this time depending on the speed of your machine
-	@if $(GET_SVC_OUTPUT) | grep 'found new station:'; then \
-	  hzn dev service stop; \
-	  echo 'Service test succeeded.'; \
-	else \
-	  hzn dev service stop; \
-	  echo 'Service test failed!'; \
-	  false; \
-	fi
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; }
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
@@ -69,16 +62,16 @@ publish-only:
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-# Create a topic in Event Streams for cpu2msghub to send data to
-MSGHUB_TOPIC ?= sdr2msghub
-msghub-topic:
-	: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
-	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$MSGHUB_API_KEY" -d "{ \"name\": \"$(MSGHUB_TOPIC)\", \"partitions\": 2 }" $$MSGHUB_ADMIN_URL/admin/topics
+# Create a topic in Event Streams for sdr2evtstreams to send data to
+EVTSTREAMS_TOPIC ?= sdr2evtstreams
+evtstreams-topic:
+	: $${EVTSTREAMS_API_KEY:?} $${EVTSTREAMS_ADMIN_URL:?}
+	curl -sS -w %{http_code} -H 'Content-Type: application/json' -H "X-Auth-Token: $$EVTSTREAMS_API_KEY" -d "{ \"name\": \"$(EVTSTREAMS_TOPIC)\", \"partitions\": 2 }" $$EVTSTREAMS_ADMIN_URL/admin/topics
 
 # List the topics currently in Event Streams
-msghub-topic-list:
-	@: $${MSGHUB_API_KEY:?} $${MSGHUB_ADMIN_URL:?}
-	@curl -sS -H "X-Auth-Token: $$MSGHUB_API_KEY" $$MSGHUB_ADMIN_URL/admin/topics | jq -r ".[] | .name"
+evtstreams-topic-list:
+	@: $${EVTSTREAMS_API_KEY:?} $${EVTSTREAMS_ADMIN_URL:?}
+	@curl -sS -H "X-Auth-Token: $$EVTSTREAMS_API_KEY" $$EVTSTREAMS_ADMIN_URL/admin/topics | jq -r ".[] | .name"
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :

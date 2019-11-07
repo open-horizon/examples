@@ -4,8 +4,8 @@
             "org": "IBM",
             "url": "$SERVICE_NAME",
             "variables": {
-                "MSGHUB_API_KEY": "$MSGHUB_API_KEY",
-                "MSGHUB_BROKER_URL": "$MSGHUB_BROKER_URL"
+                "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
+                "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL"
             }
         }
     ]
