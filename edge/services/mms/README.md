@@ -1,155 +1,116 @@
 # Horizon Model Management Service (MMS) Example
 
-## Introduction
+This is a simple example of using the Horizon Model Management Service (MMS).
+
+- [Introduction to the Horizon Model Management Service](#introduction)
+- [Preconditions for Using the MMS Example Edge Service](#preconditions)
+- [Using the MMS Example Edge Service with Deployment Pattern](#using-mms-pattern)
+- [More MMS Details](#mms-deets)
+- [Creating Your Own MMS Edge Service](CreateService.md)
+
+
+## <a id=introduction></a> Introduction
 
 The Horizon Model Management Service (MMS) enables you to have independent lifecycles for your code and for your data. While Horizon Services, Patterns, and Policies enable you to manage the lifecycles of your code components, the MMS performs an analogous service for your data files.  This can be useful for remotely updating the configuration of your Services in the field. It can also enable you to continuously train and update of your neural network models in powerful central data centers, then dynamically push new versions of the models to your small edge machines in the field. The MMS enables you to manage the lifecycle of data files on your edge node, remotely and independently from your code updates. In general the MMS provides facilities for you to securely send any data files to and from your edge nodes.
 
-This document will walk you through the process of using the Model Management Servcie to send a file to your edge nodes. It also shows how your nodes can detect the arrival of a new version of the file, and then consume the contents of the file.
+This document will walk you through the process of using the Model Management Service to send a file to your edge nodes. It also shows how your nodes can detect the arrival of a new version of the file, and then consume the contents of the file.
 
-## Getting Ready
 
-- It is assumed you have gone through the developer workflow for at least one of the other Horizon examples on this host, so you have verified your credentials are configured in the environment of this shell, you are logged-in to DockerHub, and you have created your cryptographic signing key pair, etc.
+## <a id=preconditions></a> Preconditions for Using the MMS Example Edge Service
 
-- Clone this git repo:
+If you haven't done so already, you must do these steps before proceeding with the mms example:
 
-```
-git clone git@github.com:open-horizon/examples.git
-```
+1. Install the Horizon management infrastructure (exchange and agbot).
 
-- Enter the `mms` example directory
+2. Install the Horizon agent on your edge device and configure it to point to your Horizon exchange.
 
-```
-cd  examples/edge/services/mms
-```
+3. Set your exchange org:
 
-- Set the values in `horizon/hzn.json` to your own values.
-- Add those values into your shell environment.
-
-```
-`hzn util configconv -f horizon/hzn.json`
+```bash
+export HZN_ORG_ID="<your-cluster-name>"
 ```
 
-- Build and appropriately tag this example Docker container
+4. Create a cloud API key that is associated with your Horizon instance, set your exchange user credentials, and verify them:
 
-```
-docker build -t "${DOCKER_IMAGE_BASE}_$(hzn architecture):${SERVICE_VERSION}" .
-```
-
-## Running In Development Mode
-
-- Use the developer tool to run the container with a local development instance of the Model Management Service (MMS). Normally, in production, you will use the MMS in the IBM Public Cloud, or ICP, but during development it is convenient to have a dedicated and private "dev MMS" instance you can use. So we will show that approach here first.
-
-```
-hzn dev service start
+```bash
+export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
+hzn exchange user list
 ```
 
-- Observe the `mms` Service example output (keep this running in a separate terminal so you can watch it as it changes a bit later):
+5. Choose an ID and token for your edge node, create it, and verify it:
 
-```
-# Soon you will use 'hzn service log ...' for all platforms
-# For now on Linux:
-tail -f /var/log/syslog | grep mms[[]
-# For now on Mac:
-docker logs -f $(docker ps -q --filter name=mms)
-``` 
-
-You should see something similar to this:
-
-```
-Jun  7 16:04:01 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4d486a7fc60a686843fcd1_ibm.mms[823]: myedgenode0.dev.edge-fabric.com says: "Hello!"
-Jun  7 16:04:04 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4d486a7fc60a686843fcd1_ibm.mms[823]: myedgenode0.dev.edge-fabric.com says: "Hello!"
-...
+```bash
+export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
+hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
+hzn exchange node confirm
 ```
 
-That is, the output should identify your Edge Node, and the message should be, "**Hello!**". This is how the Service is initially configured. Now let's use the "dev MMS" to send something through the MMS to the Service container running on the Edge Node. In a **host**  shell, run this:
+## <a id=using-mms-pattern></a> Using the MMS Example Edge Service with Deployment Pattern
 
-```
-echo 'Goodbye!' | ./dev-css-write.sh example-type id-0
-```
+1. Register your edge node with Horizon to use the mms pattern:
 
-- Observe the change in the mms Service example output:
-
-```
-Jun  7 16:04:17 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4d486a7fc60a686843fcd1_ibm.mms[823]: myedgenode0.dev.edge-fabric.com says: "Hello!"
-Jun  7 16:04:20 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4d486a7fc60a686843fcd1_ibm.mms[823]: myedgenode0.dev.edge-fabric.com says: "Hello!"
-Jun  7 16:04:23 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4d486a7fc60a686843fcd1_ibm.mms[823]: myedgenode0.dev.edge-fabric.com says: ""Goodbye!""
-Jun  7 16:04:26 myedgenode0 workload-c9ef49dbf715f1477f72c001eb3933970690bea96c4d486a7fc60a686843fcd1_ibm.mms[823]: myedgenode0.dev.edge-fabric.com says: ""Goodbye!""
+```bash
+hzn register -p IBM/pattern-ibm.mms
 ```
 
-- Notice the the message changed to "**Goodbye!**".
-- You can send other messages and watch the updated versions being picked up. E.g.:
+2. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
-```
-echo 'Something Random' | ./dev-css-write.sh example-type id-0
-echo 'Rubber Duck' | ./dev-css-write.sh example-type whatever-you-like-here
-```
-
-- Stop the service:
-
-```
-hzn dev service stop
-```
-
-## Publishing In Preparation For Registration
-
-- Have Horizon push your docker image to your registry and use your signing key to publish your service in the Horizon Exchange and see it there:
-
-```
-hzn exchange service publish -f horizon/service.definition.json
-hzn exchange service list
-```
-
-- Publish your edge node deployment pattern in the Horizon Exchange and see it there:
-
-```
-hzn exchange pattern publish -f horizon/pattern.json
-hzn exchange pattern list
-```
-
-## Running In Production Mode
-
-- Register your edge node with Horizon to use your deployment pattern:
-
-```
-hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture)
-```
-
-- Repeatedly list the horizon agreements until one is finalized and then list the running containers and see the `mms` example container running:
-
-```
+```bash
 hzn agreement list
-docker ps
 ```
 
-- Monitor the `mms` Service output (you should see the, "**Hello!**" message as before):
+3. After the agreement is made, list the docker container edge service that has been started as a result:
 
+``` bash
+sudo docker ps
 ```
-# soon you will use 'hzn service log ...' for all platforms
-# for now on linux:
-tail -f /var/log/syslog | grep mms[[]
-# for now on mac:
-docker logs -f $(docker ps -q --filter name=mms)
-``` 
 
-- While watching the output logs from the container, use the production MMS to send a new message to your Service:
+4. See the mms service output (you should see the, "**Hello!**" message as before):
 
-```
+  on **Linux**:
+
+  ```bash
+  sudo tail -f /var/log/syslog | grep mms[[]
+  ```
+
+  on **Mac**:
+
+  ```bash
+  sudo docker logs -f $(sudo docker ps -q --filter name=mms)
+  ```
+
+5. Use the production MMS to send a new message to your Service:
+
+```bash
 echo 'Goodbye!' | ./prod-css-write.sh example-type id-0
 ```
 
-- Again, observe the `mms` Service output (to see the message change to, "**Goodbye!**" as it did during development):
-- Be aware that if you send things in rapid succession using different IDs, they may arrive out of order.
-- Unregister your edge node, stopping the mms service:
+6. Again, observe the `mms` Service output (to see the message change to, "**Goodbye!**" as it did during development):
 
-```
+  on **Linux**:
+
+  ```bash
+  sudo tail -f /var/log/syslog | grep mms[[]
+  ```
+
+  on **Mac**:
+
+  ```bash
+  sudo docker logs -f $(sudo docker ps -q --filter name=mms)
+  ```
+
+- Be aware that if you send things in rapid succession using different IDs, they may arrive out of order.
+7. Unregister your edge node, stopping the mms service:
+
+```bash
 hzn unregister -f
 ```
 
-## More MSS Details
+## <a id=mms-deets></a> More MSS Details
 
 The `hzn mms ...` command provides additional tooling for working with the MMS. Get  help for this command with:
 
-```
+```bash
 hzn mms --help
 ```
 

@@ -24,25 +24,25 @@
             "defaultValue": "mqtt_wst_evst"
         },
         {
-            "name": "MSGHUB_API_KEY",
+            "name": "EVTSTREAMS_API_KEY",
             "label": "The API key to use when sending message to your instance of IBM Message Hub",
             "type": "string",
             "defaultValue": ""
         },
         {
-            "name": "MSGHUB_BROKER_URL",
+            "name": "EVTSTREAMS_BROKER_URL",
             "label": "The broker url to use when sending message to your instance of IBM Message Hub",
             "type": "string",
             "defaultValue": ""
         },
         {
-            "name": "MSGHUB_TOPIC",
+            "name": "EVTSTREAMS_TOPIC",
             "label": "The topic to use when sending message to your instance of IBM Message Hub",
             "type": "string",
             "defaultValue": ""
         },
         {
-            "name": "MSGHUB_CERT_ENCODED",
+            "name": "EVTSTREAMS_CERT_ENCODED",
             "label": "The base64-encoded self-signed certificate to use when sending messages to your ICP instance of IBM Event Streams. Not needed for IBM Cloud Event Streams.",
             "type": "string",
             "defaultValue": "-"
