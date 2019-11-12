@@ -33,6 +33,7 @@ while true; do
         y=$((y+1))
     done
 
+    # search for new HW_WHO value in updated inputs section
     z=0
     for k in "${nameArray[@]}"; do
         if [ "$k" == "\"HW_WHO\"" ]; then
