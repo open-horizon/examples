@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Very simple Horizon sample edge service.
 
@@ -16,11 +16,33 @@ BASEURL='--unix-socket '${HZN_ESS_API_ADDRESS}' https://localhost/api/v1/objects
 
 
 while true; do
-    userinput=$(cat input.json | jq '.[]' | jq '.[]' | jq '.[]' | jq '.[] .value')
-    #echo "$HZN_DEVICE_ID:"
+    declare -a nameArray
+    declare -a valArray
 
-    echo $userinput
-    sleep 2
+    # get names of inputs into nameArray
+    x=0
+    for i in $(jq '.userInput[].inputs[].name' input.json); do
+        nameArray[x]="$i"
+        x=$((x+1))
+    done
 
+    # get values of inputs into valArray
+    y=0
+    for j in $(jq '.userInput[].inputs[].value' input.json); do
+        valArray[y]="$j"
+        y=$((y+1))
+    done
+
+    z=0
+    for k in "${nameArray[@]}"; do
+        if [ "$k" == "\"HW_WHO\"" ]; then
+            HW_WHO=${valArray[$z]}
+        fi
+        z=$((z+1))
+    done
+
+    echo "$HZN_DEVICE_ID says: Hello ${HW_WHO}!!"
+
+    sleep 5
     DATA=$(curl -sL -o /input.json ${AUTH}${CERT}${BASEURL}json/input.json/data)
 done

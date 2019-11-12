@@ -12,7 +12,7 @@
                              /* If provided, destinationType and destinationID must be omitted. */
                              /* Delete this field when you are using policy. */
   "expiration": "",          /* A timestamp/date indicating when the object expires (it is automatically deleted). The timestamp should be provided in RFC3339 format.  */
-  "version": "1.0.0",             /* Arbitrary string value. The value is not semantically interpreted. The Model Management System does not keep multiple version of an object. */
+  "version": "",             /* Arbitrary string value. The value is not semantically interpreted. The Model Management System does not keep multiple version of an object. */
   "description": "",         /* An arbitrary description. */
   "activationTime": ""       /* A timestamp/date as to when this object should automatically be activated. The timestamp should be provided in RFC3339 format. */
 }

@@ -3,8 +3,16 @@
     {
       "inputs": [
         {
+          "name": "obj1",
+          "value": "val1"
+        },
+        {
           "name": "HW_WHO",
-          "value": "Hello World!"
+          "value": "Everybody!"
+        },
+        {
+          "name": "obj2",
+          "value": "val2"
         }
       ]
     }

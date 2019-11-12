@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk --no-cache --update add jq curl
+RUN apk --no-cache --update add jq curl bash
 
 COPY input.json /
 COPY *.sh /
