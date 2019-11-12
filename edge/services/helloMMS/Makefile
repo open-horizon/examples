@@ -48,6 +48,18 @@ publish-all-arches:
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
 
+# target to publish new input.json file to mms
+publish-mms-object:
+	hzn mms object publish -m test.json -f input.json
+
+# target to list mms object
+list-mms-object:
+	hzn mms object list -t json -i input.json -d
+
+# target to delete input.json file in mms
+delete-mms-object:
+	hzn mms object delete -t json --id input.json
+
 # Publish Service Policy target for exchange publish script
 publish-service-policy:
 	hzn exchange service addpolicy -f horizon/service_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
