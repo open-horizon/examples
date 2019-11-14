@@ -7,12 +7,18 @@
 export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
-export MATCH:='says: "Hello!"'
+export MATCH:='"Hello World!"'
 export TIME_OUT:=30
 
 # Build the docker image for the current architecture
 build:
-	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile .
+	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
+
+# Build the docker image for 3 architectures
+build-all-arches:
+	ARCH=amd64 $(MAKE) build
+	ARCH=arm $(MAKE) build
+	ARCH=arm64 $(MAKE) build
 
 # Run and verify the service
 test: build
@@ -28,25 +34,49 @@ test: build
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json
 
+publish-pattern:
+	hzn exchange pattern publish -f horizon/pattern.json
+
 # Build, run and verify, if test succeeds then publish (for the current architecture)
-build-test-publish: build test publish-service
+build-test-publish: build publish-service
 
 # Build/test/publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
-publish:
-	$(MAKE) build-test-publish
-	hzn exchange pattern publish -f horizon/pattern.json
+publish-all-arches:
+	ARCH=amd64 $(MAKE) build-test-publish
+	ARCH=arm $(MAKE) build-test-publish
+	ARCH=arm64 $(MAKE) build-test-publish
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # target for script - overwrite and pull insitead of push docker image
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
 
-# new target for icp exchange to run on startup to publish only
+# target to publish new input.json file to mms
+publish-mms-object:
+	hzn mms object publish -m object.json -f input.json
+
+# target to list mms object
+list-mms-object:
+	hzn mms object list -t json -i input.json -d
+
+# target to delete input.json file in mms
+delete-mms-object:
+	hzn mms object delete -t json --id input.json
+
+# new target for exchange publish script to run on startup to publish only
 publish-only:
-	$(MAKE) publish-service-overwrite
-	hzn exchange pattern publish -f horizon/pattern.json
+	ARCH=amd64 $(MAKE) publish-service-overwrite
+	ARCH=arm $(MAKE) publish-service-overwrite
+	ARCH=arm64 $(MAKE) publish-service-overwrite
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
+
+clean-all-archs:
+	ARCH=amd64 $(MAKE) clean
+	ARCH=arm $(MAKE) clean
+	ARCH=arm64 $(MAKE) clean
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.json.tmp.mk: horizon/hzn.json

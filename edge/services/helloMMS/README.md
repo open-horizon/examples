@@ -1,13 +1,12 @@
-# Horizon Model Management Service (MMS) Example
+# Horizon Hello Model Management Service (MMS) Example Edge Service
 
-This is a simple example of using the Horizon Model Management Service (MMS).
+This is a simple example of using and creating a Horizon edge service.
 
 - [Introduction to the Horizon Model Management Service](#introduction)
-- [Preconditions for Using the MMS Example Edge Service](#preconditions)
-- [Using the MMS Example Edge Service with Deployment Pattern](#using-mms-pattern)
+- [Preconditions for Using the Hello MMS Example Edge Service](#preconditions)
+- [Using the Hello MMS Example Edge Service with Deployment Pattern](#using-hello-mms-pattern)
 - [More MMS Details](#mms-deets)
-- [Creating Your Own MMS Edge Service](CreateService.md)
-
+- [Creating Your Own Hello MMS Edge Service](CreateService.md)
 
 ## <a id=introduction></a> Introduction
 
@@ -15,10 +14,9 @@ The Horizon Model Management Service (MMS) enables you to have independent lifec
 
 This document will walk you through the process of using the Model Management Service to send a file to your edge nodes. It also shows how your nodes can detect the arrival of a new version of the file, and then consume the contents of the file.
 
+## <a id=preconditions></a> Preconditions for Using the Hello MMS Example Edge Service
 
-## <a id=preconditions></a> Preconditions for Using the MMS Example Edge Service
-
-If you haven't done so already, you must do these steps before proceeding with the mms example:
+If you haven't done so already, you must do these steps before proceeding with the hello-mms example:
 
 1. Install the Horizon management infrastructure (exchange and agbot).
 
@@ -45,12 +43,12 @@ hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
 
-## <a id=using-mms-pattern></a> Using the MMS Example Edge Service with Deployment Pattern
+## <a id=using-hello-mms-pattern></a> Using the Hello MMS Example Edge Service with Deployment Pattern
 
-1. Register your edge node with Horizon to use the mms pattern:
+1. Register your edge node with Horizon to use the hello-mms pattern:
 
 ```bash
-hzn register -p IBM/pattern-ibm.mms
+hzn register -p IBM/pattern-ibm.hello-mms
 ```
 
 2. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
@@ -65,42 +63,40 @@ hzn agreement list
 sudo docker ps
 ```
 
-4. See the mms service output (you should see the, "**Hello!**" message as before):
+4. See the hello-mms service output (you should see the message **<your-node-id> says: Hello World!**:
 
   on **Linux**:
 
   ```bash
-  sudo tail -f /var/log/syslog | grep mms[[]
+  sudo tail -f /var/log/syslog | grep hello-mms[[]
   ```
 
   on **Mac**:
 
   ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=mms)
+  sudo docker logs -f $(sudo docker ps -q --filter name=hello-mms)
   ```
 
-5. Use the production MMS to send a new message to your Service:
+5. While observing the output, in another terminal, open the `object.json` file and change the `destinationID` value to your node id.
 
+6. Publish the `input.json` file as a new mms object:
 ```bash
-echo 'Goodbye!' | ./prod-css-write.sh example-type id-0
+make publish-mms-object
 ```
 
-6. Again, observe the `mms` Service output (to see the message change to, "**Goodbye!**" as it did during development):
+7. View the published mms object:
+```bash
+make list-mms-object
+```
 
-  on **Linux**:
+8. You should now see the output of the hello-mms service change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
 
-  ```bash
-  sudo tail -f /var/log/syslog | grep mms[[]
-  ```
+9. Delete the published mms object:
+```bash
+make delete-mms-object
+```
 
-  on **Mac**:
-
-  ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=mms)
-  ```
-
-- Be aware that if you send things in rapid succession using different IDs, they may arrive out of order.
-7. Unregister your edge node, stopping the mms service:
+10. Unregister your edge node (which will also stop the hello-mms service):
 
 ```bash
 hzn unregister -f
@@ -123,4 +119,3 @@ The `hzn mms object list -t <my-type>` can be used to list all the MMS objects o
 To delete a specific object, of type `<my-type>` with ID `<my-id>` you can use, `hzn mms object delete -t <my-type> -i <my-id>`.
 
 To view the current MMS status, use, `hzn mms status`.
-
