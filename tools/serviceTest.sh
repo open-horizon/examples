@@ -1,11 +1,8 @@
 #!/bin/bash
 
 ########################### TESTING ############################
-# For now on Mac:
-# docker logs -f `docker ps -q --filter name=$SERVICE_NAME`
-#
-# For now on Linux:
-# sudo tail -f /var/log/syslog
+# For Linux and Mac:
+# hzn service log -f $SERVICE_NAME
 ################################################################
 
 # $1 == $SERVICE_NAME
@@ -17,14 +14,7 @@ match=$2
 timeOut=$3
 START=$SECONDS
 
-##################################### Check the operating system #########################################
-if [ $(uname -s) == "Darwin" ]; then
-    # This is a MAC machine
-    command="docker logs -f `docker ps -q --filter name=$name`"
-else
-    # This is a LINUX machine
-    command="sudo tail -f /var/log/syslog"
-fi
+command="hzn service log -f $name"
 
 ####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
 $command | while read line; do
