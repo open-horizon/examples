@@ -47,7 +47,7 @@
         "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
         "privileged": true,
         "devices": [
-          "/dev/bus/usb/001/001:/dev/bus/usb/001/001"
+          "/dev/bus/usb:/dev/bus/usb"
         ]
       }
     }
