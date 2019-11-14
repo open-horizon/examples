@@ -34,6 +34,9 @@ test: build
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json
 
+publish-pattern:
+	hzn exchange pattern publish -f horizon/pattern.json
+
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build publish-service
 
@@ -50,7 +53,7 @@ publish-service-overwrite:
 
 # target to publish new input.json file to mms
 publish-mms-object:
-	hzn mms object publish -m test.json -f input.json
+	hzn mms object publish -m object.json -f input.json
 
 # target to list mms object
 list-mms-object:
@@ -60,25 +63,11 @@ list-mms-object:
 delete-mms-object:
 	hzn mms object delete -t json --id input.json
 
-# Publish Service Policy target for exchange publish script
-publish-service-policy:
-	hzn exchange service addpolicy -f horizon/service_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
-
-# Publish Business Policy target for exchange publish script
-publish-business-policy:
-	hzn exchange business addpolicy -f horizon/business_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
-
-# new target for icp exchange to run on startup to publish only
+# new target for exchange publish script to run on startup to publish only
 publish-only:
 	ARCH=amd64 $(MAKE) publish-service-overwrite
-	ARCH=amd64 $(MAKE) publish-service-policy
-	ARCH=amd64 $(MAKE) publish-business-policy
 	ARCH=arm $(MAKE) publish-service-overwrite
-	ARCH=arm $(MAKE) publish-service-policy
-	ARCH=arm $(MAKE) publish-business-policy
 	ARCH=arm64 $(MAKE) publish-service-overwrite
-	ARCH=arm64 $(MAKE) publish-service-policy
-	ARCH=arm64 $(MAKE) publish-business-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:

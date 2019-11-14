@@ -1,13 +1,13 @@
-# Creating Your Own Hello World Edge Service
+# Creating Your Own Hello MMS Edge Service
 
-Follow the steps in this page to create your first simple Horizon edge service.
+Follow the steps in this page to create your first Horizon edge service that uses the model management service.
 
 ## Preconditions for Developing Your Own Service
 
 1. If you have not already done so, complete the steps in these sections:
 
-  - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
-  - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-helloworld-pattern)
+  - [Preconditions for Using the Hello MMS Example Edge Service](README.md#preconditions)
+  - [Using the Hello MMS Example Edge Service with Deployment Pattern](README.md#using-hello-mms-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 
@@ -55,110 +55,142 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
 ## <a id=build-publish-your-hw> Building and Publishing Your Own Hello World Example Edge Service
 
-1. `cd` to the directory in which you want to create your new service and then run this command to create the files for a simple edge service and associated Horizon metadata files:
+1. Clone this git repo:
+```bash
+cd ~   # or wherever you want
+git clone git@github.com:open-horizon/examples.git
+```
 
-  ```bash
-  hzn dev service new -s myhelloworld -i "$DOCKER_HUB_ID/myhelloworld"
-  ```
+2. Copy the `hello-mms` dir to where you will start development of your new service:
+```bash
+cp -a examples/edge/services/helloMMS ~/myservice     # or wherever
+cd ~/myservice
+```
 
-  Notice that some project variables are defined in `horizon/hzn.json` and referenced in other files, for example `horizon/service.definition.json`.
+3. Set the values in `horizon/hzn.json` to your own values.
 
-2. Edit `service.sh` and change something simple, for example change "Hello" to "Hey there"
+4. Edit `service.sh` however you want.
+    - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
-  Note: This service is a shell script for brevity, but you can write your service in any language.
-
-3. Build the service docker image:
-
+5. Build the service docker image:
   ```bash
   make
   ```
 
-4. Test the service by running it the simulated agent environment:
+6. Test the service by running it the simulated agent environment:
 
   ```bash
-  hzn dev service start -S
+  hzn dev service start
   ```
-
-5. Check that the container is running:
+7. Check that the container is running:
 
   ```bash
   sudo docker ps
   ```
 
-6. Display the environment variables Horizon passes into your service container:
+8. Display the environment variables Horizon passes into your service container:
 
   ```bash
-  sudo docker inspect $(sudo docker ps -q --filter name=myhelloworld) | jq '.[0].Config.Env'
+  sudo docker inspect $(sudo docker ps -q --filter name=hello-mms) | jq '.[0].Config.Env'
   ```
 
-7. See the docker container running and look at the output:
+9. See the docker container running and look at the output:
 
   on **Linux**:
 
   ```bash
-  sudo tail -f /var/log/syslog | grep myhelloworld[[]
+  sudo tail -f /var/log/syslog | grep hello-mms[[]
   ```
 
   on **Mac**:
 
   ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=myhelloworld)
+  sudo docker logs -f $(sudo docker ps -q --filter name=hello-mms)
   ```
 
-8. Stop the service:
+10. While observing the output, in another terminal open the `object.json` file and change the `destinationID` value to your node id.
+
+11. Publish the `input.json` file as a new mms object:
+```bash
+make publish-mms-object
+```
+
+12. View the published mms object:
+```bash
+make list-mms-object
+```
+
+
+13. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` that is set in the `input.json` file.
+
+14. Stop the service:
 
   ```bash
   hzn dev service stop
   ```
 
-9. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
+15. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
 
   ```bash
   hzn exchange service publish -f horizon/service.definition.json
   hzn exchange service list
   ```
 
-10. Publish and view your edge node deployment pattern in the Horizon Exchange:
+16. Publish and view your edge node deployment pattern in the Horizon Exchange:
 
   ```bash
   hzn exchange pattern publish -f horizon/pattern.json
   hzn exchange pattern list
   ```
 
-11. Register your edge node with Horizon to use your deployment pattern:
+17. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
+```bash
+hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
+```
 
-  ```bash
-  hzn register -p pattern-myhelloworld-$(hzn architecture)
-  ```
-
-12. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+18. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
   ```bash
   hzn agreement list
   ```
 
-13. After the agreement is made, list the docker container edge service that has been started as a result:
+19. After the agreement is made, list the docker container edge service that has been started as a result:
 
   ```bash
   sudo docker ps
   ```
 
-14. See the myhelloworld service output:
+20. See the hello-mms service output:
 
   on **Linux**:
 
   ```bash
-  sudo tail -f /var/log/syslog | grep myhelloworld[[]
+  sudo tail -f /var/log/syslog | grep hello-mms[[]
   ```
 
   on **Mac**:
 
   ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=myhelloworld)
+  sudo docker logs -f $(sudo docker ps -q --filter name=hello-mms)
   ```
 
-15. Unregister your edge node (which will also stop the myhelloworld service):
+21. While observing the output, in another terminal open the `input.json` file and change the `"value":` field to whatever you want.
+
+22. Publish the `input.json` file as a new mms object:
+```bash
+make publish-mms-object
+```
+
+23. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` set in the `input.json` file.
+
+
+24. Unregister your edge node (which will also stop the hello-mms service):
 
   ```bash
   hzn unregister -f
   ```
+
+25. Delete the published mms object:
+```bash
+make delete-mms-object
+```
