@@ -94,7 +94,7 @@ cd ~/myservice
   sudo docker inspect $(sudo docker ps -q --filter name=hello-mms) | jq '.[0].Config.Env'
   ```
 
-9. See the hello-mms service output (you should see the message **$<your-node-id$> says: Hello World!**:
+9. See the hello-mms service output (you should see the message **\<your-node-id\> says: Hello World!**:
 
   on **Linux**:
 
