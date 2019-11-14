@@ -31,7 +31,7 @@ while true; do
         x=$((x+1))
     done
 
-    echo "$HZN_DEVICE_ID says: Hello ${HW_WHO}!!"
+    echo "$HZN_DEVICE_ID says: Hello ${HW_WHO}!"
     sleep 5
 
     # read in new file from the ESS

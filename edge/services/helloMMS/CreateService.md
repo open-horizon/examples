@@ -1,6 +1,6 @@
 # Creating Your Own Hello MMS Edge Service
 
-Follow the steps in this page to create your first Horizon edge service that uses the model management service.
+Follow the steps in this page to create your first Horizon edge service that uses the Model Management Service.
 
 ## Preconditions for Developing Your Own Service
 
@@ -53,7 +53,7 @@ Follow the steps in this page to create your first Horizon edge service that use
   brew install git jq
   ```
 
-## <a id=build-publish-your-hw> Building and Publishing Your Own Hello World Example Edge Service
+## <a id=build-publish-your-hw> Building and Publishing Your Own Hello MMS Example Edge Service
 
 1. Clone this git repo:
 ```bash
@@ -94,7 +94,7 @@ cd ~/myservice
   sudo docker inspect $(sudo docker ps -q --filter name=hello-mms) | jq '.[0].Config.Env'
   ```
 
-9. See the docker container running and look at the output:
+9. See the hello-mms service output (you should see the message **<your-node-id> says: Hello World!**:
 
   on **Linux**:
 
@@ -108,7 +108,7 @@ cd ~/myservice
   sudo docker logs -f $(sudo docker ps -q --filter name=hello-mms)
   ```
 
-10. While observing the output, in another terminal open the `object.json` file and change the `destinationID` value to your node id.
+10. While observing the output, in another terminal, open the `object.json` file and change the `destinationID` value to your node id.
 
 11. Publish the `input.json` file as a new mms object:
 ```bash
@@ -121,7 +121,7 @@ make list-mms-object
 ```
 
 
-13. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` that is set in the `input.json` file.
+13. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` that is set in the `input.json` file. For instance, you may see the message change from **<your-node-id> says: Hello World!** to **<your-node-id> says: Hello Everyone!**
 
 14. Stop the service:
 
@@ -183,14 +183,14 @@ make publish-mms-object
 
 23. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` set in the `input.json` file.
 
+24. Delete the published mms object:
+```bash
+make delete-mms-object
+```
 
-24. Unregister your edge node (which will also stop the hello-mms service):
+25. Unregister your edge node (which will also stop the hello-mms service):
 
   ```bash
   hzn unregister -f
   ```
 
-25. Delete the published mms object:
-```bash
-make delete-mms-object
-```
