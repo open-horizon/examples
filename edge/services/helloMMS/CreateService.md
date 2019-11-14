@@ -121,7 +121,7 @@ make list-mms-object
 ```
 
 
-13. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` that is set in the `input.json` file. For instance, you may see the message change from **<your-node-id> says: Hello World!** to **<your-node-id> says: Hello Everyone!**
+13. After approximately 15 seconds you should see the output of the hello-mms service change to the value of `HW_WHO` that is set in the `input.json` file. For instance, you may see the message change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
 
 14. Stop the service:
 

@@ -89,7 +89,7 @@ make publish-mms-object
 make list-mms-object
 ```
 
-8. You should now see the output of the hello-mms service change from **<your-node-id> says: Hello World!** to **<your-node-id> says: Hello Everyone!**
+8. You should now see the output of the hello-mms service change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
 
 9. Delete the published mms object:
 ```bash
