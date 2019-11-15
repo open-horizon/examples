@@ -3,6 +3,6 @@
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.gps",
         "SERVICE_NAME": "ibm.gps",
-        "SERVICE_VERSION": "2.0.8"
+        "SERVICE_VERSION": "2.0.9"
     }
 }
