@@ -52,7 +52,7 @@ before_script:
 # Build and test the example
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-  declare -a services
+  
   services=( edge/services/helloworld edge/services/cpu edge/services/gps edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams)
 
   - 'for service in "${services[@]}"; do
