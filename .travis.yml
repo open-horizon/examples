@@ -1,6 +1,8 @@
 sudo: true
 services: docker
 
+secure: "E0l+/i5QhUUZSsyS6dt/fOztptrOyVVyohA8QD363SlLXpDw22RGzOZXKjDP6ZW8ly5piozOkSypVxrwg/L+Uz5+O/PRUsHL87aWvho3NDwWia/pTDrMcb//Rj3y4nrW91ZtEpixRcqKFRj66kPN6HdzyEOL/y2FGMQTRi+FRFvmOMD4wOWCOYty/eGVfIAvBpms4uiJXPdjhXeDiniNosgQuFyrCN+FLRmlgU4Kbf8zb5Zkxcbs0+BlKOZAwv/Cpt5KwDJE21T+ONA8fq31sSIckmgTp4BptZR5VZ6R2SZxzEPISSlgwNgFCbvcZ+1KaNHQjNSfvsGwKKZUl1AEfYX2ICi7NLaZTzQaGXPfJGTZ2HB1QtIOlKW0znxuhLYQlwLBfbBUEOuzMSnGMYfLIYNAPe+FRxvCc1Xi76qyMiGvvfdnA1wK4Ym9OhSws/xFAT7nljgcsSa+btK4goSM4GtLKw+HbEOZu2wE1VnGIhq3W8OAYMVaQEH/XafaBb/4cUxenA8oD49YgHaCz0Ssz8pUggrcUBjHMqAMKhdz9XcwXxSYefp1FrWT6bAPiEKF/ip7yhgEZBYruDjc4Jv7dM3vFcN12NnTkIxOtLFfbV1ncP7Y6MRnRiXgHTWXa5y8sKtiInYBvv+KIKrbrrmNoL96C2MGD4ikjOu52EoE8hQ="
+
 #todo: add in go support when we start testing the gps sample
 #language: go
 #go: 1.10.x
@@ -52,7 +54,7 @@ before_script:
 # Build and test the example
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-  
+  - echo $TEST
   - services=( edge/services/helloworld edge/services/cpu edge/services/gps edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
   - |
     for service in "${services[@]}"; do
