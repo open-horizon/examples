@@ -54,15 +54,15 @@ before_script:
 # Build and test the example
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-  - services=( edge/services/helloworld edge/services/cpu edge/services/gps edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams $MY_SECRET )
+  - services=( edge/services/helloworld edge/services/cpu edge/services/gps edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
   - |
     for service in "${services[@]}"; do
-      echo "$MY_SECRET"
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         cd $TRAVIS_BUILD_DIR/$service && make test;
       fi
     done
   - cd $TRAVIS_BUILD_DIR
+  - cd $MY_SECRET
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
