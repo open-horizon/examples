@@ -6,9 +6,6 @@ services: docker
 #go: 1.10.x
 language: minimal
 
-env:
-  - secure: "aAH5/W9cg0k/rEYRndxC2NrnSjlfSzM3/dcO4VZ/n+Hca2EY+VcqXEvFuS2d29XJF5HnJgH1T1UR4OqC/wUADoiPceQimTwoybtjZ4CF/4F9omDTm9EFJv3soyEgJ8nYJ3Vzpx9JkV60v6CsqmsTFkQVLG/dVs7KpgpURXTpjc2FjMqIb3pzuYw0S4lhwS8aINaCLLJIHza4KMhVOOaEgnTQqIB0Kolt9/l+o8tfjKKfQkda+xgHcALEAcdlfWMSf3XFHKiSm/ujqU3rwuaUJ4PaW0aSuAadKOZt2XtzlSp9n/RKisSx/QvAbcBHzi2azS50ke3fgqBJwmcltXwQE7gT7EZTUZnYlFCGea/C5mPO+bJjPyWACrSHzptFzKXLQP3BANe1l/GSPBl0PkSkgSvBx5wKKVzWHKpaN8LZJo40MaUdSmpPqhssgEKgKLU8YpTDQT1fYhjksLZAlfcQWWMKfBezxJlgEqh5B0yZnqYmyxfoIAzgJiW3CT6gQXYLUg8g5YP9i9GD0dczgYbHCxGFe6taBQGmxyeNjmBZ968x4mU5qlWvvjacJuhNFypa2UBhpJRlFSZiyWiMCsT5R4/9a4OZJBWpttlbxUDNuhmDFdC/93/FixzrKdLcmkUgPLhwBhBaXyZduoJ2EP0HtO6OcL+WVsYgnhdbnXv2V8A="
-
 #notifications:
 #  slack:
 #    secure: vSzVllY4Vmt6Nf6Yl+5QDMKTEQ4jIbP/bC/LSzZFmQNlYWlDEzG1gQcPb4prh7/efjUFt+vM2lTFP7jLEkib+XiR8n4LShCl+IeRyBpiONXII4KN7O9IPTMMOpGvN/FhZFgyzRFwEvkCSuSBpOYoRGGij/wzo/mPzfJYEyGxpaRmQKEmD7xmtxXMAVWpK2L5fL6XbglEPKD7pMYUvM/WyzAMJg4JgDxOGeX7QLGdSQrTOOkUtJjiEs8WtB/fR9Gev+vwX22KrnMwZpmT9KPPi+kzwFYnfzKxHdjdsmydmBBlBS4XM8rvJL1eMyrQB2LOOW8xWUeOF03t5PfKAC6cY2h01Jdl/rx3L6Pc99ABItS3OvYcwL0HY20bz+hNI0seRMVftz7eRzMHGdQsfYXfU6hOxkovGutRoyVkS7f+m66nBaOfRh6DAlOt/H6us4WEq1zJb8SyP+S7Xm38grh+xEDIMaz8AeavhDRWyH6RQfrpxvcGbcWhURXiY7clJLgjmauGJw9H/jxkuuoIINIFjkrziRHDGj9ZxNp3JbtJfprrramMCLtHl5Ziz5Pjmcf46iZxFzNlRlW/aC5ZqQbHm5EgcNuHXHMHvzTQcnkFDrQBGaXI3sLXfaYt+1LeRwfQXGOsWSgc8lmgfcGn1Fvbj/8ykq/q1ReQFAbCvT62ZR8=
@@ -35,6 +32,8 @@ branches:
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+  - secure: "aAH5/W9cg0k/rEYRndxC2NrnSjlfSzM3/dcO4VZ/n+Hca2EY+VcqXEvFuS2d29XJF5HnJgH1T1UR4OqC/wUADoiPceQimTwoybtjZ4CF/4F9omDTm9EFJv3soyEgJ8nYJ3Vzpx9JkV60v6CsqmsTFkQVLG/dVs7KpgpURXTpjc2FjMqIb3pzuYw0S4lhwS8aINaCLLJIHza4KMhVOOaEgnTQqIB0Kolt9/l+o8tfjKKfQkda+xgHcALEAcdlfWMSf3XFHKiSm/ujqU3rwuaUJ4PaW0aSuAadKOZt2XtzlSp9n/RKisSx/QvAbcBHzi2azS50ke3fgqBJwmcltXwQE7gT7EZTUZnYlFCGea/C5mPO+bJjPyWACrSHzptFzKXLQP3BANe1l/GSPBl0PkSkgSvBx5wKKVzWHKpaN8LZJo40MaUdSmpPqhssgEKgKLU8YpTDQT1fYhjksLZAlfcQWWMKfBezxJlgEqh5B0yZnqYmyxfoIAzgJiW3CT6gQXYLUg8g5YP9i9GD0dczgYbHCxGFe6taBQGmxyeNjmBZ968x4mU5qlWvvjacJuhNFypa2UBhpJRlFSZiyWiMCsT5R4/9a4OZJBWpttlbxUDNuhmDFdC/93/FixzrKdLcmkUgPLhwBhBaXyZduoJ2EP0HtO6OcL+WVsYgnhdbnXv2V8A="
+
 
 # Install the hzn command
 #todo: change this to:
@@ -64,10 +63,9 @@ script:
     done
   - cd $TRAVIS_BUILD_DIR
 
-test: 
-  - 'if 1; then
-      echo "$SECRET_VALUE"
-    fi'
+after_script: 
+  - echo "Shhh... this is a secret!"
+  - echo "$SECRET_VALUE"
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
