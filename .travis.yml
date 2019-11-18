@@ -62,8 +62,7 @@ script:
   - cd $TRAVIS_BUILD_DIR
 
 after_script:
-  - echo "Shhh... this is a secret! $MY_SECRET_ENV <-----"
-  - echo "This should be another secret... $MY_SECRET <----"
+  - echo "Shhh... this is a secret! $TEST_SECRET"
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
