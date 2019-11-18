@@ -10,7 +10,9 @@ language: minimal
 #  slack:
 #    secure: vSzVllY4Vmt6Nf6Yl+5QDMKTEQ4jIbP/bC/LSzZFmQNlYWlDEzG1gQcPb4prh7/efjUFt+vM2lTFP7jLEkib+XiR8n4LShCl+IeRyBpiONXII4KN7O9IPTMMOpGvN/FhZFgyzRFwEvkCSuSBpOYoRGGij/wzo/mPzfJYEyGxpaRmQKEmD7xmtxXMAVWpK2L5fL6XbglEPKD7pMYUvM/WyzAMJg4JgDxOGeX7QLGdSQrTOOkUtJjiEs8WtB/fR9Gev+vwX22KrnMwZpmT9KPPi+kzwFYnfzKxHdjdsmydmBBlBS4XM8rvJL1eMyrQB2LOOW8xWUeOF03t5PfKAC6cY2h01Jdl/rx3L6Pc99ABItS3OvYcwL0HY20bz+hNI0seRMVftz7eRzMHGdQsfYXfU6hOxkovGutRoyVkS7f+m66nBaOfRh6DAlOt/H6us4WEq1zJb8SyP+S7Xm38grh+xEDIMaz8AeavhDRWyH6RQfrpxvcGbcWhURXiY7clJLgjmauGJw9H/jxkuuoIINIFjkrziRHDGj9ZxNp3JbtJfprrramMCLtHl5Ziz5Pjmcf46iZxFzNlRlW/aC5ZqQbHm5EgcNuHXHMHvzTQcnkFDrQBGaXI3sLXfaYt+1LeRwfQXGOsWSgc8lmgfcGn1Fvbj/8ykq/q1ReQFAbCvT62ZR8=
 
-secure: "ya0YFjEhDG2ibhrSNt6OffweJUrCxSPJIJogtt5JU0lbOHIsuuK5eZcqHFCNjPMlFL+WFTl8+TyA8o9FFl/B2cEekKqlfKHcBDclDvniRmOmzt/H3jsScjTzmbnAASIatZ/+gFc+EAgVwL4dCnlUX/j2KnbVY7pD2lza35Vb0xganNLkBXOZC698R9Fb6cj5j0MlrEpNlBmGGBTJcR/ZaNjsdP1VmgyCISEGcyhT5qjcSTi/CiLuoMdn9RmBwfc6wrNylo6AS6/108hK4tnzSesEPHABHCRmMz+excuQeGRlslSOPe8jQPqDLjvXqFWxkh7fwTprLyZ1FJgBvIgEpSpPUfRYZ8D2CpF/EZq1D1o+6spD5UN1FV+tzMsHuhkRDXl7tGknGAwtcpCe09KYed/VNll9GEpniOhVwtx0HhXpCplGN9cM/M53IIeR137axU6t+/bpRcyV7KZ5SHJF537boFdBVdt8oHgbgYA8ANnQWmHLuxz1hI0TaiI+PiVB3dNB4TJmevrYjA60LmTcpWENvo7LGcz9wNKcEjme0mUUKwPAGkSoGQCM+qkQLEjJJV3K7e3jcSoLtFSmZwYBLTlKCNKEVRKGgB2bYamzAAi1ctZxUMKhGhdkKOtJKDenpSmW4Px5unEjBTiEqtwDSM2ZI4GlDcYHMj3k2br4UhM="
+env: 
+  global:
+    - secure: "GgoQird+Ba65ZilBPAI3QLEB/GCSMaJOfip4aWLp24cC4AGAeYHn7aezlBGSOsAODnjwciGqxVcw76J7M3sBXt07SurXB/TMnUDEwZl0gaxnJgE4CjS50e7uPASK3h2mwHwUyq1xkPHGDJtCq2CcDCcpRs8GSJgEqp7lK/yxrst+/9hQgJrSbldnS/evl1RQ68l8wx965z/K2Li94kfNXT4DEwUHPXHVLarbsSu2+DzqonQPKrkrCquBaH+SPnQ4wmDdsYDy2qHYRHlyY9lTjVZ/9zLnVzEZP5ONvvRoyPZv85ikFxzpm+SWWqlu/N4I8P/rDnmyOuQDHFVKVoE6X88bvzWcKikQQaQIqn9ybTH1nvpGLFRoI9EDCLtUFgbipoRG3T02P1tz3iAbkFwIaCJZuzScm/kFIc8/l79E1qlSjMoKko3dMrHCyS/b3CGo6PXuD+k3W1DM9z+A9fur9+7nBI8lqSf3fARv/N+Z6mkr+E2sBm+hh5cSpWCKXaauVy3Izgb0pGUmjjH27XAfabECAxtMs1j8Yh0TjoQvBJ7J+f1FLWHj+Y8m5lucqdPI7YjdRskPJ9zG6PXORPRStaFRguj6KFqjie3gXZ/BrsPgt82iVZZKQplNU6xh91C+SuPRb8AaQgJJLHX2/5X9HYQefkwhfS9nomDvzeOZc50="
 
 #os:
 #  - osx
@@ -65,7 +67,7 @@ script:
 
 after_script: 
   - echo "Shhh... this is a secret!"
-  - echo "$TEST_SECRET"
+  - echo "$MY_SECRET_ENV"
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
