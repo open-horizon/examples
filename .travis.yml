@@ -64,7 +64,7 @@ script:
   - cd $TRAVIS_BUILD_DIR
 
 after_script: 
-  - echo "Shhh... it's a secret!"
+  - echo "Shhh... this is a secret!"
   - echo "$TEST_SECRET"
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
