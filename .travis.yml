@@ -31,7 +31,7 @@ branches:
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 HZN_ORG_ID=IBM
 
 # Install the hzn command
 #todo: change this to:
@@ -57,12 +57,12 @@ script:
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         cd $TRAVIS_BUILD_DIR/$service && make test;
+        echo "exit status..."
+        echo $?
       fi
     done
   - cd $TRAVIS_BUILD_DIR
 
-  - echo "exit status..."
-  - echo $?
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
