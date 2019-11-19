@@ -35,6 +35,11 @@ test: build
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json
 
+publish-pattern:
+	hzn exchange pattern publish -f horizon/pattern.json
+
+publish: publish-service 
+
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
 
