@@ -31,7 +31,7 @@ branches:
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 HZN_ORG_ID=IBM
+  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 # Install the hzn command
 #todo: change this to:
@@ -49,7 +49,7 @@ before_script:
   - sudo apt-get update -q
   - sudo apt-get install horizon-cli -y
 
-# Build and test the example
+# Build and test the example services that were changed in the PR
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr \
@@ -64,6 +64,7 @@ script:
       fi
     done
   - cd $TRAVIS_BUILD_DIR
+  - ls $KEY_PATH
 
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
