@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Example Blue Horizon service that returns CPU percentage.
+# Example Blue Horizon service that returns CPU percentage
 # Note: requires gawk and bc to be installed.
 
 # Get CPU usage from /proc/stat. This works even inside a docker container (gets the host total CPU usage).

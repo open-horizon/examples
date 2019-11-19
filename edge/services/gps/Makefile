@@ -4,7 +4,7 @@
 # When cross-compiling using mac, Dockerfile.arm will fail with golang:1.8, 1.10, 1.11 and 1.12
 # So far golang:1.9 has been the only version to successfully 
 
-# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
+# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them
 -include horizon/.hzn.json.tmp.mk
 
 # Default ARCH to the architecture of this machines (as horizon/golang describes it)
