@@ -8,7 +8,7 @@ export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
 export MATCH:='found new station:'
-export TIME_OUT:=20
+export TIME_OUT:=45
 
 # Build the docker image for the current architecture
 build: main.go
