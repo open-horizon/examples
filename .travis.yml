@@ -72,8 +72,8 @@ script:
 #after_success:
   - |
     mkdir /home/travis/.hzn && mkdir /home/travis/.hzn/keys
-    echo $PUBLIC_KEY | base64 -D > /home/travis/.hzn/keys/service.public.pem
-    echo $PRIVATE_KEY | base64 -D > /home/travis/.hzn/keys/service.private.key
+    echo $PUBLIC_KEY | base64 -d > /home/travis/.hzn/keys/service.public.pem
+    echo $PRIVATE_KEY | base64 -d > /home/travis/.hzn/keys/service.private.key
     echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
     for service in "${passed[@]}"; do
       if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then

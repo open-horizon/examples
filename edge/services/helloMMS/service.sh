@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Very simple Horizon sample using the MMS feature to update HW_WHO
+# Very simple Horizon sample using the MMS feature to update HW_WHO.
 
 # ${HZN_ESS_AUTH} is mounted to this container and contains a json file with the credentials for authenticating to the ESS.
 USER=$(cat ${HZN_ESS_AUTH} | jq -r ".id")
