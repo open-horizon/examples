@@ -38,7 +38,7 @@ publish-service:
 publish-pattern:
 	hzn exchange pattern publish -f horizon/pattern.json
 
-publish: publish-service 
+publish: publish-service-overwrite publish-pattern 
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
