@@ -71,11 +71,11 @@ script:
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
 #after_success:
-#  - |
-#    for service in "${passed[@]}"; do
-#      'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
-#        echo "Publishing $service..." &&
-#        echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
-#        cd $TRAVIS_BUILD_DIR/$service && make publish-service;
-#      fi'
-#    done
+  - |
+    for service in "${passed[@]}"; do
+      if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
+        echo "Publishing $service..." &&
+        echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
+        cd $TRAVIS_BUILD_DIR/$service && make publish-service;
+      fi
+    done
