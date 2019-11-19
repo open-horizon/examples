@@ -1,4 +1,4 @@
-# Make targets for building the IBM sample sdr2evtstreams edge service
+# Make targets for building the IBM sample sdr2evtstreams edge service.
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk
