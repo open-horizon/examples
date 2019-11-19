@@ -76,6 +76,6 @@ script:
       if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         echo "Publishing $service..." &&
         echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
-        cd $TRAVIS_BUILD_DIR/$service && make publish-service;
+        cd $TRAVIS_BUILD_DIR/$service && echo `pwd`;
       fi
     done
