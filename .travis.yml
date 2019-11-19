@@ -64,7 +64,7 @@ script:
       fi
     done
   - cd $TRAVIS_BUILD_DIR
-  - ls /home/travis/
+  
 
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
