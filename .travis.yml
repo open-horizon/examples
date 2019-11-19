@@ -57,9 +57,12 @@ script:
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         cd $TRAVIS_BUILD_DIR/$service && make test;
-        echo $?
+        if [ $? -eq 0 ]; then
+          passed=( "${passed[@]}" $service )
+        fi
       fi
     done
+  - echo $passed[@]
   - cd $TRAVIS_BUILD_DIR
 
 

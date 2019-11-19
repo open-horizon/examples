@@ -7,7 +7,7 @@
 export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
-export MATCH:='says: Jello'
+export MATCH:='says: Hello'
 export TIME_OUT:=30
 
 # Build the docker image for the current architecture
@@ -29,7 +29,7 @@ test: build
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
 		echo "*** Service test failed! ***"; \
-		false; }
+		false ;}
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
