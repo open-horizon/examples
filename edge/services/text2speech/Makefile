@@ -19,7 +19,8 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		failed; }
 
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json

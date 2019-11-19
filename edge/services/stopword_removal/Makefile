@@ -20,7 +20,8 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		failed; }
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:

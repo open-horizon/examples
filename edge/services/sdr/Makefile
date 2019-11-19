@@ -24,7 +24,8 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		failed; }
 
 # Create/update the metadata in the exchange for this service
 publish-service:

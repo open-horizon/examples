@@ -52,7 +52,10 @@ before_script:
 # Build and test the example
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-  - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
+  - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/helloMMS \
+      edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams edge/evtstreams/watson_speech2text \
+      edge/services/audio2text edge/services/hotword_detection edge/services/mqtt2kafka edge/services/processtext \
+      edge/services/sdr edge/services/stopword_removal edge/services/text2speech edge/services/voice2audio )
   - |
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
@@ -69,8 +72,11 @@ script:
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
 #after_success:
-#  - 'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find edge/services/helloworld -v; then
-#    echo "Publishing helloworld..." &&
-#    echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
-#    cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make publish-service;
-#    fi'
+#  - |
+#    for service in "${passed[@]}"; do
+#      'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
+#        echo "Publishing $service..." &&
+#        echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin &&
+#        cd $TRAVIS_BUILD_DIR/$service && make publish-service;
+#      fi'
+#    done
