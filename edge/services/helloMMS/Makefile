@@ -41,7 +41,7 @@ publish-pattern:
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build publish-service
 
-publish: publish-service publish-pattern
+publish: publish-service-overwrite publish-pattern
 
 # Build/test/publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
 publish-all-arches:
