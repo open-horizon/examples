@@ -33,7 +33,7 @@ branches:
 env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
-# Install the hzn command
+# Install the hzn command.
 #todo: change this to:
 #addons:
 #  apt:
@@ -64,7 +64,7 @@ script:
       fi
     done
   - cd $TRAVIS_BUILD_DIR
-  
+
 
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
