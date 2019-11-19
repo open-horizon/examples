@@ -58,11 +58,11 @@ script:
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         cd $TRAVIS_BUILD_DIR/$service && make test;
         if [ $? -eq 0 ]; then
-          passed=( "${passed[@]}" $service )
+          passed=( "${passed[@]}" "$service" )
         fi
       fi
     done
-  - echo $passed[@]
+  - echo ${passed[@]}
   - cd $TRAVIS_BUILD_DIR
 
 
