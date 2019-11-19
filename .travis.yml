@@ -33,7 +33,7 @@ branches:
 env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
-# Install the hzn command
+# Install the hzn command.
 #todo: change this to:
 #addons:
 #  apt:
