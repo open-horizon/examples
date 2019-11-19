@@ -1,4 +1,4 @@
-# Make targets for building the IBM example helloMMS edge service
+# Make targets for building the IBM example helloMMS edge service.
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk

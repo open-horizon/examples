@@ -52,8 +52,7 @@ before_script:
 # Build and test the example services that were changed in the PR
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-  - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr \
-      edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
+  - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
   - |
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
