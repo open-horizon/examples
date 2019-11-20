@@ -58,7 +58,7 @@ addons:
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
   - |
-    if [ $ARCH == "armhf"]; then 
+    if [ "$ARCH" == "armhf" ]; then 
       echo "the arch is arm" 
     fi
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
