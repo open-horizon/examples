@@ -14,12 +14,6 @@ language: minimal
 #  - osx
 dist: xenial
 
-before_install:
-  - sudo docker run --privileged linuxkit/binfmt:v0.6
-  - sudo docker run -d --privileged -p 1234:1234 --name buildkit moby/buildkit:latest --addr tcp://0.0.0.0:1234 --oci-worker-platform linux/amd64 --oci-worker-platform linux/armhf
-  - sudo docker cp buildkit:/usr/bin/buildctl /usr/bin/
-  - export BUILDKIT_HOST=tcp://0.0.0.0:1234
-
 branches:
   only:
   - master
@@ -35,10 +29,11 @@ addons:
     - qemu-user-static
     - binfmt-support
     - dpkg-cross
+    - dpkg --add-architecture armhf
 
 arch:
   - amd64
-  - arm64
+#  - arm64
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
