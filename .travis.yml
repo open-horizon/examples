@@ -32,7 +32,7 @@ addons:
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
   - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
-  - ARCH=armhf HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
+  - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 # Install the hzn command.
 #todo: change this to:
