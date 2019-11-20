@@ -51,7 +51,8 @@ addons:
     packages:
     - horizon-cli
 
-- |
+set_arch:
+  - |
     if [ $ARCH -eq "arm"]; then
       echo "the arch is arm"
     fi
