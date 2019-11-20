@@ -30,13 +30,13 @@ addons:
     - binfmt-support
     - dpkg-cross
 
-arch:
+#arch:
 #  - amd64
-  - arm64
+#  - arm64
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - ARCH=arm64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+  - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
 # Install the hzn command.
 #todo: change this to:
@@ -58,7 +58,7 @@ addons:
 # Build and test the example services that were changed in the PR
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-#  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
   - |
     for service in "${services[@]}"; do
