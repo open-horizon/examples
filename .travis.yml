@@ -9,8 +9,8 @@ language: minimal
 arch:
   - amd64
     - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
-  - arm
-    - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
+  - armhf
+    - ARCH=armhf HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 #notifications:
 #  slack:
@@ -51,11 +51,6 @@ addons:
     packages:
     - horizon-cli
 
-set_arch:
-  - |
-    if [ $ARCH -eq "arm"]; then
-      echo "the arch is arm"
-    fi
 #before_script:
 #  - wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | sudo apt-key add -
 #  - echo "deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main" | sudo tee -a /etc/apt/sources.list
@@ -65,6 +60,7 @@ set_arch:
 # Build and test the example services that were changed in the PR
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
+  - if [ $ARCH -eq "armhf"]; then echo "the arch is arm" fi
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
   - |
     for service in "${services[@]}"; do
