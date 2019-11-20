@@ -17,13 +17,19 @@ match=$2
 timeOut=$3
 START=$SECONDS
 
-##################################### Check the operating system #########################################
-if [ $(uname -s) == "Darwin" ]; then
-    # This is a MAC machine
-    command="docker logs -f `docker ps -q --filter name=$name`"
+##################################### Check for hzn service log command and OS ###########################
+logCommand=$( hzn service log 2>&1 )
+if [ "$logCommand" == 'hzn: error: expected command but got "log", try --help' ]; then
+  # Check the operating system
+  if [ $(uname -s) == "Darwin" ]; then
+      # This is a MAC machine
+      command="docker logs -f `docker ps -q --filter name=$name`"
+  else
+      # This is a LINUX machine
+      command="sudo tail -f /var/log/syslog"
+  fi
 else
-    # This is a LINUX machine
-    command="sudo tail -f /var/log/syslog"
+  command="hzn service log -f $name"
 fi
 
 ####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
