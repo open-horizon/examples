@@ -36,11 +36,9 @@ arch:
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+  - ARCH=arm TRAVIS_CPU_ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
 before_script:
-  - TRAVIS_CPU_ARCH=arm
-  - ARCH=arm
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 # Install the hzn command.
