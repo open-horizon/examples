@@ -39,6 +39,8 @@ env:
   - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
 before_script:
+  - TRAVIS_CPU_ARCH=arm
+  - ARCH=arm
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 # Install the hzn command.
@@ -62,7 +64,7 @@ addons:
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
   - |
-    cat /etc/qemu-binfmt.conf
+    
     if [ $TRAVIS_CPU_ARCH == "amd64" ]; then 
       echo "the arch is amd64!!" 
     fi
