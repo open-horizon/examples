@@ -40,19 +40,19 @@ env:
 
 # Install the hzn command.
 #todo: change this to:
-#addons:
-#  apt:
-#    update: true
-#    sources:
-#    - sourceline: deb [arch=amd64,armhf,arm64,ppc64el] http://pkg.bluehorizon.network/linux/ubuntu xenial-updates main
-#      key_url: 'http://pkg.bluehorizon.network/bluehorizon.network-public.key'
-#    packages:
-#    - horizon-cli
-before_script:
-  - wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | sudo apt-key add -
-  - echo "deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main" | sudo tee -a /etc/apt/sources.list
-  - sudo apt-get update -q
-  - sudo apt-get install horizon-cli -y
+addons:
+  apt:
+    update: true
+    sources:
+    - sourceline: deb [arch=amd64,armhf,arm64] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main
+      key_url: 'http://pkg.bluehorizon.network/bluehorizon.network-public.key'
+    packages:
+    - horizon-cli
+#before_script:
+#  - wget -qO - http://pkg.bluehorizon.network/bluehorizon.network-public.key | sudo apt-key add -
+#  - echo "deb [arch=$(dpkg --print-architecture)] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main" | sudo tee -a /etc/apt/sources.list
+#  - sudo apt-get update -q
+#  - sudo apt-get install horizon-cli -y
 
 # Build and test the example services that were changed in the PR
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
