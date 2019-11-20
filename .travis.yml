@@ -8,7 +8,9 @@ language: minimal
 
 arch:
   - amd64
+    - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
   - arm
+    - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 #notifications:
 #  slack:
