@@ -8,7 +8,7 @@ language: minimal
 
 arch:
   - amd64
-  - armhf
+  - arm64
 
 #notifications:
 #  slack:
