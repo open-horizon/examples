@@ -60,6 +60,7 @@ addons:
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
   - |
+    cat /etc/qemu-binfmt.conf
     if [ $TRAVIS_CPU_ARCH == "amd64" ]; then 
       echo "the arch is amd64!!" 
     fi
