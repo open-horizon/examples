@@ -20,18 +20,19 @@ branches:
 
 #todo: for multi-arch builds see: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation , https://dev.to/zeerorg/build-multi-arch-docker-images-on-travis-5428
 #  We can not use osx so because the docs currently state: "We do not currently support use of Docker on macOS"
-#addons:
-#  apt:
-#    update: true
-#    packages:
-#    - qemu
-#    - qemu-user-static
-#    - binfmt-support
-#    - dpkg-cross
+addons:
+  apt:
+    update: true
+    packages:
+    - qemu
+    - qemu-user-static
+    - binfmt-support
+    - dpkg-cross
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
+  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+  - ARCH=armhf HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 # Install the hzn command.
 #todo: change this to:
