@@ -30,6 +30,7 @@ addons:
     - binfmt-support
     - dpkg-cross
     - dpkg --add-architecture armhf
+    - dpkg-cross -i -a arm libc6_2.7_armel.deb
 
 arch:
   - amd64
