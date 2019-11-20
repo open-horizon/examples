@@ -6,9 +6,13 @@ services: docker
 #go: 1.10.x
 language: minimal
 
-#arch:
-#  - amd64
-#  - arm
+arch:
+  - amd64
+      env:
+        - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+  - arm
+      env:
+        - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 #notifications:
 #  slack:
@@ -34,9 +38,9 @@ branches:
 #    - dpkg-cross
 
 # Publish to staging if successful (promotion to prod is a separate process)
-env:
-  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
-  - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
+#env:
+#  - ARCH=amd64 HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
+#  - ARCH=arm HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 
 
 # Install the hzn command.
 #todo: change this to:
