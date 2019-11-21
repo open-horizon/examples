@@ -34,7 +34,7 @@ addons:
   apt:
     update: true
     sources:
-    - sourceline: deb [arch=amd64,armhf,arm64] http://pkg.bluehorizon.network/linux/ubuntu xenial-testing main
+    - sourceline: deb [arch=amd64,armhf,arm64] http://pkg.bluehorizon.network/linux/ubuntu bionic-updates main
       key_url: 'http://pkg.bluehorizon.network/bluehorizon.network-public.key'
     packages:
     - horizon-cli
