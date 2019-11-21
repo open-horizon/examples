@@ -6,9 +6,6 @@ os: linux
 arch: arm64 
 dist: xenial
 
-before_install:
-  - apt-get update
-
 services: docker-xenial
 
 branches:
@@ -33,6 +30,7 @@ env:
 
 # Install the hzn command
 addons:
+  - apt-get update
   apt:
     update: true
     sources:
