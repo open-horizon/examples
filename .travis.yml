@@ -7,7 +7,7 @@ arch: arm64
 dist: xenial
 
 before_install:
-  - sudo apt-get update
+  - apt-get update
 
 services: docker-xenial
 
