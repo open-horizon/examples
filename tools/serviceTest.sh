@@ -18,8 +18,8 @@ timeOut=$3
 START=$SECONDS
 
 ##################################### Check for hzn service log command and OS ###########################
-logCommand=$( hzn service log 2>&1 )
-if [ "$logCommand" == 'hzn: error: expected command but got "log", try --help' ]; then
+hzn service log -h > /dev/null 2>&1
+if [ $? != 0 ]; then
   # Check the operating system
   if [ $(uname -s) == "Darwin" ]; then
       # This is a MAC machine
