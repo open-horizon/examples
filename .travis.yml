@@ -4,11 +4,10 @@ services: docker
 # minmal is an alias for shell 
 language: minimal
 
-# default OS is linux
-dist: xenial
+os: linux 
+dist: bionic
 
-arch:
-  - arm64
+arch: arm64
 
 branches:
   only:
