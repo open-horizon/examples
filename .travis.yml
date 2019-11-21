@@ -59,8 +59,8 @@ script:
   - arches=( amd64 arm arm64 )
   - |
     for arch in "${arches[@]}"; do
-      echo $arch
       export ARCH=$arch
+      echo $ARCH
       for service in "${services[@]}"; do
         if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
           cd $TRAVIS_BUILD_DIR/$service && echo `pwd`; 
