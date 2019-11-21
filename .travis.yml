@@ -60,7 +60,7 @@ script:
         fi
       done
     done
-#  - cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make test
+  - cd $TRAVIS_BUILD_DIR/edge/services/helloworld && make test
   - cd $TRAVIS_BUILD_DIR
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
