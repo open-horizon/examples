@@ -4,7 +4,7 @@ sudo: true
 language: minimal
 
 os: linux 
-arch: arm64 
+arch: amd64 
 dist: xenial
 
 services: docker-xenial
