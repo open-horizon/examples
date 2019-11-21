@@ -59,10 +59,11 @@ script:
   - arches=( amd64 arm arm64 )
   - |
     for arch in "${arches[@]}"; do
-      ARCH=$arch
+      echo $arch
+      export ARCH=$arch
       for service in "${services[@]}"; do
         if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
-          cd $TRAVIS_BUILD_DIR/$service && make test;
+          cd $TRAVIS_BUILD_DIR/$service && echo `pwd`; 
           if [ $? -eq 0 ]; then
             passed=( "${passed[@]}" "$service" )
           fi
@@ -84,6 +85,6 @@ script:
     for service in "${passed[@]}"; do
       if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         echo "Publishing $service..." &&
-        cd $TRAVIS_BUILD_DIR/$service && make publish;
+        cd $TRAVIS_BUILD_DIR/$service && echo `pwd`;
       fi
     done
