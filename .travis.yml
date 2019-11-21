@@ -54,9 +54,9 @@ addons:
 # Build and test the example services that were changed in the PR
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+#  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
-  - arches=( amd64 arm arm64 )
+  - arches=( amd64 arm64 )
   - |
     for arch in "${arches[@]}"; do
       export ARCH=$arch
