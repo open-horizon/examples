@@ -1,13 +1,13 @@
 sudo: true
 
-install: travis_wait 30 mvn install
-
-# minmal is an alias for shell 
-language: minimal
+#install: travis_wait 30 mvn install
 
 os: linux 
 arch: arm64 
 dist: xenial
+
+# minmal is an alias for shell 
+language: minimal
 
 services: docker-xenial
 
