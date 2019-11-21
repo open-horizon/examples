@@ -1,13 +1,12 @@
 sudo: true
-services: docker-xenial
 
 # minmal is an alias for shell 
 language: minimal
 
-os: linux 
 dist: xenial
-
 arch: arm64
+
+services: docker-xenial
 
 branches:
   only:
