@@ -1,5 +1,5 @@
 sudo: true
-services: docker
+services: docker-xenial
 
 # minmal is an alias for shell 
 language: minimal
