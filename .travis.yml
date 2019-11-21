@@ -1,13 +1,13 @@
 sudo: true
 
-#install: travis_wait 30 mvn install
+language: minimal
 
 os: linux 
 arch: arm64 
 dist: xenial
 
-# minmal is an alias for shell 
-language: minimal
+before_install:
+  - sudo apt-get update
 
 services: docker-xenial
 
