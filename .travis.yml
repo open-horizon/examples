@@ -29,6 +29,8 @@ addons:
 env:
   - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
+bundler_args: --retry 5
+
 # Install the hzn command
 addons:
   apt:
