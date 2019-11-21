@@ -29,7 +29,7 @@ addons:
 env:
   - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
 
-# Install the hzn command.
+# Install the hzn command
 addons:
   apt:
     update: true
