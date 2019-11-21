@@ -1,5 +1,7 @@
 sudo: true
 
+install: travis_wait 30 mvn install
+
 # minmal is an alias for shell 
 language: minimal
 
@@ -28,8 +30,6 @@ addons:
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
   - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1
-
-bundler_args: --retry 5
 
 # Install the hzn command
 addons:
