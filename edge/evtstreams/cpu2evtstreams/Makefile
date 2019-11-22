@@ -27,6 +27,12 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=amd64 $(MAKE) test
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
+
 # Run and verify the service
 test: build
 	hzn dev service start -S
@@ -40,11 +46,11 @@ test: build
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 #build-test-publish: build test publish-service   # <- currently test does not always work on mac
-build-test-publish: build publish-service
+build-test-publish: build test publish-service
 
 # Build/test/publish the service to the Horizon Exchange for 3 architectures and publish a deployment pattern for those architectures
 publish-all-arches:

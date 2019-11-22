@@ -20,6 +20,7 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+# Target for travis to test new PRs
 test-all-arches:
 	ARCH=amd64 $(MAKE) test
 	ARCH=arm $(MAKE) test

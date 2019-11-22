@@ -1,7 +1,5 @@
 FROM arm32v6/alpine:latest
 
-#COPY --from=hypriot/rpi-alpine /usr/bin/qemu-arm-static /usr/bin/qemu-arm-static
-
 COPY *.sh /
 WORKDIR /
 CMD /service.sh
