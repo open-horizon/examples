@@ -70,6 +70,6 @@ script:
     for service in "${passed[@]}"; do
       if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
         echo "Publishing $service..." &&
-        cd $TRAVIS_BUILD_DIR/$service && make publish-only;
+        cd $TRAVIS_BUILD_DIR/$service && make publish-all-arches;
       fi
     done

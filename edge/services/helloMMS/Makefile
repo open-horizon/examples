@@ -22,8 +22,8 @@ build-all-arches:
 
 test-all-arches:
 	ARCH=amd64 $(MAKE) test
-	ARCH=arm $(MAKE) build
-	ARCH=arm64 $(MAKE) build
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
 
 # Run and verify the service
 test: build
