@@ -44,7 +44,7 @@ script:
   # run qemu container for cross-compiling on arm 
 #  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams )
-  - arches=( arm64 arm )
+  - arches=( amd64 arm )
   - |
     for arch in "${arches[@]}"; do
       export ARCH=$arch
