@@ -20,6 +20,11 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+test-all-arches:
+	ARCH=amd64 $(MAKE) test
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
+
 # Run and verify the service
 test: build
 	hzn dev service start -S
