@@ -42,9 +42,14 @@ publish-service:
 	hzn exchange service publish -O -f horizon/service.definition.json
 
 publish-pattern:
-	hzn exchange pattern publish -f horizon/pattern.json
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-publish: publish-service-overwrite publish-pattern 
+# Target for travis to publish service and pattern after PR is merged  
+publish: 
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
+	publish-pattern
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service
