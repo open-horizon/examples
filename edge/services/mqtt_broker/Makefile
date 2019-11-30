@@ -4,7 +4,7 @@
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(shell hzn architecture)
 
-# Build the docker image for the current architecture
+# Build the docker image for the current architecture.
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
