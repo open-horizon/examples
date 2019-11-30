@@ -48,6 +48,13 @@ test: build
 publish-service:
 	hzn exchange service publish -O -f horizon/service.definition.json
 
+# Target for travis to publish service and pattern after PR is merged  
+publish:
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
+
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 #build-test-publish: build test publish-service   # <- currently test does not always work on mac
 build-test-publish: build test publish-service
