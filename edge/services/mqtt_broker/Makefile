@@ -8,6 +8,14 @@ export ARCH ?= $(shell hzn architecture)
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=arm $(MAKE) test
+
+# Target for travis to publish service and pattern after PR is merged 
+publish: 
+	ARCH=arm $(MAKE) publish-service
+
 # Create/update the metadata in the exchange for this service
 publish-service:
 	hzn exchange service publish -f horizon/service.definition.json

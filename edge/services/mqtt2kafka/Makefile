@@ -12,6 +12,10 @@ export TIME_OUT:=30
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=arm $(MAKE) test
+
 # new testing method
 test: build
 	hzn dev service start -S
@@ -22,6 +26,10 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test failed! ***"; \
 		failed; }
+
+# Target for travis to publish service and pattern after PR is merged  
+publish:
+	ARCH=arm $(MAKE) publish-service
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
