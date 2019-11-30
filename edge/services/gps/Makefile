@@ -14,9 +14,11 @@ export ARCH ?= $(shell hzn architecture)
 export MATCH:='"latitude":'
 export TIME_OUT:=20
 
+# Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
+# Build the docker image for 3 architectures
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
 	ARCH=arm $(MAKE) build
@@ -42,6 +44,13 @@ test: build
 # Create/update the metadata in the exchange for this service
 publish-service:
 	hzn exchange service publish -O -f horizon/service.definition.json
+
+# Target for travis to publish service and pattern after PR is merged 
+publish: 
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 build-test-publish: build test publish-service
 
