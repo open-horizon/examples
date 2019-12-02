@@ -5,7 +5,7 @@
 export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
-export MATCH:='starting mqtt broker'
+export MATCH:='Starting mqtt broker...'
 export TIME_OUT:=60
 
 # Build the docker image for the current architecture
@@ -25,7 +25,7 @@ test: build
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
 		echo "*** Service test failed! ***"; \
-		false ;}
+		false; }
 
 # Target for travis to publish service and pattern after PR is merged 
 publish: 
