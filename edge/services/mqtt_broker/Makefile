@@ -4,6 +4,10 @@
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(shell hzn architecture)
 
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='starting mqtt broker'
+export TIME_OUT:=60
+
 # Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -11,6 +15,17 @@ build:
 # Target for travis to test new PRs
 test-all-arches:
 	ARCH=arm $(MAKE) test
+
+# Run and verify the service
+test: build
+	hzn dev service start -S
+	@echo 'Testing service...'
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; \
+		false ;}
 
 # Target for travis to publish service and pattern after PR is merged 
 publish: 
