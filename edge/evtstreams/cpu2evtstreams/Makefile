@@ -9,7 +9,6 @@ export ARCH ?= $(shell hzn architecture)
 # Configurable parameters passed to serviceTest.sh in "test" target
 export MATCH:='{"nodeID":'
 export TIME_OUT:=45
-export EVTSTREAMS:=yes
 
 # Build the docker image for the current architecture
 build:

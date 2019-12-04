@@ -6,7 +6,9 @@ os: linux
 arch: amd64 
 dist: xenial
 
-services: docker
+services: 
+  - docker
+  - kafkacat
 
 branches:
   only:
@@ -23,7 +25,6 @@ addons:
     - qemu-user-static
     - binfmt-support
     - dpkg-cross
-    - kafkacat
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
