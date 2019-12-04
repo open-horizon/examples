@@ -7,8 +7,9 @@
 export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
-export MATCH:='echo {"nodeID":'
-export TIME_OUT:=30
+export MATCH:='{"nodeID":'
+export TIME_OUT:=45
+export EVTSTREAMS:=yes
 
 # Build the docker image for the current architecture
 build:
@@ -37,7 +38,7 @@ test-all-arches:
 test: build
 	hzn dev service start -S
 	@echo 'Testing service...'
-	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) $(EVTSTREAMS) && \
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
