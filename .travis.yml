@@ -8,6 +8,9 @@ dist: xenial
 
 services: 
   - docker
+  - librdkafka-dev 
+  - libyajl-dev
+  - kafkacat
 
 branches:
   only:
@@ -24,9 +27,6 @@ addons:
     - qemu-user-static
     - binfmt-support
     - dpkg-cross
-    - librdkafka-dev 
-    - libyajl-dev
-    - kafkacat
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
