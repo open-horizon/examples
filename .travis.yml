@@ -4,7 +4,7 @@ language: minimal
 
 os: linux 
 arch: amd64 
-dist: xenial
+dist: bionic
 
 services: 
   - docker
@@ -39,7 +39,7 @@ addons:
   apt:
     update: true
     sources:
-    - sourceline: deb [arch=amd64,armhf,arm64] http://pkg.bluehorizon.network/linux/ubuntu xenial-updates main
+    - sourceline: deb [arch=amd64,armhf,arm64] http://pkg.bluehorizon.network/linux/ubuntu bionic-updates main
       key_url: 'http://pkg.bluehorizon.network/bluehorizon.network-public.key'
     packages:
     - horizon-cli
