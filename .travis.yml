@@ -14,8 +14,8 @@ branches:
   - master
 
 before_install:
-  - apt-get update
-  - apt-get -y install kafkacat
+  - sudo apt-get update
+  - sudo apt-get -y install kafkacat
 
 #todo: for multi-arch builds see: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation , https://dev.to/zeerorg/build-multi-arch-docker-images-on-travis-5428
 #  We can not use osx so because the docs currently state: "We do not currently support use of Docker on macOS"
