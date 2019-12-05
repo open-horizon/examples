@@ -15,6 +15,7 @@ branches:
 
 before_install:
   - sudo apt-get update
+  - sudo apt-get -y install librdkafka-dev libyajl-dev
   - sudo apt-get -y install kafkacat
 
 #todo: for multi-arch builds see: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation , https://dev.to/zeerorg/build-multi-arch-docker-images-on-travis-5428
@@ -54,7 +55,7 @@ script:
 
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
-        kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -t $EVTSTREAMS_TOPIC &
+        kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -t $EVTSTREAMS_TOPIC &
         cd $TRAVIS_BUILD_DIR/$service && make test-all-arches; 
         if [ $? -eq 0 ]; then
           passed=( "${passed[@]}" "$service" )
