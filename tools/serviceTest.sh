@@ -30,6 +30,7 @@ fi
 $command | while read line; do
     # MATCH was found
     if grep -q -m 1 "$match" <<< "$line"; then
+        echo $line
         exit 0
 
     # TIMEOUT was exceeded
