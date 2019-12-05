@@ -55,7 +55,7 @@ script:
 
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
-        if [[ $service == "evtstreams"* ]]; then 
+        if [[ $service == *"evtstreams"* ]]; then 
           echo "Monitor IBM Event Streams!"
         fi
         cd $TRAVIS_BUILD_DIR/$service && make test-all-arches; 

@@ -6,8 +6,8 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
 export ARCH ?= $(shell hzn architecture)
 
-# Configurable parameters passed to serviceTest.sh in "test" target.
-export MATCH:='{"nodeID":'
+# Configurable parameters passed to serviceTest.sh in "test" target
+export MATCH:='echo {"nodeID":'
 export TIME_OUT:=45
 
 # Build the docker image for the current architecture
