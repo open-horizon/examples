@@ -4,7 +4,7 @@
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(shell hzn architecture)
 
-# Configurable parameters passed to serviceTest.sh in "test" target
+# Configurable parameters passed to serviceTest.sh in "test" target.
 export MATCH:='"cpu":'
 export TIME_OUT:=20
 
