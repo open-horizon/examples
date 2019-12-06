@@ -18,8 +18,7 @@ before_install:
   - sudo apt-get -y install librdkafka-dev libyajl-dev
   - sudo apt-get -y install kafkacat
 
-#todo: for multi-arch builds see: http://wiki.micromint.com/index.php/Debian_ARM_Cross-compile , https://wiki.debian.org/QemuUserEmulation , https://dev.to/zeerorg/build-multi-arch-docker-images-on-travis-5428
-#  We can not use osx so because the docs currently state: "We do not currently support use of Docker on macOS"
+# Install packages needed for docker, and qemu to build multi arch builds 
 addons:
   apt:
     update: true
@@ -32,7 +31,7 @@ addons:
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 EVTSTREAMS_TOPIC=cpu2evtstreams
+  - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 EVTSTREAMS_TOPIC=travis-test-topic
 
 # Install the hzn command
 addons:
@@ -44,7 +43,7 @@ addons:
     packages:
     - horizon-cli
 
-# Build and test the example services that were changed in the PR for all arches
+# Build and test the example services that were changed in the PR for all arches 
 # Note: tools/travis-find determines if the specified service was modified, so we know if we should test it.
 script:
   - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/services/mqtt_broker edge/services/mqtt2kafka edge/services/hotword_detection edge/services/stopword_removal edge/services/audio2text edge/services/text2speech edge/services/voice2audio edge/services/processtext edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams edge/evtstreams/watson_speech2text )
@@ -62,9 +61,14 @@ script:
         cd $TRAVIS_BUILD_DIR/$service && make test-all-arches; 
         if [ $? -eq 0 ]; then
           if [[ $service == *"evtstreams"* ]]; then
-            cat $TRAVIS_BUILD_DIR/output.txt
+            [ -s $TRAVIS_BUILD_DIR/output.txt ] && \
+              { cat $TRAVIS_BUILD_DIR/output.txt; \
+              passed=( "${passed[@]}" "$service" ); } || \
+              { echo "Nothing delivered to Event Streams"; }
+            
+          else
+            passed=( "${passed[@]}" "$service" )
           fi
-          passed=( "${passed[@]}" "$service" )
         fi
       fi
       
