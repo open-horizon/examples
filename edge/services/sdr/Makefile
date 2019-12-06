@@ -35,7 +35,7 @@ test: build
 
 # Create/update the metadata in the exchange for this service
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 # Target for travis to publish service and pattern after PR is merged 
 publish: 
