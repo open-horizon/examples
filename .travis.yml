@@ -61,14 +61,15 @@ script:
         fi
         cd $TRAVIS_BUILD_DIR/$service && make test-all-arches; 
         if [ $? -eq 0 ]; then
+          if [[ $service == *"evtstreams"* ]]; then
+            cat $TRAVIS_BUILD_DIR/output.txt
+          fi
           passed=( "${passed[@]}" "$service" )
         fi
       fi
       
     done
   - cd $TRAVIS_BUILD_DIR
-  - echo `ls`
-  - cat output.txt
 
 # If this is after the PR has been merged into master, and the test was successful, then publish the example
 #todo: publishing the service from travis is a problem, because we need the docker creds, horizon creds, and service private key. Even tho they are encrypted, the travis organization still has access to them.
