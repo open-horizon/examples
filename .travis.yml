@@ -61,10 +61,8 @@ script:
         cd $TRAVIS_BUILD_DIR/$service && make test-all-arches; 
         if [ $? -eq 0 ]; then
           if [[ $service == *"cpu2evtstreams"* ]]; then
-            if grep -Fq "$HZN_DEVICE_ID" $TRAVIS_BUILD_DIR/output.txt; then
-              cat $TRAVIS_BUILD_DIR/output.txt
-              passed=( "${passed[@]}" "$service" )
-            fi
+            cat $TRAVIS_BUILD_DIR/output.txt
+            passed=( "${passed[@]}" "$service" 
           else
             passed=( "${passed[@]}" "$service" )
           fi
