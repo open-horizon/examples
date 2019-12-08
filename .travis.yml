@@ -54,7 +54,7 @@ script:
 
     for service in "${services[@]}"; do
       if git diff --name-only $TRAVIS_COMMIT_RANGE | $TRAVIS_BUILD_DIR/tools/travis-find $service -v; then
-        if [[ $service == *"evtstreams"* ]]; then 
+        if [[ $service == *"cpuevtstreams"* ]]; then 
           echo "Monitor IBM Event Streams!"
           kafkacat -C -c 1 -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -t $EVTSTREAMS_TOPIC > $TRAVIS_BUILD_DIR/output.txt 2>&1 &
         fi
@@ -62,7 +62,7 @@ script:
         if [ $? -eq 0 ]; then
           if [[ $service == *"cpu2evtstreams"* ]]; then
             cat $TRAVIS_BUILD_DIR/output.txt
-            passed=( "${passed[@]}" "$service" 
+            passed=( "${passed[@]}" "$service" )
           else
             passed=( "${passed[@]}" "$service" )
           fi
