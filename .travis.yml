@@ -31,7 +31,7 @@ addons:
 
 # Publish to staging if successful (promotion to prod is a separate process)
 env:
-  - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 HZN_DEVICE_ID=travis-test
+  - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 EVTSTREAMS_TOPIC=cpu2evtstreams HZN_DEVICE_ID=travis-test
 
 # Install the hzn command
 addons:
@@ -60,9 +60,11 @@ script:
         fi
         cd $TRAVIS_BUILD_DIR/$service && make test-all-arches; 
         if [ $? -eq 0 ]; then
-          if [[ $service == *"cpu2evtstreams"* ]]; then
-            cat $TRAVIS_BUILD_DIR/output.txt
-            passed=( "${passed[@]}" "$service" )
+          if [[ $service == *"cpuevtstreams"* ]]; then
+            if grep -Fq "$HZN_DEVICE_ID" $TRAVIS_BUILD_DIR/output.txt; then
+              cat $TRAVIS_BUILD_DIR/output.txt
+              passed=( "${passed[@]}" "$service" )
+            fi
           else
             passed=( "${passed[@]}" "$service" )
           fi
