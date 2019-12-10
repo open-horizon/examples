@@ -41,9 +41,6 @@ publish-service-overwrite:
 # new target for new exchange to run on startup to publish only
 publish-only: publish-service-overwrite
 
-# build, test, and publish
-publish: test publish-service
-
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
 
