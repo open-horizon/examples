@@ -33,7 +33,7 @@ publish:
 
 # Create/update the metadata in the exchange for this service
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 # target for script - overwrite and pull insitead of push docker image
 publish-service-overwrite:
