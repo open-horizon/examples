@@ -6,7 +6,7 @@ export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
 export MATCH:='[OVA]'
-export TIME_OUT:=30
+export TIME_OUT:=60
 
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -27,7 +27,7 @@ test: build
 		failed; }
 
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 # Target for travis to publish service and pattern after PR is merged 
 publish: 
@@ -42,8 +42,6 @@ publish-pattern:
 
 # new target for new exchange to run on startup to publish only
 publish-only: publish-service-overwrite
-
-publish: test publish-service
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
