@@ -4,7 +4,7 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
 export ARCH ?= $(shell hzn architecture)
 
-# Configurable parameters passed to serviceTest.sh in "test" target
+# Configurable parameters passed to serviceTest.sh in "test" target.
 export MATCH:='Will publish to kafka topic:'
 export TIME_OUT:=60
 
