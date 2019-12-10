@@ -30,6 +30,8 @@ addons:
     - binfmt-support
     - dpkg-cross
 
+# Required travis secret env vars for docker, publishing, and event streams:
+# DOCKER_HUB_USER, DOCKER_HUB_PASS, PRIVATE_KEY, PUBLIC_KEY, HZN_EXCHANGE_USER_AUTH, EVTSTREAMS_API_KEY, EVTSTREAMS_BROKER_URL
 # Publish to staging if successful 
 env:
   - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 EVTSTREAMS_TOPIC=cpu2evtstreams HZN_DEVICE_ID=travis-test
