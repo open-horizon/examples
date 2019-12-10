@@ -6,7 +6,7 @@ export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target.
 export MATCH:='Will publish to kafka topic:'
-export TIME_OUT:=120
+export TIME_OUT:=180
 
 # Build the docker image for the current architecture
 build:
