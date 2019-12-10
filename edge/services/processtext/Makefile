@@ -6,7 +6,7 @@ export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
 export MATCH:='[OVA]'
-export TIME_OUT:=30
+export TIME_OUT:=60
 
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
@@ -23,7 +23,7 @@ test: build
 		false; }
 
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 # target for script - overwrite and pull insitead of push docker image
 publish-service-overwrite:
@@ -33,8 +33,6 @@ publish-pattern:
 	hzn exchange pattern publish -f horizon/pattern.json
 
 publish-only: publish-service-overwrite publish-pattern
-
-publish: test publish-service publish-pattern
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
