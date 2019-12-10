@@ -11,7 +11,7 @@ checkrc() {
   fi
 }
 
-
+echo "Starting mqtt2kafka service..."
 if [[ -z "${EVTSTREAMS_API_KEY}" ]]; then
     echo "EVTSTREAMS_API_KEY not set: ${EVTSTREAMS_API_KEY}"
     exit 1
