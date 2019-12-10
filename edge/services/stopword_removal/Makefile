@@ -6,7 +6,7 @@ export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
 export MATCH:='stopwordremoval running...'
-export TIME_OUT:=30
+export TIME_OUT:=60
 
 # Build the docker image for the current architecture
 build:
@@ -29,7 +29,7 @@ test: build
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 # Target for travis to publish service and pattern after PR is merged 
 publish: 
@@ -40,9 +40,6 @@ publish-service-overwrite:
 
 # new target for new exchange to run on startup to publish only
 publish-only: publish-service-overwrite
-
-# build, test, and publish
-publish: test publish-service
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
