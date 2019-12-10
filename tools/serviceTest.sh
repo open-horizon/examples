@@ -23,7 +23,7 @@ if [ $(uname -s) == "Darwin" ]; then
     command="docker logs -f `docker ps -q --filter name=$name`"
 else
     # This is a LINUX machine
-    command="sudo tail -f /var/log/syslog"
+    command="sudo tail -f /var/log/syslog | grep $name[[]"
 fi
 
 ####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
