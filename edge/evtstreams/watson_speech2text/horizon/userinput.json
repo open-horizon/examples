@@ -19,11 +19,21 @@
             "org": "$HZN_ORG_ID",
             "url": "ibm.mqtt2kafka",
             "variables": {
-                "MQTT_WST_EVST": "$MQTT_WST_EVST",
                 "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
                 "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL",
                 "EVTSTREAMS_CERT_ENCODED": "$EVTSTREAMS_CERT_ENCODED",
-                "EVTSTREAMS_TOPIC": "$EVTSTREAMS_TOPIC"
+                "EVTSTREAMS_TOPIC": "$EVTSTREAMS_TOPIC",
+                "MQTT_WST_EVST": "$MQTT_WST_EVST"
+            }
+        },
+        {
+            "org": "IBM",
+            "url": "ibm.mqtt2kafka",
+            "versionRange": "1.0.11",
+            "variables": {
+                "EVTSTREAMS_API_KEY": "",
+                "EVTSTREAMS_BROKER_URL": "",
+                "EVTSTREAMS_TOPIC": ""
             }
         }
     ]
