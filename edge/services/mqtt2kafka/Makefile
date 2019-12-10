@@ -25,7 +25,7 @@ test: build
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
 		echo "*** Service test failed! ***"; \
-		failed; }
+		false; }
 
 # Target for travis to publish service and pattern after PR is merged  
 publish:
