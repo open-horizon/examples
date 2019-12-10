@@ -33,7 +33,7 @@ publish-service:
 # Target for travis to publish service and pattern after PR is merged  
 publish: 
 	ARCH=arm $(MAKE) publish-service
-	hzn exchange pattern publish -f horizon/pattern.json
+	ARCH=arm $(MAKE) publish-pattern
 
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
