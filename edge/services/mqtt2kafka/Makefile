@@ -33,7 +33,7 @@ publish:
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
