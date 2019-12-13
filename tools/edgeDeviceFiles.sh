@@ -12,7 +12,6 @@ DISTRO=$3			# for 64-bit-ARM and x86_64-LINUX 'xenial' instead of 'bionic' for t
 # Check if environment variables for `cloutctl login ...` are set 
 function checkEnvVars () {
 	echo "Checking environment variables..."
-	echo ""
 
 	if [ -z $EDGE_DEVICE ]; then
 		echo "ERROR: Device type not specified."
@@ -35,17 +34,18 @@ function checkEnvVars () {
 		echo "ERROR: PW environment variable is not set. Can not run 'cloudctl login ...'"
 		exit 1 
 	fi
+	echo ""
 }
 
 function cloudLogin () {
 	echo "Connecting to cluster and configure kubectl..."
-	echo ""
 
 	cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
 		echo "ERROR: 'cloudctl login' failed. Check if ICP_URL, USER, and PW environment variables are set correctly."
         exit 1
     fi
+    echo ""
 }
 
 function getClusterName () {
