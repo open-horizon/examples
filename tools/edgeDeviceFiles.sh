@@ -1,28 +1,58 @@
 #!/bin/bash
 
 # This script gathers the necessary information and files to install Horizon and register an edge device
-
-# Usage: ./script.sh <edge-device-type> [-t (to create a tar file containing gathered files)] <distribution>
-
+#
+# Usage: ./script.sh <edge-device-type> [-d <distribution>] [-t]
+#
 # Parameters:
-EDGE_DEVICE=$1 		# the type of edge device planned for install and registration < 32-bit-ARM , 64-bit-ARM , x86_64-LINUX , macOS >
-PACKAGE_FILES=$2 	# if '-t' flag is set, create agentInstallFiles.tar.gz file containing gathered files 
-DISTRO=$3			# for 64-bit-ARM and x86_64-LINUX 'xenial' instead of 'bionic' for the older version of Ubuntu
+#	required: 
+# 		<edge-device-type>		the type of edge device planned for install and registration 
+#								accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-LINUX , macOS >
+#
+#	optional: 	
+#		-t 						create agentInstallFiles.tar.gz file containing gathered files
+#		-d <distribution>		script defaults to 'bionic' build on linux
+#								use this flag with < 64-bit-ARM or x86_64-LINUX > 
+#								to specify `xenial` build 
+#								Flag is ignored with < macOS >
 
-# Check if environment variables for `cloutctl login ...` are set 
+
+# Parse script parameters
+while (( "$#" )); do
+  	case "$1" in
+    	-d) # distribution specified 
+      		if ! ([[ "$2" == "xenial" ]] || [[ "$2" == "bionic" ]]); then
+      			echo "ERROR: Unknown linux distribution type."
+      			exit 1
+      		fi
+      		DISTRO=$2
+      		shift 2
+      		;;
+    	-t) # create tar file
+      		PACKAGE_FILES=$1
+      		shift
+     		;;
+    	*) # based on "Usage" this should be device type 
+			if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]]); then
+				echo "ERROR: Unknown device type."
+				exit 1
+			fi
+      		EDGE_DEVICE=$1
+      		shift
+      		;;
+  	esac
+done
+if [ -z $EDGE_DEVICE ]; then
+	echo "ERROR: Device type not specified."
+	echo "Usage: ./script.sh <edge-device-type> [-t]"
+	exit 1
+fi
+
+ 
 function checkEnvVars () {
 	echo "Checking environment variables..."
 
-	if [ -z $EDGE_DEVICE ]; then
-		echo "ERROR: Device type not specified."
-		echo "Usage: ./script.sh <edge-device-type> [-t]"
-		exit 1
-
-	elif ! ([[ "$EDGE_DEVICE" == "32-bit-ARM" ]] || [[ "$EDGE_DEVICE" == "64-bit-ARM" ]] || [[ "$EDGE_DEVICE" == "x86_64-Linux" ]] || [[ "$EDGE_DEVICE" == "macOS" ]]); then
-		echo "ERROR: Unknown device type."
-		exit 1
-
-	elif [ -z $ICP_URL ]; then
+	if [ -z $ICP_URL ]; then
 		echo "ERROR: ICP_URL environment variable is not set. Can not run 'cloudctl login ...'"
 		exit 1 	
 
@@ -48,6 +78,7 @@ function cloudLogin () {
     echo ""
 }
 
+# Query the IBM Cloud Private cluster name
 function getClusterName () {
 	echo "Getting cluster name..."
 	
@@ -61,6 +92,7 @@ function getClusterName () {
 	echo ""
 }
 
+# Create a IBM Cloud Private platform API key
 function createAPIKey () {
 	echo "Creating IBM Cloud Private platform API key..."
 
@@ -75,6 +107,7 @@ function createAPIKey () {
     echo ""
 }
 
+# With the information from the previous functions, create agent-install.cfg
 function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
 
@@ -95,8 +128,9 @@ EndOfContent
 	echo ""
 }
 
+# Get the IBM Cloud Private self-signed certificate
 function getICPCert () {
-	echo "Getting the IBM Cloud Private self-signed certificate..."
+	echo "Getting the IBM Cloud Private self-signed certificate agent-install.crt..."
 
 	kubectl -n kube-public get secret ibmcloud-cluster-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 --decode > agent-install.crt
 	if [ $? -ne 0 ]; then
@@ -106,10 +140,11 @@ function getICPCert () {
     echo ""
 }
 
+# Locate the IBM Edge Computing for Devices installation content
 function gatherHorizonFiles () {
 	echo "Locating the IBM Edge Computing for Devices installation content for $EDGE_DEVICE device..."
 
-    # Determine edge device type
+    # Determine edge device type, and distribution if applicable 
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
 		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/raspbian/stretch/armhf
 		if [ $? -ne 0 ]; then
@@ -118,14 +153,22 @@ function gatherHorizonFiles () {
     	fi
 
 	elif [[ "$EDGE_DEVICE" == "64-bit-ARM" ]]; then
-		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/arm64
+		if [[ "$DISTRO" == "xenial" ]]; then
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/xenial/arm64
+		else
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/arm64
+		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing for Devices installation content"
         	exit 1
     	fi
 
 	elif [[ "$EDGE_DEVICE" == "x86_64-Linux" ]]; then
-		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/amd64
+		if [[ "$DISTRO" == "xenial" ]]; then
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/xenial/amd64
+		else	
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/amd64
+		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing for Devices installation content"
         	exit 1
@@ -145,6 +188,7 @@ function gatherHorizonFiles () {
 	echo ""
 }
 
+# Download the latest version of the agent-install.sh script and make it executable
 function pullAgentInstallScript () {
 	echo "Pulling agent-install.sh script..."
 
@@ -157,6 +201,7 @@ function pullAgentInstallScript () {
     echo ""
 }
 
+# Create a tar file of the gathered files for batch install 
 function createTarFile () {
 	echo "Creating agentInstallFiles.tar.gz file containing gathered files..."
 
