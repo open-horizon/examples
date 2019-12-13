@@ -145,10 +145,22 @@ function gatherHorizonFiles () {
 	echo ""
 }
 
+function pullAgentInstallScript () {
+	echo "Pulling agent-install.sh script..."
+
+	curl -O https://raw.githubusercontent.com/open-horizon/anax/v3.2.1/agent-install/agent-install.sh && \
+		chmod +x ./agent-install.sh
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Failed to pull agent-install.sh script from the anax repo."
+       	exit 1
+    fi
+    echo ""
+}
+
 function createTarFile () {
 	echo "Creating agentInstallFiles.tar.gz file containing gathered files..."
 
-	tar -czvf agentInstallFiles.tar.gz $(ls agent-install.cfg agent-install.crt *horizon*)
+	tar -czvf agentInstallFiles.tar.gz $(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*)
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create agentInstallFiles.tar.gz file."
        	exit 1
@@ -170,6 +182,8 @@ main () {
 	getICPCert
 
 	gatherHorizonFiles
+
+	pullAgentInstallScript
 
 	if [[ "$PACKAGE_FILES" == "-t" ]]; then
 		createTarFile
