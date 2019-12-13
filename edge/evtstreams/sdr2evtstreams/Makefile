@@ -1,4 +1,4 @@
-# Make targets for building the IBM sample sdr2evtstreams edge service
+# Make targets for building the IBM sample sdr2evtstreams edge service.
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk
@@ -8,7 +8,7 @@ export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
 export MATCH:='found new station:'
-export TIME_OUT:=20
+export TIME_OUT:=45
 
 # Build the docker image for the current architecture
 build: main.go
@@ -27,6 +27,12 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=amd64 $(MAKE) test
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
+
 # new testing method
 test: build
 	hzn dev service start -S
@@ -35,11 +41,19 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		false; }
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
+
+# Target for travis to publish service and pattern after PR is merged 
+publish: 
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service

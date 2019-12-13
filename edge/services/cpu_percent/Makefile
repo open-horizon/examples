@@ -4,7 +4,7 @@
 # To build for an arch different from the current system, set this env var to 1 of the values in the comment above
 export ARCH ?= $(shell hzn architecture)
 
-# Configurable parameters passed to serviceTest.sh in "test" target
+# Configurable parameters passed to serviceTest.sh in "test" target.
 export MATCH:='"cpu":'
 export TIME_OUT:=20
 
@@ -18,6 +18,12 @@ build-all-arches:
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=amd64 $(MAKE) test
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
+
 # new testing method
 test: build
 	hzn dev service start -S
@@ -26,11 +32,18 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		false; }
 
 # Create/update the metadata in the exchange for this service
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
+
+# Target for travis to publish service and pattern after PR is merged  
+publish: 
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
 build-test-publish: build test publish-service

@@ -4,13 +4,17 @@
 # Default ARCH to the architecture of this machines (as horizon/golang describes it). Can be overridden.
 export ARCH ?= $(shell hzn architecture)
 
-# Configurable parameters passed to serviceTest.sh in "test" target
-export MATCH:='Will publish to kafka topic:'
-export TIME_OUT:=30
+# Configurable parameters passed to serviceTest.sh in "test" target.
+export MATCH:='Starting mqtt2kafka service...'
+export TIME_OUT:=60
 
 # Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
+
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=arm $(MAKE) test
 
 # new testing method
 test: build
@@ -20,20 +24,22 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		false; }
+
+# Target for travis to publish service and pattern after PR is merged  
+publish:
+	ARCH=arm $(MAKE) publish-service
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
 
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
 
 # new target for new exchange to run on startup to publish only
 publish-only: publish-service-overwrite
-
-# build, test, and publish
-publish: test publish-service
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :

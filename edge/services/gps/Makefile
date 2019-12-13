@@ -4,7 +4,7 @@
 # When cross-compiling using mac, Dockerfile.arm will fail with golang:1.8, 1.10, 1.11 and 1.12
 # So far golang:1.9 has been the only version to successfully 
 
-# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
+# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them
 -include horizon/.hzn.json.tmp.mk
 
 # Default ARCH to the architecture of this machines (as horizon/golang describes it)
@@ -14,13 +14,21 @@ export ARCH ?= $(shell hzn architecture)
 export MATCH:='"latitude":'
 export TIME_OUT:=20
 
+# Build the docker image for the current architecture
 build:
 	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
+# Build the docker image for 3 architectures
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
+
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=amd64 $(MAKE) test
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
 
 # new testing method
 test: build
@@ -30,11 +38,18 @@ test: build
 		{ hzn dev service stop; \
 		echo "*** Service test succeeded! ***"; } || \
 		{ hzn dev service stop; \
-		echo "*** Service test failed! ***"; }
+		echo "*** Service test failed! ***"; \
+		false; }
 
 # Create/update the metadata in the exchange for this service
 publish-service:
-	hzn exchange service publish -f horizon/service.definition.json
+	hzn exchange service publish -O -f horizon/service.definition.json
+
+# Target for travis to publish service and pattern after PR is merged 
+publish: 
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service
 
 build-test-publish: build test publish-service
 

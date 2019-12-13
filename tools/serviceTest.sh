@@ -40,3 +40,8 @@ $command | while read line; do
     sleep 1;
 
 done
+
+
+
+
+
