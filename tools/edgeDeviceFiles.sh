@@ -50,6 +50,19 @@ fi
 
  
 function checkEnvVars () {
+	echo "Checking system requirements..."
+	cloudctl --help
+	if [ $? -ne 0 ]; then
+		echo "ERROR: cloudctl is not installed."
+        exit 1
+    fi
+
+    kubectl --help
+	if [ $? -ne 0 ]; then
+		echo "ERROR: kubectl is not installed."
+        exit 1
+    fi
+
 	echo "Checking environment variables..."
 
 	if [ -z $ICP_URL ]; then
