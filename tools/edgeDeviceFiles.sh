@@ -216,11 +216,11 @@ function pullAgentInstallScript () {
 
 # Create a tar file of the gathered files for batch install 
 function createTarFile () {
-	echo "Creating agentInstallFiles.tar.gz file containing gathered files..."
+	echo "Creating agentInstallFiles-$EDGE_DEVICE.tar.gz file containing gathered files..."
 
-	tar -czvf agentInstallFiles.tar.gz $(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*)
+	tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz $(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*)
 	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to create agentInstallFiles.tar.gz file."
+		echo "ERROR: Failed to create agentInstallFiles-$EDGE_DEVICE.tar.gz file."
        	exit 1
     fi
 	echo ""
