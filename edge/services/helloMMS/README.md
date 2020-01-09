@@ -81,19 +81,19 @@ sudo docker ps
 
 6. Publish the `input.json` file as a new mms object:
 ```bash
-make publish-mms-object
+hzn mms object publish -m object.json -f input.json
 ```
 
 7. View the published mms object:
 ```bash
-make list-mms-object
+hzn mms object list -t json -i input.json -d
 ```
 
 8. You should now see the output of the hello-mms service change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
 
 9. Delete the published mms object:
 ```bash
-make delete-mms-object
+hzn mms object delete -t json --id input.json
 ```
 
 10. Unregister your edge node (which will also stop the hello-mms service):
