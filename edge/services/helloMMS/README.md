@@ -89,14 +89,14 @@ hzn mms object publish -m object.json -f input.json
 hzn mms object list -t json -i input.json -d
 ```
 
-8. You should now see the output of the hello-mms service change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
+Once the `Object status` changes to `delivered` you will see the output of the hello-mms service change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
 
-9. Delete the published mms object:
+8. Delete the published mms object:
 ```bash
 hzn mms object delete -t json --id input.json
 ```
 
-10. Unregister your edge node (which will also stop the hello-mms service):
+9. Unregister your edge node (which will also stop the hello-mms service):
 
 ```bash
 hzn unregister -f
