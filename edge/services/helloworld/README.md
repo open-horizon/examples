@@ -102,7 +102,7 @@ sudo apt install -y git
 On **macOS**:
 
 ```bash
-brew install git jq
+brew install git 
 ```
 
 2. If you have not done so already, clone this git repo:
