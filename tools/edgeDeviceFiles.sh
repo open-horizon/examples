@@ -21,6 +21,9 @@ Parameters:
 				  use this flag with < 64-bit-ARM or x86_64-Linux > 
 				  to specify \`xenial\` build 
 				  Flag is ignored with < macOS >
+	-k 			include this flag to create a new $USER-API-Key. If this flag is not set, 
+				  the existing api keys will be checked for $USER-API-Key and creation will 
+				  be skipped if it exists
 
 Required Environment Variables:
   ICP_URL			https://<cluster_CA_domain>:<icp-port-number>
@@ -48,6 +51,10 @@ while (( "$#" )); do
       		;;
     	-t) # create tar file
       		PACKAGE_FILES=$1
+      		shift
+     		;;
+     	-k) # create api key 
+      		CREATE_API_KEY=$1
       		shift
      		;;
     	*) # based on "Usage" this should be device type 
@@ -142,12 +149,28 @@ function getClusterName () {
 	echo ""
 }
 
+# Check if an IBM Cloud Private platform API key exists
+function checkAPIKey () {
+	echo "Checking if API key already exists for $USER..."
+	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-API-Key\""
+
+	cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-API-Key"	
+	if [ $? -ne 0 ]; then
+		echo "\"$USER-API-Key\" does not exist. A new one will be created."
+        echo ""
+        CREATE_NEW_KEY=true
+    else 
+    	CREATE_NEW_KEY=false
+    fi
+    echo ""
+}
+
 # Create a IBM Cloud Private platform API key
 function createAPIKey () {
 	echo "Creating IBM Cloud Private platform API key..."
-	echo "cloudctl iam api-key-create \"$EDGE_DEVICE API Key\" -d \"$EDGE_DEVICE API Key\" -f key.txt"
+	echo "cloudctl iam api-key-create \"$USER-API-Key\" -d \"$USER API Key\" -f key.txt"
 
-	cloudctl iam api-key-create "$EDGE_DEVICE API Key" -d "$EDGE_DEVICE API Key" -f key.txt
+	cloudctl iam api-key-create "$USER-API-Key" -d "$USER API Key" -f key.txt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create API Key."
         echo ""
@@ -167,8 +190,6 @@ function createAgentInstallConfig () {
 HZN_EXCHANGE_URL=$ICP_URL/ec-exchange/v1/
 HZN_FSS_CSSURL=$ICP_URL/ec-css/
 HZN_ORG_ID=$CLUSTER_NAME
-HZN_EXCHANGE_USER_AUTH=iamapikey:$API_KEY
-HZN_EXCHANGE_PATTERN=IBM/pattern-ibm.helloworld
 EndOfContent
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create agent-install.cfg file."
@@ -277,6 +298,16 @@ function createTarFile () {
 	echo ""
 }
 
+function printApiKey () {
+	echo ""
+	echo "******************** Your created API Key **********************"
+	echo ""
+	echo "        value: $API_KEY"
+	echo ""
+	echo "*************** Save this value for future use *****************"
+	echo ""
+}
+
 main () {
 	checkEnvVars
 
@@ -284,7 +315,11 @@ main () {
 
 	getClusterName
 
-	createAPIKey
+	checkAPIKey
+
+	if [[ "$CREATE_API_KEY" == "-k" ]] || [[ "$CREATE_NEW_KEY" == "true" ]]; then
+		createAPIKey
+	fi
 
 	createAgentInstallConfig
 
@@ -296,6 +331,10 @@ main () {
 
 	if [[ "$PACKAGE_FILES" == "-t" ]]; then
 		createTarFile
+	fi
+
+	if [[ "$CREATE_API_KEY" == "-k" ]] || [[ "$CREATE_NEW_KEY" == "true" ]]; then
+		printApiKey
 	fi
 }
 main

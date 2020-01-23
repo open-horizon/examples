@@ -91,7 +91,33 @@ The Horizon Policy mechanism offers an alternative to using Deployment Patterns.
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Make sure your Edge Node is not registered by running:
+1. Install `git`:
+
+On **Linux**:
+
+```bash
+sudo apt install -y git
+```
+
+On **macOS**:
+
+```bash
+brew install git jq
+```
+
+2. If you have not done so already, clone this git repo:
+
+```bash
+git clone git@github.com:open-horizon/examples.git
+```
+
+3. Go to the `helloworld` directory:
+
+```bash
+cd examples/edge/services/helloworld
+```
+
+4. Make sure your Edge Node is not registered by running:
 
 ```bash
 hzn unregister -f
@@ -113,13 +139,13 @@ hzn unregister -f
 
 - It provides values for three `properties` (`model`, `serial`, and `configuration`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
 
-2. Register your Node Policy using this command:
+5. Register your Node Policy using this command:
 
 ```bash
 hzn register --policy horizon/node_policy.json
 ```
 
-3. When the registration completes, use the following command to review the Node Policy:
+6. When the registration completes, use the following command to review the Node Policy:
 
 ```bash
 hzn policy list
@@ -145,13 +171,18 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
 
-1. To attach the example Service policy to this service, use the following command (substituting your service name):
+1. List the services in your org:
+```bash
+hzn exchange service list
+```
+
+2. To attach the example Service policy to this service, use the following command (substituting your service name):
 
 ```bash
 hzn exchange service addpolicy -f horizon/service_policy.json <published-helloworld-service-name>
 ```
 
-2. Once that completes, you can look at the results with the following command:
+3. Once that completes, you can look at the results with the following command:
 
 ```bash
 hzn exchange service listpolicy <published-helloworld-service-name>
