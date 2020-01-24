@@ -7,7 +7,7 @@ function scriptUsage () {
 	cat << EOF
 ERROR: No arguments specified.
 
-Usage: ./script.sh <edge-device-type> [-d <distribution>] [-t]
+Usage: ./script.sh <edge-device-type> [-t] [-k] [-d <distribution>]
 
 Parameters:
   required: 
@@ -15,20 +15,20 @@ Parameters:
 				  accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-Linux , macOS >
 
   optional: 	
-	-t 			create agentInstallFiles.tar.gz file containing gathered files
+    -t 				create agentInstallFiles.tar.gz file containing gathered files
 				  If this flag isn't set, the gathered files will be placed in the current directory
-	-d <distribution>	script defaults to 'bionic' build on linux
+    -d 				<distribution>	script defaults to 'bionic' build on linux
 				  use this flag with < 64-bit-ARM or x86_64-Linux > 
 				  to specify \`xenial\` build 
 				  Flag is ignored with < macOS >
-	-k 			include this flag to create a new $USER-API-Key. If this flag is not set, 
+    -k 				include this flag to create a new $USER-API-Key. If this flag is not set, 
 				  the existing api keys will be checked for $USER-API-Key and creation will 
 				  be skipped if it exists
 
 Required Environment Variables:
-  ICP_URL			https://<cluster_CA_domain>:<icp-port-number>
-  USER 				your-icp-admin-user
-  PW				your-icp-admin-userour-icp-admin-password
+    CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
+    USER 			your-cluster-admin-user
+    PW				your-cluster-admin-password
 
 EOF
 	exit 1
@@ -96,25 +96,25 @@ function checkEnvVars () {
 
 	echo "Checking environment variables..."
 
-	if [ -z $ICP_URL ]; then
-		echo "ERROR: ICP_URL environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - ICP_URL=https://<cluster_CA_domain>:<icp-port-number>"
+	if [ -z $CLUSTER_URL ]; then
+		echo "ERROR: CLUSTER_URL environment variable is not set. Can not run 'cloudctl login ...'"
+		echo " - CLUSTER_URL=https://<cluster_CA_domain>:<port-number>"
 		echo ""
 		exit 1 	
 
 	elif [ -z $USER ]; then
 		echo "ERROR: USER environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - USER=<your-icp-admin-user>"
+		echo " - USER=<your-cluster-admin-user>"
 		echo ""
 		exit 1 
 
 	elif [ -z $PW ]; then
 		echo "ERROR: PW environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - PW=<your-icp-admin-password>"
+		echo " - PW=<your-cluster-admin-password>"
 		echo ""
 		exit 1 
 	fi
-	echo " - ICP_URL set"
+	echo " - CLUSTER_URL set"
 	echo " - USER set"
 	echo " - PW set"
 	echo ""
@@ -122,18 +122,18 @@ function checkEnvVars () {
 
 function cloudLogin () {
 	echo "Connecting to cluster and configure kubectl..."
-	echo "cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
+	echo "cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
 
-	cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
+	cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
-		echo "ERROR: 'cloudctl login' failed. Check if ICP_URL, USER, and PW environment variables are set correctly."
+		echo "ERROR: 'cloudctl login' failed. Check if CLUSTER_URL, USER, and PW environment variables are set correctly."
         echo ""
         exit 1
     fi
     echo ""
 }
 
-# Query the IBM Cloud Private cluster name
+# Query the IBM Cloud Pak cluster name
 function getClusterName () {
 	echo "Getting cluster name..."
 	echo "kubectl get configmap -n kube-public ibmcloud-cluster-info -o jsonpath=\"{.data.cluster_name}\""
@@ -149,7 +149,7 @@ function getClusterName () {
 	echo ""
 }
 
-# Check if an IBM Cloud Private platform API key exists
+# Check if an IBM Cloud Pak platform API key exists
 function checkAPIKey () {
 	echo "Checking if API key already exists for $USER..."
 	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-API-Key\""
@@ -165,9 +165,9 @@ function checkAPIKey () {
     echo ""
 }
 
-# Create a IBM Cloud Private platform API key
+# Create a IBM Cloud Pak platform API key
 function createAPIKey () {
-	echo "Creating IBM Cloud Private platform API key..."
+	echo "Creating IBM Cloud Pak platform API key..."
 	echo "cloudctl iam api-key-create \"$USER-API-Key\" -d \"$USER API Key\" -f key.txt"
 
 	cloudctl iam api-key-create "$USER-API-Key" -d "$USER API Key" -f key.txt
@@ -187,8 +187,8 @@ function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
 
 	cat << EndOfContent > agent-install.cfg
-HZN_EXCHANGE_URL=$ICP_URL/ec-exchange/v1/
-HZN_FSS_CSSURL=$ICP_URL/ec-css/
+HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
+HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
 HZN_ORG_ID=$CLUSTER_NAME
 EndOfContent
 	if [ $? -ne 0 ]; then
@@ -202,14 +202,14 @@ EndOfContent
 	echo ""
 }
 
-# Get the IBM Cloud Private self-signed certificate
-function getICPCert () {
-	echo "Getting the IBM Cloud Private self-signed certificate agent-install.crt..."
+# Get the IBM Cloud Pak self-signed certificate
+function getClusterCert () {
+	echo "Getting the IBM Cloud Pak self-signed certificate agent-install.crt..."
 	echo "kubectl -n kube-public get secret ibmcloud-cluster-ca-cert -o jsonpath=\"{.data['ca\.crt']}\" | base64 --decode > agent-install.crt"
 
 	kubectl -n kube-public get secret ibmcloud-cluster-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 --decode > agent-install.crt
 	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to get the IBM Cloud Private self-signed certificate"
+		echo "ERROR: Failed to get the IBM Cloud Pak self-signed certificate"
         echo ""
         exit 1
     fi
@@ -218,14 +218,14 @@ function getICPCert () {
 
 # Locate the IBM Edge Computing for Devices installation content
 function gatherHorizonFiles () {
-	echo "Locating the IBM Edge Computing for Devices installation content for $EDGE_DEVICE device..."
+	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
 	echo "tar --strip-components n -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/..."
 
     # Determine edge device type, and distribution if applicable 
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
 		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/raspbian/stretch/armhf
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
         	exit 1
     	fi
@@ -237,7 +237,7 @@ function gatherHorizonFiles () {
 			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/arm64
 		fi
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
         	exit 1
     	fi
@@ -249,7 +249,7 @@ function gatherHorizonFiles () {
 			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/amd64
 		fi
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
         	exit 1
     	fi
@@ -257,7 +257,7 @@ function gatherHorizonFiles () {
 	elif [[ "$EDGE_DEVICE" == "macOS" ]]; then
 		tar --strip-components 3 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/macos
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
         	exit 1
     	fi
@@ -274,7 +274,7 @@ function gatherHorizonFiles () {
 function pullAgentInstallScript () {
 	echo "Pulling agent-install.sh script..."
 
-	curl -O https://raw.githubusercontent.com/open-horizon/anax/v3.2.1/agent-install/agent-install.sh && \
+	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-install.sh && \
 		chmod +x ./agent-install.sh
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to pull agent-install.sh script from the anax repo."
@@ -323,7 +323,7 @@ main () {
 
 	createAgentInstallConfig
 
-	getICPCert
+	getClusterCert
 
 	gatherHorizonFiles
 
