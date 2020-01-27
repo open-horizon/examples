@@ -159,8 +159,8 @@ function checkAPIKey () {
 	echo "Checking if API key already exists for $USER..."
 	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-API-Key\""
 
-	cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-API-Key"	
-	if [ $? -ne 0 ]; then
+	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-API-Key")
+	if [ -z $KEY ]; then
 		echo "\"$USER-API-Key\" does not exist. A new one will be created."
         echo ""
         CREATE_NEW_KEY=true
