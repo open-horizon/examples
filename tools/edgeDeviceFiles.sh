@@ -7,7 +7,7 @@ function scriptUsage () {
 	cat << EOF
 ERROR: No arguments specified.
 
-Usage: ./script.sh <edge-device-type> [-t] [-k] [-d <distribution>]
+Usage: ./script.sh <edge-device-type> [-t] [-k] [-d <distribution>] [-f <directory>]
 
 Parameters:
   required: 
@@ -24,6 +24,7 @@ Parameters:
     -k 				include this flag to create a new $USER-API-Key. If this flag is not set, 
 				  the existing api keys will be checked for $USER-API-Key and creation will 
 				  be skipped if it exists
+    -f 				<directory> to move gathered files to. Default is current directory
 
 Required Environment Variables:
     CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
@@ -57,6 +58,10 @@ while (( "$#" )); do
       		CREATE_API_KEY=$1
       		shift
      		;;
+     	-f) # directory to move gathered files to
+			DIR=$2
+      		shift 2
+      		;;
     	*) # based on "Usage" this should be device type 
 			if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]]); then
 				echo "ERROR: Unknown device type."
@@ -298,6 +303,28 @@ function createTarFile () {
 	echo ""
 }
 
+# Move gathered files to specified -f directory 
+function moveFiles () {
+	echo "Moving files to $DIR..."
+	if ! [[ -d "$DIRECTORY" ]]; then
+    	echo "$DIR does not exist, creating it..."
+    	mkdir $DIR
+	fi
+
+	mv $(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*) $DIR
+	if [ -f key.txt ]; then
+    	mv key.txt $DIR
+	fi
+
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Failed to move files to $DIR."
+       	echo ""
+       	exit 1
+    fi
+    echo ""
+}
+
+# If an API Key was created, print it out
 function printApiKey () {
 	echo ""
 	echo "******************** Your created API Key **********************"
@@ -318,7 +345,7 @@ main () {
 	checkAPIKey
 
 	if [[ "$CREATE_API_KEY" == "-k" ]] || [[ "$CREATE_NEW_KEY" == "true" ]]; then
-		createAPIKey
+		echo "createAPIKey"
 	fi
 
 	createAgentInstallConfig
@@ -333,9 +360,14 @@ main () {
 		createTarFile
 	fi
 
+	if ! [ -z $DIR ]; then
+		moveFiles
+	fi
+
 	if [[ "$CREATE_API_KEY" == "-k" ]] || [[ "$CREATE_NEW_KEY" == "true" ]]; then
 		printApiKey
 	fi
+
 }
 main
 
