@@ -7,7 +7,7 @@ function scriptUsage () {
 	cat << EOF
 ERROR: No arguments specified.
 
-Usage: ./script.sh <edge-device-type> [-t] [-k] [-d <distribution>] [-f <directory>]
+Usage: ./edgeDeviceFiles.sh <edge-device-type> [-t] [-k] [-d <distribution>] [-f <directory>]
 
 Parameters:
   required: 
@@ -345,7 +345,7 @@ main () {
 	checkAPIKey
 
 	if [[ "$CREATE_API_KEY" == "-k" ]] || [[ "$CREATE_NEW_KEY" == "true" ]]; then
-		echo "createAPIKey"
+		createAPIKey
 	fi
 
 	createAgentInstallConfig
