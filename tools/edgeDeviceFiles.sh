@@ -306,7 +306,7 @@ function createTarFile () {
 # Move gathered files to specified -f directory 
 function moveFiles () {
 	echo "Moving files to $DIR..."
-	if ! [[ -d "$DIRECTORY" ]]; then
+	if ! [[ -d "$DIR" ]]; then
     	echo "$DIR does not exist, creating it..."
     	mkdir $DIR
 	fi
