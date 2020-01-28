@@ -27,7 +27,7 @@ Parameters:
     -f 				<directory> to move gathered files to. Default is current directory
 
 Required Environment Variables:
-    ICP_URL			https://<cluster_CA_domain>:<port-number>
+    CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
     USER 			your-cluster-admin-user
     PW				your-cluster-admin-password
 
@@ -101,9 +101,9 @@ function checkEnvVars () {
 
 	echo "Checking environment variables..."
 
-	if [ -z $ICP_URL ]; then
-		echo "ERROR: ICP_URL environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - ICP_URL=https://<cluster_CA_domain>:<port-number>"
+	if [ -z $CLUSTER_URL ]; then
+		echo "ERROR: CLUSTER_URL environment variable is not set. Can not run 'cloudctl login ...'"
+		echo " - CLUSTER_URL=https://<cluster_CA_domain>:<port-number>"
 		echo ""
 		exit 1 	
 
@@ -119,7 +119,7 @@ function checkEnvVars () {
 		echo ""
 		exit 1 
 	fi
-	echo " - ICP_URL set"
+	echo " - CLUSTER_URL set"
 	echo " - USER set"
 	echo " - PW set"
 	echo ""
@@ -127,11 +127,11 @@ function checkEnvVars () {
 
 function cloudLogin () {
 	echo "Connecting to cluster and configure kubectl..."
-	echo "cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
+	echo "cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
 
-	cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
+	cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
-		echo "ERROR: 'cloudctl login' failed. Check if ICP_URL, USER, and PW environment variables are set correctly."
+		echo "ERROR: 'cloudctl login' failed. Check if CLUSTER_URL, USER, and PW environment variables are set correctly."
         echo ""
         exit 1
     fi
@@ -192,8 +192,8 @@ function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
 
 	cat << EndOfContent > agent-install.cfg
-HZN_EXCHANGE_URL=$ICP_URL/ec-exchange/v1/
-HZN_FSS_CSSURL=$ICP_URL/ec-css/
+HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
+HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
 HZN_ORG_ID=$CLUSTER_NAME
 EndOfContent
 	if [ $? -ne 0 ]; then
