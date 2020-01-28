@@ -21,13 +21,13 @@ Parameters:
 				  use this flag with < 64-bit-ARM or x86_64-Linux > 
 				  to specify \`xenial\` build 
 				  Flag is ignored with < macOS >
-    -k 				include this flag to create a new $USER-API-Key. If this flag is not set, 
-				  the existing api keys will be checked for $USER-API-Key and creation will 
+    -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set, 
+				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will 
 				  be skipped if it exists
     -f 				<directory> to move gathered files to. Default is current directory
 
 Required Environment Variables:
-    CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
+    ICP_URL			https://<cluster_CA_domain>:<port-number>
     USER 			your-cluster-admin-user
     PW				your-cluster-admin-password
 
@@ -101,9 +101,9 @@ function checkEnvVars () {
 
 	echo "Checking environment variables..."
 
-	if [ -z $CLUSTER_URL ]; then
-		echo "ERROR: CLUSTER_URL environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - CLUSTER_URL=https://<cluster_CA_domain>:<port-number>"
+	if [ -z $ICP_URL ]; then
+		echo "ERROR: ICP_URL environment variable is not set. Can not run 'cloudctl login ...'"
+		echo " - ICP_URL=https://<cluster_CA_domain>:<port-number>"
 		echo ""
 		exit 1 	
 
@@ -119,7 +119,7 @@ function checkEnvVars () {
 		echo ""
 		exit 1 
 	fi
-	echo " - CLUSTER_URL set"
+	echo " - ICP_URL set"
 	echo " - USER set"
 	echo " - PW set"
 	echo ""
@@ -127,11 +127,11 @@ function checkEnvVars () {
 
 function cloudLogin () {
 	echo "Connecting to cluster and configure kubectl..."
-	echo "cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
+	echo "cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
 
-	cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
+	cloudctl login -a $ICP_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
-		echo "ERROR: 'cloudctl login' failed. Check if CLUSTER_URL, USER, and PW environment variables are set correctly."
+		echo "ERROR: 'cloudctl login' failed. Check if ICP_URL, USER, and PW environment variables are set correctly."
         echo ""
         exit 1
     fi
@@ -156,12 +156,12 @@ function getClusterName () {
 
 # Check if an IBM Cloud Pak platform API key exists
 function checkAPIKey () {
-	echo "Checking if API key already exists for $USER..."
-	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-API-Key\""
+	echo "Checking if USER-Edge-Device-API-Key already exists..."
+	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-Edge-Device-API-Key\""
 
-	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-API-Key")
+	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-Edge-Device-API-Key")
 	if [ -z $KEY ]; then
-		echo "\"$USER-API-Key\" does not exist. A new one will be created."
+		echo "\"$USER-Edge-Device-API-Key\" does not exist. A new one will be created."
         echo ""
         CREATE_NEW_KEY=true
     else 
@@ -173,9 +173,9 @@ function checkAPIKey () {
 # Create a IBM Cloud Pak platform API key
 function createAPIKey () {
 	echo "Creating IBM Cloud Pak platform API key..."
-	echo "cloudctl iam api-key-create \"$USER-API-Key\" -d \"$USER API Key\" -f key.txt"
+	echo "cloudctl iam api-key-create \"$USER-Edge-Device-API-Key\" -d \"$USER-Edge-Device-API-Key\" -f key.txt"
 
-	cloudctl iam api-key-create "$USER-API-Key" -d "$USER API Key" -f key.txt
+	cloudctl iam api-key-create "$USER-Edge-Device-API-Key" -d "$USER-Edge-Device-API-Key" -f key.txt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create API Key."
         echo ""
@@ -183,7 +183,7 @@ function createAPIKey () {
     fi
 
     API_KEY=$(cat key.txt | jq -r '.apikey')
-    echo " - API Key: $API_KEY"
+    echo " - $USER-Edge-Device-API-Key: $API_KEY"
     echo ""
 }
 
@@ -192,8 +192,8 @@ function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
 
 	cat << EndOfContent > agent-install.cfg
-HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
-HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
+HZN_EXCHANGE_URL=$ICP_URL/ec-exchange/v1/
+HZN_FSS_CSSURL=$ICP_URL/ec-css/
 HZN_ORG_ID=$CLUSTER_NAME
 EndOfContent
 	if [ $? -ne 0 ]; then
@@ -329,7 +329,7 @@ function printApiKey () {
 	echo ""
 	echo "******************** Your created API Key **********************"
 	echo ""
-	echo "        value: $API_KEY"
+	echo "     $USER-Edge-Device-API-Key: $API_KEY"
 	echo ""
 	echo "*************** Save this value for future use *****************"
 	echo ""
