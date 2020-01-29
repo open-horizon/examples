@@ -162,9 +162,9 @@ function checkAPIKey () {
 	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-Edge-Device-API-Key")
 	if [ -z $KEY ]; then
 		echo "\"$USER-Edge-Device-API-Key\" does not exist. A new one will be created."
-        echo ""
         CREATE_NEW_KEY=true
     else 
+    	echo "\"$USER-Edge-Device-API-Key\" already exists. Skipping key creation."
     	CREATE_NEW_KEY=false
     fi
     echo ""
@@ -212,7 +212,7 @@ function getClusterCert () {
 	echo "Getting the IBM Cloud Pak self-signed certificate agent-install.crt..."
 	echo "kubectl -n kube-public get secret ibmcloud-cluster-ca-cert -o jsonpath=\"{.data['ca\.crt']}\" | base64 --decode > agent-install.crt"
 
-	kubectl -n kube-public get secret ibmcloud-cluster-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 --decode > agent-install.crt
+	kubectl --namespace kube-system get secret cluster-ca-cert -o jsonpath="{.data['tls\.crt']}" | base64 --decode > agent-install.crt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to get the IBM Cloud Pak self-signed certificate"
         echo ""
@@ -224,11 +224,11 @@ function getClusterCert () {
 # Locate the IBM Edge Computing for Devices installation content
 function gatherHorizonFiles () {
 	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
-	echo "tar --strip-components n -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/..."
+	echo "tar --strip-components n -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/..."
 
     # Determine edge device type, and distribution if applicable 
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
-		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/raspbian/stretch/armhf
+		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/raspbian/stretch/armhf
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
@@ -237,9 +237,9 @@ function gatherHorizonFiles () {
 
 	elif [[ "$EDGE_DEVICE" == "64-bit-ARM" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/xenial/arm64
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/xenial/arm64
 		else
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/arm64
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/bionic/arm64
 		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
@@ -249,9 +249,9 @@ function gatherHorizonFiles () {
 
 	elif [[ "$EDGE_DEVICE" == "x86_64-Linux" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/xenial/amd64
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/xenial/amd64
 		else	
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/linux/ubuntu/bionic/amd64
+			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/bionic/amd64
 		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
@@ -260,7 +260,7 @@ function gatherHorizonFiles () {
     	fi
 
 	elif [[ "$EDGE_DEVICE" == "macOS" ]]; then
-		tar --strip-components 3 -zxvf ibm-edge-computing-x86_64-3.2.1.1.tar.gz ibm-edge-computing-x86_64-3.2.1.1/horizon-edge-packages/macos
+		tar --strip-components 3 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/macos
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
@@ -327,11 +327,11 @@ function moveFiles () {
 # If an API Key was created, print it out
 function printApiKey () {
 	echo ""
-	echo "******************** Your created API Key **********************"
+	echo "************************** Your created API Key ******************************"
 	echo ""
 	echo "     $USER-Edge-Device-API-Key: $API_KEY"
 	echo ""
-	echo "*************** Save this value for future use *****************"
+	echo "********************* Save this value for future use *************************"
 	echo ""
 }
 
