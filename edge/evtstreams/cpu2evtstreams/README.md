@@ -74,7 +74,7 @@ sudo docker ps
 
 5. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
   ```
-  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t $EVTSTREAMS_TOPIC
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
   ```
 6. See the cpu2evtstreams service output:
 
@@ -107,7 +107,33 @@ hzn unregister -f
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Make sure your Edge Node is not registered by running:
+1. Install `git`:
+
+On **Linux**:
+
+```bash
+sudo apt install -y git
+```
+
+On **macOS**:
+
+```bash
+brew install git
+```
+
+2. If you have not done so already, clone this git repo:
+
+```bash
+git clone git@github.com:open-horizon/examples.git
+```
+
+3. Go to the `cpu2evtstreams` directory:
+
+```bash
+cd examples/edge/evtstreams/cpu2evtstreams
+```
+
+4. Make sure your Edge Node is not registered by running:
 
 ```
 hzn unregister -f
@@ -128,18 +154,18 @@ hzn unregister -f
 
 - It provides values for three `properties` (`model`, `year`, and `os`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
 
-2. Get the user input file for the cpu2evtstreams sample:
+5. Get the user input file for the cpu2evtstreams sample:
 ```
 wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
 
-3. Register your Node Policy using this command:
+6. Register your Node Policy using this command:
 
 ```
 hzn register --policy horizon/node_policy.json -f userinput.json
 ```
 
-4. When the registration completes, use the following command to review the Node Policy:
+7. When the registration completes, use the following command to review the Node Policy:
 
 ```
 hzn policy list
@@ -165,13 +191,17 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Mac` or `Pi3B `. If you recall the Node Policy we used above, the model `property` was set to `Mac`, so this Service should be compatible with our Edge Node.
 
-1. To attach the example Service policy to this service, use the following command (substituting your service name):
+1. List the services in your org:
+```bash
+hzn exchange service list
+```
+2. To attach the example Service policy to this service, use the following command (substituting your service name):
 
 ```
 hzn exchange service addpolicy -f horizon/service_policy.json <published-cpu2evtstreams-service-name>
 ```
 
-2. Once that completes, you can look at the results with the following command:
+3. Once that completes, you can look at the results with the following command:
 
 ```
 hzn exchange service listpolicy <published-cpu2evtstreams-service-name>
