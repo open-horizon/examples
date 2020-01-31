@@ -10,19 +10,19 @@ ERROR: No arguments specified.
 Usage: ./edgeDeviceFiles.sh <edge-device-type> [-t] [-k] [-d <distribution>] [-f <directory>]
 
 Parameters:
-  required: 
-    <edge-device-type>		the type of edge device planned for install and registration 
+  required:
+    <edge-device-type>		the type of edge device planned for install and registration
 				  accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-Linux , macOS >
 
-  optional: 	
+  optional:
     -t 				create agentInstallFiles.tar.gz file containing gathered files
 				  If this flag isn't set, the gathered files will be placed in the current directory
     -d 				<distribution>	script defaults to 'bionic' build on linux
-				  use this flag with < 64-bit-ARM or x86_64-Linux > 
-				  to specify \`xenial\` build 
+				  use this flag with < 64-bit-ARM or x86_64-Linux >
+				  to specify \`xenial\` build
 				  Flag is ignored with < macOS >
-    -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set, 
-				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will 
+    -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set,
+				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will
 				  be skipped if it exists
     -f 				<directory> to move gathered files to. Default is current directory
 
@@ -41,7 +41,7 @@ fi
 echo "Checking script parameters..."
 while (( "$#" )); do
   	case "$1" in
-    	-d) # distribution specified 
+    	-d) # distribution specified
       		if ! ([[ "$2" == "xenial" ]] || [[ "$2" == "bionic" ]]); then
       			echo "ERROR: Unknown linux distribution type."
       			echo ""
@@ -54,7 +54,7 @@ while (( "$#" )); do
       		PACKAGE_FILES=$1
       		shift
      		;;
-     	-k) # create api key 
+     	-k) # create api key
       		CREATE_API_KEY=$1
       		shift
      		;;
@@ -62,7 +62,7 @@ while (( "$#" )); do
 			DIR=$2
       		shift 2
       		;;
-    	*) # based on "Usage" this should be device type 
+    	*) # based on "Usage" this should be device type
 			if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]]); then
 				echo "ERROR: Unknown device type."
 				echo ""
@@ -79,7 +79,7 @@ fi
 echo " - valid parameters"
 echo ""
 
- 
+
 function checkEnvVars () {
 	echo "Checking system requirements..."
 	cloudctl --help > /dev/null 2>&1
@@ -105,19 +105,19 @@ function checkEnvVars () {
 		echo "ERROR: CLUSTER_URL environment variable is not set. Can not run 'cloudctl login ...'"
 		echo " - CLUSTER_URL=https://<cluster_CA_domain>:<port-number>"
 		echo ""
-		exit 1 	
+		exit 1
 
 	elif [ -z $USER ]; then
 		echo "ERROR: USER environment variable is not set. Can not run 'cloudctl login ...'"
 		echo " - USER=<your-cluster-admin-user>"
 		echo ""
-		exit 1 
+		exit 1
 
 	elif [ -z $PW ]; then
 		echo "ERROR: PW environment variable is not set. Can not run 'cloudctl login ...'"
 		echo " - PW=<your-cluster-admin-password>"
 		echo ""
-		exit 1 
+		exit 1
 	fi
 	echo " - CLUSTER_URL set"
 	echo " - USER set"
@@ -156,14 +156,14 @@ function getClusterName () {
 
 # Check if an IBM Cloud Pak platform API key exists
 function checkAPIKey () {
-	echo "Checking if USER-Edge-Device-API-Key already exists..."
+	echo "Checking if \"$USER-Edge-Device-API-Key\" already exists..."
 	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-Edge-Device-API-Key\""
 
 	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-Edge-Device-API-Key")
 	if [ -z $KEY ]; then
 		echo "\"$USER-Edge-Device-API-Key\" does not exist. A new one will be created."
         CREATE_NEW_KEY=true
-    else 
+    else
     	echo "\"$USER-Edge-Device-API-Key\" already exists. Skipping key creation."
     	CREATE_NEW_KEY=false
     fi
@@ -226,7 +226,7 @@ function gatherHorizonFiles () {
 	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
 	echo "tar --strip-components n -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/..."
 
-    # Determine edge device type, and distribution if applicable 
+    # Determine edge device type, and distribution if applicable
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
 		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/raspbian/stretch/armhf
 		if [ $? -ne 0 ]; then
@@ -250,7 +250,7 @@ function gatherHorizonFiles () {
 	elif [[ "$EDGE_DEVICE" == "x86_64-Linux" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
 			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/xenial/amd64
-		else	
+		else
 			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/bionic/amd64
 		fi
 		if [ $? -ne 0 ]; then
@@ -289,7 +289,7 @@ function pullAgentInstallScript () {
     echo ""
 }
 
-# Create a tar file of the gathered files for batch install 
+# Create a tar file of the gathered files for batch install
 function createTarFile () {
 	echo "Creating agentInstallFiles-$EDGE_DEVICE.tar.gz file containing gathered files..."
 	echo "tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz \$(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*)"
@@ -303,7 +303,7 @@ function createTarFile () {
 	echo ""
 }
 
-# Move gathered files to specified -f directory 
+# Move gathered files to specified -f directory
 function moveFiles () {
 	echo "Moving files to $DIR..."
 	if ! [[ -d "$DIR" ]]; then
