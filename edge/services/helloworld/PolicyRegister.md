@@ -1,7 +1,5 @@
 # Using the Hello World Example Edge Service with Deployment Policy
 
-Follow the steps in this page to create your first simple Horizon edge service.
-
 ## Preconditions for Developing Your Own Service
 
 1. If you have not already done so, complete the steps in these sections:
