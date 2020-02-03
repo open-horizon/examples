@@ -47,41 +47,34 @@ hzn exchange node confirm
 ## <a id=using-sdr2evtstreams-pattern></a> Using the SDR To IBM Event Streams Edge Service with Deployment Pattern
 
 1. Get the user input file for the sdr2evtstreams sample:
-```
+```bash
 wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/sdr2evtstreams/horizon/userinput.json
 ```
 2. Register your edge node with Horizon to use the sdr2evtstreams pattern:
-```
+```bash
 hzn register -p IBM/pattern-ibm.sdr2evtstreams -f userinput.json
 ```
 3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
-```
+```bash
 hzn agreement list
 ```
 4. Once the agreement is made, list the docker container edge service that has been started as a result:
-```
+```bash
 sudo docker ps
 ```
 
 5. On any machine, install `kafkacat`, then subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
-```
+```bash
 kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X -t $EVTSTREAMS_TOPIC
 ```
 
 6. See the sdr2evtstreams service output:
-
-	on **Linux**:
-	```
-	tail -f /var/log/syslog | grep sdr2evtstreams[[]
-	```
-
-	on **Mac**:
-	```
-	docker logs -f $(docker ps -q --filter name=sdr2evtstreams)
-	``` 
+```bash
+hzn service log -f ibm.sdr2evtstreams
+```
 
 7. Unregister your edge node, stopping the sdr2evtstreams service:
-```
+```bash
 hzn unregister -f
 ```
 
