@@ -45,10 +45,10 @@ hzn exchange node confirm
 6. Deploy (or get access to) an instance of IBM Event Streams that the cpu2evtstreams sample can send its data to. Ensure that the topic `cpu2evtstreams` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
     - `EVTSTREAMS_API_KEY`
     - `EVTSTREAMS_BROKER_URL`
-    - `EVTSTREAMS_CERT_ENCODED` **(if using IBM Event Streams in IBM Cloud Private)** due to differences in the base64 command set this variable as follows based on the platform you're using:
+    - `EVTSTREAMS_CERT_ENCODED` **(if using IBM Event Streams in IBM OpenShift Cloud Private)** due to differences in the base64 command set this variable as follows based on the platform you're using:
         - on **Linux**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64 -w 0)”`
         - on **Mac**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64)”`
-    - `EVTSTREAMS_CERT_FILE` **(if using IBM Event Streams in IBM Cloud Private)**
+    - `EVTSTREAMS_CERT_FILE` **(if using IBM Event Streams in IBM OpenShift Cloud Private)**
 
 
 ## <a id=using-cpu2evtstreams-pattern></a> Using the CPU To IBM Event Streams Edge Service with Deployment Pattern
