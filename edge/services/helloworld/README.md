@@ -59,17 +59,9 @@ sudo docker ps
 
 4. See the helloworld service output:
 
-  on **Linux**:
-
-  ```bash
-  sudo tail -f /var/log/syslog | grep helloworld[[]
-  ```
-
-  on **Mac**:
-
-  ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=helloworld)
-  ```
+``` bash
+hzn service log -f ibm.helloworld
+```
 
 5. Unregister your edge node (which will also stop the myhelloworld service):
 
@@ -269,17 +261,9 @@ sudo docker ps
 
 5. See the helloworld service output:
 
-  on **Linux**:
-
-  ```bash
-  sudo tail -f /var/log/syslog | grep helloworld[[]
-  ```
-
-  on **Mac**:
-
-  ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=helloworld)
-  ```
+``` bash
+hzn service log -f ibm.helloworld
+```
 
 6. Unregister your edge node (which will also stop the myhelloworld service):
 
