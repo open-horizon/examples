@@ -1,8 +1,6 @@
 # Using the CPU To IBM Event Streams Service with Deployment Policy
 
-Follow the steps in this page to create your own CPU To IBM Event Streams Edge Service.
-
-## Preconditions for Developing Your Own Service
+Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service using deployment policy.
 
 1. If you have not already done so, complete the steps in these sections:
 
