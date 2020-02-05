@@ -93,17 +93,9 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
 7. See the docker container running and look at the output:
 
-  on **Linux**:
-
-  ```bash
-  sudo tail -f /var/log/syslog | grep myhelloworld[[]
-  ```
-
-  on **Mac**:
-
-  ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=myhelloworld)
-  ```
+``` bash
+hzn service log -f myhelloworld
+```
 
 8. Stop the service:
 
@@ -145,17 +137,9 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
 14. See the myhelloworld service output:
 
-  on **Linux**:
-
-  ```bash
-  sudo tail -f /var/log/syslog | grep myhelloworld[[]
-  ```
-
-  on **Mac**:
-
-  ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=myhelloworld)
-  ```
+``` bash
+hzn service log -f myhelloworld
+```
 
 15. Unregister your edge node (which will also stop the myhelloworld service):
 
