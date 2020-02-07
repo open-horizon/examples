@@ -3,6 +3,9 @@
 # if the org id is set locally we don't want to override the IBM org of these samples
 unset HZN_ORG_ID
 
+# check if required environment variables are set
+: ${EXCHANGE_ROOT_PASS:?} ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?} ${HZN_ORG_ID:?}
+
 # git branch/repository to clone
 branch="-b master"
 repository="https://github.com/open-horizon/examples.git"
