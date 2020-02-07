@@ -4,7 +4,7 @@
 unset HZN_ORG_ID
 
 # check if required environment variables are set
-: ${EXCHANGE_ROOT_PASS:?} ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?} ${HZN_ORG_ID:?}
+: ${EXCHANGE_ROOT_PASS:?} ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
 
 # git branch/repository to clone
 branch="-b master"
