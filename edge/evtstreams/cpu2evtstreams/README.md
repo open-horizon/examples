@@ -42,14 +42,10 @@ hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
 
-6. Deploy (or get access to) an instance of IBM Event Streams that the cpu2evtstreams sample can send its data to. Ensure that the topic `cpu2evtstreams` is created in Event Streams. Using information from the Event Streams UI, `export` these environment variables:
-    - `EVTSTREAMS_API_KEY`
-    - `EVTSTREAMS_BROKER_URL`
-    - `EVTSTREAMS_CERT_ENCODED` **(if using IBM Event Streams in IBM OpenShift Cloud Private)** due to differences in the base64 command set this variable as follows based on the platform you're using:
-        - on **Linux**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64 -w 0)”`
-        - on **Mac**: `EVTSTREAMS_CERT_ENCODED=“$(cat $EVTSTREAMS_CERT_FILE | base64)”`
-    - `EVTSTREAMS_CERT_FILE` **(if using IBM Event Streams in IBM OpenShift Cloud Private)**
-
+6. While this service can be used with any kafka based message brokers, if you are using IBM Event Streams and an instance has already been deployed for you, obtain the `evtstreams.cfg` file that was created during this process. This file contains all the necessary environment variables for `cpu2evtstreams` to publish data to IBM Event Streams. Set these environment variables in your shell now:
+```bash
+eval export $(cat agent-install.cfg)
+```
 
 ## <a id=using-cpu2evtstreams-pattern></a> Using the CPU To IBM Event Streams Edge Service with Deployment Pattern
 
@@ -62,32 +58,46 @@ wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evt
 hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json
 ```
 
+The cpu2evtstreams sample has a dependent service called gps. This service requires a privileged node to run due to the hardware access it requires to get your coordinates.
+3. Create a `policy.json` file to update your node policy:
+```bash
+cat << EndOfContent > policy.json
+{
+  "properties": [
+    {
+      "name": "openhorizon.allowPrivileged",
+      "value": true
+    }
+  ]
+}
+EndOfContent
+```
+4. Update your node policy to authorize the node:
+```bash
+hzn hzn policy update --input-file=policy.json
+```
 
-Thinking I'll add a new step 3 for the node policy update
-
-
-
-3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+5. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```bash
 hzn agreement list
 ```
 
-4. Once the agreement is made, list the docker container edge service that has been started as a result:
+6. Once the agreement is made, list the docker container edge service that has been started as a result:
 ```bash
 sudo docker ps
 ```
 
-5. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
+7. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
   ```bash
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
   ```
-6. See the cpu2evtstreams service output:
+8. See the cpu2evtstreams service output:
 
 ```bash
 hzn service log -f ibm.cpu2evtstreams
 ```
 
-7. Unregister your edge node, stopping the cpu2evtstreams service:
+9. Unregister your edge node, stopping the cpu2evtstreams service:
 ```bash
 hzn unregister -f
 ```
