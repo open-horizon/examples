@@ -62,6 +62,11 @@ wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evt
 hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json
 ```
 
+
+Thinking I'll add a new step 3 for the node policy update
+
+
+
 3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```bash
 hzn agreement list
