@@ -5,7 +5,6 @@
 1. If you have not already done so, complete the steps in these sections:
 
   - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
-  - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-helloworld-pattern)
   
 ## <a id=using-helloworld-policy></a> Using the Hello World Example Edge Service with Deployment Policy
 
@@ -47,12 +46,6 @@ git clone git@github.com:open-horizon/examples.git
 cd examples/edge/services/helloworld
 ```
 
-4. Make sure your Edge Node is not registered by running:
-
-```bash
-hzn unregister -f
-```
-
 - Now let's register using the `horizon/node_policy.json` file:
 
 ```json
@@ -69,13 +62,13 @@ hzn unregister -f
 
 - It provides values for three `properties` (`model`, `serial`, and `configuration`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
 
-5. Register your Node Policy using this command:
+4. Register your Node Policy using this command:
 
 ```bash
 hzn register --policy horizon/node_policy.json
 ```
 
-6. When the registration completes, use the following command to review the Node Policy:
+5. When the registration completes, use the following command to review the Node Policy:
 
 ```bash
 hzn policy list
