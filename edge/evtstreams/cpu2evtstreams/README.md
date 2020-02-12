@@ -44,7 +44,7 @@ hzn exchange node confirm
 
 6. While this service can be used with any kafka based message brokers, if you are using IBM Event Streams and an instance has already been deployed for you, obtain the `evtstreams.cfg` file that was created during this process. This file contains all the necessary environment variables for `cpu2evtstreams` to publish data to IBM Event Streams. Set these environment variables in your shell now:
 ```bash
-eval export $(cat agent-install.cfg)
+eval export $(cat evtstreams.cfg)
 ```
 
 7. If you have not done so already, unregister your node before moving on:
