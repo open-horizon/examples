@@ -37,6 +37,11 @@ hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
 
+6. If you have not done so already, unregister your node before moving on:
+ ```bash
+hzn unregister -f
+```
+
 ## <a id=using-helloworld-pattern></a> Using the Hello World Example Edge Service with Deployment Pattern
 
 1. Register your edge node with Horizon to use the helloworld pattern:
