@@ -47,6 +47,12 @@ hzn exchange node confirm
 eval export $(cat agent-install.cfg)
 ```
 
+7. If you have not done so already, unregister your node before moving on:
+ ```bash
+hzn unregister -f
+```
+
+
 ## <a id=using-cpu2evtstreams-pattern></a> Using the CPU To IBM Event Streams Edge Service with Deployment Pattern
 
 1. Get the user input file for the cpu2evtstreams sample:
