@@ -58,8 +58,7 @@ wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evt
 hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json
 ```
 
-The cpu2evtstreams sample has a dependent service called gps. This service requires a privileged node to run due to the hardware access it requires to get your coordinates.
-3. Create a `policy.json` file to update your node policy:
+3. The `cpu2evtstreams` sample has a dependent service called `gps`. This service requires a privileged node to run due to the hardware access it requires to get your coordinates. Create a `policy.json` file to update your node policy:
 ```bash
 cat << EndOfContent > policy.json
 {
