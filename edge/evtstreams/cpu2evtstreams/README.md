@@ -21,7 +21,7 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 2. Install the Horizon agent on your edge device and configure it to point to your Horizon exchange.
 
-3. As part of the installation process for IBM Edge Computing Manager a file called `agent-install.cfg` was created, set those environment variables in your shell now:
+3. As part of the infrasctucture installation process for IBM Edge Computing Manager a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css url values. Locate this file and set those environment variables in your shell now:
 
 ```bash
 eval export $(cat agent-install.cfg)
