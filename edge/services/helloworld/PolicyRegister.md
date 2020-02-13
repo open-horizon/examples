@@ -20,31 +20,13 @@ The Horizon Policy mechanism offers an alternative to using Deployment Patterns.
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Install `git`:
-
-On **Linux**:
-
+1. Get the required helloworld policy files:
 ```bash
-sudo apt install -y git
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/node_policy.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/business_policy.json
 ```
 
-On **macOS**:
 
-```bash
-brew install git 
-```
-
-2. If you have not done so already, clone this git repo:
-
-```bash
-git clone git@github.com:open-horizon/examples.git
-```
-
-3. Go to the `helloworld` directory:
-
-```bash
-cd examples/edge/services/helloworld
-```
 
 - Now let's register using the `horizon/node_policy.json` file:
 
