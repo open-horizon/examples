@@ -62,7 +62,7 @@ wget https://raw.githubusercontent.com/t-fine/examples/raw/master/edge/services/
 ```
 2. Register your edge node with Horizon to use the cpu2evtstreams pattern:
 ```bash
-hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json -s ibm.cpu2evtstreams --serviceorg IBM -t 120 --policy privileged_node_policy.json
+hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json -s ibm.cpu2evtstreams --serviceorg IBM -t 120 --policy=privileged_node_policy.json
 ```
  Note: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit. 
 
