@@ -27,10 +27,10 @@ If you haven't done so already, you must do these steps before proceeding with t
 eval export $(cat agent-install.cfg)
 ```
 
-4. Create a cloud API key that is associated with your Horizon instance, set your exchange user credentials, and verify them:
+4. In addition to the file above, an API key associated with your Horizon instance would have been created, set the exchange user credentials, and verify them:
 
 ```bash
-export HZN_EXCHANGE_USER_AUTH=iamapikey:<your-API-key>
+export HZN_EXCHANGE_USER_AUTH=iamapikey:<horizon-API-key>
 hzn exchange user list
 ```
 
