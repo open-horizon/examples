@@ -20,15 +20,13 @@ The Horizon Policy mechanism offers an alternative to using Deployment Patterns.
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Get the required helloworld policy files:
+1. Get the required helloworld node and business policy files:
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/node_policy.json
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/business_policy.json
 ```
 
-
-
-- Now let's register using the `horizon/node_policy.json` file:
+- Below is the `node_policy.json` file:
 
 ```json
 {
@@ -42,15 +40,15 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 }
 ```
 
-- It provides values for three `properties` (`model`, `serial`, and `configuration`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
+- It provides values for three `properties` (`model`, `serial`, and `configuration`), that will effect which services get deployed to this edge node, and states no `constraints`.
 
-4. Register your Node Policy using this command:
+2. Register your Node Policy with this policy
 
 ```bash
-hzn register --policy horizon/node_policy.json
+hzn register --policy node_policy.json
 ```
 
-5. When the registration completes, use the following command to review the Node Policy:
+3. When the registration completes, use the following command to review the Node Policy:
 
 ```bash
 hzn policy list
@@ -62,7 +60,7 @@ hzn policy list
 
 - Like the other two Policy types, Service Policy contains a set of `properties` and a set of `constraints`. The `properties` of a Service Policy could state characteristics of the Service code that Node Policy authors or Business Policy authors may find relevant. The `constraints` of a Service Policy can be used to restrict where this Service can be run. The Service developer could, for example, assert that this Service requires a particular hardware setup such as CPU/GPU constraints, memory constraints, specific sensors, actuators or other peripheral devices required, etc.
 
-- Now let's attach this Service Policy to the helloworld Service previously published using the `horizon/service_policy.json` file:
+- Below is the Service Policy of ibm.helloworld published by the helloworld service developer that is in the exchange:
 
 ```json
 {
@@ -76,26 +74,15 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
 
-1. List the services in your org:
-```bash
-hzn exchange service list
-```
-
-2. To attach the example Service policy to this service, use the following command (substituting your service name):
+1. View the pubished service policy:
 
 ```bash
-hzn exchange service addpolicy -f horizon/service_policy.json <published-helloworld-service-name>
-```
-
-3. Once that completes, you can look at the results with the following command:
-
-```bash
-hzn exchange service listpolicy <published-helloworld-service-name>
+hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 ```
 
 - Notice that Horizon has again automatically added some additional `properties` to your Policy. These generated property values can be used in `constraints` in Node Policies and Business Policies.
 
-- Now that we have set up the Policies for an Edge Node and the Policies for a published Service, we can move on to the final step of defining a Business Policy to tie them all together and cause software to be automatically deployed on your Edge Node.
+- Now that you have set up the Policy for your Edge Node and the published Service policy is in the exchange, we can move on to the final step of defining a Business Policy to tie them all together and cause software to be automatically deployed on your Edge Node.
 
 ### Business Policy
 
@@ -103,7 +90,7 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 
 - Business Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Business Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-- Below is the `horizon/business_policy.json` file used for this example:
+- Below is the `business_policy.json` file you grabbed in step one:
 
 ```json
 {
@@ -142,23 +129,17 @@ hzn exchange service listpolicy <published-helloworld-service-name>
 }
 ```
 
-- This simple example of a Business Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `horizon/node_policy.json` file, so this Business Policy should successfully deploy our Service onto the Edge Node.
+- This simple example of a Business Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `node_policy.json` file, so this Business Policy should successfully deploy our Service onto the Edge Node.
 
-- At the end, the userInput section has the same purpose as the horizon/userinput.json files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
+- At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `horizon/business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
-
-```bash
-hzn exchange business addpolicy -f horizon/business_policy.json bizPolicy1
-```
-
-2. Once that competes, you can look at the results with the following command, substituting your own org ID:
+1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
 
 ```bash
-hzn exchange business listpolicy major-peacock-icp-cluster/bizPolicy1
+hzn exchange business addpolicy -f business_policy.json bizPolicy1
 ```
 
-- The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
+- The results should look very similar to your original `business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
 3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
