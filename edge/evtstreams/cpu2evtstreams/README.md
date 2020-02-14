@@ -57,8 +57,8 @@ hzn unregister -f
 
 1. Get the user input file for the cpu2evtstreams sample and the policy file for the gps service to run privileged:
 ```bash
-wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
-wget https://raw.githubusercontent.com/open-horizon/examples/raw/master/edge/services/gps/horizon/node_policy_privileged.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/gps/horizon/node_policy_privileged.json
 ```
 2. Register your edge node with Horizon to use the cpu2evtstreams pattern:
 ```bash
