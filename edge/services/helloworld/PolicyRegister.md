@@ -60,7 +60,7 @@ hzn policy list
 
 - Like the other two Policy types, Service Policy contains a set of `properties` and a set of `constraints`. The `properties` of a Service Policy could state characteristics of the Service code that Node Policy authors or Business Policy authors may find relevant. The `constraints` of a Service Policy can be used to restrict where this Service can be run. The Service developer could, for example, assert that this Service requires a particular hardware setup such as CPU/GPU constraints, memory constraints, specific sensors, actuators or other peripheral devices required, etc.
 
-- Below is the Service Policy of ibm.helloworld published by the helloworld service developer that is in the exchange:
+- Below is the Service Policy for `ibm.helloworld` published by the helloworld service developer that is in the exchange:
 
 ```json
 {
