@@ -20,10 +20,11 @@ Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service us
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Get the required `cpu2evtstreams` node and business policy files:
+1. Get the required `cpu2evtstreams` node and business policy files and the user input file:
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/node_policy.json
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/business_policy.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
 
 - Below is the `node_policy.json` file:
@@ -41,18 +42,13 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 
 - It provides values for three `properties` (`model`, `year`, and `os`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
 
-5. Get the user input file for the cpu2evtstreams sample:
-```bash
-wget https://github.com/open-horizon/examples/raw/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
-```
-
-6. Register your Node Policy using this command:
+2. Register your Node Policy using this command:
 
 ```bash
 hzn register --policy node_policy.json -f userinput.json
 ```
 
-7. When the registration completes, use the following command to review the Node Policy:
+3. When the registration completes, use the following command to review the Node Policy:
 
 ```bash
 hzn policy list
