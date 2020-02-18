@@ -42,7 +42,10 @@ echo "Checking script parameters..."
 while (( "$#" )); do
   	case "$1" in
     	-d) # distribution specified
-      		if ! ([[ "$2" == "xenial" ]] || [[ "$2" == "bionic" ]] || [[ "$2" == "stretch"]] || [[ "$2" == "buster"]]); then
+      		if ! ([[ "$2" == "xenial" ]] \
+						|| [[ "$2" == "bionic" ]] \
+						|| [[ "$2" == "stretch" ]] \
+						|| [[ "$2" == "buster" ]]); then
       			echo "ERROR: Unknown linux distribution type."
       			echo ""
       			exit 1
@@ -225,6 +228,7 @@ function getClusterCert () {
 function gatherHorizonFiles () {
 	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
 	echo "tar --strip-components n -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/..."
+	echo "Dist is $DISTR"
 
     # Determine edge device type, and distribution if applicable
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
