@@ -228,7 +228,11 @@ function gatherHorizonFiles () {
 
     # Determine edge device type, and distribution if applicable
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
-		tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
+			if [[ "$DISTR" == "stretch" ]]; then
+				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
+			else
+				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/buster/armhf
+			fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
