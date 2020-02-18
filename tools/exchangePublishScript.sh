@@ -7,7 +7,7 @@ unset HZN_ORG_ID
 : ${EXCHANGE_ROOT_PASS:?} ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
 
 # git branch/repository to clone
-branch="-b master"
+branch="-b v4.0"
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
