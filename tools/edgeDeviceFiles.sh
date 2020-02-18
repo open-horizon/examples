@@ -224,11 +224,11 @@ function getClusterCert () {
 # Locate the IBM Edge Computing for Devices installation content
 function gatherHorizonFiles () {
 	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
-	echo "tar --strip-components n -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/..."
+	echo "tar --strip-components n -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/..."
 
     # Determine edge device type, and distribution if applicable
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
-		tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/raspbian/stretch/armhf
+		tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
@@ -237,9 +237,9 @@ function gatherHorizonFiles () {
 
 	elif [[ "$EDGE_DEVICE" == "64-bit-ARM" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/xenial/arm64
+			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/xenial/arm64
 		else
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/bionic/arm64
+			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/bionic/arm64
 		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
@@ -249,9 +249,9 @@ function gatherHorizonFiles () {
 
 	elif [[ "$EDGE_DEVICE" == "x86_64-Linux" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/xenial/amd64
+			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/xenial/amd64
 		else
-			tar --strip-components 6 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/linux/ubuntu/bionic/amd64
+			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/bionic/amd64
 		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
@@ -260,7 +260,7 @@ function gatherHorizonFiles () {
     	fi
 
 	elif [[ "$EDGE_DEVICE" == "macOS" ]]; then
-		tar --strip-components 3 -zxvf ibm-edge-computing-x86_64-4.0.0.tar.gz ibm-edge-computing-x86_64-4.0.0/horizon-edge-packages/macos
+		tar --strip-components 3 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/macos
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
