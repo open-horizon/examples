@@ -163,6 +163,7 @@ sudo docker ps
 ``` bash
 hzn service log -f ibm.helloworld
 ```
+ - **Note**: Press **Ctrl C** to stop the command output.
 
 6. Unregister your edge node (which will also stop the myhelloworld service):
 
