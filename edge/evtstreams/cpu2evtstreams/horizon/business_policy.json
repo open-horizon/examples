@@ -1,13 +1,13 @@
 {
-  "label": "$SERVICE_NAME Business Policy for $ARCH",
+  "label": "ibm.cpu2evtstreams Business Policy for $ARCH",
   "description": "A Horizon Business Policy example to run cpu2evtstreams",
   "service": {
-    "name": "$SERVICE_NAME",
-    "org": "$HZN_ORG_ID",
+    "name": "ibm.cpu2evtstreams",
+    "org": "IBM",
     "arch": "$ARCH",
     "serviceVersions": [
       {
-        "version": "$SERVICE_VERSION",
+        "version": "1.4.3",
         "priority":{}
       }
     ]
@@ -20,8 +20,8 @@
   ],
   "userInput": [
     {
-      "serviceOrgid": "$HZN_ORG_ID",
-      "serviceUrl": "$SERVICE_NAME",
+      "serviceOrgid": "IBM",
+      "serviceUrl": "ibm.cpu2evtstreams",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": []
     }
