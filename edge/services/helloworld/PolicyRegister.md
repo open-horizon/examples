@@ -94,15 +94,15 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 ```json
 {
-  "label": "$SERVICE_NAME Business Policy for $ARCH",
+  "label": "ibm.helloworld Business Policy for $ARCH",
   "description": "A super-simple sample Horizon Business Policy",
   "service": {
-    "name": "$SERVICE_NAME",
-    "org": "$HZN_ORG_ID",
+    "name": "ibm.helloworld",
+    "org": "IBM",
     "arch": "$ARCH",
     "serviceVersions": [
       {
-        "version": "$SERVICE_VERSION",
+        "version": "1.0.0",
         "priority":{}
       }
     ]
@@ -115,8 +115,8 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
   ],
   "userInput": [
     {
-      "serviceOrgid": "$HZN_ORG_ID",
-      "serviceUrl": "$SERVICE_NAME",
+      "serviceOrgid": "IBM",
+      "serviceUrl": "ibm.helloworld",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {
@@ -133,10 +133,15 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-1. To publish this Business Policy to the Exchange and get this Service running on the Edge Node edit the `business_policy.json` file to correctly identify your specific Service name, org, version, arch, etc. When your Business Policy is ready, run the following command to publish it, giving it a memorable name (bizPolicy1 in this example):
+1. Set the architecture of the Edge Node you want to deploy the `ibm.helloworld` service to `(arm, arm64, amd64)`:
+```bash
+export ARCH=<edge-node-arch>
+```
+
+2. Publish this Business Policy to the Exchange and get this Service running on the Edge Node and give it a memorable name:
 
 ```bash
-hzn exchange business addpolicy -f business_policy.json bizPolicy1
+hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
 ```
 
 - The results should look very similar to your original `business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
