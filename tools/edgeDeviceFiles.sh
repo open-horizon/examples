@@ -228,11 +228,11 @@ function getClusterCert () {
 function gatherHorizonFiles () {
 	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
 	echo "tar --strip-components n -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/..."
-	echo "Dist is $DISTR"
+	echo "Dist is $DISTRO"
 
     # Determine edge device type, and distribution if applicable
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
-			if [[ "$DISTR" == "stretch" ]]; then
+			if [[ "$DISTRO" == "stretch" ]]; then
 				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
 			else
 				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/buster/armhf
