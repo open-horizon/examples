@@ -74,7 +74,7 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
 
-1. View the pubished service policy:
+1. View the pubished service policy for the `amd64` archiitecture:
 
 ```bash
 hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
