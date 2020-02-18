@@ -87,6 +87,7 @@ sudo docker ps
 ```bash
 hzn service log -f ibm.cpu2evtstreams
 ```
+ - **Note**: Press **Ctrl C** to stop the command output.
 
 7. Unregister your edge node, stopping the cpu2evtstreams service:
 ```bash
