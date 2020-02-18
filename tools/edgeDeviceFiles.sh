@@ -42,7 +42,7 @@ echo "Checking script parameters..."
 while (( "$#" )); do
   	case "$1" in
     	-d) # distribution specified
-      		if ! ([[ "$2" == "xenial" ]] || [[ "$2" == "bionic" ]]); then
+      		if ! ([[ "$2" == "xenial" ]] || [[ "$2" == "bionic" ]] || [[ "$2" == "stretch"]] || [[ "$2" == "buster"]]); then
       			echo "ERROR: Unknown linux distribution type."
       			echo ""
       			exit 1
