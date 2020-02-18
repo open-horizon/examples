@@ -74,7 +74,7 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Mac` or `Pi3B `. If you recall the Node Policy we used above, the model `property` was set to `Mac`, so this Service should be compatible with our Edge Node.
 
-1. View the pubished service policy for the `amd64` archiitecture:
+1. View the pubished service policy for the `amd64` architecture:
 ```bash
 hzn exchange service listpolicy IBM/ibm.cpu2evtstreams_1.4.3_amd64
 ```
