@@ -53,7 +53,7 @@ hzn register -p IBM/pattern-ibm.helloworld -s ibm.helloworld --serviceorg IBM
 ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
-2. View the formed agreemend:
+2. View the formed agreement:
 
 ```bash
 hzn agreement list
