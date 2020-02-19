@@ -68,7 +68,7 @@ hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json -s ibm.cpu2evts
 ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
-3. View the formed agreemend:
+3. View the formed agreement:
 ```bash
 hzn agreement list
 ```
