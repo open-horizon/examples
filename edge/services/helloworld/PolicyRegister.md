@@ -26,7 +26,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/business_policy.json
 ```
 
-- Below is the `node_policy.json` file:
+- Below is the `node_policy.json` file you obtained in step one:
 
 ```json
 {
@@ -60,7 +60,7 @@ hzn policy list
 
 - Like the other two Policy types, Service Policy contains a set of `properties` and a set of `constraints`. The `properties` of a Service Policy could state characteristics of the Service code that Node Policy authors or Business Policy authors may find relevant. The `constraints` of a Service Policy can be used to restrict where this Service can be run. The Service developer could, for example, assert that this Service requires a particular hardware setup such as CPU/GPU constraints, memory constraints, specific sensors, actuators or other peripheral devices required, etc.
 
-- Below is the Service Policy for `ibm.helloworld` published by the helloworld service developer that is in the exchange:
+- Below is the `service_policy.json` file the service developer attached to `ibm.helloworld` when it was published:
 
 ```json
 {
@@ -74,7 +74,7 @@ hzn policy list
 
 - Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
 
-1. View the pubished service policy for the `amd64` architecture:
+1. View the pubished service policy attached to `ibm.helloworld`:
 
 ```bash
 hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
@@ -90,7 +90,7 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - Business Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Business Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-- Below is the `business_policy.json` file you grabbed in step one:
+- Below is the `business_policy.json` file you obtained in step one:
 
 ```json
 {
@@ -133,12 +133,12 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-1. Set the architecture of the Edge Node you want to deploy the `ibm.helloworld` service to `(arm, arm64, amd64)`:
+1. Set the architecture of the Edge Node you want to deploy the `ibm.helloworld` service to `[arm, arm64, amd64]`:
 ```bash
 export ARCH=<edge-node-arch>
 ```
 
-2. Publish this Business Policy to the Exchange and get this Service running on the Edge Node and give it a memorable name:
+2. Publish this Business Policy to the Exchange to deploy the `ibm.helloworld` service to the Edge Node (give it a memorable name):
 
 ```bash
 hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
@@ -152,20 +152,20 @@ hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
 hzn agreement list
 ```
 
-4. After the agreement is made, list the docker container edge service that has been started as a result:
+4. After the agreement is made, list the edge service docker container that has been started as a result:
 
 ```bash
 sudo docker ps
 ```
 
-5. See the helloworld service output:
+5. See the `ibm.helloworld` service output:
 
 ``` bash
 hzn service log -f ibm.helloworld
 ```
  - **Note**: Press **Ctrl C** to stop the command output.
 
-6. Unregister your edge node (which will also stop the myhelloworld service):
+6. Unregister your edge node:
 
 ```bash
 hzn unregister -f
