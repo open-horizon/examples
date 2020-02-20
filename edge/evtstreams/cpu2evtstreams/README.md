@@ -27,7 +27,7 @@ If you haven't done so already, you must do these steps before proceeding with t
 eval export $(cat agent-install.cfg)
 ```
 
- - Note: if for some reason you are disconnected from ssh or your command line closes, run the above command again to set the required environment variables.
+ - **Note**: if for some reason you are disconnected from ssh or your command line closes, run the above command again to set the required environment variables.
 
 4. In addition to the file above, an API key associated with your Horizon instance would have been created, set the exchange user credentials, and verify them:
 
