@@ -2,7 +2,7 @@
 
 ## Preconditions for Developing Your Own Service
 
-1. If you have not already done so, complete the steps in these sections:
+1. If you have not already done so, complete the steps in this section:
 
   - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
   
