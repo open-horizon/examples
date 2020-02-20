@@ -24,7 +24,6 @@ Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service us
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/node_policy.json
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/business_policy.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
 
 - Below is the `node_policy.json` file:
