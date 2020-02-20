@@ -2,7 +2,7 @@
 
 Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service using deployment policy.
 
-1. If you have not already done so, complete the steps in these sections:
+1. If you have not already done so, complete the steps in this section:
 
   - [Preconditions for Using the CPU To IBM Event Streams Example Edge Service](README.md#preconditions)
 
