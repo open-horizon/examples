@@ -45,7 +45,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 2. Register your Node Policy using this command:
 
 ```bash
-hzn register --policy node_policy.json -f userinput.json
+hzn register --policy node_policy.json
 ```
 
 3. When the registration completes, use the following command to review the Node Policy:
@@ -105,20 +105,37 @@ hzn exchange service listpolicy IBM/ibm.cpu2evtstreams_1.4.3_amd64
       }
     ]
   },
-  "properties": [
-  ],
+  "properties": [],
   "constraints": [
     "os == \"Mojave\"",
     "model == \"Mac\" OR model == \"Pi3B\""
   ],
-  "userInput": []
+  "userInput": [
+    {
+      "serviceOrgid": "IBM",
+      "serviceUrl": "ibm.cpu2evtstreams",
+      "serviceVersionRange": "[0.0.0,INFINITY)",
+      "inputs": [
+        {
+          "name": "EVTSTREAMS_API_KEY",
+          "value": "$EVTSTREAMS_API_KEY"
+        },
+        {
+          "name": "EVTSTREAMS_BROKER_URL",
+          "value": "$EVTSTREAMS_BROKER_URL"
+        },
+        {
+          "name": "EVTSTREAMS_CERT_ENCODED",
+          "value": "$EVTSTREAMS_CERT_ENCODED"
+        }
+      ]
     }
   ]
 }
 ```
 - This simple example of a Business Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `horizon/node_policy.json` file, so this Business Policy should successfully deploy our Service onto the Edge Node.
 
-- At the bottom, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams. Though, for this example we have left the `userInput` section blank and will use the same `userinput.json` file we used before during pattern registration. 
+- At the bottom, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams. 
 
 1. Set the architecture of the Edge Node you want to deploy the `ibm.cpu2evtstreams` service to `(arm, arm64, amd64)`:
 ```bash
