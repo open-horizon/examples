@@ -80,6 +80,7 @@ publish-only:
 	ARCH=arm $(MAKE) publish-service-overwrite
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
+	$(MAKE) publish-only-pattern-each-arch
 
 publish-only-pattern-each-arch:
 	ARCH=amd64 hzn exchange pattern publish -f horizon/pattern.json
