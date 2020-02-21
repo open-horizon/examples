@@ -96,15 +96,15 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 
 ```bash
 {
-  "label": "ibm.cpu2evtstreams Business Policy for $ARCH",
+  "label": "$SERVICE_NAME Business Policy for $ARCH",
   "description": "A Horizon Business Policy example to run cpu2evtstreams",
   "service": {
-    "name": "ibm.cpu2evtstreams",
-    "org": "IBM",
+    "name": "$SERVICE_NAME",
+    "org": "$HZN_ORG_ID",
     "arch": "$ARCH",
     "serviceVersions": [
       {
-        "version": "1.4.3",
+        "version": "$SERVICE_VERSION",
         "priority":{}
       }
     ]
@@ -116,8 +116,8 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
   ],
   "userInput": [
     {
-      "serviceOrgid": "IBM",
-      "serviceUrl": "ibm.cpu2evtstreams",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {
