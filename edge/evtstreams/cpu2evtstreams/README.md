@@ -68,28 +68,25 @@ hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json -s ibm.cpu2evts
 ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
-3. View the formed agreement:
-```bash
-hzn agreement list
-```
-
-4. Once the agreement is made, list the docker container edge service that has been started as a result:
+3. Once the agreement is made, list the docker container edge service that has been started as a result:
 ```bash
 sudo docker ps
 ```
 
-5. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
+4. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
   ```bash
   kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
   ```
-6. See the cpu2evtstreams service output:
+ - **Note**: Press **Ctrl C** to stop the command output.
+  
+5. See the cpu2evtstreams service output:
 
 ```bash
 hzn service log -f ibm.cpu2evtstreams
 ```
  - **Note**: Press **Ctrl C** to stop the command output.
 
-7. Unregister your edge node, stopping the cpu2evtstreams service:
+6. Unregister your edge node, stopping the cpu2evtstreams service:
 ```bash
 hzn unregister -f
 ```
