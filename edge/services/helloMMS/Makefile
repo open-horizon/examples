@@ -28,7 +28,7 @@ test-all-arches:
 
 # Run and verify the service
 test: build
-	hzn dev service start -S
+	hzn dev service start
 	@echo 'Testing service...'
 	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
 		{ hzn dev service stop; \
@@ -80,6 +80,11 @@ publish-only:
 	ARCH=arm $(MAKE) publish-service-overwrite
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
+
+publish-only-pattern-each-arch:
+	ARCH=amd64 hzn exchange pattern publish -f horizon/pattern.json
+	ARCH=arm hzn exchange pattern publish -f horizon/pattern.json
+	ARCH=arm64 hzn exchange pattern publish -f horizon/pattern.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :

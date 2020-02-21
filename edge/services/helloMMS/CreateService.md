@@ -75,7 +75,7 @@ Follow the steps in this page to create your first Horizon edge service that use
   eval $(hzn util configconv -f horizon/hzn.json)
   ```
 
-4. Edit `service.sh` however you want. For example, for now to be able to confirm that you are running your own service, you could customize the `echo` statement near the end that says "Hello".
+4. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello".
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
 5. Build the service docker image. Note that the Dockerfiles copy `config.json` into the service image for it to initially use.
@@ -137,10 +137,12 @@ Follow the steps in this page to create your first Horizon edge service that use
   HZN_FSS_CSSURL=http://localhost:8580  hzn mms object list -d
   ```
 
-13. After approximately 15 seconds you should see the output of the service change to the value of `HW_WHO` that is now set in the `config.json` file, for example **\<your-node-id\> says: Hello from the MMS!** Now delete your MMS object and watch the service messages change back to the original value:
+  Once the `Object status` changes to `delivered` you will see the output of the hello-mms service (in the other terminal) change from **\<your-node-id\> says: Hello from the dockerfile!** to **\<your-node-id\> says: Hello from the MMS!**
+
+13. Delete your MMS object and watch the service messages change back to the original value:
 
   ```bash
-  HZN_FSS_CSSURL=http://localhost:8580  hzn mms object delete -t $SERVICE_NAME -i config.json
+  HZN_FSS_CSSURL=http://localhost:8580  hzn mms object delete -t $HZN_DEVICE_ID.hello-mms -i config.json
   ```
 
 14. Stop the service:
@@ -178,17 +180,37 @@ Follow the steps in this page to create your first Horizon edge service that use
 
 19. While watching the output, switch back to your **other terminal** for the remainder of the steps.
 
-20. Edit `config.json` and change the value associated with the `HW_WHO` field to some other value, for example **"from the MMS"**. Then publish it as a new object in the cloud MMS:
+20. Publish `config.json` as a new object in the cloud MMS:
 
   ```bash
   hzn mms object publish -m object.json -f config.json
   ```
 
-21. After approximately 15 seconds you should see the output of the service change to the value of `HW_WHO` set in the `config.json` file.
-
-22. Clean up by deleting the published mms object and unregistering your edge node:
+21. View the published mms object:
 
   ```bash
-  hzn mms object delete -t $SERVICE_NAME -i config.json
+  hzn mms object list -t $HZN_DEVICE_ID.hello-mms -i config.json -d
+  ```
+
+22. After approximately 15 seconds you should see the output of the service change to the value of `HW_WHO` set in the `config.json` file.
+
+23. Clean up by deleting the published mms object and unregistering your edge node:
+
+  ```bash
+  hzn mms object delete -t $HZN_DEVICE_ID.hello-mms -i config.json
   hzn unregister -f
   ```
+
+## More MMS Information
+
+You can browse the [full MMS REST API](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/open-horizon/edge-sync-service/master/swagger.json) .
+
+The ESS REST API (the APIs that an edge service uses) is a small subset of that. The most commonly used ESS REST APIs are:
+
+- `GET /api/v1/objects/{objectType}` - Get metadata for objects of the specified type that have changed, but not yet been acknowledged by this edge service. (There is an optional URL parameter `?received=true` that will cause it to return all objects of this type, regardless of whether they've been acknowledged or not, but this is rarely needed.)
+- `GET /api/v1/objects/{objectType}/{objectID}` - Get an object's metadata
+- `PUT /api/v1/objects/{objectType}/{objectID}` - Create the metadata (specified in the body) for a new (or updated) object that this service is sending to MMS
+- `GET /api/v1/objects/{objectType}/{objectID}/data` - Get the file associated with this object
+- `PUT /api/v1/objects/{objectType}/{objectID}/data` - Send this file (specified in the body) to MMS
+- `PUT /api/v1/objects/{objectType}/{objectID}/deleted` - Confirm that this service has seen that the object has been deleted
+- `PUT /api/v1/objects/{objectType}/{objectID}/received` - Confirm that this service has seen that the object has been changed

@@ -48,48 +48,52 @@ hzn exchange node confirm
 1. Register your edge node with Horizon to use the hello-mms pattern:
 
   ```bash
-  hzn register -p IBM/pattern-ibm.hello-mms  -s ibm.hello-mms --serviceorg IBM
+  export SERVICE_NAME=ibm.hello-mms
+  hzn register -p IBM/pattern-$SERVICE_NAME-$(hzn architecture) -s $SERVICE_NAME --serviceorg IBM
   ```
 
-2. After the has started, list the docker containers to see it:
+2. After the service has started, list the docker containers to see it:
 
   ``` bash
   sudo docker ps
   ```
 
-3. See the hello-mms service output (you should see the message **<your-node-id> says: Hello World!**:
+3. View the hello-mms service output with the "follow" flag. This sample service repeatedly checks for an updated config file (`config.json`) that contains a parameter of who it should say "hello" to. The initial config file is built into the docker image. Updated config files can come via MMS. Initially you should see the message like: **<your-node-id> says: Hello from the dockerfile!** .
 
   ```bash
-  hzn service log -f ibm.hello-mms
+  hzn service log -f $SERVICE_NAME
   ```
 
-4. While observing the service output in one terminal, **open another terminal** and get the sample files that will be needed to create an MMS object:
+4. While observing the service output in one terminal, **open another terminal** and get the sample files that will be needed to create and publish a new config file in MMS:
 
   ```bash
   wget -q --show-progress https://github.com/open-horizon/examples/raw/master/edge/services/helloMMS/object.json
-  wget -q --show-progress https://github.com/open-horizon/examples/raw/master/edge/services/helloMMS/input.json
+  wget -q --show-progress https://github.com/open-horizon/examples/raw/master/edge/services/helloMMS/config.json
   ```
 
-5. Publish the `input.json` file (along with its metadata `object.json`) as a new mms object:
+5. Modify `config.json` and publish it (along with its metadata `object.json`) as a new mms object:
 
   ```bash
+  jq '.HW_WHO = "from the MMS"' config.json > config.tmp && mv config.tmp config.json
   export HZN_DEVICE_ID="${HZN_EXCHANGE_NODE_AUTH%%:*}"   # this env var is referenced in object.json
-  hzn mms object publish -m object.json -f input.json
+  hzn mms object publish -m object.json -f config.json
   ```
 
 6. View the published mms object:
 
   ```bash
-  hzn mms object list -t json -i input.json -d
+  hzn mms object list -t $HZN_DEVICE_ID.hello-mms -i config.json -d
   ```
 
-  Once the `Object status` changes to `delivered` you will see the output of the hello-mms service (in the other terminal) change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
+  Once the `Object status` changes to `delivered` you will see the output of the hello-mms service (in the other terminal) change from **\<your-node-id\> says: Hello from the dockerfile!** to **\<your-node-id\> says: Hello from the MMS!**
 
 7. Delete the published mms object:
 
   ```bash
-  hzn mms object delete -t json --id input.json
+  hzn mms object delete -t $HZN_DEVICE_ID.hello-mms --id config.json
   ```
+
+  Note in the service output in the other terminal that this will cause the service to revert to the original config file, and therefore the original "hello" message.
 
 8. Unregister your edge node (which will also stop the hello-mms service):
 
@@ -110,7 +114,7 @@ A good place to start is with the `hzn mms object new` command, which will emit 
 You can view all of the MMS objects that are used with a particular pattern like this:
 
 ```bash
-hzn mms object list --destinationType pattern-ibm.hello-mms
+hzn mms object list --destinationType pattern-ibm.hello-mms -d
 ```
 
 To view the current MMS status, use, `hzn mms status`.

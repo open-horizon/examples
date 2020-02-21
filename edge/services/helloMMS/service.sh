@@ -1,47 +1,49 @@
 #!/bin/bash
 
-# A very simple Horizon sample edge service that shows how to use an Model Management System (MMS) file with your service.
-# In this case we use an MMS file as a config file for this service that can be updated dynamically. The service has a default
+# A simple Horizon sample edge service that shows how to use a Model Management System (MMS) file with your service.
+# In this case we use a MMS file as a config file for this service that can be updated dynamically. The service has a default
 # copy of the config file built into the docker image. Once the service starts up it periodically checks for a new version of
 # the config file using the local MMS API (aka ESS) that the Horizon agent provides to services. If an updated config file is
 # found, it is loaded into the service and the config parameters applied (in this case who to say hello to).
 
 # Of course, MMS can also hold and deliver inference models, which can be used by services in a similar way.
 
-OBJECT_TYPE='bp.hello-mms'
+# The type and name of the MMS file we are using
+OBJECT_TYPE="$HZN_DEVICE_ID.hello-mms"
 OBJECT_ID=config.json
 
-# ${HZN_ESS_AUTH} is mounted to this container and contains a json file with the credentials for authenticating to the ESS.
+# ${HZN_ESS_AUTH} is mounted to this container by the Horizon agent and is a json file with the credentials for authenticating to ESS.
+# ESS (Edge Sync Service) is a proxy to MMS that runs in the Horizon agent.
 USER=$(cat ${HZN_ESS_AUTH} | jq -r ".id")
 PW=$(cat ${HZN_ESS_AUTH} | jq -r ".token")
 
-# Passing basic auth creds in base64 encoded form (-u).
+# Some curl parameters for using the ESS REST API
 AUTH="-u ${USER}:${PW}"
-
-# ${HZN_ESS_CERT} is mounted to this container and contains the client side SSL cert to talk to the ESS API.
+# ${HZN_ESS_CERT} is mounted to this container by the Horizon agent and the cert clients use to verify the identity of ESS.
 CERT="--cacert ${HZN_ESS_CERT}"
-
 SOCKET="--unix-socket ${HZN_ESS_API_ADDRESS}"
 BASEURL='https://localhost/api/v1/objects'
 
-# Save original config file from the docker image so we can revert back to it if the MMS file is deleted
+# Save original config file that came from the docker image so we can revert back to it if the MMS file is deleted
 cp $OBJECT_ID ${OBJECT_ID}.original
 
-# Repeatedly read config.json (initially from the docker image, but then from MMS) and echo hello
+# Repeatedly check to see if an updated config.json was delivered via MMS/ESS, then use the value within it to echo hello
 while true; do
 
-    # See if there is a new version of the file
+    # See if there is a new version of the config.json file
     #echo "DEBUG: Checking for MMS updates"
-    #OBJ=$(curl -sSL ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE/$OBJECT_ID)  # this would result in getting the object metadata every call
-    HTTP_CODE=$(curl -sSLw "%{http_code}" -o objects.curl ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE)  # will only get changes that we haven't acknowledged below
-    if [[ "$HTTP_CODE" != '200' && "$HTTP_CODE" != '404' ]]; then echo "Error: HTTP code $HTTP_CODE from: curl -sSLw %{http_code} -o objects.curl ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE"; fi
-    #echo "DEBUG: MMS response=$(cat objects.curl)"
-    OBJ_ID=$(jq -r ".[] | select(.objectID == \"$OBJECT_ID\") | .objectID" objects.curl)  # if not found, jq returns 0 exit code, but blank value
+    #HTTP_CODE=$(curl -sSLw "%{http_code}" -o objects.meta ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE/$OBJECT_ID)  # not using this because it would result in getting the object metadata every call, even if it hasn't been updated
+    HTTP_CODE=$(curl -sSLw "%{http_code}" -o objects.meta ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE)  # will only get changes that we haven't acknowledged (see below)
+    if [[ "$HTTP_CODE" != '200' && "$HTTP_CODE" != '404' ]]; then echo "Error: HTTP code $HTTP_CODE from: curl -sSLw %{http_code} -o objects.meta ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE"; fi
+    #echo "DEBUG: MMS metadata=$(cat objects.meta)"
+    # objects.meta is a json array of all MMS files of OBJECT_TYPE that have been updated. Search for the ID we are interested in
+    OBJ_ID=$(jq -r ".[] | select(.objectID == \"$OBJECT_ID\") | .objectID" objects.meta)  # if not found, jq returns 0 exit code, but blank value
+
     if [[ "$HTTP_CODE" == '200' && "$OBJ_ID" == $OBJECT_ID ]]; then
         #echo "DEBUG: Received new metadata for $OBJ_ID"
 
-        # Handle if the MMS file was deleted
-        DELETED=$(jq -r ".[] | select(.objectID == \"$OBJECT_ID\") | .deleted" objects.curl)  # if not found, jq returns 0 exit code, but blank value
+        # Handle the case in which MMS is telling us the config file was deleted
+        DELETED=$(jq -r ".[] | select(.objectID == \"$OBJECT_ID\") | .deleted" objects.meta)  # if not found, jq returns 0 exit code, but blank value
         if [[ "$DELETED" == "true" ]]; then
             echo "MMS file $OBJECT_ID was deleted, reverting to original $OBJECT_ID"
 
@@ -53,9 +55,9 @@ while true; do
             cp ${OBJECT_ID}.original $OBJECT_ID
         
         else
-            echo "Received new $OBJECT_ID from MMS"
+            echo "Received new/updated $OBJECT_ID from MMS"
 
-            # Read the new file from the MMS
+            # Read the new file from MMS
             HTTP_CODE=$(curl -sSLw "%{http_code}" -o $OBJECT_ID ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE/$OBJECT_ID/data)
             if [[ "$HTTP_CODE" != '200' ]]; then echo "Error: HTTP code $HTTP_CODE from: curl -sSLw %{http_code} -o $OBJECT_ID ${AUTH} ${CERT} $SOCKET $BASEURL/$OBJECT_TYPE/$OBJECT_ID/data"; fi
             #ls -l $OBJECT_ID
@@ -70,6 +72,6 @@ while true; do
     #HW_WHO=$(jq -r .HW_WHO $OBJECT_ID)
     eval $(jq -r 'to_entries[] | .key + "=\"" + .value + "\""' $OBJECT_ID)
 
-    echo "$HZN_DEVICE_ID says: Hey there ${HW_WHO}!"
+    echo "$HZN_DEVICE_ID says: Hello ${HW_WHO}!"
     sleep 5
 done

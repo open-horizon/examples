@@ -1,6 +1,6 @@
 {
   "objectID": "config.json",            /* Required: A unique identifier of the object. */
-  "objectType": "$SERVICE_NAME",          /* Required: The type of the object. */
+  "objectType": "$HZN_DEVICE_ID.hello-mms",          /* Required: The type of the object. */
   "destinationOrgID": "$HZN_ORG_ID", /* Required: The organization ID of the object (an object belongs to exactly one organization). */
   "destinationID": "$HZN_DEVICE_ID",       /* The node id (without org prefix) where the object should be placed. */
                              /* If omitted the object is sent to all nodes with the same destinationType. */
