@@ -23,7 +23,6 @@ The Horizon Policy mechanism offers an alternative to using Deployment Patterns.
 1. Get the required helloworld node and business policy files:
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/node_policy.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/business_policy.json
 ```
 
 - Below is the `node_policy.json` file you obtained in step one:
@@ -90,19 +89,24 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - Business Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Business Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-- Below is the `business_policy.json` file you obtained in step one:
+1. Get the required `helloworld` business policy file and the `hzn.json` file:
+```bash
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/business_policy.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/hzn.json
+```
+- Below is the `business_policy.json` file you just grabbed in step one:
 
 ```json
 {
-  "label": "ibm.helloworld Business Policy for $ARCH",
+  "label": "$SERVICE_NAME Business Policy for $ARCH",
   "description": "A super-simple sample Horizon Business Policy",
   "service": {
-    "name": "ibm.helloworld",
-    "org": "IBM",
+    "name": "$SERVICE_NAME",
+    "org": "$HZN_ORG_ID",
     "arch": "$ARCH",
     "serviceVersions": [
       {
-        "version": "1.0.0",
+        "version": "$SERVICE_VERSION",
         "priority":{}
       }
     ]
@@ -115,8 +119,8 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
   ],
   "userInput": [
     {
-      "serviceOrgid": "IBM",
-      "serviceUrl": "ibm.helloworld",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {
@@ -133,12 +137,13 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-1. Set the architecture of the Edge Node you want to deploy the `ibm.helloworld` service to `[arm, arm64, amd64]`:
+2. Run the following commands to set the environment variables needed by the `business_policy.json` file in your shell:
 ```bash
-export ARCH=<edge-node-arch>
+export ARCH=$(hzn architecture)
+eval $(hzn util configconv -f hzn.json)
 ```
 
-2. Publish this Business Policy to the Exchange to deploy the `ibm.helloworld` service to the Edge Node (give it a memorable name):
+3. Publish this Business Policy to the Exchange to deploy the `ibm.helloworld` service to the Edge Node (give it a memorable name):
 
 ```bash
 hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
@@ -146,26 +151,26 @@ hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
 
 - The results should look very similar to your original `business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
-3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
 ```bash
 hzn agreement list
 ```
 
-4. After the agreement is made, list the edge service docker container that has been started as a result:
+5. After the agreement is made, list the edge service docker container that has been started as a result:
 
 ```bash
 sudo docker ps
 ```
 
-5. See the `ibm.helloworld` service output:
+6. See the `ibm.helloworld` service output:
 
 ``` bash
 hzn service log -f ibm.helloworld
 ```
  - **Note**: Press **Ctrl C** to stop the command output.
 
-6. Unregister your edge node:
+7. Unregister your edge node:
 
 ```bash
 hzn unregister -f
