@@ -20,13 +20,12 @@ Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service us
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Get the required `cpu2evtstreams` node and business policy files and the user input file:
+1. Get the required `cpu2evtstreams` node policy file:
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/node_policy.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/business_policy.json
 ```
 
-- Below is the `node_policy.json` file:
+- Below is the `node_policy.json` file you just grabbed in step one:
 
 ```bash
 {
@@ -59,7 +58,7 @@ hzn policy list
 
 - Like the other two Policy types, Service Policy contains a set of `properties` and a set of `constraints`. The `properties` of a Service Policy could state characteristics of the Service code that Node Policy authors or Business Policy authors may find relevant. The `constraints` of a Service Policy can be used to restrict where this Service can be run. The Service developer could, for example, assert that this Service requires a particular hardware setup such as CPU/GPU constraints, memory constraints, specific sensors, actuators or other peripheral devices required, etc.
 
-- Below is the Service Policy for `ibm.cpu2evtstreams` published by the cpu2evtstreams service developer that is in the exchange:
+- Below is the `service_policy.json` file the service developer attached to the `ibm.cpu2evtstreams` service when it was published to the exchange:
 
 ```bash
 {
@@ -87,7 +86,13 @@ hzn exchange service listpolicy IBM/ibm.cpu2evtstreams_1.4.3_amd64
 
 - Business Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Business Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-- Below is the `business_policy.json` file you grabbed in step one:
+1. Get the required `cpu2evtstreams` business policy file and the `hzn.json` file:
+```bash
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/business_policy.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/hzn.json
+```
+
+- Below is the `business_policy.json` file you just grabbed in step one:
 
 ```bash
 {
@@ -136,12 +141,13 @@ hzn exchange service listpolicy IBM/ibm.cpu2evtstreams_1.4.3_amd64
 
 - At the bottom, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams. 
 
-1. Set the architecture of the Edge Node you want to deploy the `ibm.cpu2evtstreams` service to `(arm, arm64, amd64)`:
+2. Run the following commands to set the environment variables needed by the `business_policy.json` file in your shell:
 ```bash
-export ARCH=<edge-node-arch>
+export ARCH=$(hzn architecture)
+eval $(hzn util configconv -f hzn.json)
 ```
 
-2. Publish this Business Policy to the Exchange and get this Service running on the Edge Node and give it a memorable name:
+3. Publish this Business Policy to the Exchange and get this Service running on the Edge Node and give it a memorable name:
 
 ```bash
 hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
@@ -150,24 +156,30 @@ hzn exchange business addpolicy -f business_policy.json <choose-any-policy-name>
 - The results should look very similar to your original `horizon/business_policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
 
 
-3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```bash
 hzn agreement list
 ```
 
-4. Once the agreement is made, list the docker container edge service that has been started as a result:
+5. Once the agreement is made, list the docker container edge service that has been started as a result:
 ```bash
 sudo docker ps
 ```
 
-5. See the cpu2evtstreams service output:
+6. On any machine, install [kafkacat](https://github.com/edenhill/kafkacat#install), then subscribe to the Event Streams topic to see the json data that `cpu2evtstreams` is sending:
+  ```bash
+  kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
+  ```
+ - **Note**: Press **Ctrl C** to stop the command output.
+  
+7. See the cpu2evtstreams service output:
 
 ```bash
 hzn service log -f ibm.cpu2evtstreams
 ```
  - **Note**: Press **Ctrl C** to stop the command output.
 
-6. Unregister your edge node, stopping the cpu2evtstreams service:
+8. Unregister your edge node, stopping the cpu2evtstreams service:
 ```bash
 hzn unregister -f
 ```
