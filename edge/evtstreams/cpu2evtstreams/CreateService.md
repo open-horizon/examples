@@ -89,9 +89,16 @@ sudo docker ps
 ```
 
 8. See the cpu2evtstreams service output:
-```bash
-hzn service log -f ibm.cpu2evtstreams
-```
+
+ 	on **Linux**:
+ 	```
+ 	tail -f /var/log/syslog | grep cpu2evtstreams[[]
+ 	```
+
+ 	on **Mac**:
+ 	```
+ 	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
+ 	``` 
 
 9. See the environment variables Horizon passes into your service container:
 ```bash
