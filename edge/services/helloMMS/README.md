@@ -22,26 +22,32 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 2. Install the Horizon agent on your edge device and configure it to point to your Horizon exchange.
 
-3. Set your exchange org:
+3. As part of the infrastructure installation process for Horizon, a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css URLs. Locate this file and set those environment variables in your shell now:
 
-```bash
-export HZN_ORG_ID="<your-cluster-name>"
-```
+  ```bash
+  eval export $(cat agent-install.cfg)
+  ```
 
 4. Create a cloud API key that is associated with your Horizon instance, set your exchange user credentials, and verify them:
 
-```bash
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
-hzn exchange user list
-```
+  ```bash
+  export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
+  hzn exchange user list
+  ```
 
 5. Choose an ID and token for your edge node, create it, and verify it:
 
-```bash
-export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
-hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
-hzn exchange node confirm
-```
+  ```bash
+  export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
+  hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
+  hzn exchange node confirm
+  ```
+
+6. If you have not done so already, unregister your node before moving on:
+
+  ```bash
+  hzn unregister -f
+  ```
 
 ## <a id=using-hello-mms-pattern></a> Using the Hello MMS Example Edge Service with Deployment Pattern
 
@@ -117,4 +123,4 @@ You can view all of the MMS objects that are used with a particular pattern like
 hzn mms object list --destinationType pattern-ibm.hello-mms -d
 ```
 
-To view the current MMS status, use, `hzn mms status`.
+To view the current MMS status, use: `hzn mms status`

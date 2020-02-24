@@ -75,7 +75,7 @@ Follow the steps in this page to create your first Horizon edge service that use
   eval $(hzn util configconv -f horizon/hzn.json)
   ```
 
-4. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello".
+4. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello". While you are editing `service.sh`, read the comments and code to learn the basic pattern for using a MMS file in an edge service. This coding pattern will be the same, regardless of what language you implement your own edge services in.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
 5. Build the service docker image. Note that the Dockerfiles copy `config.json` into the service image for it to initially use.
