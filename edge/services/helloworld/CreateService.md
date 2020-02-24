@@ -94,7 +94,7 @@ Follow the steps in this page to create your first simple Horizon edge service.
 7. See the docker container running and look at the output:
 
 ``` bash
-hzn service log -f myhelloworld
+CHANGE THIS STEP
 ```
 
 8. Stop the service:
