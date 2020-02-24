@@ -91,7 +91,7 @@ Follow the steps in this page to create your first simple Horizon edge service.
   sudo docker inspect $(sudo docker ps -q --filter name=myhelloworld) | jq '.[0].Config.Env'
   ```
 
-7. See the docker container running and look at the output:
+7. See your helloworld service output:
 
    on **Linux**:
 
