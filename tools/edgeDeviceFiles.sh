@@ -19,7 +19,8 @@ Parameters:
 				  If this flag isn't set, the gathered files will be placed in the current directory
     -d 				<distribution>	script defaults to 'bionic' build on linux
 				  use this flag with < 64-bit-ARM or x86_64-Linux >
-				  to specify \`xenial\` build
+				  to specify 'xenial' build
+                                  use this with < 32-bit-ARM > to specify 'stretch' instead of defauly, 'buster'
 				  Flag is ignored with < macOS >
     -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set,
 				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will
@@ -232,11 +233,11 @@ function gatherHorizonFiles () {
 
     # Determine edge device type, and distribution if applicable
     if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
-			if [[ "$DISTRO" == "stretch" ]]; then
-				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
-			else
-				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/buster/armhf
-			fi
+		if [[ "$DISTRO" == "stretch" ]]; then
+			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
+		else
+			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/buster/armhf
+		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
         	echo ""
@@ -287,7 +288,7 @@ function gatherHorizonFiles () {
 function pullAgentInstallScript () {
 	echo "Pulling agent-install.sh script..."
 
-	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-install.sh && \
+	curl -O https://raw.githubusercontent.com/open-horizon/anax/v4.0/agent-install/agent-install.sh && \
 		chmod +x ./agent-install.sh
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to pull agent-install.sh script from the anax repo."
