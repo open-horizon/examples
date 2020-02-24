@@ -16,16 +16,18 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 2. Install the Horizon agent on your edge device and configure it to point to your Horizon exchange.
 
-3. Set your exchange org:
+3. As part of the infrasctucture installation process for IBM Edge Computing Manager a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css url values. Locate this file and set those environment variables in your shell now:
 
 ```bash
-export HZN_ORG_ID="<your-cluster-name>"
+eval export $(cat agent-install.cfg)
 ```
 
-4. Create a cloud API key that is associated with your Horizon instance, set your exchange user credentials, and verify them:
+ - **Note**: if for some reason you disconnected from ssh or your command line closes, run the above command again to set the required environment variables.
+
+4. In addition to the file above, an API key associated with your Horizon instance would have been created, set the exchange user credentials, and verify them:
 
 ```bash
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
+export HZN_EXCHANGE_USER_AUTH=iamapikey:<horizon-API-key>
 hzn exchange user list
 ```
 
@@ -37,33 +39,34 @@ hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
 hzn exchange node confirm
 ```
 
+6. If you have not done so already, unregister your node before moving on:
+ ```bash
+hzn unregister -f
+```
+
 ## <a id=using-helloworld-pattern></a> Using the Hello World Example Edge Service with Deployment Pattern
 
 1. Register your edge node with Horizon to use the helloworld pattern:
 
 ```bash
-hzn register -p IBM/pattern-ibm.helloworld
+hzn register -p IBM/pattern-ibm.helloworld -s ibm.helloworld --serviceorg IBM
 ```
+ - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
-2. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
-
-```bash
-hzn agreement list
-```
-
-3. After the agreement is made, list the docker container edge service that has been started as a result:
+2. After the agreement is made, list the docker container edge service that has been started as a result:
 
 ``` bash
 sudo docker ps
 ```
 
-4. See the helloworld service output:
+3. See the helloworld service output:
 
 ``` bash
 hzn service log -f ibm.helloworld
 ```
+ - **Note**: Press **Ctrl C** to stop the command output.
 
-5. Unregister your edge node (which will also stop the myhelloworld service):
+4. Unregister your edge node (which will also stop the myhelloworld service):
 
 ```bash
 hzn unregister -f
