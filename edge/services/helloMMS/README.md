@@ -22,85 +22,90 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 2. Install the Horizon agent on your edge device and configure it to point to your Horizon exchange.
 
-3. Set your exchange org:
+3. As part of the infrastructure installation process for Horizon, a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css URLs. Locate this file and set those environment variables in your shell now:
 
-```bash
-export HZN_ORG_ID="<your-cluster-name>"
-```
+  ```bash
+  eval export $(cat agent-install.cfg)
+  ```
 
 4. Create a cloud API key that is associated with your Horizon instance, set your exchange user credentials, and verify them:
 
-```bash
-export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
-hzn exchange user list
-```
+  ```bash
+  export HZN_EXCHANGE_USER_AUTH="iamapikey:<your-API-key>"
+  hzn exchange user list
+  ```
 
 5. Choose an ID and token for your edge node, create it, and verify it:
 
-```bash
-export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
-hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
-hzn exchange node confirm
-```
+  ```bash
+  export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
+  hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH
+  hzn exchange node confirm
+  ```
+
+6. If you have not done so already, unregister your node before moving on:
+
+  ```bash
+  hzn unregister -f
+  ```
 
 ## <a id=using-hello-mms-pattern></a> Using the Hello MMS Example Edge Service with Deployment Pattern
 
 1. Register your edge node with Horizon to use the hello-mms pattern:
 
-```bash
-hzn register -p IBM/pattern-ibm.hello-mms
-```
-
-2. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
-
-```bash
-hzn agreement list
-```
-
-3. After the agreement is made, list the docker container edge service that has been started as a result:
-
-``` bash
-sudo docker ps
-```
-
-4. See the hello-mms service output (you should see the message **<your-node-id> says: Hello World!**:
-
-  on **Linux**:
-
   ```bash
-  sudo tail -f /var/log/syslog | grep hello-mms[[]
+  export SERVICE_NAME=ibm.hello-mms
+  hzn register -p IBM/pattern-$SERVICE_NAME-$(hzn architecture) -s $SERVICE_NAME --serviceorg IBM
   ```
 
-  on **Mac**:
+2. After the service has started, list the docker containers to see it:
 
-  ```bash
-  sudo docker logs -f $(sudo docker ps -q --filter name=hello-mms)
+  ``` bash
+  sudo docker ps
   ```
 
-5. While observing the output, in another terminal, open the `object.json` file and change the `destinationID` value to your node id.
+3. View the hello-mms service output with the "follow" flag. This sample service repeatedly checks for an updated config file (`config.json`) that contains a parameter of who it should say "hello" to. The initial config file is built into the docker image. Updated config files can come via MMS. Initially you should see the message like: **<your-node-id> says: Hello from the dockerfile!** .
 
-6. Publish the `input.json` file as a new mms object:
-```bash
-hzn mms object publish -m object.json -f input.json
-```
+  ```bash
+  hzn service log -f $SERVICE_NAME
+  ```
 
-7. View the published mms object:
-```bash
-hzn mms object list -t json -i input.json -d
-```
+4. While observing the service output in one terminal, **open another terminal** and get the sample files that will be needed to create and publish a new config file in MMS:
 
-Once the `Object status` changes to `delivered` you will see the output of the hello-mms service change from **\<your-node-id\> says: Hello World!** to **\<your-node-id\> says: Hello Everyone!**
+  ```bash
+  wget -q --show-progress https://github.com/open-horizon/examples/raw/master/edge/services/helloMMS/object.json
+  wget -q --show-progress https://github.com/open-horizon/examples/raw/master/edge/services/helloMMS/config.json
+  ```
 
-8. Delete the published mms object:
-```bash
-hzn mms object delete -t json --id input.json
-```
+5. Modify `config.json` and publish it (along with its metadata `object.json`) as a new mms object:
 
-9. Unregister your edge node (which will also stop the hello-mms service):
+  ```bash
+  jq '.HW_WHO = "from the MMS"' config.json > config.tmp && mv config.tmp config.json
+  export HZN_DEVICE_ID="${HZN_EXCHANGE_NODE_AUTH%%:*}"   # this env var is referenced in object.json
+  hzn mms object publish -m object.json -f config.json
+  ```
 
-```bash
-hzn unregister -f
-```
+6. View the published mms object:
+
+  ```bash
+  hzn mms object list -t $HZN_DEVICE_ID.hello-mms -i config.json -d
+  ```
+
+  Once the `Object status` changes to `delivered` you will see the output of the hello-mms service (in the other terminal) change from **\<your-node-id\> says: Hello from the dockerfile!** to **\<your-node-id\> says: Hello from the MMS!**
+
+7. Delete the published mms object:
+
+  ```bash
+  hzn mms object delete -t $HZN_DEVICE_ID.hello-mms --id config.json
+  ```
+
+  Note in the service output in the other terminal that this will cause the service to revert to the original config file, and therefore the original "hello" message.
+
+8. Unregister your edge node (which will also stop the hello-mms service):
+
+  ```bash
+  hzn unregister -f
+  ```
 
 ## <a id=mms-deets></a> More MSS Details
 
@@ -110,12 +115,12 @@ The `hzn mms ...` command provides additional tooling for working with the MMS. 
 hzn mms --help
 ```
 
-A good place to start is with the `hzn mms object new` command, which will emit an MMS object metadata template. You can take this template, fill in the fields that are relevant to your use case, and remove all of the "comments" wrapped in `/* ... */`. Then you can pass it to the `hzn mms object publish -m <my-metadata-file` (as your `<my-metadata-file>`).
+A good place to start is with the `hzn mms object new` command, which will emit an MMS object metadata template. You can take this template and fill in the fields that are relevant to your use case and then use it to publish your MMS object.
 
-To publish an object with the MMS, you can use the scripts you used above, or the `hzn mms object publish ...` command. For the latter you need to provide `-t <my-type>` and `-i <my-id>` (passing your own type, `<my-type>`, and ID, `<my-id>`). This command also takes a `-p <my-pattern>` flag that you can use to tell the MMS to deliver this object only to Edge Nodes that are registered with Deployment Pattern `<my-pattern>.
+You can view all of the MMS objects that are used with a particular pattern like this:
 
-The `hzn mms object list -t <my-type>` can be used to list all the MMS objects of type, `<my-type>`.
+```bash
+hzn mms object list --destinationType pattern-ibm.hello-mms -d
+```
 
-To delete a specific object, of type `<my-type>` with ID `<my-id>` you can use, `hzn mms object delete -t <my-type> -i <my-id>`.
-
-To view the current MMS status, use, `hzn mms status`.
+To view the current MMS status, use: `hzn mms status`

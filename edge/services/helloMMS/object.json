@@ -1,11 +1,11 @@
 {
-  "objectID": "input.json",            /* Required: A unique identifier of the object. */
-  "objectType": "json",          /* Required: The type of the object. */
+  "objectID": "config.json",            /* Required: A unique identifier of the object. */
+  "objectType": "$HZN_DEVICE_ID.hello-mms",          /* Required: The type of the object. */
   "destinationOrgID": "$HZN_ORG_ID", /* Required: The organization ID of the object (an object belongs to exactly one organization). */
-  "destinationID": "fyre-tfine",       /* The node id (without org prefix) where the object should be placed. */
+  "destinationID": "$HZN_DEVICE_ID",       /* The node id (without org prefix) where the object should be placed. */
                              /* If omitted the object is sent to all nodes with the same destinationType. */
                              /* Delete this field when you are using destinationPolicy. */
-  "destinationType": "pattern-ibm.hello-mms",     /* The pattern in use by nodes that should receive this object. */
+  "destinationType": "pattern-${SERVICE_NAME}-$ARCH",     /* The pattern in use by nodes that should receive this object. */
                              /* If omitted (and if destinationsList is omitted too) the object is broadcast to all known nodes. */
                              /* Delete this field when you are using policy. */
   "destinationsList": null,  /* The list of destinations as an array of pattern:nodeId pairs that should receive this object. */
