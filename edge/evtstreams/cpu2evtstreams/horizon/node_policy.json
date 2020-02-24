@@ -8,6 +8,9 @@
         },
         {
             "name": "os", "value": "Mojave"
+        },
+        {
+            "name": "openhorizon.allowPrivileged", "value": true
         }
     ],
     "constraints": []

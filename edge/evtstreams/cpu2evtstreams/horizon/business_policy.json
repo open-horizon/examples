@@ -23,7 +23,20 @@
       "serviceOrgid": "$HZN_ORG_ID",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
-      "inputs": []
+      "inputs": [
+        {
+          "name": "EVTSTREAMS_API_KEY",
+          "value": "$EVTSTREAMS_API_KEY"
+        },
+        {
+          "name": "EVTSTREAMS_BROKER_URL",
+          "value": "$EVTSTREAMS_BROKER_URL"
+        },
+        {
+          "name": "EVTSTREAMS_CERT_ENCODED",
+          "value": "$EVTSTREAMS_CERT_ENCODED"
+        }
+      ]
     }
   ]
 }
