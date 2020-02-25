@@ -45,8 +45,11 @@
     "services": {
       "$SERVICE_NAME": {
         "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+        "binds": [
+          "/dev/:/dev/:ro"
+        ],
         "devices": [
-          "/dev/ttyACM0:/dev/ttyACM0"
+          "/dev/:/dev/"
         ]
       }
     }
