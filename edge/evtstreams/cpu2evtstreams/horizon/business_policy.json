@@ -3,7 +3,7 @@
   "description": "A Horizon Business Policy example to run cpu2evtstreams",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "$HZN_ORG_ID",
+    "org": "IBM",
     "arch": "$ARCH",
     "serviceVersions": [
       {
@@ -20,7 +20,7 @@
   ],
   "userInput": [
     {
-      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceOrgid": "IBM",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [

@@ -141,6 +141,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 ```bash
 export ARCH=$(hzn architecture)
 eval $(hzn util configconv -f hzn.json)
+eval export $(cat agent-install.cfg)
 ```
 
 3. Publish this Business Policy to the Exchange to deploy the `ibm.helloworld` service to the Edge Node (give it a memorable name):
