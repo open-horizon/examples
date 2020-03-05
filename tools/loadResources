@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# Load all of 1 type of resource into the Horizon Exchange, which had previously been dumped with a command like: hzn exchange <resource-type> list -l
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+cat << EndOfMessage
+Usage: $(basename "$0") <json-file>
+
+Publishes the Horizon Exchange resources contained in <json-file>, or from stdin if omitted. Typically the json comes from a command like 'hzn exchange <resource-type> list -l'. This enables you to dump 1 or all of the Exchange resources of a given type, and then load them into either another Exchange org, or into a different instance of Horizon. This can also be used to essentially copy resources from one version of Horizon to another when doing a full reinstall, instead of an upgrade. Before publishing, $(basename "$0") will process the json to remove fields that are including in the listing, but can not be included when publishing (e.g. the lastUpdated field).
+
+Limitations: currently only supports loading services (but not service policies), patterns, and deployment policies.
+
+Environment variables: because $(basename "$0") uses the 'hzn exchange ...' command to publish the resources, all of the same environment variables are supported.
+
+Examples:
+
+Copy 1 pattern from the IBM org to your org:
+  hzn exchange pattern list IBM/pattern-ibm.helloworld | $(basename "$0")
+
+Copy all patterns from the IBM org to your org:
+  hzn exchange pattern list IBM/ -l | $(basename "$0")
+
+Copy all of your deployment policies from 1 instance of Horizon to another:
+  hzn exchange deployment listpolicy -l > ourPolicies.json
+  # move to (or install) another instance of Horizon, then
+  $(basename "$0") ourPolicies.json
+EndOfMessage
+exit
+fi
+
+# Confirm they have hzn and jq installed
+if ! which hzn >/dev/null || ! which jq >/dev/null; then
+    echo "Error: the hzn and jq commands are required. Install them before continuing."
+    exit 2
+fi
+
+checkexitcode() {   # check the previous cmds exit code. Invoke like this: checkexitcode $? 'reading the specified json'
+    if [[ $1 == 0 ]]; then return; fi
+    echo "Error: exit code $1 when $2"
+    exit $1
+}
+
+jsonfile="$1"  # if omitted, we read from stdin
+
+json=$(jq -c . $jsonfile)  # get the json and check its syntax
+checkexitcode $? 'reading the specified json'
+
+# Try to auto-detect which type of resource these are
+if jq -e '.[].services' <<< "$json" >/dev/null; then
+    resType='pattern'
+elif jq -e '.[].service' <<< "$json" >/dev/null; then
+    resType='deployment-policy'
+elif jq -e '.[].sharable' <<< "$json" >/dev/null; then
+    resType='service'
+else
+    echo "Error: can not determine resource type in the specified json. Allowable types: services, patterns, deployment policies"
+    exit 2
+fi
+echo "Determined the json contains resources of type $resType"
+
+# Loop thru each resource and publish it
+keys=$(jq -r 'to_entries[] | .key' <<< $json)
+checkexitcode $? 'getting keys from the specified json'
+for k in $keys; do
+    name=${k#*/}    # strip the org from the beginning of the key
+    resourceJson=$(jq -c ".[\"$k\"] | del(.owner) | del(.lastUpdated) | .public = false" <<< $json)
+    checkexitcode $? "getting resource $k from the specified json"
+
+    # Pipe our massaged json in the appropriate hzn publish command
+    case $resType in
+        service) echo "$resourceJson" | hzn exchange service publish -I -O -f-
+        ;;
+        pattern) echo "$resourceJson" | hzn exchange pattern publish -p $name -f-
+        ;;
+        deployment-policy) echo "$resourceJson" | hzn exchange deployment addpolicy -f-  $name
+        ;;
+    esac
+    checkexitcode $? "publishing $name to the exchange"
+done
