@@ -11,7 +11,7 @@ branch="-b master"
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
-input="$(dirname $0)/examples/tools/blessedSamples.txt"
+input="examples/tools/blessedSamples.txt"
 
 topDir=$(pwd)
 error=0
