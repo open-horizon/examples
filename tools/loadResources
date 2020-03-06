@@ -6,9 +6,9 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 cat << EndOfMessage
 Usage: $(basename "$0") <json-file>
 
-Publishes the Horizon Exchange resources contained in <json-file>, or from stdin if omitted. Typically the json comes from a command like 'hzn exchange <resource-type> list -l'. This enables you to dump 1 or all of the Exchange resources of a given type, and then load them into either another Exchange org, or into a different instance of Horizon. This can also be used to essentially copy resources from one version of Horizon to another when doing a full reinstall, instead of an upgrade. Before publishing, $(basename "$0") will process the json to remove fields that are including in the listing, but can not be included when publishing (e.g. the lastUpdated field).
+Publishes the Horizon Exchange resources contained in <json-file>, or from stdin if omitted. Typically the json comes from a command like 'hzn exchange <resource-type> list -l'. This enables you to dump 1 or all of the Exchange resources of a given type, and then load them into either another Exchange org, or into a different instance of Horizon. This can also be used to essentially copy resources from one version of Horizon to another when doing a full reinstall, instead of an upgrade. Before publishing, $(basename "$0") will process the json to: remove fields that are included in the listing, but can not be included when publishing (e.g. the lastUpdated field), and to remove the orginal org so it will be published in the org specfied by HZN_ORG_ID.
 
-Limitations: currently only supports loading services (but not service policies), patterns, and deployment policies.
+Limitations: currently only supports loading services (but not service policies yet), patterns, and deployment policies.
 
 Environment variables: because $(basename "$0") uses the 'hzn exchange ...' command to publish the resources, all of the same environment variables are supported.
 
@@ -20,6 +20,9 @@ Copy 1 pattern from the IBM org to your org:
 Copy all patterns from the IBM org to your org:
   hzn exchange pattern list IBM/ -l | $(basename "$0")
 
+Copy all services from the IBM org to your org:
+  hzn exchange service list IBM/ -l | $(basename "$0")
+
 Copy all of your deployment policies from 1 instance of Horizon to another:
   hzn exchange deployment listpolicy -l > ourPolicies.json
   # move to (or install) another instance of Horizon, then
@@ -27,6 +30,13 @@ Copy all of your deployment policies from 1 instance of Horizon to another:
 EndOfMessage
 exit
 fi
+
+#TODOS:
+# - we can't currently support loading service policies because the exchange and hzn don't support listing the policies
+#   for all services at once.
+# - we can't currently support loading nodes, because they each need a token. If you are exchange root when listing
+#   the nodes, the bcrypt of the token is returned. But we would have to modify the exchange PUT /orgs/{orgid}/nodes/{id}
+#   to optionally accept already bcrypt'd tokens.
 
 # Confirm they have hzn and jq installed
 if ! which hzn >/dev/null || ! which jq >/dev/null; then
@@ -44,6 +54,10 @@ jsonfile="$1"  # if omitted, we read from stdin
 
 json=$(jq -c . $jsonfile)  # get the json and check its syntax
 checkexitcode $? 'reading the specified json'
+if [[ -z "$json" ]]; then
+    echo "Error: json input is empty"
+    exit 2
+fi
 
 # Try to auto-detect which type of resource these are
 if jq -e '.[].services' <<< "$json" >/dev/null; then
@@ -68,7 +82,10 @@ for k in $keys; do
 
     # Pipe our massaged json in the appropriate hzn publish command
     case $resType in
-        service) echo "$resourceJson" | hzn exchange service publish -I -O -f-
+        service) # Have to 1st inflate the deployment field from a string to real json
+            deployment=$(jq -r '.deployment' <<< $resourceJson)
+            resourceJson=$(jq ".deployment = $deployment" <<< $resourceJson)
+            echo "$resourceJson" | hzn exchange service publish -I -O -f-
         ;;
         pattern) echo "$resourceJson" | hzn exchange pattern publish -p $name -f-
         ;;
