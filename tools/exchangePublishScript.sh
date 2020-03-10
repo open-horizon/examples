@@ -13,7 +13,7 @@ Usage: ./exchangePublishScript.sh [-c <cluster-name>]
 
 Parameters:
   optional:
-    -c              <cluster-name> set this flag to publish example deployment policy for the helloworld 
+    -c              <cluster-name> set this flag to publish example deployment policy for the helloworld
                       and cpu2evtstreams samples
 
 Required Environment Variables:
@@ -38,8 +38,8 @@ while (( "$#" )); do
     esac
 done
 
-# check the previous cmds exit code. 
-checkexitcode () {   
+# check the previous cmds exit code.
+checkexitcode () {
     if [[ $1 == 0 ]]; then return; fi
     echo""
     echo "Error: exit code $1 when $2"
@@ -49,11 +49,11 @@ checkexitcode () {
 
 # publish deployment policy for helloworld and cpu2evtstreams if -c flag is used
 function deployPolPublish () {
-    if [[ $line == *"cpu2evtstreams" ]]; then 
+    if [[ $line == *"cpu2evtstreams" ]]; then
         HZN_ORG_ID=$ORG hzn exchange business addpolicy -f horizon/business_policy.json ibm.cpu2evtstreams
         checkexitcode $? 'publishing cpu2evtstreams deployment policy to the exchange'
 
-    elif [[ $line == *"helloworld" ]]; then 
+    elif [[ $line == *"helloworld" ]]; then
         HZN_ORG_ID=$ORG hzn exchange business addpolicy -f horizon/business_policy.json ibm.helloworld
         checkexitcode $? 'publishing helloworld deployment policy to the exchange'
     fi
@@ -77,12 +77,12 @@ do
     # each $line contains the path to any service or pattern that needs to be published
     cd $line
     checkexitcode $? "finding service directory "$line""
-    
+
     echo `pwd`
     make publish-only
     checkexitcode $? "publishing "$line" to the exchange"
 
-    # check if an org was specified to publish sample deployment policy 
+    # check if an org was specified to publish sample deployment policy
     if ! [ -z $ORG ]; then
         deployPolPublish
     fi
@@ -97,6 +97,6 @@ if [ $error != 0 ]; then
     echo "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
 else
     echo "\nNo errors were encountered. Removing examples directory...\n"
-    #rm -f -r examples/
+    rm -f -r examples/
 fi
 
