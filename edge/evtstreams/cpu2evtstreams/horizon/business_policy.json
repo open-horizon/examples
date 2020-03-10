@@ -4,7 +4,7 @@
   "service": {
     "name": "$SERVICE_NAME",
     "org": "IBM",
-    "arch": "$ARCH",
+    "arch": "*",
     "serviceVersions": [
       {
         "version": "$SERVICE_VERSION",
@@ -16,7 +16,8 @@
   ],
   "constraints": [
     "os == \"Mojave\"",
-    "model == \"Mac\" OR model == \"Pi3B\""
+    "model == \"Mac\" OR model == \"Pi3B\"",
+    "openhorizon.example == cpu2evtstreams"
   ],
   "userInput": [
     {
