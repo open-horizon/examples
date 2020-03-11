@@ -51,7 +51,7 @@ checkexitcode () {
 # publish deployment policy for helloworld and cpu2evtstreams if -c flag is used
 function deployPolPublish () {
     if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]]); then 
-        export PUBLIC_ORG=$ORG; make publish-business-policy
+        PUBLIC_ORG=$ORG make publish-business-policy
         checkexitcode $? "publishing deployment policy to the "$ORG" in the exchange"
     fi
 }
