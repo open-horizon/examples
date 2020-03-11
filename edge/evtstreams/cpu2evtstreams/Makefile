@@ -76,7 +76,7 @@ publish-service-policy:
 
 # Publish Business Policy target for exchange publish script
 publish-business-policy:
-	hzn exchange business addpolicy -f horizon/business_policy.json --org=$(PUBLIC_ORG) $(SERVICE_NAME)_$(SERVICE_VERSION)
+	hzn exchange business addpolicy -f horizon/business_policy.json $(SERVICE_NAME)_$(SERVICE_VERSION)
 
 # new target for icp exchange to run on startup to publish only
 publish-only:
@@ -109,6 +109,6 @@ clean-all-archs:
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.json.tmp.mk: horizon/hzn.json
-	@ hzn util configconv -f $< > $@
+	@ hzn util configconv -f $< | sed 's/=/?=/' > $@
 
 .PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs
