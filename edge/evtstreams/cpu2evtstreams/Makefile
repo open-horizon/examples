@@ -76,7 +76,7 @@ publish-service-policy:
 
 # Publish Business Policy target for exchange publish script
 publish-business-policy:
-	hzn exchange business addpolicy -f horizon/business_policy.json $(SERVICE_NAME)_$(SERVICE_VERSION)
+	hzn exchange business addpolicy -f horizon/business_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
 
 # new target for icp exchange to run on startup to publish only
 publish-only:
