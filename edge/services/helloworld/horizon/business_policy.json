@@ -4,7 +4,7 @@
   "service": {
     "name": "$SERVICE_NAME",
     "org": "IBM",
-    "arch": "$ARCH",
+    "arch": "*",
     "serviceVersions": [
       {
         "version": "$SERVICE_VERSION",
@@ -16,7 +16,8 @@
   ],
   "constraints": [
     "serial >= 9000000",
-    "model == \"Thingamajig ULTRA\""
+    "model == \"Thingamajig ULTRA\"",
+    "openhorizon.example == helloworld"
   ],
   "userInput": [
     {

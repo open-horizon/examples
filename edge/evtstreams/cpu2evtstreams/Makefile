@@ -76,19 +76,16 @@ publish-service-policy:
 
 # Publish Business Policy target for exchange publish script
 publish-business-policy:
-	hzn exchange business addpolicy -f horizon/business_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+	hzn exchange business addpolicy -f horizon/business_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
 
 # new target for icp exchange to run on startup to publish only
 publish-only:
 	ARCH=amd64 $(MAKE) publish-service-overwrite
 	ARCH=amd64 $(MAKE) publish-service-policy
-	ARCH=amd64 $(MAKE) publish-business-policy
 	ARCH=arm $(MAKE) publish-service-overwrite
 	ARCH=arm $(MAKE) publish-service-policy
-	ARCH=arm $(MAKE) publish-business-policy
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	ARCH=arm64 $(MAKE) publish-service-policy
-	ARCH=arm64 $(MAKE) publish-business-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Create a topic in Event Streams for cpu2evtstreams to send data to
@@ -112,6 +109,6 @@ clean-all-archs:
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.json.tmp.mk: horizon/hzn.json
-	@ hzn util configconv -f $< > $@
+	@ hzn util configconv -f $< | sed 's/=/?=/' > $@
 
 .PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs
