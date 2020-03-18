@@ -45,13 +45,11 @@ publish-service:
 publish: 
 	ARCH=amd64 $(MAKE) publish-service
 	ARCH=amd64 $(MAKE) publish-service-policy
-	ARCH=amd64 $(MAKE) publish-business-policy
 	ARCH=arm $(MAKE) publish-service
 	ARCH=arm $(MAKE) publish-service-policy
-	ARCH=arm $(MAKE) publish-business-policy
 	ARCH=arm64 $(MAKE) publish-service
 	ARCH=arm64 $(MAKE) publish-service-policy
-	ARCH=arm64 $(MAKE) publish-business-policy
+	$(MAKE) publish-business-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
