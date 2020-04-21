@@ -2,17 +2,20 @@
 
 # This script gathers the necessary information and files to install Horizon and register an edge device
 
+# default agent image tag if it is not specified by script user
+IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
+CLUSTER_STORAGE_CLASS="gp2"
 
 function scriptUsage () {
 	cat << EOF
 ERROR: No arguments specified.
 
-Usage: ./edgeDeviceFiles.sh <edge-device-type> [-t] [-k] [-d <distribution>] [-f <directory>]
+Usage: ./edgeDeviceFiles.sh <edge-device-type> [-t] [-k] [-r] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-d <distribution>] [-f <directory>]
 
 Parameters:
   required:
     <edge-device-type>		the type of edge device planned for install and registration
-				  accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-Linux , macOS >
+				  accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-Linux , macOS , x86_64-Cluster >
 
   optional:
     -t 				create agentInstallFiles.tar.gz file containing gathered files
@@ -24,12 +27,30 @@ Parameters:
     -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set,
 				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will
 				  be skipped if it exists
+    -r              		use edge cluster registry other than ocp image registry. 
+                  		  If used, "EDGE_CLUSTER_REGISTRY_USER", "EDGE_CLUSTER_REGISTRY_PW"
+                  		  and "EDGE_CLUSTER_REGISTRY_REPONAME" need to set as environment variables
+				  Only apply when <edge-device-type> is <x86_64-Cluster>
+    -s 				storage class used in edge cluster. Default is gp2
+				  Only apply when <edge-device-type> is <x86_64-Cluster>
+    -i				tag of agent image to deploy to edge cluster
+				  Only apply when <edge-device-type> is <x86_64-Cluster>
+    -o              		specify HZN_ORG_ID. Only apply when <edge-device-type> is <x86_64-Cluster>
+    -n				specify NODE_ID, it should be same as your cluster name
+				  Only apply when <edge-device-type> is <x86_64-Cluster>
     -f 				<directory> to move gathered files to. Default is current directory
 
 Required Environment Variables:
     CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
     USER 			your-cluster-admin-user
     PW				your-cluster-admin-password
+
+Required Environment Variables if specify -r:
+	EDGE_CLUSTER_REGISTRY_USER	your-edge-cluster-registry-username
+	EDGE_CLUSTER_REGISTRY_PW	your-edge-cluster-registry-password
+	EDGE_CLUSTER_REGISTRY_REPONAME	repo-name-of-your-edge-cluster-registry
+
+
 
 EOF
 	exit 1
@@ -61,16 +82,36 @@ while (( "$#" )); do
       		CREATE_API_KEY=$1
       		shift
      		;;
+	-r) # use edge cluster registry
+		USING_EDGE_CLUSTER_REGISTRY=$1
+		shift
+		;;
+	-s) # storage class to use by persistent volume claim in edge cluster
+		CLUSTER_STORAGE_CLASS=$2
+		shift 2
+		;;
+	-i) # tag of agent image to deploy to edge cluster
+		AGENT_IMAGE_TAG=$2
+		shift 2
+		;;
+	-o) # value of HZN_ORG_ID
+		ORG_ID=$2
+		shift 2
+		;;
+	-n) # value of NODE_ID
+		HZN_NODE_ID=$2
+		shift 2
+		;;
      	-f) # directory to move gathered files to
-			DIR=$2
+		DIR=$2
       		shift 2
       		;;
     	*) # based on "Usage" this should be device type
-			if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]]); then
-				echo "ERROR: Unknown device type."
-				echo ""
-				exit 1
-			fi
+		if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]] || [[ "$1" == "x86_64-Cluster" ]]); then
+			echo "ERROR: Unknown device type."
+			echo ""
+			exit 1
+		fi
       		EDGE_DEVICE=$1
       		shift
       		;;
@@ -88,19 +129,27 @@ function checkEnvVars () {
 	cloudctl --help > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		echo "ERROR: cloudctl is not installed."
-        echo ""
-        exit 1
-    fi
-    echo " - cloudctl installed"
+        	echo ""
+        	exit 1
+    	fi
+    	echo " - cloudctl installed"
 
-    kubectl --help > /dev/null 2>&1
+    	kubectl --help > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		echo "ERROR: kubectl is not installed."
-        echo ""
-        exit 1
-    fi
-    echo " - kubectl installed"
-    echo ""
+        	echo ""
+        	exit 1
+   	fi
+    	echo " - kubectl installed"
+
+    	oc --help > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo "ERROR: oc is not installed."
+        	echo ""
+        	exit 1
+    	fi
+    	echo " - oc installed"
+    	echo ""
 
 	echo "Checking environment variables..."
 
@@ -125,6 +174,42 @@ function checkEnvVars () {
 	echo " - CLUSTER_URL set"
 	echo " - USER set"
 	echo " - PW set"
+	echo ""
+
+	if [ "$USING_EDGE_CLUSTER_REGISTRY"=="-r" ]; then
+        	echo "USING_EDGE_CLUSTER_REGISTRY: true"
+        	if [ -z $EDGE_CLUSTER_REGISTRY_REPONAME ]; then
+            		echo "ERROR: EDGE_CLUSTER_REGISTRY_REPONAME environment variable is not set. Can not login to edge cluster registry ...'"
+            		echo ""
+            		exit 1
+        	elif [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
+            		echo "ERROR: EDGE_CLUSTER_REGISTRY_USERenvironment variable is not set. Can not login to edge cluster registry ...'"
+            		echo ""
+            		exit 1
+        	elif [ -z $EDGE_CLUSTER_REGISTRY_PW ]; then
+            		echo "ERROR: EDGE_CLUSTER_REGISTRY_PW environment variable is not set. Can not login to edge cluster registry ...'"
+            		echo ""
+            		exit 1
+        	fi
+		EDGE_CLUSTER_REGISTRY="true"
+
+        	echo " - EDGE_CLUSTER_REGISTRY_REPONAME set"
+        	echo " - EDGE_CLUSTER_REGISTRY_USER set"
+        	echo " - EDGE_CLUSTER_REGISTRY_PW set"
+        	echo ""
+    	else
+		EDGE_CLUSTER_REGISTRY="false"
+	fi
+}
+
+function checkParams() {
+	echo "Checking input paramters ..."
+	if [ -z $HZN_NODE_ID ]; then
+		echo "ERROR: NODE_ID is not set. Please specify -n <your edge cluster name>"
+		echo ""
+		exit 1
+	fi
+	echo "Using NODE_ID: $HZN_NODE_ID"
 	echo ""
 }
 
@@ -190,15 +275,87 @@ function createAPIKey () {
     echo ""
 }
 
+function getImageFromOcpRegistry() {
+    # get OCP_USER, OCP_TOKEN and OCP_DOCKER_HOST
+    oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}'
+    if [ $? -ne 0 ]; then
+        echo "Default route for the OpenShift image registry is not found, creating it ..."
+        oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+        if [ $? -ne 0 ]; then
+            echo "ERROR: failed to create the default route for the OpenShift image registry, exiting..."
+            echo ""
+            exit 1
+        else 
+            echo "Default route for the OpenShift image registry created"
+			echo ""
+        fi
+    fi
+
+    OCP_DOCKER_HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+    OCP_USER=$(oc whoami)
+    OCP_TOKEN=$(oc whoami -t)
+
+    echo "OCP_DOCKER_HOST=$OCP_DOCKER_HOST"
+    echo "OCP_USER=$OCP_USER"
+    echo "OCP_TOKEN=$OCP_TOKEN"
+    echo ""
+
+    # get the OpenShift certificate
+    echo "Getting penShift certificate..."
+    echo | openssl s_client -connect $OCP_DOCKER_HOST:443 -showcerts | sed -n "/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p" > ocp.crt
+    if [ $? -ne 0 ]; then
+		echo "ERROR: Failed to get the OpenShift certificate"
+        echo ""
+        exit 1
+    fi
+    echo "Get ocp.crt"
+    echo ""
+
+    # Getting image from ocp ....
+}
+
+function zipAgentImage() {
+    echo "Zipping $IMAGE_TAR_FILE..."
+    
+    IMAGE_ZIP_FILE="$IMAGE_TAR_FILE.gz"
+    tar -czvf $IMAGE_ZIP_FILE $(ls $IMAGE_TAR_FILE)
+    if [ $? -ne 0 ]; then
+        echo "ERROR: failed to zip $IMAGE_TAR_FILE"
+        echo ""
+        exit 1
+    fi
+
+    echo "$IMAGE_ZIP_FILE created"
+    echo ""
+}
+
 # With the information from the previous functions, create agent-install.cfg
 function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
+	HUB_CERT_PATH="agent-install.crt"
 
+if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+	cat << EndOfContent > agent-install.cfg
+HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
+HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
+HZN_ORG_ID=$ORG_ID
+HZN_MGMT_HUB_CERT_PATH=$HUB_CERT_PATH
+NODE_ID=$HZN_NODE_ID
+USE_EDGE_CLUSTER_REGISTRY=$EDGE_CLUSTER_REGISTRY
+EDGE_CLUSTER_REGISTRY_USERNAME=$EDGE_CLUSTER_REGISTRY_USER
+EDGE_CLUSTER_REGISTRY_TOKEN=$EDGE_CLUSTER_REGISTRY_PW
+EDGE_CLUSTER_REGISTRY_REPO=$EDGE_CLUSTER_REGISTRY_REPONAME
+EDGE_CLUSTER_STORAGE_CLASS=$CLUSTER_STORAGE_CLASS
+EndOfContent
+
+else
 	cat << EndOfContent > agent-install.cfg
 HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
 HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
 HZN_ORG_ID=$CLUSTER_NAME
 EndOfContent
+
+fi
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create agent-install.cfg file."
         echo ""
@@ -289,6 +446,7 @@ function pullAgentInstallScript () {
 
 	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-install.sh && \
 		chmod +x ./agent-install.sh
+
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to pull agent-install.sh script from the anax repo."
        	echo ""
@@ -297,12 +455,37 @@ function pullAgentInstallScript () {
     echo ""
 }
 
+function pullClusterDeployTemplages () {
+	echo "Pulling cluster deploy templates: deployment-template.yml, persistentClaim-template.yml..."
+
+	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/k8s/deployment-template.yml
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Failed to pull deployment-template.yml script from the anax repo."
+       	echo ""
+       	exit 1
+    fi
+
+	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/k8s/persistentClaim-template.yml
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Failed to pull persistentClaim-template.yml script from the anax repo."
+       	echo ""
+       	exit 1
+    fi
+	
+}
+
 # Create a tar file of the gathered files for batch install
 function createTarFile () {
 	echo "Creating agentInstallFiles-$EDGE_DEVICE.tar.gz file containing gathered files..."
-	echo "tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz \$(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*)"
 
-	tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz $(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*)
+	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt $IMAGE_ZIP_FILE deployment-template.yml persistentClaim-template.yml"
+	else
+		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt *horizon*"
+	fi
+	echo "tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz \$(ls $FILES_TO_COMPRESS)"
+
+	tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz $(ls $FILES_TO_COMPRESS)
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create agentInstallFiles-$EDGE_DEVICE.tar.gz file."
        	echo ""
@@ -319,7 +502,7 @@ function moveFiles () {
     	mkdir $DIR
 	fi
 
-	mv $(ls agent-install.sh agent-install.cfg agent-install.crt *horizon*) $DIR
+	mv $(ls $FILES_TO_COMPRESS) $DIR
 	if [ -f key.txt ]; then
     	mv key.txt $DIR
 	fi
@@ -342,8 +525,35 @@ function printApiKey () {
 	echo "********************* Save this value for future use *************************"
 	echo ""
 }
+cluster_main() {
+	checkEnvVars
 
-main () {
+	checkParams
+
+	cloudLogin
+
+	#getImageFromOcpRegistry
+
+	zipAgentImage
+
+	createAgentInstallConfig
+
+	getClusterCert
+
+	pullAgentInstallScript
+
+	pullClusterDeployTemplages
+
+	if [[ "$PACKAGE_FILES" == "-t" ]]; then
+		createTarFile
+	fi
+
+	if ! [ -z $DIR ]; then
+		moveFiles
+	fi
+}
+
+device_main() {
 	checkEnvVars
 
 	cloudLogin
@@ -377,6 +587,16 @@ main () {
 	fi
 
 }
+
+main() {
+
+	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+		cluster_main
+	else
+		device_main
+	fi
+}
+
 main
 
 
