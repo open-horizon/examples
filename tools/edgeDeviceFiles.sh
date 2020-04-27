@@ -3,6 +3,7 @@
 # This script gathers the necessary information and files to install Horizon and register an edge device
 
 # default agent image tag if it is not specified by script user
+AGENT_IMAGE_TAG="2.26.0"
 IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
 CLUSTER_STORAGE_CLASS="gp2"
 
@@ -29,15 +30,16 @@ Parameters:
 				  be skipped if it exists
     -r              		use edge cluster registry other than ocp image registry. 
                   		  If used, "EDGE_CLUSTER_REGISTRY_USER", "EDGE_CLUSTER_REGISTRY_PW"
-                  		  and "EDGE_CLUSTER_REGISTRY_REPONAME" need to set as environment variables
-				  Only apply when <edge-device-type> is <x86_64-Cluster>
+                  		  and "IMAGE_ON_EDGE_CLUSTER_REGISTRY" need to be set as environment variables
+				  Only applies when <edge-device-type> is <x86_64-Cluster>
     -s 				storage class used in edge cluster. Default is gp2
-				  Only apply when <edge-device-type> is <x86_64-Cluster>
+				  Only applies when <edge-device-type> is <x86_64-Cluster>
     -i				tag of agent image to deploy to edge cluster
-				  Only apply when <edge-device-type> is <x86_64-Cluster>
-    -o              		specify HZN_ORG_ID. Only apply when <edge-device-type> is <x86_64-Cluster>
-    -n				specify NODE_ID, it should be same as your cluster name
-				  Only apply when <edge-device-type> is <x86_64-Cluster>
+				  Only applies when <edge-device-type> is <x86_64-Cluster>
+    -o              		specify the value of HZN_ORG_ID. 
+                                  Only applies when <edge-device-type> is <x86_64-Cluster>
+    -n				specify the value of NODE_ID, it should be same as your cluster name
+				  Only applies when <edge-device-type> is <x86_64-Cluster>
     -f 				<directory> to move gathered files to. Default is current directory
 
 Required Environment Variables:
@@ -45,10 +47,12 @@ Required Environment Variables:
     USER 			your-cluster-admin-user
     PW				your-cluster-admin-password
 
-Required Environment Variables if specify -r:
+Required Environment Variables if -r is specified:
 	EDGE_CLUSTER_REGISTRY_USER	your-edge-cluster-registry-username
 	EDGE_CLUSTER_REGISTRY_PW	your-edge-cluster-registry-password
-	EDGE_CLUSTER_REGISTRY_REPONAME	repo-name-of-your-edge-cluster-registry
+	IMAGE_ON_EDGE_CLUSTER_REGISTRY	full-image-name-on-your-edge-cluster-registry-to-host-agent-image, 
+		in format: <registry-name>/<repo-name>/<image-name>
+		if using docker hub, specify the value in the format <docker-repo-name>/<image-name>
 
 
 
@@ -142,15 +146,24 @@ function checkEnvVars () {
    	fi
     	echo " - kubectl installed"
 
-    	oc --help > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		echo "ERROR: oc is not installed."
-        	echo ""
-        	exit 1
-    	fi
-    	echo " - oc installed"
-    	echo ""
+	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+    		oc --help > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "ERROR: oc is not installed."
+        		echo ""
+        		exit 1
+    		fi
+    		echo " - oc installed"
 
+		docker --help > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "ERROR: docker is not installed."
+			echo ""
+			exit 1
+		fi
+	fi
+    	echo ""
+	
 	echo "Checking environment variables..."
 
 	if [ -z $CLUSTER_URL ]; then
@@ -176,26 +189,26 @@ function checkEnvVars () {
 	echo " - PW set"
 	echo ""
 
-	if [ "$USING_EDGE_CLUSTER_REGISTRY"=="-r" ]; then
+	if [ "$EDGE_DEVICE"=="x86_64-Cluster" ] &&  [ "$USING_EDGE_CLUSTER_REGISTRY"=="-r" ]; then
         	echo "USING_EDGE_CLUSTER_REGISTRY: true"
-        	if [ -z $EDGE_CLUSTER_REGISTRY_REPONAME ]; then
-            		echo "ERROR: EDGE_CLUSTER_REGISTRY_REPONAME environment variable is not set. Can not login to edge cluster registry ...'"
-            		echo ""
-            		exit 1
-        	elif [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
-            		echo "ERROR: EDGE_CLUSTER_REGISTRY_USERenvironment variable is not set. Can not login to edge cluster registry ...'"
+        	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
+            		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
             		echo ""
             		exit 1
         	elif [ -z $EDGE_CLUSTER_REGISTRY_PW ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_PW environment variable is not set. Can not login to edge cluster registry ...'"
             		echo ""
             		exit 1
+		elif [ -z $IMAGE_ON_EDGE_CLUSTER_REGISTRY ]; then
+			echo "ERROR: IMAGE_ON_EDGE_CLUSTER_REGISTRY environment variable is not set. Please see script usage ./edgeDeviceFiles.sh'"
+                        echo ""
+                        exit 1
         	fi
 		EDGE_CLUSTER_REGISTRY="true"
 
-        	echo " - EDGE_CLUSTER_REGISTRY_REPONAME set"
         	echo " - EDGE_CLUSTER_REGISTRY_USER set"
         	echo " - EDGE_CLUSTER_REGISTRY_PW set"
+		echo " - IMAGE_ON_EDGE_CLUSTER_REGISTRY set"
         	echo ""
     	else
 		EDGE_CLUSTER_REGISTRY="false"
@@ -312,6 +325,54 @@ function getImageFromOcpRegistry() {
     echo ""
 
     # Getting image from ocp ....
+    if [[ "$OSTYPE" == "linux"* ]]; then
+	echo "Detected OS is Linux, adding ocp.crt to docker..."
+	mkdir -p /etc/docker/certs.d/$OCP_DOCKER_HOST
+	cp ocp.crt /etc/docker/certs.d/$OCP_DOCKER_HOST
+	systemctl restart docker.service
+	echo "Docker restarted"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+	echo "Detected OS is Mac OS, adding ocp.crt to docker..."
+	mkdir -p ~/.docker/certs.d/$OCP_DOCKER_HOST
+	cp ocp.crt ~/.docker/certs.d/$OCP_DOCKER_HOST
+	osascript -e 'quit app "Docker"'
+	open -a Docker
+	echo "Docker restarted"
+    else
+	echo "ERROR: Detected OS is $OSTYPE. This script is only supported on Linux or Mac OS, exiting..."
+	echo ""
+	echo 1
+    fi
+
+    # login to OCP registry
+    echo "Logging in to OpenShift image registry..."
+    echo "$OCP_TOKEN" | docker login -u $OCP_USER --password-stdin $OCP_DOCKER_HOST
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Failed to login to OpenShift image registry"
+        echo ""
+        exit 1
+    fi
+
+    # Getting image from ocp ....
+	OCP_IMAGE=$OCP_DOCKER_HOST/ibmcom/amd64_anax_k8s:$AGENT_IMAGE_TAG
+	echo "Pulling image $OCP_IMAGE from OpenShift image registry..."
+	docker pull $OCP_IMAGE
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Failed to pull image from OCP image registry"
+        echo ""
+        exit 1
+    fi
+
+    # save image to tar file
+    echo "Saving agent image to $IMAGE_TAR_FILE..."
+    docker save $OCP_IMAGE > $IMAGE_TAR_FILE
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Failed to save agent image to $IMAGE_TAR_FILE"
+        echo ""
+        exit 1
+    fi
+    echo "Agent image saved to $IMAGE_TAR_FILE"
+    echo ""
 }
 
 function zipAgentImage() {
@@ -325,6 +386,7 @@ function zipAgentImage() {
         exit 1
     fi
 
+    rm $IMAGE_TAR_FILE
     echo "$IMAGE_ZIP_FILE created"
     echo ""
 }
@@ -344,7 +406,7 @@ NODE_ID=$HZN_NODE_ID
 USE_EDGE_CLUSTER_REGISTRY=$EDGE_CLUSTER_REGISTRY
 EDGE_CLUSTER_REGISTRY_USERNAME=$EDGE_CLUSTER_REGISTRY_USER
 EDGE_CLUSTER_REGISTRY_TOKEN=$EDGE_CLUSTER_REGISTRY_PW
-EDGE_CLUSTER_REGISTRY_REPO=$EDGE_CLUSTER_REGISTRY_REPONAME
+IMAGE_ON_EDGE_CLUSTER_REGISTRY=$IMAGE_ON_EDGE_CLUSTER_REGISTRY:$AGENT_IMAGE_TAG
 EDGE_CLUSTER_STORAGE_CLASS=$CLUSTER_STORAGE_CLASS
 EndOfContent
 
@@ -532,7 +594,7 @@ cluster_main() {
 
 	cloudLogin
 
-	#getImageFromOcpRegistry
+	getImageFromOcpRegistry
 
 	zipAgentImage
 
