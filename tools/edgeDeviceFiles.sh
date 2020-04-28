@@ -189,7 +189,7 @@ function checkEnvVars () {
 	echo " - PW set"
 	echo ""
 
-    if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]] &&  [[ "$USING_EDGE_CLUSTER_REGISTRY" == "-r" ]]; then
+	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]] &&  [[ "$USING_EDGE_CLUSTER_REGISTRY" == "-r" ]]; then
         	echo "USING_EDGE_CLUSTER_REGISTRY: true"
         	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
