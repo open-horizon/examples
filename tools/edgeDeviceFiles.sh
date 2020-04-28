@@ -28,7 +28,7 @@ Parameters:
     -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set,
 				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will
 				  be skipped if it exists
-    -r              		use edge cluster registry other than ocp image registry. 
+    -r              		use edge cluster registry other than ocp image registry.
                   		  If used, "EDGE_CLUSTER_REGISTRY_USER", "EDGE_CLUSTER_REGISTRY_PW"
                   		  and "IMAGE_ON_EDGE_CLUSTER_REGISTRY" need to be set as environment variables
 				  Only applies when <edge-device-type> is <x86_64-Cluster>
@@ -36,7 +36,7 @@ Parameters:
 				  Only applies when <edge-device-type> is <x86_64-Cluster>
     -i				tag of agent image to deploy to edge cluster
 				  Only applies when <edge-device-type> is <x86_64-Cluster>
-    -o              		specify the value of HZN_ORG_ID. 
+    -o              		specify the value of HZN_ORG_ID.
                                   Only applies when <edge-device-type> is <x86_64-Cluster>
     -n				specify the value of NODE_ID, it should be same as your cluster name
 				  Only applies when <edge-device-type> is <x86_64-Cluster>
@@ -50,7 +50,7 @@ Required Environment Variables:
 Required Environment Variables if -r is specified:
 	EDGE_CLUSTER_REGISTRY_USER	your-edge-cluster-registry-username
 	EDGE_CLUSTER_REGISTRY_PW	your-edge-cluster-registry-password
-	IMAGE_ON_EDGE_CLUSTER_REGISTRY	full-image-name-on-your-edge-cluster-registry-to-host-agent-image, 
+	IMAGE_ON_EDGE_CLUSTER_REGISTRY	full-image-name-on-your-edge-cluster-registry-to-host-agent-image,
 		in format: <registry-name>/<repo-name>/<image-name>
 		if using docker hub, specify the value in the format <docker-repo-name>/<image-name>
 
@@ -163,7 +163,7 @@ function checkEnvVars () {
 		fi
 	fi
     	echo ""
-	
+
 	echo "Checking environment variables..."
 
 	if [ -z $CLUSTER_URL ]; then
@@ -189,7 +189,7 @@ function checkEnvVars () {
 	echo " - PW set"
 	echo ""
 
-	if [ "$EDGE_DEVICE"=="x86_64-Cluster" ] &&  [ "$USING_EDGE_CLUSTER_REGISTRY"=="-r" ]; then
+    if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]] &&  [[ "$USING_EDGE_CLUSTER_REGISTRY" == "-r" ]]; then
         	echo "USING_EDGE_CLUSTER_REGISTRY: true"
         	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
@@ -298,7 +298,7 @@ function getImageFromOcpRegistry() {
             echo "ERROR: failed to create the default route for the OpenShift image registry, exiting..."
             echo ""
             exit 1
-        else 
+        else
             echo "Default route for the OpenShift image registry created"
 			echo ""
         fi
@@ -377,7 +377,7 @@ function getImageFromOcpRegistry() {
 
 function zipAgentImage() {
     echo "Zipping $IMAGE_TAR_FILE..."
-    
+
     IMAGE_ZIP_FILE="$IMAGE_TAR_FILE.gz"
     tar -czvf $IMAGE_ZIP_FILE $(ls $IMAGE_TAR_FILE)
     if [ $? -ne 0 ]; then
@@ -533,7 +533,7 @@ function pullClusterDeployTemplages () {
        	echo ""
        	exit 1
     fi
-	
+
 }
 
 # Create a tar file of the gathered files for batch install
