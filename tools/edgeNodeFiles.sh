@@ -1,21 +1,22 @@
 #!/bin/bash
 
-# This script gathers the necessary information and files to install Horizon and register an edge device
+# This script gathers the necessary information and files to install Horizon and register an edge node
 
 # default agent image tag if it is not specified by script user
 AGENT_IMAGE_TAG="2.26.0"
 IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
 CLUSTER_STORAGE_CLASS="gp2"
+PACKAGE_NAME="ibm-eam-4.1.0-x86_64"
 
 function scriptUsage () {
 	cat << EOF
 ERROR: No arguments specified.
 
-Usage: ./edgeDeviceFiles.sh <edge-device-type> [-t] [-k] [-r] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-d <distribution>] [-f <directory>]
+Usage: ./edgeNodeFiles.sh <edge-node-type> [-t] [-k] [-r] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-d <distribution>] [-f <directory>] [-p <package_name]
 
 Parameters:
   required:
-    <edge-device-type>		the type of edge device planned for install and registration
+    <edge-node-type>		the type of edge node planned for install and registration
 				  accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-Linux , macOS , x86_64-Cluster >
 
   optional:
@@ -25,22 +26,25 @@ Parameters:
 				  use this flag with < 64-bit-ARM or x86_64-Linux >
 				  to specify \`xenial\` build
 				  Flag is ignored with < macOS >
-    -k 				include this flag to create a new $USER-Edge-Device-API-Key. If this flag is not set,
-				  the existing api keys will be checked for $USER-Edge-Device-API-Key and creation will
+    -k 				include this flag to create a new $USER-Edge-Node-API-Key. If this flag is not set,
+				  the existing api keys will be checked for $USER-Edge-Node-API-Key and creation will
 				  be skipped if it exists
     -r              		use edge cluster registry other than ocp image registry. 
                   		  If used, "EDGE_CLUSTER_REGISTRY_USER", "EDGE_CLUSTER_REGISTRY_PW"
                   		  and "IMAGE_ON_EDGE_CLUSTER_REGISTRY" need to be set as environment variables
-				  Only applies when <edge-device-type> is <x86_64-Cluster>
+				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -s 				storage class used in edge cluster. Default is gp2
-				  Only applies when <edge-device-type> is <x86_64-Cluster>
+				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -i				tag of agent image to deploy to edge cluster
-				  Only applies when <edge-device-type> is <x86_64-Cluster>
+				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -o              		specify the value of HZN_ORG_ID. 
-                                  Only applies when <edge-device-type> is <x86_64-Cluster>
+                                  Only applies when <edge-node-type> is <x86_64-Cluster>
     -n				specify the value of NODE_ID, it should be same as your cluster name
-				  Only applies when <edge-device-type> is <x86_64-Cluster>
+				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -f 				<directory> to move gathered files to. Default is current directory
+    -p				specify the package where installation files are stored, default is $PACKAGE_NAME
+				  assumes the package bundle is named $PACKAGE_NAME.tar.gz and expects a standardized
+				  directory structure of $PACKAGE_NAME/horizon-edge-packages/<PLATFORM>/<OS>/<DISTRO>/<ARCH>
 
 Required Environment Variables:
     CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
@@ -110,18 +114,22 @@ while (( "$#" )); do
 		DIR=$2
       		shift 2
       		;;
-    	*) # based on "Usage" this should be device type
+     	-p) # installation media name string
+		PACKAGE_NAME=$2
+      		shift 2
+      		;;
+    	*) # based on "Usage" this should be node type
 		if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]] || [[ "$1" == "x86_64-Cluster" ]]); then
-			echo "ERROR: Unknown device type."
+			echo "ERROR: Unknown node type."
 			echo ""
 			exit 1
 		fi
-      		EDGE_DEVICE=$1
+      		EDGE_NODE=$1
       		shift
       		;;
   	esac
 done
-if [ -z $EDGE_DEVICE ]; then
+if [ -z $EDGE_NODE ]; then
 	scriptUsage
 fi
 echo " - valid parameters"
@@ -146,7 +154,7 @@ function checkEnvVars () {
    	fi
     	echo " - kubectl installed"
 
-	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
     		oc --help > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			echo "ERROR: oc is not installed."
@@ -189,7 +197,7 @@ function checkEnvVars () {
 	echo " - PW set"
 	echo ""
 
-	if [ "$EDGE_DEVICE"=="x86_64-Cluster" ] &&  [ "$USING_EDGE_CLUSTER_REGISTRY"=="-r" ]; then
+	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]] &&  [[ "$USING_EDGE_CLUSTER_REGISTRY" == "-r" ]]; then
         	echo "USING_EDGE_CLUSTER_REGISTRY: true"
         	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
@@ -200,7 +208,7 @@ function checkEnvVars () {
             		echo ""
             		exit 1
 		elif [ -z $IMAGE_ON_EDGE_CLUSTER_REGISTRY ]; then
-			echo "ERROR: IMAGE_ON_EDGE_CLUSTER_REGISTRY environment variable is not set. Please see script usage ./edgeDeviceFiles.sh'"
+			echo "ERROR: IMAGE_ON_EDGE_CLUSTER_REGISTRY environment variable is not set. Please see script usage ./edgeNodeFiles.sh'"
                         echo ""
                         exit 1
         	fi
@@ -257,15 +265,15 @@ function getClusterName () {
 
 # Check if an IBM Cloud Pak platform API key exists
 function checkAPIKey () {
-	echo "Checking if \"$USER-Edge-Device-API-Key\" already exists..."
-	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-Edge-Device-API-Key\""
+	echo "Checking if \"$USER-Edge-Node-API-Key\" already exists..."
+	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-Edge-Node-API-Key\""
 
-	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-Edge-Device-API-Key")
+	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-Edge-Node-API-Key")
 	if [ -z $KEY ]; then
-		echo "\"$USER-Edge-Device-API-Key\" does not exist. A new one will be created."
+		echo "\"$USER-Edge-Node-API-Key\" does not exist. A new one will be created."
         CREATE_NEW_KEY=true
     else
-    	echo "\"$USER-Edge-Device-API-Key\" already exists. Skipping key creation."
+    	echo "\"$USER-Edge-Node-API-Key\" already exists. Skipping key creation."
     	CREATE_NEW_KEY=false
     fi
     echo ""
@@ -274,9 +282,9 @@ function checkAPIKey () {
 # Create a IBM Cloud Pak platform API key
 function createAPIKey () {
 	echo "Creating IBM Cloud Pak platform API key..."
-	echo "cloudctl iam api-key-create \"$USER-Edge-Device-API-Key\" -d \"$USER-Edge-Device-API-Key\" -f key.txt"
+	echo "cloudctl iam api-key-create \"$USER-Edge-Node-API-Key\" -d \"$USER-Edge-Node-API-Key\" -f key.txt"
 
-	cloudctl iam api-key-create "$USER-Edge-Device-API-Key" -d "$USER-Edge-Device-API-Key" -f key.txt
+	cloudctl iam api-key-create "$USER-Edge-Node-API-Key" -d "$USER-Edge-Node-API-Key" -f key.txt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create API Key."
         echo ""
@@ -284,7 +292,7 @@ function createAPIKey () {
     fi
 
     API_KEY=$(cat key.txt | jq -r '.apikey')
-    echo " - $USER-Edge-Device-API-Key: $API_KEY"
+    echo " - $USER-Edge-Node-API-Key: $API_KEY"
     echo ""
 }
 
@@ -396,10 +404,10 @@ function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
 	HUB_CERT_PATH="agent-install.crt"
 
-if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+if [[ "$EDGE_Node" == "x86_64-Cluster" ]]; then
 	cat << EndOfContent > agent-install.cfg
-HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
-HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
+HZN_EXCHANGE_URL=$CLUSTER_URL/edge-exchange/v1/
+HZN_FSS_CSSURL=$CLUSTER_URL/edge-css/
 HZN_ORG_ID=$ORG_ID
 HZN_MGMT_HUB_CERT_PATH=$HUB_CERT_PATH
 NODE_ID=$HZN_NODE_ID
@@ -412,8 +420,8 @@ EndOfContent
 
 else
 	cat << EndOfContent > agent-install.cfg
-HZN_EXCHANGE_URL=$CLUSTER_URL/ec-exchange/v1/
-HZN_FSS_CSSURL=$CLUSTER_URL/ec-css/
+HZN_EXCHANGE_URL=$CLUSTER_URL/edge-exchange/v1/
+HZN_FSS_CSSURL=$CLUSTER_URL/edge-css/
 HZN_ORG_ID=$CLUSTER_NAME
 EndOfContent
 
@@ -443,59 +451,59 @@ function getClusterCert () {
     echo ""
 }
 
-# Locate the IBM Edge Computing for Devices installation content
+# Locate the IBM Edge Application Manager node installation content
 function gatherHorizonFiles () {
-	echo "Locating the IBM Edge Computing Manager for Devices installation content for $EDGE_DEVICE device..."
-	echo "tar --strip-components n -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/..."
+	echo "Locating the IBM Edge Application Manager node installation content for $EDGE_NODE node..."
+	echo "tar --strip-components n -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/..."
 	echo "Dist is $DISTRO"
 
-    # Determine edge device type, and distribution if applicable
-    if [[ "$EDGE_DEVICE" == "32-bit-ARM" ]]; then
+    # Determine edge node type, and distribution if applicable
+    if [[ "$EDGE_NODE" == "32-bit-ARM" ]]; then
 			if [[ "$DISTRO" == "stretch" ]]; then
-				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/stretch/armhf
+				tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/raspbian/stretch/armhf
 			else
-				tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/raspbian/buster/armhf
+				tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/raspbian/buster/armhf
 			fi
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
         	echo ""
         	exit 1
     	fi
 
-	elif [[ "$EDGE_DEVICE" == "64-bit-ARM" ]]; then
+	elif [[ "$EDGE_NODE" == "64-bit-ARM" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
-			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/xenial/arm64
+			tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/ubuntu/xenial/arm64
 		else
-			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/bionic/arm64
+			tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/ubuntu/bionic/arm64
 		fi
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
         	echo ""
         	exit 1
     	fi
 
-	elif [[ "$EDGE_DEVICE" == "x86_64-Linux" ]]; then
+	elif [[ "$EDGE_NODE" == "x86_64-Linux" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
-			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/xenial/amd64
+			tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/ubuntu/xenial/amd64
 		else
-			tar --strip-components 6 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/linux/ubuntu/bionic/amd64
+			tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/ubuntu/bionic/amd64
 		fi
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
         	echo ""
         	exit 1
     	fi
 
-	elif [[ "$EDGE_DEVICE" == "macOS" ]]; then
-		tar --strip-components 3 -zxvf ibm-ecm-4.0.0-x86_64.tar.gz ibm-ecm-4.0.0-x86_64/horizon-edge-packages/macos
+	elif [[ "$EDGE_NODE" == "macOS" ]]; then
+		tar --strip-components 3 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/macos
 		if [ $? -ne 0 ]; then
-			echo "ERROR: Failed to locate the IBM Edge Computing Manager for Devices installation content"
+			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
         	echo ""
         	exit 1
     	fi
 
 	else
-		echo "ERROR: Unknown device type."
+		echo "ERROR: Unknown node type."
 		echo ""
 		exit 1
 	fi
@@ -538,18 +546,18 @@ function pullClusterDeployTemplages () {
 
 # Create a tar file of the gathered files for batch install
 function createTarFile () {
-	echo "Creating agentInstallFiles-$EDGE_DEVICE.tar.gz file containing gathered files..."
+	echo "Creating agentInstallFiles-$EDGE_NODE.tar.gz file containing gathered files..."
 
-	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
 		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt $IMAGE_ZIP_FILE deployment-template.yml persistentClaim-template.yml"
 	else
 		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt *horizon*"
 	fi
-	echo "tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz \$(ls $FILES_TO_COMPRESS)"
+	echo "tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz \$(ls $FILES_TO_COMPRESS)"
 
-	tar -czvf agentInstallFiles-$EDGE_DEVICE.tar.gz $(ls $FILES_TO_COMPRESS)
+	tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz $(ls $FILES_TO_COMPRESS)
 	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to create agentInstallFiles-$EDGE_DEVICE.tar.gz file."
+		echo "ERROR: Failed to create agentInstallFiles-$EDGE_NODE.tar.gz file."
        	echo ""
        	exit 1
     fi
@@ -582,7 +590,7 @@ function printApiKey () {
 	echo ""
 	echo "************************** Your created API Key ******************************"
 	echo ""
-	echo "     $USER-Edge-Device-API-Key: $API_KEY"
+	echo "     $USER-Edge-Node-API-Key: $API_KEY"
 	echo ""
 	echo "********************* Save this value for future use *************************"
 	echo ""
@@ -652,7 +660,7 @@ device_main() {
 
 main() {
 
-	if [[ "$EDGE_DEVICE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
 		cluster_main
 	else
 		device_main
