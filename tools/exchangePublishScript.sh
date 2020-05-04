@@ -94,6 +94,6 @@ if [ $error != 0 ]; then
     echo -e "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
 else
     echo -e "\nSuccessfully published all content to the exchange. Removing examples directory...\n"
-    rm -f -r examples/
+    rm -f -r /tmp/examples/
 fi
 
