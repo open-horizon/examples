@@ -3,9 +3,6 @@
 # if the org id is set locally we don't want to override the IBM org of these samples
 unset HZN_ORG_ID
 
-# check if required environment variables are set
-: ${EXCHANGE_ROOT_PASS:?} ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
-
 function scriptUsage () {
     cat << EOF
 
@@ -39,10 +36,13 @@ while (( "$#" )); do
     esac
 done
 
+# check if required environment variables are set
+: ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
+
 # check the previous cmds exit code. 
 checkexitcode () {   
     if [[ $1 == 0 ]]; then return; fi
-    echo""
+    echo ""
     echo "Error: exit code $1 when $2"
     echo ""
     error=1
@@ -66,13 +66,13 @@ input="examples/tools/blessedSamples.txt"
 topDir=$(pwd)
 error=0
 
-git clone $branch $repository
+git clone $branch $repository /tmp
 
 # read in blessedSamples.txt which contains the services and patterns to publish
 while IFS= read -r line
 do
     # each $line contains the path to any service or pattern that needs to be published
-    cd $line
+    cd /tmp/$line
     checkexitcode $? "finding service directory "$line""
     
     echo `pwd`
@@ -91,9 +91,9 @@ done < "$input"
 
 # clean up if no errors
 if [ $error != 0 ]; then
-    echo "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
+    echo -e "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
 else
-    echo "\nSuccessfully published all content to the exchange. Removing examples directory...\n"
+    echo -e "\nSuccessfully published all content to the exchange. Removing examples directory...\n"
     rm -f -r examples/
 fi
 
