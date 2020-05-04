@@ -66,7 +66,7 @@ input="examples/tools/blessedSamples.txt"
 topDir=$(pwd)
 error=0
 
-git clone $branch $repository /tmp
+git clone $branch $repository /tmp/examples
 
 # read in blessedSamples.txt which contains the services and patterns to publish
 while IFS= read -r line
