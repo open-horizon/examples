@@ -39,6 +39,9 @@ done
 # check if required environment variables are set
 : ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
 
+# path to the cloned exmaples repo
+PATH_TO_EXAMPLES=/tmp/open-horizon
+
 # check the previous cmds exit code. 
 checkexitcode () {   
     if [[ $1 == 0 ]]; then return; fi
@@ -61,18 +64,18 @@ branch="-b master"
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
-input="/tmp/examples/tools/blessedSamples.txt"
+input="/tmp/open-horizon/examples/tools/blessedSamples.txt"
 
 topDir=$(pwd)
 error=0
 
-git clone $branch $repository /tmp/examples
+git clone $branch $repository $PATH_TO_EXAMPLES/examples
 
 # read in blessedSamples.txt which contains the services and patterns to publish
 while IFS= read -r line
 do
     # each $line contains the path to any service or pattern that needs to be published
-    cd /tmp/$line
+    cd $PATH_TO_EXAMPLES/$line
     checkexitcode $? "finding service directory "$line""
     
     echo `pwd`
@@ -94,6 +97,6 @@ if [ $error != 0 ]; then
     echo -e "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
 else
     echo -e "\nSuccessfully published all content to the exchange. Removing examples directory...\n"
-    rm -f -r /tmp/examples/
+    rm -f -r $PATH_TO_EXAMPLES/examples/
 fi
 
