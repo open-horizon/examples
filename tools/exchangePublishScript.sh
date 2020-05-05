@@ -94,7 +94,7 @@ done < "$input"
 
 # clean up if no errors
 if [ $error != 0 ]; then
-    echo -e "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
+    echo -e "\n*** Errors were encountered when publishing, the cloned $PATH_TO_EXAMPLES/examples directory was not deleted *** \n"
 else
     echo -e "\nSuccessfully published all content to the exchange. Removing $PATH_TO_EXAMPLES/examples directory...\n"
     rm -f -r $PATH_TO_EXAMPLES
