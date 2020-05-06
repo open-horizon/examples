@@ -3,9 +3,6 @@
 # if the org id is set locally we don't want to override the IBM org of these samples
 unset HZN_ORG_ID
 
-# check if required environment variables are set
-: ${EXCHANGE_ROOT_PASS:?} ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
-
 function scriptUsage () {
     cat << EOF
 
@@ -39,10 +36,16 @@ while (( "$#" )); do
     esac
 done
 
+# check if required environment variables are set
+: ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
+
+# path to the cloned exmaples repo
+PATH_TO_EXAMPLES=/tmp/open-horizon
+
 # check the previous cmds exit code. 
 checkexitcode () {   
     if [[ $1 == 0 ]]; then return; fi
-    echo""
+    echo ""
     echo "Error: exit code $1 when $2"
     echo ""
     error=1
@@ -61,18 +64,18 @@ branch="-b master"
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
-input="examples/tools/blessedSamples.txt"
+input="$PATH_TO_EXAMPLES/examples/tools/blessedSamples.txt"
 
 topDir=$(pwd)
 error=0
 
-git clone $branch $repository
+git clone $branch $repository $PATH_TO_EXAMPLES/examples
 
 # read in blessedSamples.txt which contains the services and patterns to publish
 while IFS= read -r line
 do
     # each $line contains the path to any service or pattern that needs to be published
-    cd $line
+    cd $PATH_TO_EXAMPLES/$line
     checkexitcode $? "finding service directory "$line""
     
     echo `pwd`
@@ -91,9 +94,9 @@ done < "$input"
 
 # clean up if no errors
 if [ $error != 0 ]; then
-    echo "\n*** Errors were encountered when publishing, the cloned examples directory was not deleted *** \n"
+    echo -e "\n*** Errors were encountered when publishing, the cloned $PATH_TO_EXAMPLES/examples directory was not deleted *** \n"
 else
-    echo "\nNo errors were encountered. Removing examples directory...\n"
-    rm -f -r examples/
+    echo -e "\nSuccessfully published all content to the exchange. Removing $PATH_TO_EXAMPLES/examples directory...\n"
+    rm -f -r $PATH_TO_EXAMPLES
 fi
 
