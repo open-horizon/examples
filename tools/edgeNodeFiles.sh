@@ -7,6 +7,7 @@ AGENT_IMAGE_TAG="2.26.0"
 IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
 CLUSTER_STORAGE_CLASS="gp2"
 PACKAGE_NAME="ibm-eam-4.1.0-x86_64"
+AGENT_NAMESPACE="openhorizon-agent"
 
 function scriptUsage () {
 	cat << EOF
@@ -41,6 +42,8 @@ Parameters:
                                   Only applies when <edge-node-type> is <x86_64-Cluster>
     -n				specify the value of NODE_ID, it should be same as your cluster name
 				  Only applies when <edge-node-type> is <x86_64-Cluster>
+    -m				specify the value of edge cluster namespace that agent will be installed to
+                                  Only applies when <edge-node-type> is <x86_64-Cluster>
     -f 				<directory> to move gathered files to. Default is current directory
     -p				specify the package where installation files are stored, default is $PACKAGE_NAME
 				  assumes the package bundle is named $PACKAGE_NAME.tar.gz and expects a standardized
@@ -108,6 +111,10 @@ while (( "$#" )); do
 		;;
 	-n) # value of NODE_ID
 		HZN_NODE_ID=$2
+		shift 2
+		;;
+	-m) # edge cluster namespace to install agent to
+		AGENT_NAMESPACE=$2
 		shift 2
 		;;
      	-f) # directory to move gathered files to
@@ -416,6 +423,7 @@ EDGE_CLUSTER_REGISTRY_USERNAME=$EDGE_CLUSTER_REGISTRY_USER
 EDGE_CLUSTER_REGISTRY_TOKEN=$EDGE_CLUSTER_REGISTRY_PW
 IMAGE_ON_EDGE_CLUSTER_REGISTRY=$IMAGE_ON_EDGE_CLUSTER_REGISTRY:$AGENT_IMAGE_TAG
 EDGE_CLUSTER_STORAGE_CLASS=$CLUSTER_STORAGE_CLASS
+AGENT_NAMESPACE=$AGENT_NAMESPACE
 EndOfContent
 
 else
