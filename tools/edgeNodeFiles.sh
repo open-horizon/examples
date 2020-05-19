@@ -13,7 +13,7 @@ function scriptUsage () {
 	cat << EOF
 ERROR: No arguments specified.
 
-Usage: ./edgeNodeFiles.sh <edge-node-type> [-t] [-k] [-r] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-d <distribution>] [-f <directory>] [-p <package_name]
+Usage: ./edgeNodeFiles.sh <edge-node-type> [-t] [-k] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-m <agent-namespace>] [-d <distribution>] [-f <directory>] [-p <package_name]
 
 Parameters:
   required:
@@ -30,10 +30,6 @@ Parameters:
     -k 				include this flag to create a new $USER-Edge-Node-API-Key. If this flag is not set,
 				  the existing api keys will be checked for $USER-Edge-Node-API-Key and creation will
 				  be skipped if it exists
-    -r              		use edge cluster registry other than ocp image registry.
-                  		  If used, "EDGE_CLUSTER_REGISTRY_USER", "EDGE_CLUSTER_REGISTRY_PW"
-                  		  and "IMAGE_ON_EDGE_CLUSTER_REGISTRY" need to be set as environment variables
-				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -s 				storage class used in edge cluster. Default is gp2
 				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -i				tag of agent image to deploy to edge cluster
@@ -54,12 +50,11 @@ Required Environment Variables:
     USER 			your-cluster-admin-user
     PW				your-cluster-admin-password
 
-Required Environment Variables if -r is specified:
-	EDGE_CLUSTER_REGISTRY_USER	your-edge-cluster-registry-username
-	EDGE_CLUSTER_REGISTRY_PW	your-edge-cluster-registry-password
-	IMAGE_ON_EDGE_CLUSTER_REGISTRY	full-image-name-on-your-edge-cluster-registry-to-host-agent-image,
-		in format: <registry-name>/<repo-name>/<image-name>
-		if using docker hub, specify the value in the format <docker-repo-name>/<image-name>
+    EDGE_CLUSTER_REGISTRY_USER		your-edge-cluster-registry-username
+    EDGE_CLUSTER_REGISTRY_PW		your-edge-cluster-registry-password
+    IMAGE_ON_EDGE_CLUSTER_REGISTRY	full-image-name-on-your-edge-cluster-registry-to-host-agent-image,
+	in format: <registry-name>/<repo-name>/<image-name>
+	if using docker hub, specify the value in the format <docker-repo-name>/<image-name>
 
 
 
@@ -93,10 +88,10 @@ while (( "$#" )); do
       		CREATE_API_KEY=$1
       		shift
      		;;
-	-r) # use edge cluster registry
-		USING_EDGE_CLUSTER_REGISTRY=$1
-		shift
-		;;
+	#-r) # use edge cluster registry
+		#USING_EDGE_CLUSTER_REGISTRY=$1
+		#shift
+		#;;
 	-s) # storage class to use by persistent volume claim in edge cluster
 		CLUSTER_STORAGE_CLASS=$2
 		shift 2
@@ -204,7 +199,7 @@ function checkEnvVars () {
 	echo " - PW set"
 	echo ""
 
-	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]] &&  [[ "$USING_EDGE_CLUSTER_REGISTRY" == "-r" ]]; then
+	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
         	echo "USING_EDGE_CLUSTER_REGISTRY: true"
         	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
