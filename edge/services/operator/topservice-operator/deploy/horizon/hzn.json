@@ -1,0 +1,8 @@
+{
+    "HZN_ORG_ID": "mycluster",
+    "MetadataVars": {
+        "DOCKER_IMAGE_BASE": "",
+        "SERVICE_NAME": "troy.operator",
+        "SERVICE_VERSION": "0.0.1"
+    }
+}
