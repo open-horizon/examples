@@ -38,7 +38,7 @@ Parameters:
                                   Only applies when <edge-node-type> is <x86_64-Cluster>
     -n				specify the value of NODE_ID, it should be same as your cluster name
 				  Only applies when <edge-node-type> is <x86_64-Cluster>
-    -m				specify the value of edge cluster namespace that agent will be installed to
+    -m				specify the value of edge cluster namespace that agent will be installed to, default is $AGENT_NAMESPACE
                                   Only applies when <edge-node-type> is <x86_64-Cluster>
     -f 				<directory> to move gathered files to. Default is current directory
     -p				specify the package where installation files are stored, default is $PACKAGE_NAME
@@ -416,7 +416,7 @@ NODE_ID=$HZN_NODE_ID
 USE_EDGE_CLUSTER_REGISTRY=$EDGE_CLUSTER_REGISTRY
 EDGE_CLUSTER_REGISTRY_USERNAME=$EDGE_CLUSTER_REGISTRY_USER
 EDGE_CLUSTER_REGISTRY_TOKEN=$EDGE_CLUSTER_REGISTRY_PW
-IMAGE_ON_EDGE_CLUSTER_REGISTRY=$IMAGE_ON_EDGE_CLUSTER_REGISTRY:$AGENT_IMAGE_TAG
+IMAGE_FULL_PATH_ON_EDGE_CLUSTER_REGISTRY=$IMAGE_ON_EDGE_CLUSTER_REGISTRY:$AGENT_IMAGE_TAG
 EDGE_CLUSTER_STORAGE_CLASS=$CLUSTER_STORAGE_CLASS
 AGENT_NAMESPACE=$AGENT_NAMESPACE
 EndOfContent
