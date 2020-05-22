@@ -129,31 +129,27 @@ hzn agreement list
 }
 ```
 
-
-
-
-
-
-
-1. Register your edge cluster with Horizon to use the operator pattern:
-
-```bash
-hzn register -p IBM/pattern-ibm.helloworld -s ibm.helloworld --serviceorg IBM
-```
- - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
-
-2. After the agreement is made, list the docker container edge service that has been started as a result:
-
-``` bash
-sudo docker ps
+5. Veryfy that the `simple-operator` deployment is up and runing:
+```bash 
+kubectl get pod -n openhorizon-agent
 ```
 
-3. See the helloworld service output:
+- If everything deployed correctly you will see the operator pod in addition to three `example-ibmserviceoperator` pods running similar to following output
 
-``` bash
-hzn service log -f ibm.helloworld
+```bash 
+NAME                                          READY   STATUS    RESTARTS   AGE
+agent-6d8b8895f-bpwm9                         1/1     Running   0          2d21h
+example-ibmserviceoperator-7d6849c487-5pmcb   1/1     Running   0          88s
+example-ibmserviceoperator-7d6849c487-926xt   1/1     Running   0          88s
+example-ibmserviceoperator-7d6849c487-j9z58   1/1     Running   0          88s
+simple-operator-5cd47878fc-gjcl6              1/1     Running   0          96s
 ```
- - **Note**: Press **Ctrl C** to stop the command output.
+
+
+
+
+
+
 
 4. Unregister your edge node (which will also stop the myhelloworld service):
 
