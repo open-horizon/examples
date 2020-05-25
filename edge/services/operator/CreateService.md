@@ -1,13 +1,13 @@
-# Creating Your Own Hello World Edge Service
+# Creating Your Own Operator Edge Service
 
-Follow the steps in this page to create your first simple Horizon edge service.
+Follow the steps in this page to create your first simple operator Horizon edge service.
 
 ## Preconditions for Developing Your Own Service
 
 1. If you have not already done so, complete the steps in these sections:
 
-  - [Preconditions for Using the Hello World Example Edge Service](README.md#preconditions)
-  - [Using the Hello World Example Edge Service with Deployment Pattern](README.md#using-helloworld-pattern)
+  - [Preconditions for Using the Operator Example Edge Service](README.md#preconditions)
+  - [Using the Operator Example Edge Service with Deployment Pattern](README.md#using-helloworld-pattern)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 
@@ -53,7 +53,7 @@ Follow the steps in this page to create your first simple Horizon edge service.
   brew install git jq
   ```
 
-## <a id=build-publish-your-hw> Building and Publishing Your Own Hello World Example Edge Service
+## <a id=build-publish-your-op> Building and Publishing Your Own Operator Example Edge Service
 
 1. `cd` to the directory in which you want to create your new service and then run this command to create the files for a simple edge service and associated Horizon metadata files:
 
