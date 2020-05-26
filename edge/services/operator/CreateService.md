@@ -55,9 +55,9 @@ Follow the steps on this page to create your first operator that deploys an edge
 
 ## <a id=build-publish-your-op> Building and Publishing Your Own Operator Example Edge Service
 
-In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. To start, the Kubernetes open source  documentation has an [operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) overview article which is a good resource to learn about operators. Visit the [operator-sdk getting started](https://github.com/operator-framework/getting-started#overview) page to find the steps followed to create the operator used in this example. 
+In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. To start, the Kubernetes open source documentation has an [operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) overview article which is a good resource to learn about operators. Visit the [operator-sdk getting started](https://github.com/operator-framework/getting-started#overview) page to find the steps followed to create the operator used in this example. 
 
-
+When following the steps in the operator-sdk documentation, the [controller file](https://github.com/operator-framework/getting-started#add-a-new-controller) is where you can specify the containerized edge service you want to deploy to the edge cluster. If you look at [line 196](https://github.com/t-fine/examples/blob/2851c6abb17ccf2fbd760f5e5f494f3c4a668328/edge/services/operator/simple-operator/pkg/controller/ibmserviceoperator/ibmserviceoperator_controller.go#L196) of the controller file you can see the open-horizon/ibm.helloworld_amd64:1.0.0 docker image is specified. 
 
 
 
