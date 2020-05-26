@@ -11,7 +11,6 @@ AGENT_NAMESPACE="openhorizon-agent"
 
 function scriptUsage () {
 	cat << EOF
-ERROR: No arguments specified.
 
 Usage: ./edgeNodeFiles.sh <edge-node-type> [-t] [-k] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-m <agent-namespace>] [-d <distribution>] [-f <directory>] [-p <package_name]
 
@@ -62,6 +61,7 @@ EOF
 	exit 1
 }
 if [[ "$#" = "0" ]]; then
+	echo "ERROR: No arguments specified."
 	scriptUsage
 fi
 
@@ -120,6 +120,12 @@ while (( "$#" )); do
 		PACKAGE_NAME=$2
       		shift 2
       		;;
+	-*) #invalid flag
+		echo "ERROR: Unknow flag $1"
+		echo ""
+		scriptUsage
+		exit 1
+		;;
     	*) # based on "Usage" this should be node type
 		if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]] || [[ "$1" == "x86_64-Cluster" ]]); then
 			echo "ERROR: Unknown node type."
@@ -238,7 +244,7 @@ function checkParams() {
 
 function cloudLogin () {
 	echo "Connecting to cluster and configure kubectl..."
-	echo "cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation"
+	echo "cloudctl login -a $CLUSTER_URL -u $USER -p ******** -n kube-public --skip-ssl-validation"
 
 	cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
@@ -324,7 +330,7 @@ function getImageFromOcpRegistry() {
     echo ""
 
     # get the OpenShift certificate
-    echo "Getting penShift certificate..."
+    echo "Getting OpenShift certificate..."
     echo | openssl s_client -connect $OCP_DOCKER_HOST:443 -showcerts | sed -n "/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p" > ocp.crt
     if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to get the OpenShift certificate"
