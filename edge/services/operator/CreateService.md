@@ -85,7 +85,7 @@ Testing operators is different from testing Horizon services for edge devices. I
   hzn exchange service list
   ```
 
-6. Optional: Modify the `service.policy.json` file located in the `horiizon/` directory to contain a constraint of your choosing and add it to your published operator service:
+6. **Optional:** Modify the `service.policy.json` file located in the `horizon/` directory to contain a constraint of your choosing and add it to your published operator service:
   ```bash
   hzn exchange service addpolicy -f horizon/service.definition.json <your-operator-service>
   ```
