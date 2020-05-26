@@ -1,6 +1,6 @@
 # Creating Your Own Operator Edge Service
 
-Follow the steps in this page to create your first simple operator Horizon edge service.
+Follow the steps on this page to create your first operator that deploys an edge service to a cluster, and learn how you can pass horizon environment variables (in addition to any other environment variables needed) to your deployed service pods. 
 
 ## Preconditions for Developing Your Own Service
 
@@ -54,6 +54,10 @@ Follow the steps in this page to create your first simple operator Horizon edge 
   ```
 
 ## <a id=build-publish-your-op> Building and Publishing Your Own Operator Example Edge Service
+
+In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. To start, the Kubernetes open source  documentation has an operator overview article (https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) which is a good resource to learn about operators.
+
+
 
 1. `cd` to the directory in which you want to create your new service and then run this command to create the files for a simple edge service and associated Horizon metadata files:
 
