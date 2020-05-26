@@ -55,7 +55,9 @@ Follow the steps on this page to create your first operator that deploys an edge
 
 ## <a id=build-publish-your-op> Building and Publishing Your Own Operator Example Edge Service
 
-In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. To start, the Kubernetes open source  documentation has an operator overview article (https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) which is a good resource to learn about operators.
+In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. To start, the Kubernetes open source  documentation has an [operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) overview article which is a good resource to learn about operators. Visit the [operator-sdk getting started](https://github.com/operator-framework/getting-started#overview) page to find the steps followed to create the operator used in this example. 
+
+
 
 
 
