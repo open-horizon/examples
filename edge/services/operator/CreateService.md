@@ -90,14 +90,14 @@ Testing operators is different from testing Horizon services for edge devices. I
   hzn exchange service addpolicy -f horizon/service.definition.json <your-operator-service>
   ```
   
-7. Modify the `deployment.policy.json` file located in the `horiizon/` directory by changing the `"constraints": ["openhorizon.service == ibm.operator"]` to something else uniquely identifying the edge cluster you want to run your operator service.
+7. Modify the `deployment.policy.json` file located in the `horizon/` directory by changing the `"constraints": ["openhorizon.service == ibm.operator"]` to something else uniquely identifying the edge cluster you want to run your operator service.
 
 8. Publish this Deployment Policy to the Exchange giving it a memorable name of your choosing:
    ```bash
    hzn exchange business addpolicy -f deployment.policy.json <choose-any-policy-name>
    ```
    
-9. Modify the `node.policy.json` file located in the `horiizon/` directory by changing the `"properties":`  value to that of the constraint you spedified in the `deployment.policy.json` so they match and will form an agreement.
+9. Modify the `node.policy.json` file located in the `horizon/` directory by changing the `"properties":`  value to that of the constraint you spedified in the `deployment.policy.json` so they match and will form an agreement.
 
 10. Register your cluster with your new node policy:
   ```bash
