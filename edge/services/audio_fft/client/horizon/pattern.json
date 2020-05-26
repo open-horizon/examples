@@ -1,0 +1,33 @@
+{
+  "name": "pattern-${SERVICE_NAME}",
+  "label": "FFT recording services",
+  "description": "Pattern for FFT recording services.",
+  "services": [
+    {
+      "serviceUrl": "com.github.vkorn.fft-example-record",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "${ARCH}",
+      "serviceVersions": [
+        {
+          "version": "${SERVICE_VERSION}"
+        }
+      ]
+    }
+  ],
+  "userInput":[
+    {
+      "serviceOrgId": "${HZN_ORG_ID}",
+      "serviceUrl": "com.github.vkorn.fft-example",
+      "serviceArch": "${ARCH}",
+      "serviceVersionRange": "[0.0.0,INFINITY)",
+      "inputs": [
+        {"name":"MQTT_BROKER","value":"volantmq:1883"},
+        {"name":"MQTT_CLIENT_USER","value":"fft-client"},
+        {"name":"MQTT_CLIENT_PASS","value":"client-pass"},
+        {"name":"MQTT_CLIENT_CLIENT","value":"fft-client"},
+        {"name":"SAMPLE_RATE","value":"48000"},
+        {"name":"RECORD_FRAME","value":"3"}
+      ]
+    }
+  ]
+}

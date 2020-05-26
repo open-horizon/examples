@@ -1,0 +1,8 @@
+{
+    "HZN_ORG_ID": "testorg",
+    "MetadataVars": {
+        "DOCKER_IMAGE_CLIENT": "vkorn/fft-client",
+        "SERVICE_NAME": "fft-client",
+        "SERVICE_VERSION": "1.0.0"
+    }
+}

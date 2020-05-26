@@ -1,0 +1,37 @@
+{
+	"org": "${HZN_ORG_ID}",
+	"label": "fft",
+	"description": "FFT sound analyzer",
+	"documentation": "https://github.com/vkorn/fft-example",
+	"url": "com.github.vkorn.fft-example-client",
+	"version": "${SERVICE_VERSION}",
+	"arch": "${ARCH}", 
+	"public": false,
+	"sharable": "singleton",
+	"requiredServices": [],
+	"userInput": [
+		 { "name": "VOLANTMQ_CONFIG", "label": "", "type": "string", "defaultValue": "/config/volantmq.yaml" },
+		 { "name": "MQTT_BROKER", "label": "", "type": "string", "defaultValue": "volantmq:1883" },
+		 { "name": "MQTT_SERVER_USER", "label": "", "type": "string", "defaultValue": "fft-server" },
+		 { "name": "MQTT_SERVER_PASS", "label": "", "type": "string", "defaultValue": "server-pass" },
+		 { "name": "MQTT_SERVER_CLIENT", "label": "", "type": "string", "defaultValue": "fft-server" },
+		 { "name": "SAMPLE_RATE", "label": "", "type": "string", "defaultValue": "48000" }
+	],
+	"deployment": {
+		"services": {
+			"volantmq": {
+				"binds": ["/Users/vkorn/Work/horizon/fft-example/volantmq/vmq.users:/vmq.users"],
+				"image": "${DOCKER_IMAGE_MQTT}:1.0.1",
+				"privileged": false,
+				"specific_ports": [{
+					"HostPort": "1883:1883/tcp",
+					"HostIP": "0.0.0.0"
+				}]
+			},
+			"fft-server": {
+				"image": "${DOCKER_IMAGE_SERVER}:1.0.4",
+				"privileged": false
+			}
+		}
+	}
+}

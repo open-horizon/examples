@@ -1,0 +1,9 @@
+{
+    "HZN_ORG_ID": "testorg",
+    "MetadataVars": {
+        "DOCKER_IMAGE_SERVER": "vkorn/fft-server",
+        "DOCKER_IMAGE_MQTT": "vkorn/volantmq",
+        "SERVICE_NAME": "fft-server",
+        "SERVICE_VERSION": "1.0.0"
+    }
+}

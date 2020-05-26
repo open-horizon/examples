@@ -1,0 +1,52 @@
+version: v0.0.1
+system:
+  log:
+    console:
+      level: debug
+  http:
+    defaultPort: 8081
+plugins:
+  enabled:
+  - auth_http
+  config:
+    auth:                   
+      - name: internal 
+        backend: simpleAuth
+        config:
+          users:
+            testuser: "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05"
+          usersFile: /vmq.users
+auth:
+  anonymous: false
+  order:
+    - internal
+mqtt:
+  version:
+  - v3.1.1
+  - v3.1
+  - v5.0
+  keepAlive:
+    period: 60 
+    force: false
+  systree:
+    enabled: true
+    updateInterval: 10
+  options:
+    connectTimeout: 5 
+    offlineQoS0: true 
+    sessionDups: true 
+    retainAvailable: true
+    subsOverlap: false   
+    subsId: false      
+    subsShared: false  
+    subsWildcard: true 
+    receiveMax: 65530  
+    maxPacketSize: 268435455 
+    maxTopicAlias: 65535    
+    maxQoS: 2
+listeners:
+  defaultAddr: "0.0.0.0"
+  mqtt:
+    tcp:
+      1883:
+        auth:

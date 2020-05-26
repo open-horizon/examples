@@ -1,0 +1,33 @@
+{
+  "name": "pattern-${SERVICE_NAME}",
+  "label": "FFT analyzer services",
+  "description": "Pattern for FFT analyzer services.",
+  "services": [
+    {
+      "serviceUrl": "com.github.vkorn.fft-example-record",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "${ARCH}",
+      "serviceVersions": [
+        {
+          "version": "${SERVICE_VERSION}"
+        }
+      ]
+    }
+  ],
+  "userInput":[
+    {
+      "serviceOrgId": "${HZN_ORG_ID}",
+      "serviceUrl": "com.github.vkorn.fft-example",
+      "serviceArch": "${ARCH}",
+      "serviceVersionRange": "[0.0.0,INFINITY)",
+      "inputs": [
+        {"name":"VOLANTMQ_CONFIG","value":"/config/volantmq.yaml"},
+        {"name":"MQTT_BROKER","value":"volantmq:1883"},
+        {"name":"MQTT_SERVER_USER","value":"fft-server"},
+        {"name":"MQTT_SERVER_PASS","value":"server-pass"},
+        {"name":"MQTT_SERVER_CLIENT","value":"fft-server"},
+        {"name":"SAMPLE_RATE","value":"48000"}
+      ]
+    }
+  ]
+}
