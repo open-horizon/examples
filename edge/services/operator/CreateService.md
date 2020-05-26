@@ -76,9 +76,6 @@ cd ~/myoperator/simple-operator/deploy
 3. Set the values in `horizon/hzn.json` to your own values and update the path in `horizon/service.definition.json` to point to the `ibm.operator.tar.gz` file
   - Node: the `ibm.operator.tar.gz` file contains everything in the `deploy/` directory.
 
-4. Edit `service.sh` however you want, or you can change the value of `HW_WHO` to edit the who this service says hello to.
-    - Note: this service is a shell script simply for brevity, but you can write your service in any language.
-
 Testing operators is different from testing Horizon services for edge devices. If you have created your own operator file for this example, you can test it by following the steps on the `operator-sdk` getting started page under the [Run as a Deployment inside the cluster](https://github.com/operator-framework/getting-started#1-run-as-a-deployment-inside-the-cluster) section.
 
 5. With the operator tested, instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
