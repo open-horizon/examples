@@ -1,9 +1,6 @@
 {
-    "properties": [
-        {
-            "name": "prop1",
-            "value": "value1"
-        }
-    ],
-    "constraints": []
+    "properties": [],
+    "constraints": [
+        "openhorizon.arch == amd64"
+    ]
 }
