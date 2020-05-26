@@ -35,8 +35,6 @@ Parameters:
 				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -o              		specify the value of HZN_ORG_ID.
                                   Only applies when <edge-node-type> is <x86_64-Cluster>
-    -n				specify the value of NODE_ID, it should be same as your cluster name
-				  Only applies when <edge-node-type> is <x86_64-Cluster>
     -m				specify the value of edge cluster namespace that agent will be installed to, default is $AGENT_NAMESPACE
                                   Only applies when <edge-node-type> is <x86_64-Cluster>
     -f 				<directory> to move gathered files to. Default is current directory
@@ -74,7 +72,6 @@ while (( "$#" )); do
 					|| [[ "$2" == "stretch" ]] \
 					|| [[ "$2" == "buster" ]]); then
       			echo "ERROR: Unknown linux distribution type."
-      			echo ""
       			exit 1
       		fi
       		DISTRO=$2
@@ -104,10 +101,10 @@ while (( "$#" )); do
 		ORG_ID=$2
 		shift 2
 		;;
-	-n) # value of NODE_ID
-		HZN_NODE_ID=$2
-		shift 2
-		;;
+	#-n) # value of NODE_ID
+		#HZN_NODE_ID=$2
+		#shift 2
+		#;;
 	-m) # edge cluster namespace to install agent to
 		AGENT_NAMESPACE=$2
 		shift 2
@@ -122,14 +119,12 @@ while (( "$#" )); do
       		;;
 	-*) #invalid flag
 		echo "ERROR: Unknow flag $1"
-		echo ""
 		scriptUsage
 		exit 1
 		;;
     	*) # based on "Usage" this should be node type
 		if ! ([[ "$1" == "32-bit-ARM" ]] || [[ "$1" == "64-bit-ARM" ]] || [[ "$1" == "x86_64-Linux" ]] || [[ "$1" == "macOS" ]] || [[ "$1" == "x86_64-Cluster" ]]); then
 			echo "ERROR: Unknown node type."
-			echo ""
 			exit 1
 		fi
       		EDGE_NODE=$1
@@ -149,7 +144,6 @@ function checkEnvVars () {
 	cloudctl --help > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		echo "ERROR: cloudctl is not installed."
-        	echo ""
         	exit 1
     	fi
     	echo " - cloudctl installed"
@@ -157,7 +151,6 @@ function checkEnvVars () {
     	kubectl --help > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		echo "ERROR: kubectl is not installed."
-        	echo ""
         	exit 1
    	fi
     	echo " - kubectl installed"
@@ -166,7 +159,6 @@ function checkEnvVars () {
     		oc --help > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			echo "ERROR: oc is not installed."
-        		echo ""
         		exit 1
     		fi
     		echo " - oc installed"
@@ -174,7 +166,6 @@ function checkEnvVars () {
 		docker --help > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			echo "ERROR: docker is not installed."
-			echo ""
 			exit 1
 		fi
 	fi
@@ -185,39 +176,32 @@ function checkEnvVars () {
 	if [ -z $CLUSTER_URL ]; then
 		echo "ERROR: CLUSTER_URL environment variable is not set. Can not run 'cloudctl login ...'"
 		echo " - CLUSTER_URL=https://<cluster_CA_domain>:<port-number>"
-		echo ""
 		exit 1
 
 	elif [ -z $USER ]; then
 		echo "ERROR: USER environment variable is not set. Can not run 'cloudctl login ...'"
 		echo " - USER=<your-cluster-admin-user>"
-		echo ""
 		exit 1
 
 	elif [ -z $PW ]; then
 		echo "ERROR: PW environment variable is not set. Can not run 'cloudctl login ...'"
 		echo " - PW=<your-cluster-admin-password>"
-		echo ""
 		exit 1
 	fi
 	echo " - CLUSTER_URL set"
 	echo " - USER set"
 	echo " - PW set"
-	echo ""
 
 	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
-        	echo "USING_EDGE_CLUSTER_REGISTRY: true"
+        	#echo "USING_EDGE_CLUSTER_REGISTRY: true"  # since this is no longer a user input, do not report it
         	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
-            		echo ""
             		exit 1
         	elif [ -z $EDGE_CLUSTER_REGISTRY_PW ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_PW environment variable is not set. Can not login to edge cluster registry ...'"
-            		echo ""
             		exit 1
 		elif [ -z $IMAGE_ON_EDGE_CLUSTER_REGISTRY ]; then
 			echo "ERROR: IMAGE_ON_EDGE_CLUSTER_REGISTRY environment variable is not set. Please see script usage ./edgeNodeFiles.sh'"
-                        echo ""
                         exit 1
         	fi
 		EDGE_CLUSTER_REGISTRY="true"
@@ -225,21 +209,20 @@ function checkEnvVars () {
         	echo " - EDGE_CLUSTER_REGISTRY_USER set"
         	echo " - EDGE_CLUSTER_REGISTRY_PW set"
 		echo " - IMAGE_ON_EDGE_CLUSTER_REGISTRY set"
-        	echo ""
     	else
 		EDGE_CLUSTER_REGISTRY="false"
 	fi
+	echo ""
 }
 
 function checkParams() {
-	echo "Checking input paramters ..."
-	if [ -z $HZN_NODE_ID ]; then
-		echo "ERROR: NODE_ID is not set. Please specify -n <your edge cluster name>"
-		echo ""
-		exit 1
-	fi
-	echo "Using NODE_ID: $HZN_NODE_ID"
-	echo ""
+	: #echo "Checking input paramters ..."
+	#if [ -z $HZN_NODE_ID ]; then
+	#	echo "ERROR: NODE_ID is not set. Please specify -n <your edge cluster name>"
+	#	exit 1
+	#fi
+	#echo "Using NODE_ID: $HZN_NODE_ID"
+	#echo ""
 }
 
 function cloudLogin () {
@@ -249,8 +232,7 @@ function cloudLogin () {
 	cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
 		echo "ERROR: 'cloudctl login' failed. Check if CLUSTER_URL, USER, and PW environment variables are set correctly."
-        echo ""
-        exit 1
+        exit 2
     fi
     echo ""
 }
@@ -263,8 +245,7 @@ function getClusterName () {
 	CLUSTER_NAME=$(kubectl get configmap -n kube-public ibmcloud-cluster-info -o jsonpath="{.data.cluster_name}")
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to get cluster name."
-        echo ""
-        exit 1
+        exit 2
     fi
 
 	echo " - Cluster name: $CLUSTER_NAME"
@@ -295,8 +276,7 @@ function createAPIKey () {
 	cloudctl iam api-key-create "$USER-Edge-Node-API-Key" -d "$USER-Edge-Node-API-Key" -f key.txt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create API Key."
-        echo ""
-        exit 1
+        exit 2
     fi
 
     API_KEY=$(cat key.txt | jq -r '.apikey')
@@ -306,14 +286,13 @@ function createAPIKey () {
 
 function getImageFromOcpRegistry() {
     # get OCP_USER, OCP_TOKEN and OCP_DOCKER_HOST
-    oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}'
+    oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}' > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "Default route for the OpenShift image registry is not found, creating it ..."
         oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
         if [ $? -ne 0 ]; then
             echo "ERROR: failed to create the default route for the OpenShift image registry, exiting..."
-            echo ""
-            exit 1
+            exit 2
         else
             echo "Default route for the OpenShift image registry created"
 			echo ""
@@ -334,30 +313,35 @@ function getImageFromOcpRegistry() {
     echo | openssl s_client -connect $OCP_DOCKER_HOST:443 -showcerts | sed -n "/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p" > ocp.crt
     if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to get the OpenShift certificate"
-        echo ""
-        exit 1
+2        exit 2
     fi
     echo "Get ocp.crt"
     echo ""
 
     # Getting image from ocp ....
     if [[ "$OSTYPE" == "linux"* ]]; then
-	echo "Detected OS is Linux, adding ocp.crt to docker..."
-	mkdir -p /etc/docker/certs.d/$OCP_DOCKER_HOST
-	cp ocp.crt /etc/docker/certs.d/$OCP_DOCKER_HOST
-	systemctl restart docker.service
-	echo "Docker restarted"
+        echo "Detected OS is Linux, adding ocp.crt to docker and restarting docker service..."
+        mkdir -p /etc/docker/certs.d/$OCP_DOCKER_HOST
+        cp ocp.crt /etc/docker/certs.d/$OCP_DOCKER_HOST
+        systemctl restart docker.service
+        echo "Docker restarted"
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-	echo "Detected OS is Mac OS, adding ocp.crt to docker..."
-	mkdir -p ~/.docker/certs.d/$OCP_DOCKER_HOST
-	cp ocp.crt ~/.docker/certs.d/$OCP_DOCKER_HOST
-	osascript -e 'quit app "Docker"'
-	open -a Docker
-	echo "Docker restarted"
+        echo "Detected OS is Mac OS, adding ocp.crt to docker and restarting docker service..."
+        mkdir -p ~/.docker/certs.d/$OCP_DOCKER_HOST
+        cp ocp.crt ~/.docker/certs.d/$OCP_DOCKER_HOST
+        osascript -e 'quit app "Docker"'
+        open -a Docker
+		# The open cmd above does not wait for docker to fully start, so we have to poll
+        printf "Waiting for docker to restart"
+        while ! docker ps > /dev/null 2>&1; do
+            printf '.'
+            sleep 2
+		done
+        echo -e "\nDocker restarted"
     else
-	echo "ERROR: Detected OS is $OSTYPE. This script is only supported on Linux or Mac OS, exiting..."
-	echo ""
-	echo 1
+        echo "ERROR: Detected OS is $OSTYPE. This script is only supported on Linux or Mac OS, exiting..."
+        echo ""
+        exit 1
     fi
 
     # login to OCP registry
@@ -365,8 +349,7 @@ function getImageFromOcpRegistry() {
     echo "$OCP_TOKEN" | docker login -u $OCP_USER --password-stdin $OCP_DOCKER_HOST
     if [ $? -ne 0 ]; then
 	echo "ERROR: Failed to login to OpenShift image registry"
-        echo ""
-        exit 1
+        exit 2
     fi
 
     # Getting image from ocp ....
@@ -375,8 +358,7 @@ function getImageFromOcpRegistry() {
 	docker pull $OCP_IMAGE
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to pull image from OCP image registry"
-        echo ""
-        exit 1
+2        exit 2
     fi
 
     # save image to tar file
@@ -384,8 +366,7 @@ function getImageFromOcpRegistry() {
     docker save $OCP_IMAGE > $IMAGE_TAR_FILE
     if [ $? -ne 0 ]; then
 	echo "ERROR: Failed to save agent image to $IMAGE_TAR_FILE"
-        echo ""
-        exit 1
+        exit 2
     fi
     echo "Agent image saved to $IMAGE_TAR_FILE"
     echo ""
@@ -398,8 +379,7 @@ function zipAgentImage() {
     tar -czvf $IMAGE_ZIP_FILE $(ls $IMAGE_TAR_FILE)
     if [ $? -ne 0 ]; then
         echo "ERROR: failed to zip $IMAGE_TAR_FILE"
-        echo ""
-        exit 1
+        exit 2
     fi
 
     rm $IMAGE_TAR_FILE
@@ -418,7 +398,6 @@ HZN_EXCHANGE_URL=$CLUSTER_URL/edge-exchange/v1/
 HZN_FSS_CSSURL=$CLUSTER_URL/edge-css/
 HZN_ORG_ID=$ORG_ID
 HZN_MGMT_HUB_CERT_PATH=$HUB_CERT_PATH
-NODE_ID=$HZN_NODE_ID
 USE_EDGE_CLUSTER_REGISTRY=$EDGE_CLUSTER_REGISTRY
 EDGE_CLUSTER_REGISTRY_USERNAME=$EDGE_CLUSTER_REGISTRY_USER
 EDGE_CLUSTER_REGISTRY_TOKEN=$EDGE_CLUSTER_REGISTRY_PW
@@ -437,8 +416,7 @@ EndOfContent
 fi
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create agent-install.cfg file."
-        echo ""
-        exit 1
+        exit 2
     fi
 
     echo "agent-install.cfg file created: "
@@ -454,8 +432,7 @@ function getClusterCert () {
 	kubectl -n kube-public get secret ibmcloud-cluster-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 --decode > agent-install.crt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to get the IBM Cloud Pak self-signed certificate"
-        echo ""
-        exit 1
+2        exit 2
     fi
     echo ""
 }
@@ -475,8 +452,7 @@ function gatherHorizonFiles () {
 			fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
-        	echo ""
-        	exit 1
+        	exit 2
     	fi
 
 	elif [[ "$EDGE_NODE" == "64-bit-ARM" ]]; then
@@ -487,8 +463,7 @@ function gatherHorizonFiles () {
 		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
-        	echo ""
-        	exit 1
+        	exit 2
     	fi
 
 	elif [[ "$EDGE_NODE" == "x86_64-Linux" ]]; then
@@ -499,21 +474,18 @@ function gatherHorizonFiles () {
 		fi
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
-        	echo ""
-        	exit 1
+        	exit 2
     	fi
 
 	elif [[ "$EDGE_NODE" == "macOS" ]]; then
 		tar --strip-components 3 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/macos
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
-        	echo ""
-        	exit 1
+        	exit 2
     	fi
 
 	else
 		echo "ERROR: Unknown node type."
-		echo ""
 		exit 1
 	fi
 	echo ""
@@ -523,34 +495,30 @@ function gatherHorizonFiles () {
 function pullAgentInstallScript () {
 	echo "Pulling agent-install.sh script..."
 
-	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-install.sh && \
-		chmod +x ./agent-install.sh
-
-	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to pull agent-install.sh script from the anax repo."
-       	echo ""
-       	exit 1
+	httpCode=$(curl -w "%{http_code}" --progress-bar -LO https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-install.sh)
+	if [[ $httpCode -ne 200 ]]; then
+		echo "ERROR: Failed to pull agent-install.sh script from the anax repo, HTTP code: $httpCode"
+       	exit 2
     fi
+	chmod +x ./agent-install.sh
     echo ""
 }
 
 function pullClusterDeployTemplages () {
 	echo "Pulling cluster deploy templates: deployment-template.yml, persistentClaim-template.yml..."
 
-	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/k8s/deployment-template.yml
-	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to pull deployment-template.yml script from the anax repo."
-       	echo ""
-       	exit 1
+	httpCode=$(curl -w "%{http_code}" --progress-bar -LO https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/k8s/deployment-template.yml)
+	if [[ $httpCode -ne 200 ]]; then
+		echo "ERROR: Failed to pull deployment-template.yml script from the anax repo, HTTP code: $httpCode"
+       	exit 2
     fi
 
-	curl -O https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/k8s/persistentClaim-template.yml
-	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to pull persistentClaim-template.yml script from the anax repo."
-       	echo ""
-       	exit 1
+	httpCode=$(curl -w "%{http_code}" --progress-bar -LO https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/k8s/persistentClaim-template.yml)
+	if [[ $httpCode -ne 200 ]]; then
+		echo "ERROR: Failed to pull persistentClaim-template.yml script from the anax repo, HTTP code: $httpCode"
+       	exit 2
     fi
-
+	echo ""
 }
 
 # Create a tar file of the gathered files for batch install
@@ -562,13 +530,12 @@ function createTarFile () {
 	else
 		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt *horizon*"
 	fi
-	echo "tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz \$(ls $FILES_TO_COMPRESS)"
+	echo "tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz $(ls $FILES_TO_COMPRESS)"
 
 	tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz $(ls $FILES_TO_COMPRESS)
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create agentInstallFiles-$EDGE_NODE.tar.gz file."
-       	echo ""
-       	exit 1
+       	exit 2
     fi
 	echo ""
 }
@@ -588,8 +555,7 @@ function moveFiles () {
 
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to move files to $DIR."
-       	echo ""
-       	exit 1
+       	exit 2
     fi
     echo ""
 }
