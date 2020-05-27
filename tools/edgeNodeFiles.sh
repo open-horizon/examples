@@ -4,7 +4,7 @@
 
 # default agent image tag if it is not specified by script user
 AGENT_IMAGE_TAG="2.26.0"
-IMAGE_TAR_FILE="amd64_anax_k8s.tar"
+IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
 CLUSTER_STORAGE_CLASS="gp2"
 PACKAGE_NAME="ibm-eam-4.1.0-x86_64"
 AGENT_NAMESPACE="openhorizon-agent"
@@ -35,7 +35,7 @@ Required Environment Variables:
     PW - Your cluster admin password
     EDGE_CLUSTER_REGISTRY_USER - Your edge cluster registry username (not used for microk8s)
     EDGE_CLUSTER_REGISTRY_PW - Your edge cluster registry password (not used for microk8s)
-    IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-name>/<repo-name>/amd64_anax_k8s, for microsk8s: localhost:32000/amd64_anax_k8s
+    IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-host>/<repo-name>/amd64_anax_k8s, for microsk8s: localhost:32000/agent-repo/amd64_anax_k8s
 EOF
 	exit 1
 }
