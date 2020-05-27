@@ -35,7 +35,7 @@ Required Environment Variables:
     PW - Your cluster admin password
     EDGE_CLUSTER_REGISTRY_USER - Your edge cluster registry username (not used for microk8s)
     EDGE_CLUSTER_REGISTRY_PW - Your edge cluster registry password (not used for microk8s)
-    IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-host>/<repo-name>/amd64_anax_k8s, for microsk8s: localhost:32000/agent-repo/amd64_anax_k8s
+    IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-host>/<ocp-project>/amd64_anax_k8s, for microsk8s: localhost:32000/agent-repo/amd64_anax_k8s
 EOF
 	exit 1
 }
