@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# This script gathers the necessary information and files to install Horizon and register an edge node
+# This script gathers the necessary information and files to install the Horizon agent and register an edge node
 
 # default agent image tag if it is not specified by script user
 AGENT_IMAGE_TAG="2.26.0"
-IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
+IMAGE_TAR_FILE="amd64_anax_k8s.tar"
 CLUSTER_STORAGE_CLASS="gp2"
 PACKAGE_NAME="ibm-eam-4.1.0-x86_64"
 AGENT_NAMESPACE="openhorizon-agent"
@@ -12,54 +12,34 @@ AGENT_NAMESPACE="openhorizon-agent"
 function scriptUsage () {
 	cat << EOF
 
-Usage: ./edgeNodeFiles.sh <edge-node-type> [-t] [-k] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-n <node-id>] [-m <agent-namespace>] [-d <distribution>] [-f <directory>] [-p <package_name]
+Usage: ./edgeNodeFiles.sh <edge-node-type> [-k] [-f <directory>] [-t] [-p <package_name>] [-d <distribution>] [-s <edge-cluster-storage-class>] [-i <agent-image-tag>] [-o <hzn-org-id>] [-m <agent-namespace>]
 
 Parameters:
-  required:
-    <edge-node-type>		the type of edge node planned for install and registration
-				  accepted values: < 32-bit-ARM , 64-bit-ARM , x86_64-Linux , macOS , x86_64-Cluster >
+  Required:
+    <edge-node-type>    The type of edge node planned for agent install and registration. Valid values: 32-bit-ARM, 64-bit-ARM, x86_64-Linux, macOS, x86_64-Cluster
 
-  optional:
-    -t 				create agentInstallFiles.tar.gz file containing gathered files
-				  If this flag isn't set, the gathered files will be placed in the current directory
-    -d 				<distribution>	script defaults to 'bionic' build on linux
-				  use this flag with < 64-bit-ARM or x86_64-Linux >
-				  to specify \`xenial\` build
-				  Flag is ignored with < macOS >
-    -k 				include this flag to create a new $USER-Edge-Node-API-Key. If this flag is not set,
-				  the existing api keys will be checked for $USER-Edge-Node-API-Key and creation will
-				  be skipped if it exists
-    -s 				storage class used in edge cluster. Default is gp2
-				  Only applies when <edge-node-type> is <x86_64-Cluster>
-    -i				tag of agent image to deploy to edge cluster
-				  Only applies when <edge-node-type> is <x86_64-Cluster>
-    -o              		specify the value of HZN_ORG_ID.
-                                  Only applies when <edge-node-type> is <x86_64-Cluster>
-    -m				specify the value of edge cluster namespace that agent will be installed to, default is $AGENT_NAMESPACE
-                                  Only applies when <edge-node-type> is <x86_64-Cluster>
-    -f 				<directory> to move gathered files to. Default is current directory
-    -p				specify the package where installation files are stored, default is $PACKAGE_NAME
-				  assumes the package bundle is named $PACKAGE_NAME.tar.gz and expects a standardized
-				  directory structure of $PACKAGE_NAME/horizon-edge-packages/<PLATFORM>/<OS>/<DISTRO>/<ARCH>
+  Optional:
+    -k          Include this flag to create a new $USER-Edge-Node-API-Key, even if one already exists.
+    -f <directory>     The directory to put the gathered files in. Default is current directory.
+    -t          Create agentInstallFiles-<edge-node-type>.tar.gz file containing gathered files. If this flag is not set, the gathered files will be placed in the current directory.
+    -p <package_name>   The product media bundle name. Default is $PACKAGE_NAME, which means it will look for $PACKAGE_NAME.tar.gz and expects a standardized directory structure of $PACKAGE_NAME/horizon-edge-packages/<PLATFORM>/<OS>/<DISTRO>/<ARCH>
+    -d <distribution>	By default 'bionic' and 'buster' packages are used on linux. Use this flag to use 'xenial' or 'stretch' packages. Flag is ignored with macOS and x86_64-Cluster.
+    -s <edge-cluster-storage-class>   Storage class used on the edge cluster. Default is gp2. Only applies for node type x86_64-Cluster.
+    -i <agent-image-tag>   Docker tag (version) of agent image to deploy to edge cluster. Only applies for node type x86_64-Cluster.
+    -o <hzn-org-id>     The exchange org id that should be used on the edge node. Currently on used for node type x86_64-Cluster.
+    -m <agent-namespace>   The edge cluster namespace that the agent will be installed into. Default is $AGENT_NAMESPACE. Only applies for node type x86_64-Cluster.
 
 Required Environment Variables:
-    CLUSTER_URL			https://<cluster_CA_domain>:<port-number>
-    USER 			your-cluster-admin-user
-    PW				your-cluster-admin-password
-
-    EDGE_CLUSTER_REGISTRY_USER		your-edge-cluster-registry-username
-    EDGE_CLUSTER_REGISTRY_PW		your-edge-cluster-registry-password
-    IMAGE_ON_EDGE_CLUSTER_REGISTRY	full-image-name-on-your-edge-cluster-registry-to-host-agent-image,
-	in format: <registry-name>/<repo-name>/<image-name>
-	if using docker hub, specify the value in the format <docker-repo-name>/<image-name>
-
-
-
+    CLUSTER_URL	- for example: https://<cluster_CA_domain>:<port-number>
+    USER - Your cluster admin user
+    PW - Your cluster admin password
+    EDGE_CLUSTER_REGISTRY_USER - Your edge cluster registry username (not used for microk8s)
+    EDGE_CLUSTER_REGISTRY_PW - Your edge cluster registry password (not used for microk8s)
+    IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-name>/<repo-name>/amd64_anax_k8s, for microsk8s: localhost:32000/amd64_anax_k8s
 EOF
 	exit 1
 }
 if [[ "$#" = "0" ]]; then
-	echo "ERROR: No arguments specified."
 	scriptUsage
 fi
 
@@ -127,12 +107,12 @@ while (( "$#" )); do
 			echo "ERROR: Unknown node type."
 			exit 1
 		fi
-      		EDGE_NODE=$1
+      		EDGE_NODE_TYPE=$1
       		shift
       		;;
   	esac
 done
-if [ -z $EDGE_NODE ]; then
+if [ -z $EDGE_NODE_TYPE ]; then
 	scriptUsage
 fi
 echo " - valid parameters"
@@ -155,7 +135,7 @@ function checkEnvVars () {
    	fi
     	echo " - kubectl installed"
 
-	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
     		oc --help > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			echo "ERROR: oc is not installed."
@@ -192,7 +172,7 @@ function checkEnvVars () {
 	echo " - USER set"
 	echo " - PW set"
 
-	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
         	#echo "USING_EDGE_CLUSTER_REGISTRY: true"  # since this is no longer a user input, do not report it
         	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
             		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
@@ -392,7 +372,7 @@ function createAgentInstallConfig () {
 	echo "Creating agent-install.cfg file..."
 	HUB_CERT_PATH="agent-install.crt"
 
-if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
+if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
 	cat << EndOfContent > agent-install.cfg
 HZN_EXCHANGE_URL=$CLUSTER_URL/edge-exchange/v1/
 HZN_FSS_CSSURL=$CLUSTER_URL/edge-css/
@@ -439,12 +419,12 @@ function getClusterCert () {
 
 # Locate the IBM Edge Application Manager node installation content
 function gatherHorizonFiles () {
-	echo "Locating the IBM Edge Application Manager node installation content for $EDGE_NODE node..."
+	echo "Locating the IBM Edge Application Manager node installation content for $EDGE_NODE_TYPE node..."
 	echo "tar --strip-components n -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/..."
 	echo "Dist is $DISTRO"
 
     # Determine edge node type, and distribution if applicable
-    if [[ "$EDGE_NODE" == "32-bit-ARM" ]]; then
+    if [[ "$EDGE_NODE_TYPE" == "32-bit-ARM" ]]; then
 			if [[ "$DISTRO" == "stretch" ]]; then
 				tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/raspbian/stretch/armhf
 			else
@@ -455,7 +435,7 @@ function gatherHorizonFiles () {
         	exit 2
     	fi
 
-	elif [[ "$EDGE_NODE" == "64-bit-ARM" ]]; then
+	elif [[ "$EDGE_NODE_TYPE" == "64-bit-ARM" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
 			tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/ubuntu/xenial/arm64
 		else
@@ -466,7 +446,7 @@ function gatherHorizonFiles () {
         	exit 2
     	fi
 
-	elif [[ "$EDGE_NODE" == "x86_64-Linux" ]]; then
+	elif [[ "$EDGE_NODE_TYPE" == "x86_64-Linux" ]]; then
 		if [[ "$DISTRO" == "xenial" ]]; then
 			tar --strip-components 6 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/linux/ubuntu/xenial/amd64
 		else
@@ -477,7 +457,7 @@ function gatherHorizonFiles () {
         	exit 2
     	fi
 
-	elif [[ "$EDGE_NODE" == "macOS" ]]; then
+	elif [[ "$EDGE_NODE_TYPE" == "macOS" ]]; then
 		tar --strip-components 3 -zxvf $PACKAGE_NAME.tar.gz $PACKAGE_NAME/horizon-edge-packages/macos
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed to locate the IBM Edge Application Manager node installation content"
@@ -523,18 +503,18 @@ function pullClusterDeployTemplages () {
 
 # Create a tar file of the gathered files for batch install
 function createTarFile () {
-	echo "Creating agentInstallFiles-$EDGE_NODE.tar.gz file containing gathered files..."
+	echo "Creating agentInstallFiles-$EDGE_NODE_TYPE.tar.gz file containing gathered files..."
 
-	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
 		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt $IMAGE_ZIP_FILE deployment-template.yml persistentClaim-template.yml"
 	else
 		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt *horizon*"
 	fi
-	echo "tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz $(ls $FILES_TO_COMPRESS)"
+	echo "tar -czvf agentInstallFiles-$EDGE_NODE_TYPE.tar.gz $(ls $FILES_TO_COMPRESS)"
 
-	tar -czvf agentInstallFiles-$EDGE_NODE.tar.gz $(ls $FILES_TO_COMPRESS)
+	tar -czvf agentInstallFiles-$EDGE_NODE_TYPE.tar.gz $(ls $FILES_TO_COMPRESS)
 	if [ $? -ne 0 ]; then
-		echo "ERROR: Failed to create agentInstallFiles-$EDGE_NODE.tar.gz file."
+		echo "ERROR: Failed to create agentInstallFiles-$EDGE_NODE_TYPE.tar.gz file."
        	exit 2
     fi
 	echo ""
@@ -635,7 +615,7 @@ device_main() {
 
 main() {
 
-	if [[ "$EDGE_NODE" == "x86_64-Cluster" ]]; then
+	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
 		cluster_main
 	else
 		device_main
