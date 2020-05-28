@@ -6,10 +6,6 @@ This is a simple example of using and creating an operator as edge service.
 - [Using the Operator Example Edge Service with Deployment Policy](#using-operator-policy)
 - [Using the Operator Example Edge Service with Deployment Pattern](PatternRegister.md)
 - [Creating Your Own Operator Edge Service](CreateService.md)
-
-
-- [Using the Operator Example Edge Service with Deployment Policy](#using-operator-pattern)
-
 - Further Learning - to see more Horizon features demonstrated, continue on to the [cpu2evtstreams example](../../evtstreams/cpu2evtstreams).
 
 ## <a id=preconditions></a> Preconditions for Using the Operator Example Edge Service
