@@ -99,9 +99,9 @@ Testing operators is different from testing Horizon services for edge devices. I
    
 9. Modify the `node.policy.json` file located in the `horizon/` directory by changing the `"properties":`  value to that of the constraint you spedified in the `deployment.policy.json` so they match and will form an agreement.
 
-10. Register your cluster with your new node policy:
+10. Get your modified `node.policy.json` file onto your edge cluster then tegister your cluster with your new node policy:
   ```bash
-  hzn register --policy horizon/node.policy.json`
+  hzn register --policy horizon/node.policy.json
   ```
   
 11. Veryfy that the `simple-operator` deployment is up and runing:
