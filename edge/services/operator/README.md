@@ -3,6 +3,7 @@
 This is a simple example of using and creating an operator as edge service.
 
 - [Preconditions for Using the Operator Example Edge Service](#preconditions)
+- [Using the Operator Example Edge Service with Deployment Policy](#using-operator-policy)
 - [Using the Operator Example Edge Service with Deployment Pattern](PatternRegister.md)
 - [Creating Your Own Operator Edge Service](CreateService.md)
 
@@ -47,13 +48,13 @@ hzn exchange node confirm
 hzn unregister -f
 ```
 
-## <a id=using-helloworld-pattern></a> Using the Operator Example Edge Service with Deployment Policy
+## <a id=using-pattern-policy></a> Using the Operator Example Edge Service with Deployment Policy
 
 In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create three pods running the `ibm.helloworld` service. 
 
 1. Get the required node policy file:
 ```bash
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/operator/horizon/node.policy.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/operator/simple-operator/deploy/horizon/node.policy.json
 ```
 
 - Below is the `node_policy.json` file you obtained in step one:
