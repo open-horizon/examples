@@ -48,7 +48,7 @@ hzn exchange node confirm
 hzn unregister -f
 ```
 
-## <a id=using-pattern-policy></a> Using the Operator Example Edge Service with Deployment Policy
+## <a id=using-operator-policy></a> Using the Operator Example Edge Service with Deployment Policy
 
 In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create three pods running the `ibm.helloworld` service. 
 
