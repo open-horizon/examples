@@ -87,6 +87,16 @@ hzn policy list
 hzn agreement list
 ```
 
+- Below is the `service.policy.json` that has been published into the Exchange when it was created:
+```json
+{
+    "properties": [],
+    "constraints": [
+        "openhorizon.arch == amd64"
+    ]
+}
+```
+
 - Below is the `business.policy.json` that has been published into the Exchange when it was created:
 ```json
 {
