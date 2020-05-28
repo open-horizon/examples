@@ -1,5 +1,5 @@
 {
-    "HZN_ORG_ID": "mycluster",
+    "HZN_ORG_ID": "IBM",
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "",
         "SERVICE_NAME": "ibm.operator",
