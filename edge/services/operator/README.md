@@ -82,7 +82,7 @@ hzn policy list
 hzn agreement list
 ```
 
-- Below is the `business_policy.json` file you just grabbed in step one:
+- Below is the `business.policy.json` that has been published into the Exchange when it was created:
 ```json
 {
   "mycluster/ibm.operator_1.0.0": {
