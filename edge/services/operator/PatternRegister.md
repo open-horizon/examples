@@ -1,14 +1,14 @@
-# Horizon Hello World Example Edge Service
+# Horizon Operator Example Edge Service
 
-This is a simple example of using and creating a Horizon edge service.
+## Preconditions for Developing Your Own Service
 
-- [Preconditions for Using the Hello World Example Edge Service](#preconditions)
-- [Using the Hello World Example Edge Service with Deployment Pattern](#using-helloworld-pattern)
-- [Using the Hello World Example Edge Service with Deployment Policy](PolicyRegister.md)
-- [Creating Your Own Hello World Edge Service](CreateService.md)
-- Further Learning - to see more Horizon features demonstrated, continue on to the [cpu2evtstreams example](../../evtstreams/cpu2evtstreams).
+1. If you have not already done so, complete the steps in this section:
 
-## <a id=preconditions></a> Preconditions for Using the Hello World Example Edge Service
+  - [Preconditions for Using the Operator Example Edge Service](README.md#preconditions)
+  
+## <a id=using-operator-pattern></a> Using the Operator Example Edge Service with Deployment Pattern
+
+## <a id=preconditions></a> Preconditions for Using the Operator Example Edge Service
 
 If you haven't done so already, you must do these steps before proceeding with the helloworld example:
 
