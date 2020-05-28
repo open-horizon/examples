@@ -7,7 +7,7 @@ Follow the steps on this page to create your first operator that deploys an edge
 1. If you have not already done so, complete the steps in these sections:
 
   - [Preconditions for Using the Operator Example Edge Service](README.md#preconditions)
-  - [Using the Operator Example Edge Service with Deployment Pattern](README.md#using-helloworld-pattern)
+  - [Using the Operator Example Edge Service with Deployment Policy](README.md#using-operator-policy)
 
 2. If you are using macOS as your development host, configure Docker to store credentials in `~/.docker`:
 
