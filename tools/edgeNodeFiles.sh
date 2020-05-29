@@ -3,7 +3,7 @@
 # This script gathers the necessary information and files to install the Horizon agent and register an edge node
 
 # default agent image tag if it is not specified by script user
-AGENT_IMAGE_TAG="2.26.0"
+AGENT_IMAGE_TAG="2.26.10"
 IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
 CLUSTER_STORAGE_CLASS="gp2"
 PACKAGE_NAME="ibm-eam-4.1.0-x86_64"
