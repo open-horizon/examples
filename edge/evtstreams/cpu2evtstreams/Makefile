@@ -56,7 +56,7 @@ publish:
 	ARCH=arm $(MAKE) publish-service-policy
 	ARCH=arm64 $(MAKE) publish-service
 	ARCH=arm64 $(MAKE) publish-service-policy
-	$(MAKE) publish-business-policy
+	$(MAKE) publish-deployment-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Build, run and verify, if test succeeds then publish (for the current architecture)
@@ -76,11 +76,11 @@ publish-service-overwrite:
 
 # Publish Service Policy target for exchange publish script
 publish-service-policy:
-	hzn exchange service addpolicy -f horizon/service_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+	hzn exchange service addpolicy -f horizon/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
 
-# Publish Business Policy target for exchange publish script
-publish-business-policy:
-	hzn exchange business addpolicy -f horizon/business_policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
+# Publish Deployment Policy target for exchange publish script
+publish-deployment-policy:
+	hzn exchange deployment addpolicy -f horizon/deployment.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
 
 # new target for icp exchange to run on startup to publish only
 publish-only:
