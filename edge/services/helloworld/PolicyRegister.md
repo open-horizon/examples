@@ -44,7 +44,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 2. Register your Node Policy with this policy
 
 ```bash
-hzn register --policy node_policy.json
+hzn register --policy node.policy.json
 ```
 
 3. When the registration completes, use the following command to review the Node Policy:
@@ -133,7 +133,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 }
 ```
 
-- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `node_policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
+- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
