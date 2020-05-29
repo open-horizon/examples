@@ -19,7 +19,7 @@ Parameters:
     <edge-node-type>    The type of edge node planned for agent install and registration. Valid values: 32-bit-ARM, 64-bit-ARM, x86_64-Linux, macOS, x86_64-Cluster
 
   Optional:
-    -k          Include this flag to create a new $USER-Edge-Node-API-Key, even if one already exists.
+    -k          Include this flag to create a new $CLUSTER_USER-Edge-Node-API-Key, even if one already exists.
     -f <directory>     The directory to put the gathered files in. Default is current directory.
     -t          Create agentInstallFiles-<edge-node-type>.tar.gz file containing gathered files. If this flag is not set, the gathered files will be placed in the current directory.
     -p <package_name>   The product media bundle name. Default is $PACKAGE_NAME, which means it will look for $PACKAGE_NAME.tar.gz and expects a standardized directory structure of $PACKAGE_NAME/horizon-edge-packages/<PLATFORM>/<OS>/<DISTRO>/<ARCH>
@@ -31,8 +31,8 @@ Parameters:
 
 Required Environment Variables:
     CLUSTER_URL	- for example: https://<cluster_CA_domain>:<port-number>
-    USER - Your cluster admin user
-    PW - Your cluster admin password
+    CLUSTER_USER - Your cluster admin user
+    CLUSTER_PW - Your cluster admin password
     EDGE_CLUSTER_REGISTRY_USER - Your edge cluster registry username (not used for microk8s)
     EDGE_CLUSTER_REGISTRY_PW - Your edge cluster registry password (not used for microk8s)
     IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-host>/<ocp-project>/amd64_anax_k8s, for microsk8s: localhost:32000/agent-repo/amd64_anax_k8s
@@ -158,19 +158,19 @@ function checkEnvVars () {
 		echo " - CLUSTER_URL=https://<cluster_CA_domain>:<port-number>"
 		exit 1
 
-	elif [ -z $USER ]; then
-		echo "ERROR: USER environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - USER=<your-cluster-admin-user>"
+	elif [ -z $CLUSTER_USER ]; then
+		echo "ERROR: CLUSTER_USER environment variable is not set. Can not run 'cloudctl login ...'"
+		echo " - CLUSTER_USER=<your-cluster-admin-user>"
 		exit 1
 
-	elif [ -z $PW ]; then
-		echo "ERROR: PW environment variable is not set. Can not run 'cloudctl login ...'"
-		echo " - PW=<your-cluster-admin-password>"
+	elif [ -z $CLUSTER_PW ]; then
+		echo "ERROR: CLUSTER_PW environment variable is not set. Can not run 'cloudctl login ...'"
+		echo " - CLUSTER_PW=<your-cluster-admin-password>"
 		exit 1
 	fi
 	echo " - CLUSTER_URL set"
-	echo " - USER set"
-	echo " - PW set"
+	echo " - CLUSTER_USER set"
+	echo " - CLUSTER_PW set"
 
 	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
         	#echo "USING_EDGE_CLUSTER_REGISTRY: true"  # since this is no longer a user input, do not report it
@@ -207,11 +207,11 @@ function checkParams() {
 
 function cloudLogin () {
 	echo "Connecting to cluster and configure kubectl..."
-	echo "cloudctl login -a $CLUSTER_URL -u $USER -p ******** -n kube-public --skip-ssl-validation"
+	echo "cloudctl login -a $CLUSTER_URL -u $CLUSTER_USER -p ******** -n kube-public --skip-ssl-validation"
 
-	cloudctl login -a $CLUSTER_URL -u $USER -p $PW -n kube-public --skip-ssl-validation
+	cloudctl login -a $CLUSTER_URL -u $CLUSTER_USER -p $CLUSTER_PW -n kube-public --skip-ssl-validation
 	if [ $? -ne 0 ]; then
-		echo "ERROR: 'cloudctl login' failed. Check if CLUSTER_URL, USER, and PW environment variables are set correctly."
+		echo "ERROR: 'cloudctl login' failed. Check if CLUSTER_URL, CLUSTER_USER, and CLUSTER_PW environment variables are set correctly."
         exit 2
     fi
     echo ""
@@ -234,15 +234,15 @@ function getClusterName () {
 
 # Check if an IBM Cloud Pak platform API key exists
 function checkAPIKey () {
-	echo "Checking if \"$USER-Edge-Node-API-Key\" already exists..."
-	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$USER-Edge-Node-API-Key\""
+	echo "Checking if \"$CLUSTER_USER-Edge-Node-API-Key\" already exists..."
+	echo "cloudctl iam api-keys | cut -d' ' -f4 | grep \"$CLUSTER_USER-Edge-Node-API-Key\""
 
-	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$USER-Edge-Node-API-Key")
+	KEY=$(cloudctl iam api-keys | cut -d' ' -f4 | grep "$CLUSTER_USER-Edge-Node-API-Key")
 	if [ -z $KEY ]; then
-		echo "\"$USER-Edge-Node-API-Key\" does not exist. A new one will be created."
+		echo "\"$CLUSTER_USER-Edge-Node-API-Key\" does not exist. A new one will be created."
         CREATE_NEW_KEY=true
     else
-    	echo "\"$USER-Edge-Node-API-Key\" already exists. Skipping key creation."
+    	echo "\"$CLUSTER_USER-Edge-Node-API-Key\" already exists. Skipping key creation."
     	CREATE_NEW_KEY=false
     fi
     echo ""
@@ -251,16 +251,16 @@ function checkAPIKey () {
 # Create a IBM Cloud Pak platform API key
 function createAPIKey () {
 	echo "Creating IBM Cloud Pak platform API key..."
-	echo "cloudctl iam api-key-create \"$USER-Edge-Node-API-Key\" -d \"$USER-Edge-Node-API-Key\" -f key.txt"
+	echo "cloudctl iam api-key-create \"$CLUSTER_USER-Edge-Node-API-Key\" -d \"$CLUSTER_USER-Edge-Node-API-Key\" -f key.txt"
 
-	cloudctl iam api-key-create "$USER-Edge-Node-API-Key" -d "$USER-Edge-Node-API-Key" -f key.txt
+	cloudctl iam api-key-create "$CLUSTER_USER-Edge-Node-API-Key" -d "$CLUSTER_USER-Edge-Node-API-Key" -f key.txt
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create API Key."
         exit 2
     fi
 
     API_KEY=$(cat key.txt | jq -r '.apikey')
-    echo " - $USER-Edge-Node-API-Key: $API_KEY"
+    echo " - $CLUSTER_USER-Edge-Node-API-Key: $API_KEY"
     echo ""
 }
 
@@ -545,7 +545,7 @@ function printApiKey () {
 	echo ""
 	echo "************************** Your created API Key ******************************"
 	echo ""
-	echo "     $USER-Edge-Node-API-Key: $API_KEY"
+	echo "     $CLUSTER_USER-Edge-Node-API-Key: $API_KEY"
 	echo ""
 	echo "********************* Save this value for future use *************************"
 	echo ""
