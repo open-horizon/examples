@@ -358,6 +358,7 @@ HZN_ORG_ID=$ORG_ID
 HZN_MGMT_HUB_CERT_PATH=$HUB_CERT_PATH
 EDGE_CLUSTER_STORAGE_CLASS=$CLUSTER_STORAGE_CLASS
 AGENT_NAMESPACE=$AGENT_NAMESPACE
+AGENT_IMAGE_TAG=$AGENT_IMAGE_TAG
 EndOfContent
 
 else
@@ -458,6 +459,19 @@ function pullAgentInstallScript () {
     echo ""
 }
 
+# Download the latest version of the agent-uninstall.sh script and make it executable
+function pullAgentUninsallScript () {
+	echo "Pulling agent-uninstall.sh script..."
+        
+	httpCode=$(curl -w "%{http_code}" --progress-bar -LO https://raw.githubusercontent.com/open-horizon/anax/master/agent-install/agent-uninstall.sh)
+        if [[ $httpCode -ne 200 ]]; then
+                echo "ERROR: Failed to pull agent-uninstall.sh script from the anax repo, HTTP code: $httpCode"
+        exit 2
+    fi
+        chmod +x ./agent-uninstall.sh
+    echo ""
+}
+
 function pullClusterDeployTemplages () {
 	echo "Pulling cluster deploy templates: deployment-template.yml, persistentClaim-template.yml..."
 
@@ -480,7 +494,7 @@ function createTarFile () {
 	echo "Creating agentInstallFiles-$EDGE_NODE_TYPE.tar.gz file containing gathered files..."
 
 	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
-		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt $IMAGE_ZIP_FILE deployment-template.yml persistentClaim-template.yml"
+		FILES_TO_COMPRESS="agent-install.sh agent-uninstall.sh agent-install.cfg agent-install.crt $IMAGE_ZIP_FILE deployment-template.yml persistentClaim-template.yml"
 	else
 		FILES_TO_COMPRESS="agent-install.sh agent-install.cfg agent-install.crt *horizon*"
 	fi
@@ -540,6 +554,8 @@ cluster_main() {
 	getClusterCert
 
 	pullAgentInstallScript
+
+	pullAgentUninsallScript
 
 	pullClusterDeployTemplages
 
