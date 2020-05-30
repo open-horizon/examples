@@ -3,7 +3,7 @@
 # This script gathers the necessary information and files to install the Horizon agent and register an edge node
 
 # default agent image tag if it is not specified by script user
-AGENT_IMAGE_TAG="2.26.10"
+AGENT_IMAGE_TAG="4.1.0"
 IMAGE_TAR_FILE="amd64_anax_k8s_ubi.tar"
 CLUSTER_STORAGE_CLASS="gp2"
 PACKAGE_NAME="ibm-eam-4.1.0-x86_64"
@@ -33,9 +33,6 @@ Required Environment Variables:
     CLUSTER_URL	- for example: https://<cluster_CA_domain>:<port-number>
     CLUSTER_USER - Your cluster admin user
     CLUSTER_PW - Your cluster admin password
-    EDGE_CLUSTER_REGISTRY_USER - Your edge cluster registry username (not used for microk8s)
-    EDGE_CLUSTER_REGISTRY_PW - Your edge cluster registry password (not used for microk8s)
-    IMAGE_ON_EDGE_CLUSTER_REGISTRY - Full image path (without tag) the agent should be stored in on your edge cluster registry. For example OCP: <registry-host>/<ocp-project>/amd64_anax_k8s, for microsk8s: localhost:32000/agent-repo/amd64_anax_k8s
 EOF
 	exit 1
 }
@@ -172,26 +169,6 @@ function checkEnvVars () {
 	echo " - CLUSTER_USER set"
 	echo " - CLUSTER_PW set"
 
-	if [[ "$EDGE_NODE_TYPE" == "x86_64-Cluster" ]]; then
-        	#echo "USING_EDGE_CLUSTER_REGISTRY: true"  # since this is no longer a user input, do not report it
-        	if [ -z $EDGE_CLUSTER_REGISTRY_USER ]; then
-            		echo "ERROR: EDGE_CLUSTER_REGISTRY_USER environment variable is not set. Can not login to edge cluster registry ...'"
-            		exit 1
-        	elif [ -z $EDGE_CLUSTER_REGISTRY_PW ]; then
-            		echo "ERROR: EDGE_CLUSTER_REGISTRY_PW environment variable is not set. Can not login to edge cluster registry ...'"
-            		exit 1
-		elif [ -z $IMAGE_ON_EDGE_CLUSTER_REGISTRY ]; then
-			echo "ERROR: IMAGE_ON_EDGE_CLUSTER_REGISTRY environment variable is not set. Please see script usage ./edgeNodeFiles.sh'"
-                        exit 1
-        	fi
-		EDGE_CLUSTER_REGISTRY="true"
-
-        	echo " - EDGE_CLUSTER_REGISTRY_USER set"
-        	echo " - EDGE_CLUSTER_REGISTRY_PW set"
-		echo " - IMAGE_ON_EDGE_CLUSTER_REGISTRY set"
-    	else
-		EDGE_CLUSTER_REGISTRY="false"
-	fi
 	echo ""
 }
 
@@ -378,10 +355,6 @@ HZN_EXCHANGE_URL=$CLUSTER_URL/edge-exchange/v1/
 HZN_FSS_CSSURL=$CLUSTER_URL/edge-css/
 HZN_ORG_ID=$ORG_ID
 HZN_MGMT_HUB_CERT_PATH=$HUB_CERT_PATH
-USE_EDGE_CLUSTER_REGISTRY=$EDGE_CLUSTER_REGISTRY
-EDGE_CLUSTER_REGISTRY_USERNAME=$EDGE_CLUSTER_REGISTRY_USER
-EDGE_CLUSTER_REGISTRY_TOKEN=$EDGE_CLUSTER_REGISTRY_PW
-IMAGE_FULL_PATH_ON_EDGE_CLUSTER_REGISTRY=$IMAGE_ON_EDGE_CLUSTER_REGISTRY:$AGENT_IMAGE_TAG
 EDGE_CLUSTER_STORAGE_CLASS=$CLUSTER_STORAGE_CLASS
 AGENT_NAMESPACE=$AGENT_NAMESPACE
 EndOfContent
