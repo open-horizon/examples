@@ -290,6 +290,7 @@ function getImageFromOcpRegistry() {
         open -a Docker
 		# The open cmd above does not wait for docker to fully start, so we have to poll
         printf "Waiting for docker to restart"
+		sleep 2   # sometimes the very first docker ps succeeds even tho docker is not ready yet
         while ! docker ps > /dev/null 2>&1; do
             printf '.'
             sleep 2
