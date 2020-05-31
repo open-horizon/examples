@@ -539,6 +539,18 @@ function printApiKey () {
 	echo "********************* Save this value for future use *************************"
 	echo ""
 }
+
+# Log out from management hub cluster
+function cloudLogout () {
+	echo "Logging out from management hub cluster"
+	cloudctl logout
+	if [ $? -ne 0 ]; then
+		echo "ERROR: 'cloudctl logout' failed."
+	fi
+	echo ""
+}
+
+
 cluster_main() {
 	checkEnvVars
 
@@ -567,6 +579,8 @@ cluster_main() {
 	if ! [ -z $DIR ]; then
 		moveFiles
 	fi
+
+	cloudLogout
 }
 
 device_main() {
