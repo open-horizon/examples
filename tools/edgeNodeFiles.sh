@@ -287,6 +287,7 @@ function getImageFromOcpRegistry() {
         mkdir -p ~/.docker/certs.d/$OCP_DOCKER_HOST
         cp ocp.crt ~/.docker/certs.d/$OCP_DOCKER_HOST
         osascript -e 'quit app "Docker"'
+		sleep 1
         open -a Docker
 		# The open cmd above does not wait for docker to fully start, so we have to poll
         printf "Waiting for docker to restart"
