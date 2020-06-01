@@ -1,0 +1,7 @@
+apiVersion: ibm.operator/v1
+kind: IBMserviceOperator
+metadata:
+  name: example-ibmserviceoperator
+spec:
+  # Add fields here
+  size: 3

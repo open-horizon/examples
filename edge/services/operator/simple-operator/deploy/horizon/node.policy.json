@@ -1,0 +1,7 @@
+{
+  "properties": [
+    { "name": "openhorizon.service", "value": "ibm.operator" }
+  ],
+  "constraints": [
+  ]
+}
