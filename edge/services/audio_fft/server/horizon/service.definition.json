@@ -20,7 +20,7 @@
 	"deployment": {
 		"services": {
 			"volantmq": {
-				"binds": ["/Users/vkorn/Work/horizon/fft-example/volantmq/vmq.users:/vmq.users"],
+				"binds": ["${MQTT_USERS_FILE}:/vmq.users"],
 				"image": "${DOCKER_IMAGE_MQTT}:1.0.1",
 				"privileged": false,
 				"specific_ports": [{

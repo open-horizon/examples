@@ -7,10 +7,10 @@ IMG_NAME=
 DOCKER_FILE=
 WORKDIR=
 DOCKER_ID=vkorn
+MQTT_USER_FILE=/tmp/hzn/vmq.users
 
-.PHONY: docker-build build-client-amd build-client-arm build-client
+.PHONY: docker-build build-client-amd build-client-arm build-client build build-test-client test-all-arches
 
-.ONESHELL:
 docker-build:
 	cd $(WORKDIR)
 	docker build --no-cache -t $(IMG_NAME):$(ARCH)-$(VERSION) --build-arg BUILD_IMAGE=$(BUILD_IMAGE) --build-arg RUN_IMAGE=$(RUN_IMAGE) --build-arg GOARCH=$(GOARCH) -f $(DOCKER_FILE) .
@@ -44,3 +44,29 @@ build-server-arm:
 
 build-server: build-server-amd build-server-arm
 	$(MAKE) IMG_NAME=$(DOCKER_ID)/fft-server create-manifest
+
+build-test-client:
+	docker build --no-cache -t fft-test-client -f test-client/Dockerfile .
+
+build: build-server build-client
+
+define gen_mqtt_users =
+	set -e
+	echo fft-server: $$(echo "server-pass\c" | openssl dgst -sha256) > $(MQTT_USER_FILE)
+	echo fft-client: $$(echo "client-pass\c" | openssl dgst -sha256) >> $(MQTT_USER_FILE)
+endef
+
+.ONESHELL:
+SHELL = /bin/sh
+test-all-arches: build build-test-client
+	$(gen_mqtt_users)
+	cd server/ && hzn dev service start -S -v && \
+	docker run -it --rm fft-test-client && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; \
+		false ;}
+
+publish:
+	exit 0

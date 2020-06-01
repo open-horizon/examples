@@ -51,7 +51,7 @@ addons:
 # The three docker commands are to simulate the arm and arm64 arches for cross-compiling 
 # cpu2evtstreams is the only service that is checked end to end, making sure data is delivered to IBM Event Streams
 script:
-  - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/services/mqtt_broker edge/services/mqtt2kafka edge/services/hotword_detection edge/services/stopword_removal edge/services/audio2text edge/services/text2speech edge/services/voice2audio edge/services/processtext edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams edge/evtstreams/watson_speech2text )
+  - services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/services/mqtt_broker edge/services/mqtt2kafka edge/services/hotword_detection edge/services/stopword_removal edge/services/audio2text edge/services/text2speech edge/services/voice2audio edge/services/processtext edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams edge/evtstreams/watson_speech2text edge/services/audio_fft )
   - |
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     docker run --rm -t arm32v6/alpine uname -m

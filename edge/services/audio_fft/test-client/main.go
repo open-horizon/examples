@@ -66,6 +66,7 @@ func main() {
 	}
 
 	errorsCount := 0
+	coldStart := true
 
 	for _, f := range folders {
 		if !f.IsDir() {
@@ -119,8 +120,12 @@ func main() {
 			logrus.Infof("Sending sample %s, should trigger: %t", samples[index].name, shouldTrigger)
 			err = sendSample(c, samples[index].sample, shouldTrigger, ch)
 			if err != nil {
-				logrus.Error("Failed to send sample", err)
-				errorsCount++
+				if 0 == ii && coldStart {
+					coldStart = false
+				} else {
+					logrus.Error("Failed to send sample", err)
+					errorsCount++
+				}
 			}
 		}
 	}
@@ -128,7 +133,7 @@ func main() {
 	if 0 == errorsCount {
 		logrus.Info("All passed")
 	} else {
-		logrus.Errorf("Got %d errors", errorsCount)
+		logrus.Fatalf("Got %d errors", errorsCount)
 	}
 }
 
