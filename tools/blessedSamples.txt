@@ -2,4 +2,5 @@ examples/edge/services/cpu_percent
 examples/edge/services/gps
 examples/edge/services/helloworld
 examples/edge/services/helloMMS
+examples/edge/services/operator/simple-operator/deploy
 examples/edge/evtstreams/cpu2evtstreams
