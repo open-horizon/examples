@@ -1,6 +1,6 @@
 {
-  "label": "$SERVICE_NAME Business Policy for $ARCH",
-  "description": "A Horizon Business Policy example to run cpu2evtstreams",
+  "label": "$SERVICE_NAME Deployment Policy for $ARCH",
+  "description": "A Horizon Deployment Policy example to run cpu2evtstreams",
   "service": {
     "name": "$SERVICE_NAME",
     "org": "IBM",
