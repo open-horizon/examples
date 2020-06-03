@@ -10,4 +10,3 @@ Edge examples specific to the Watson IoT Platform are found in:
 In general to run the code from one of these examples:
  - cd into the directory
  - run *make*
-
