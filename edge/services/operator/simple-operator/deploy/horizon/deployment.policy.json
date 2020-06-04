@@ -1,5 +1,5 @@
 {
-  "label": "$SERVICE_NAME Business Policy for $ARCH",
+  "label": "$SERVICE_NAME Business Policy",
   "description": "A super-simple sample Horizon Business Policy",
   "service": {
     "name": "$SERVICE_NAME",

@@ -1,5 +1,5 @@
 {
-  "label": "$SERVICE_NAME Deployment Policy for $ARCH",
+  "label": "$SERVICE_NAME Deployment Policy",
   "description": "A Horizon Deployment Policy example to run cpu2evtstreams",
   "service": {
     "name": "$SERVICE_NAME",
