@@ -3,7 +3,7 @@
   "description": "A super-simple sample Horizon Deployment Policy",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "IBM",
+    "org": "$HZN_ORG_ID",
     "arch": "*",
     "serviceVersions": [
       {
@@ -16,12 +16,11 @@
   ],
   "constraints": [
     "serial >= 9000000",
-    "model == \"Thingamajig ULTRA\"",
-    "openhorizon.example == helloworld"
+    "model == \"Thingamajig ULTRA\""
   ],
   "userInput": [
     {
-      "serviceOrgid": "IBM",
+      "serviceOrgid": "$HZN_ORG_ID",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [

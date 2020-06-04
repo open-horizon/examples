@@ -8,12 +8,6 @@
         },
         {
             "name": "os", "value": "Mojave"
-        },
-        {
-            "name": "openhorizon.example", "value": "cpu2evtstreams"
-        },
-        {
-            "name": "openhorizon.allowPrivileged", "value": true
         }
     ],
     "constraints": []

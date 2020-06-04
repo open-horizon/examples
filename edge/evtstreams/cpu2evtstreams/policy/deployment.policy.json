@@ -3,7 +3,7 @@
   "description": "A Horizon Deployment Policy example to run cpu2evtstreams",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "IBM",
+    "org": "$HZN_ORG_ID",
     "arch": "*",
     "serviceVersions": [
       {
@@ -16,12 +16,11 @@
   ],
   "constraints": [
     "os == \"Mojave\"",
-    "model == \"Mac\" OR model == \"Pi3B\"",
-    "openhorizon.example == cpu2evtstreams"
+    "model == \"Mac\" OR model == \"Pi3B\""
   ],
   "userInput": [
     {
-      "serviceOrgid": "IBM",
+      "serviceOrgid": "$HZN_ORG_ID",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
