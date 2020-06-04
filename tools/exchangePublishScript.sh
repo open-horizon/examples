@@ -53,8 +53,8 @@ checkexitcode () {
 
 # publish deployment policy for helloworld and cpu2evtstreams if -c flag is used
 function deployPolPublish () {
-    if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]]); then 
-        HZN_ORG_ID=$ORG make publish-business-policy
+    if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]] || [[ $line == *"operator"* ]]); then 
+        HZN_ORG_ID=$ORG make publish-deployment-policy
         checkexitcode $? "publishing deployment policy to the "$ORG" in the exchange"
     fi
 }
