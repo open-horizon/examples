@@ -1,6 +1,6 @@
 {
   "label": "$SERVICE_NAME Deployment Policy for $ARCH",
-  "description": "A Horizon Deployment Policy example to run cpu2evtstreams",
+  "description": "A super-simple sample Horizon Deployment Policy",
   "service": {
     "name": "$SERVICE_NAME",
     "org": "IBM",
@@ -15,7 +15,9 @@
   "properties": [
   ],
   "constraints": [
-    "openhorizon.example == cpu2evtstreams"
+    "serial >= 9000000",
+    "model == \"Thingamajig ULTRA\"",
+    "openhorizon.example == helloworld"
   ],
   "userInput": [
     {
@@ -24,16 +26,8 @@
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
         {
-          "name": "EVTSTREAMS_API_KEY",
-          "value": "$EVTSTREAMS_API_KEY"
-        },
-        {
-          "name": "EVTSTREAMS_BROKER_URL",
-          "value": "$EVTSTREAMS_BROKER_URL"
-        },
-        {
-          "name": "EVTSTREAMS_CERT_ENCODED",
-          "value": "$EVTSTREAMS_CERT_ENCODED"
+          "name": "HW_WHO",
+          "value": "Valued Customer"
         }
       ]
     }

@@ -1,6 +1,6 @@
 {
   "properties": [
-    { "name": "openhorizon.service", "value": "ibm.operator" }
+    { "name": "openhorizon.example", "value": "operator" }
   ],
   "constraints": [
   ]

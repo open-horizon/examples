@@ -15,7 +15,7 @@
   "properties": [
   ],
   "constraints": [
-    "openhorizon.service == ibm.operator"
+    "openhorizon.example == operator"
   ],
   "userInput": [
       {

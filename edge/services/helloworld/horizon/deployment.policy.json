@@ -15,8 +15,6 @@
   "properties": [
   ],
   "constraints": [
-    "serial >= 9000000",
-    "model == \"Thingamajig ULTRA\"",
     "openhorizon.example == helloworld"
   ],
   "userInput": [
