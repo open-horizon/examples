@@ -125,17 +125,16 @@ Follow the steps in this page to create your first simple Horizon edge service.
   hzn exchange service addpolicy -f policy/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
   hzn exchange service listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
   ```
-  
+
 2. Publish and view your deployment policy in the Horizon Exchange:
   ```bash
   hzn exchange deployment addpolicy -f policy/deployment.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
   hzn exchange deployment listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
   ```
 
-3. Get the node policy file and register your edge node with your new deployment policy:
+3. Register your edge device with the node policy:
   ```bash
-  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/node.policy.json
-  hzn register --policy node.policy.json
+  hzn register --policy policy/node.policy.json
   ```
   
 4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
@@ -156,14 +155,14 @@ Follow the steps in this page to create your first simple Horizon edge service.
   hzn service log -f myhelloworld
   ```
 
-7. Unregister your edge node (which will also stop the myhelloworld service):
+7. Unregister your edge device (which will also stop the myhelloworld service):
 
   ```bash
   hzn unregister -f
   ```
   
-## Publishing A Policy For Your Hello World Example Edge Service
-  
+## Publishing A Pattern For Your Hello World Example Edge Service
+
 1. Publish and view your edge node deployment pattern in the Horizon Exchange:
 
   ```bash
