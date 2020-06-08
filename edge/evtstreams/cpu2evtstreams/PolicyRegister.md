@@ -113,25 +113,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
   "constraints": [
     "openhorizon.example == cpu2evtstreams"
   ],
-  "userInput": [
-    {
-      "serviceOrgid": "IBM",
-      "serviceUrl": "$SERVICE_NAME",
-      "serviceVersionRange": "[0.0.0,INFINITY)",
-      "inputs": [
-        {
-          "name": "EVTSTREAMS_API_KEY",
-          "value": "$EVTSTREAMS_API_KEY"
-        },
-        {
-          "name": "EVTSTREAMS_BROKER_URL",
-          "value": "$EVTSTREAMS_BROKER_URL"
-        },
-        {
-          "name": "EVTSTREAMS_CERT_ENCODED",
-          "value": "$EVTSTREAMS_CERT_ENCODED"
-        }
-      ]
+  "userInput": []
     }
   ]
 }
