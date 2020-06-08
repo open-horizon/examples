@@ -30,15 +30,15 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 ```bash
 {
     "properties": [
-        { "name": "model", "value": "Mac" },
-        { "name": "year", "value": "2018" },
-        { "name": "os", "value": "Mojave" }
+        {
+            "name": "openhorizon.example", "value": "cpu2evtstreams"
+        }
     ],
     "constraints": []
 }
 ```
 
-- It provides values for three `properties` (`model`, `year`, and `os`). It states no `constraints`, so any appropriately signed and authorized code can be deployed on this Edge Node,
+- It provides values for one just properties (`openhorizon.example`), that should restrict the services that get deployed to this edge node to the `cpu2evtstreams` service.
 
 2. Register your Node Policy using this command:
 
@@ -52,7 +52,7 @@ hzn register --policy node.policy.json
 hzn policy list
 ```
 
-- Notice that in addition to the three `properties` stated in the node_policy.json file, Horizon has added a few more (openhorizon.cpu, openhorizon.arch, and openhorizon.memory). Horizon provides this additional information automatically and these `properties` may be used in any of your Policy `constraints`.
+- Notice that in addition to the `properties` stated in the `node.policy.json` file, Horizon has added a few more (openhorizon.cpu, openhorizon.arch, and openhorizon.memory). Horizon provides this additional information automatically and these `properties` may be used in any of your Policy `constraints`.
 
 ### Service Policy 
 
@@ -64,13 +64,12 @@ hzn policy list
 {
     "properties": [],
     "constraints": [
-        "model == \"Mac\" OR model == \"Pi3B\"",
-        "os == \"Mojave\""
+        "openhorizon.memory >= 100"
     ]
 }
 ```
 
-- Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Mac` or `Pi3B `. If you recall the Node Policy we used above, the model `property` was set to `Mac`, so this Service should be compatible with our Edge Node.
+- Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example constraint is one that a Service developer might add, stating that their Service must only run on edge nodes with 100 MB or more memory.
 
 1. View the pubished service policy attached to `ibm.cpu2evtstreams`:
 ```bash
@@ -96,12 +95,12 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 
 ```bash
 {
-  "label": "$SERVICE_NAME Deployment Policy for $ARCH",
+  "label": "$SERVICE_NAME Deployment Policy",
   "description": "A Horizon Deployment Policy example to run cpu2evtstreams",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "$HZN_ORG_ID",
-    "arch": "$ARCH",
+    "org": "IBM",
+    "arch": "*",
     "serviceVersions": [
       {
         "version": "$SERVICE_VERSION",
@@ -109,14 +108,14 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
       }
     ]
   },
-  "properties": [],
+  "properties": [
+  ],
   "constraints": [
-    "os == \"Mojave\"",
-    "model == \"Mac\" OR model == \"Pi3B\""
+    "openhorizon.example == cpu2evtstreams"
   ],
   "userInput": [
     {
-      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceOrgid": "IBM",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
@@ -137,7 +136,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
   ]
 }
 ```
-- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `horizon/node_policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
+- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have one `constraints` value that are satisfied by the `properties` set in the `horizon/node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
 
 - At the bottom, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams. 
 
