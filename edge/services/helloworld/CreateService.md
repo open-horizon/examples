@@ -118,80 +118,84 @@ Follow the steps in this page to create your first simple Horizon edge service.
   hzn exchange service list
   ```
 
-10. Publish and view your service policy in the Horizon Exchange:
+## Publishing Policy Files For Your Hello World Example Edge Service
+
+1. Publish and view your service policy in the Horizon Exchange:
   ```bash
   hzn exchange service addpolicy -f policy/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
   hzn exchange service listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
   ```
   
-11. Publish and view your deployment policy in the Horizon Exchange:
+2. Publish and view your deployment policy in the Horizon Exchange:
   ```bash
   hzn exchange deployment addpolicy -f policy/deployment.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
   hzn exchange deployment listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
   ```
 
-12. Get the node policy file and register your edge node with your new deployment policy:
+3. Get the node policy file and register your edge node with your new deployment policy:
   ```bash
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/node.policy.json
   hzn register --policy node.policy.json
   ```
   
-13. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
   ```bash
   hzn agreement list
   ```
 
-14. After the agreement is made, list the docker container edge service that has been started as a result:
+5. After the agreement is made, list the docker container edge service that has been started as a result:
 
   ```bash
   sudo docker ps
   ```
 
-15. See the myhelloworld service output:
+6. See the myhelloworld service output:
 
   ``` bash
   hzn service log -f myhelloworld
   ```
 
-16. Unregister your edge node (which will also stop the myhelloworld service):
+7. Unregister your edge node (which will also stop the myhelloworld service):
 
   ```bash
   hzn unregister -f
   ```
   
-17. Publish and view your edge node deployment pattern in the Horizon Exchange:
+## Publishing A Policy For Your Hello World Example Edge Service
+  
+1. Publish and view your edge node deployment pattern in the Horizon Exchange:
 
   ```bash
   hzn exchange pattern publish -f horizon/pattern.json
   hzn exchange pattern list
   ```
 
-18. Register your edge node with Horizon to use your deployment pattern:
+2. Register your edge node with Horizon to use your deployment pattern:
 
   ```bash
   hzn register -p pattern-myhelloworld-$(hzn architecture)
   ```
 
-19. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
   ```bash
   hzn agreement list
   ```
 
-20. After the agreement is made, list the docker container edge service that has been started as a result:
+4. After the agreement is made, list the docker container edge service that has been started as a result:
 
   ```bash
   sudo docker ps
   ```
 
-21. See the myhelloworld service output:
+5. See the myhelloworld service output:
 
 ``` bash
 hzn service log -f myhelloworld
 ```
 
-22. Unregister your edge node (which will also stop the myhelloworld service):
+6. Unregister your edge node (which will also stop the myhelloworld service):
 
   ```bash
   hzn unregister -f
