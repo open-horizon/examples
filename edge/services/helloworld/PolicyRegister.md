@@ -30,9 +30,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 ```json
 {
   "properties": [
-    { "name": "model", "value": "Thingamajig ULTRA" },
-    { "name": "serial", "value": 9123456 },
-    { "name": "configuration", "value": "Mark-II-PRO" }
+    { "name": "openhorizon.example", "value": "helloworld" }
   ],
   "constraints": [
   ]
@@ -66,7 +64,7 @@ hzn policy list
   "properties": [
   ],
   "constraints": [
-    "model == \"Whatsit ULTRA\" OR model == \"Thingamajig ULTRA\""
+    "openhorizon.memory >= 100"
   ]
 }
 ```
@@ -98,12 +96,12 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 
 ```json
 {
-  "label": "$SERVICE_NAME Deployment Policy for $ARCH",
+  "label": "$SERVICE_NAME Deployment Policy",
   "description": "A super-simple sample Horizon Deployment Policy",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "$HZN_ORG_ID",
-    "arch": "$ARCH",
+    "org": "IBM",
+    "arch": "*",
     "serviceVersions": [
       {
         "version": "$SERVICE_VERSION",
@@ -114,12 +112,11 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
   "properties": [
   ],
   "constraints": [
-    "serial >= 9000000",
-    "model == \"Thingamajig ULTRA\""
+    "openhorizon.example == helloworld"
   ],
   "userInput": [
     {
-      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceOrgid": "IBM",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
