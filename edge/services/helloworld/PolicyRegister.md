@@ -37,7 +37,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 }
 ```
 
-- It provides values for three `properties` (`model`, `serial`, and `configuration`), that will effect which services get deployed to this edge node, and states no `constraints`.
+- It provides values for one just `properties` (`openhorizon.example`), that should restrict the services that get deployed to this edge node to the `helloworld` service.
 
 2. Register your Node Policy with this policy
 
@@ -69,7 +69,7 @@ hzn policy list
 }
 ```
 
-- Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
+- Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on edge nodes with 100 MB or more memory.
 
 1. View the pubished service policy attached to `ibm.helloworld`:
 
@@ -130,7 +130,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 }
 ```
 
-- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
+- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have one `constraints` value that is satisfied by the `properties` set in the `node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
