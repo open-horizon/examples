@@ -132,8 +132,8 @@ hzn exchange service list
 
 3. Publish and view your deployment policy in the Horizon Exchange:
   ```bash
-  hzn exchange deployment addpolicy -f policy/deployment.policy.json ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
-  hzn exchange deployment listpolicy ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
+  hzn exchange deployment addpolicy -f policy/deployment.policy.json policy-${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
+  hzn exchange deployment listpolicy policy-${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
   ```
 
 4. Register your edge device with the node policy:
