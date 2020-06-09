@@ -20,7 +20,7 @@ Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service us
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Get the required `cpu2evtstreams` node policy file and the use input file:
+1. Get the required `cpu2evtstreams` node policy file and the user input file:
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/node.policy.json
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
