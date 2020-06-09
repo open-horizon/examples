@@ -72,12 +72,38 @@ else
 fi
 echo "Determined the json contains resources of type $resType"
 
+
+
 # Loop thru each resource and publish it
 keys=$(jq -r 'to_entries[] | .key' <<< $json)
 checkexitcode $? 'getting keys from the specified json'
 for k in $keys; do
     name=${k#*/}    # strip the org from the beginning of the key
     resourceJson=$(jq -c ".[\"$k\"] | del(.owner) | del(.lastUpdated) | .public = false" <<< $json)
+
+    OLD_HZN_ORG_ID=${k%%/*}
+
+    ## Don't alter service references if it points to an IBM service
+    if [ "${OLD_HZN_ORG_ID}" != "IBM" ] && [ "${OLD_HZN_ORG_ID}" != "${HZN_ORG_ID}"  ]; then
+
+	    if jq -e '.services' <<< "$resourceJson" > /dev/null; then
+
+	       fixServicesServiceOrgid=$(echo "${resourceJson}" | jq "(.services[] | select(.serviceOrgid == \"${OLD_HZN_ORG_ID}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
+	       resourceJson=${fixServicesServiceOrgid}
+	    fi
+
+	    if jq -e '.userInput' <<< "$resourceJson" > /dev/null; then
+	       fixUserInputServiceOrgid=$(echo "${resourceJson}" | jq "(.userInput[] | select (.serviceOrgid == \"${OLD_HZN_ORG_ID}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
+	       resourceJson=${fixUserInputServiceOrgid}
+	    fi
+
+	    if jq -e '.service' <<< "$resourceJson" > /dev/null; then
+	       fixServiceOrg=$(echo "${resourceJson}" | jq "(select(.service.org == \"${OLD_HZN_ORG_ID}\") | .service.org ) = \"\${HZN_ORG_ID}\"")
+	       resourceJson="${fixServiceOrg}"
+	    fi
+
+    fi
+   
     checkexitcode $? "getting resource $k from the specified json"
 
     # Pipe our massaged json in the appropriate hzn publish command
@@ -94,3 +120,4 @@ for k in $keys; do
     esac
     checkexitcode $? "publishing $name to the exchange"
 done
+
