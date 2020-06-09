@@ -1,0 +1,33 @@
+{
+	"org": "${HZN_ORG_ID}",
+	"label": "fft-client",
+	"description": "FFT sound analyzer",
+	"documentation": "https://github.com/vkorn/fft-example",
+	"url": "ibm.fft-client",
+	"version": "${SERVICE_VERSION}",
+	"arch": "${ARCH}", 
+	"public": false,
+	"sharable": "singleton",
+	"requiredServices": [{
+		"url": "ibm.fft-server",
+		"org": "${HZN_ORG_ID}",
+        "versionRange": "[0.0.0,INFINITY)",
+        "arch": "${ARCH}"
+	}],
+	"userInput": [
+		 { "name": "MQTT_BROKER", "label": "", "type": "string", "defaultValue": "volantmq:1883" },
+		 { "name": "MQTT_CLIENT_USER", "label": "", "type": "string", "defaultValue": "fft-client" },
+		 { "name": "MQTT_CLIENT_PASS", "label": "", "type": "string", "defaultValue": "client-pass" },
+		 { "name": "MQTT_CLIENT_CLIENT", "label": "", "type": "string", "defaultValue": "fft-client" },
+		 { "name": "SAMPLE_RATE", "label": "", "type": "string", "defaultValue": "48000" },
+		 { "name": "RECORD_FRAME", "label": "", "type": "string", "defaultValue": "3" }
+	],
+	"deployment": {
+		"services": {
+			"fft-client": {
+				"image": "${DOCKER_IMAGE_BASE}:${SERVICE_VERSION}",
+				"privileged": false
+			}
+		}
+	}
+}

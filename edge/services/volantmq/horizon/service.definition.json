@@ -1,0 +1,26 @@
+{
+	"org": "${HZN_ORG_ID}",
+	"label": "volantmq",
+	"description": "VolantMQ MQTT server",
+	"documentation": "https://volantmq.io",
+	"url": "ibm.volantmq",
+	"version": "${SERVICE_VERSION}",
+	"arch": "${ARCH}", 
+	"public": false,
+	"sharable": "singleton",
+	"requiredServices": [],
+	"userInput": [],
+	"deployment": {
+		"services": {
+			"volantmq": {
+				"binds": ["/tmp/hzn/vmq.users:/vmq.users:rw"],
+				"image": "${DOCKER_IMAGE_BASE}:${SERVICE_VERSION}",
+				"privileged": false,
+				"specific_ports": [{
+					"HostPort": "1883:1883/tcp",
+					"HostIP": "0.0.0.0"
+				}]
+			}
+		}
+	}
+}

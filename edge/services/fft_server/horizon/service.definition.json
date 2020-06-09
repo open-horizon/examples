@@ -1,0 +1,32 @@
+{
+	"org": "${HZN_ORG_ID}",
+	"label": "fft-server",
+	"description": "FFT sound analyzer",
+	"documentation": "https://github.com/vkorn/fft-example",
+	"url": "ibm.fft-server",
+	"version": "${SERVICE_VERSION}",
+	"arch": "${ARCH}", 
+	"public": false,
+	"sharable": "singleton",
+	"requiredServices": [{
+		"url": "ibm.volantmq",
+		"org": "${HZN_ORG_ID}",
+        "versionRange": "[0.0.0,INFINITY)",
+        "arch": "${ARCH}"
+	}],
+	"userInput": [
+		 { "name": "MQTT_BROKER", "label": "", "type": "string", "defaultValue": "volantmq:1883" },
+		 { "name": "MQTT_SERVER_USER", "label": "", "type": "string", "defaultValue": "fft-server" },
+		 { "name": "MQTT_SERVER_PASS", "label": "", "type": "string", "defaultValue": "server-pass" },
+		 { "name": "MQTT_SERVER_CLIENT", "label": "", "type": "string", "defaultValue": "fft-server" },
+		 { "name": "SAMPLE_RATE", "label": "", "type": "string", "defaultValue": "48000" }
+	],
+	"deployment": {
+		"services": {
+			"fft-server": {
+				"image": "${DOCKER_IMAGE_BASE}:${SERVICE_VERSION}",
+				"privileged": false
+			}
+		}
+	}
+}

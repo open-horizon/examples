@@ -1,0 +1,32 @@
+{
+    "services": [
+        {
+            "org": "${HZN_ORG_ID}",
+            "url": "${SERVICE_NAME}",
+            "variables": {
+                "MQTT_BROKER": "volantmq:1883",
+                "MQTT_CLIENT_USER": "fft-client",
+                "MQTT_CLIENT_PASS": "client-pass",
+                "MQTT_CLIENT_CLIENT": "fft-client",
+                "SAMPLE_RATE": "48000",
+                "RECORD_FRAME": "3"
+            }
+        },
+        {
+        	"org": "${HZN_ORG_ID}",
+        	"url": "ibm.fft-server",
+        	"variables":  {
+        		"MQTT_BROKER": "volantmq:1883",
+        		"MQTT_SERVER_USER": "fft-server",
+        		"MQTT_SERVER_PASS": "server-pass", 
+        		"MQTT_SERVER_CLIENT": "fft-server",
+        		"SAMPLE_RATE": "48000"
+        	}
+        },
+        {
+        	"org": "${HZN_ORG_ID}",
+        	"url": "ibm.volantmq",
+        	"variables": {}	
+        }
+    ]
+}

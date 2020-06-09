@@ -7,3 +7,6 @@ cloud/sdr/ui/sdr-app/client/\.env
 cloud/sdr/ui/sdr-app/client/src/config/settings\.js
 
 cloud/sdr/ui/sdr-app/localdev-config\.json
+
+.idea/
+*.users

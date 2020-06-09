@@ -1,0 +1,28 @@
+{
+  "name": "pattern-${SERVICE_NAME}",
+  "label": "FFT audio processing services",
+  "description": "Pattern for FFT audo processing services.",
+  "public": false,
+  "services": [
+    {
+      "serviceUrl": "${SERVICE_NAME}",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "amd64",
+      "serviceVersions": [
+        {
+          "version": "${SERVICE_VERSION}"
+        }
+      ]
+    },
+    {
+      "serviceUrl": "${SERVICE_NAME}",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "arm",
+      "serviceVersions": [
+        {
+          "version": "${SERVICE_VERSION}"
+        }
+      ]
+    }
+  ]
+}
