@@ -116,38 +116,84 @@ hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
 
-12. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
-```bash
-hzn exchange pattern publish -f horizon/pattern.json
-hzn exchange pattern list
-```
+## Publishing Policy Files For Your Cpu2evtstreams Example Edge Service
 
-13. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
+1. Publish and view your service policy in the Horizon Exchange:
+  ```bash
+  hzn exchange service addpolicy -f policy/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+  hzn exchange service listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+  ```
+
+2. Publish and view your deployment policy in the Horizon Exchange:
+  ```bash
+  hzn exchange deployment addpolicy -f policy/deployment.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
+  hzn exchange deployment listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
+  ```
+
+3. Register your edge device with the node policy:
+  ```bash
+  hzn register --policy policy/node.policy.json
+  ```
+  
+4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+
+  ```bash
+  hzn agreement list
+  ```
+  
+5. After the agreement is made, list the docker container edge service that has been started as a result:
+
+  ```bash
+  sudo docker ps
+  ```
+
+6. See the cpu2evtstreams service output:
+
+  ``` bash
+  hzn service log -f ibm.cpu2evtstreams
+  ```
+
+7. Unregister your edge device (which will also stop the myhelloworld service):
+
+  ```bash
+  hzn unregister -f
+  ```
+  
+## Publishing A Pattern For Your Cpu2evtstreams Example Edge Service
+
+1. Publish and view your edge node deployment pattern in the Horizon Exchange:
+
+  ```bash
+  hzn exchange pattern publish -f horizon/pattern.json
+  hzn exchange pattern list
+  ```
+
+2. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
 ```bash
 hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
 ```
 
-14. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```bash
 hzn agreement list
 ```
 
-15. Once the agreement is made, list the docker container edge service that has been started as a result:
+4. Once the agreement is made, list the docker container edge service that has been started as a result:
 ```bash
 sudo docker ps
 ```
 
-16. On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
+5. On any machine, subscribe to the Event Streams topic to see the json data that cpu2evtstreams is sending:
 ```bash
 kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -X ssl.ca.location=$EVTSTREAMS_CERT_FILE -t cpu2evtstreams
 ```
 
-17. See the cpu2evtstreams service output:
+6. See the cpu2evtstreams service output:
 ```bash
 hzn service log -f ibm.cpu2evtstreams
 ```
 
-18. Unregister your edge node, stopping the cpu2evtstreams service:
+7. Unregister your edge node, stopping the cpu2evtstreams service:
 ```bash
 hzn unregister -f
 ```
