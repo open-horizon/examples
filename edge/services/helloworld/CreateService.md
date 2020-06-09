@@ -134,14 +134,14 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
 2. Publish and view your service policy in the Horizon Exchange:
   ```bash
-  hzn exchange service addpolicy -f service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
-  hzn exchange service listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+  hzn exchange service addpolicy -f service.policy.json ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}_${ARCH}
+  hzn exchange service listpolicy ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}_${ARCH}
   ```
 
 3. Publish and view your deployment policy in the Horizon Exchange:
   ```bash
-  hzn exchange deployment addpolicy -f deployment.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
-  hzn exchange deployment listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
+  hzn exchange deployment addpolicy -f deployment.policy.json ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
+  hzn exchange deployment listpolicy ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
   ```
 
 4. Register your edge device with the node policy:
