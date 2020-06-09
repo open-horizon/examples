@@ -57,14 +57,12 @@ hzn unregister -f
 
 ## <a id=using-cpu2evtstreams-pattern></a> Using the CPU To IBM Event Streams Edge Service with Deployment Pattern
 
-1. Get the user input file for the cpu2evtstreams sample and the policy file for the gps service to run privileged:
+1. Get the user input file for the cpu2evtstreams sample:
 ```bash
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/gps/horizon/node_policy_privileged.json
 ```
 2. Register your edge node with Horizon to use the cpu2evtstreams pattern:
 ```bash
-hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json -s ibm.cpu2evtstreams --serviceorg IBM -t 120 --policy=node_policy_privileged.json
+hzn register -p IBM/pattern-ibm.cpu2evtstreams -f userinput.json -s ibm.cpu2evtstreams --serviceorg IBM -t 120 
 ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
