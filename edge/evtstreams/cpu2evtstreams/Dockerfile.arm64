@@ -10,6 +10,12 @@ COPY tmp/arm64/*.rsa.pub /etc/apk/keys/
 COPY tmp/arm64/kafkacat-*.apk /
 RUN apk --no-cache add /kafkacat-*.apk && rm kafkacat-*.apk
 
+# Create hzngroup and hznuser
+RUN addgroup -S hzngroup && adduser -S hznuser -G hzngroup
+
+# Run container as hznuser user
+USER hznuser
+
 COPY *.sh /
 WORKDIR /
 CMD /service.sh
