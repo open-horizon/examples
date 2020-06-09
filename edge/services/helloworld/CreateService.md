@@ -126,6 +126,11 @@ Follow the steps in this page to create your first simple Horizon edge service.
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/service.policy.json
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/deployment.policy.json
   ```
+2. Set the required environment variables:
+  ```bash
+  eval $(hzn util configconv -f horizon/hzn.json)
+  export ARCH=$(hzn architecture)
+  ```
 
 2. Publish and view your service policy in the Horizon Exchange:
   ```bash
