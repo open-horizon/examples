@@ -1,6 +1,6 @@
 {
   "label": "$SERVICE_NAME Deployment Policy",
-  "description": "A super-simple sample Horizon Business Policy",
+  "description": "A super-simple sample Horizon Deployment Policy",
   "service": {
     "name": "$SERVICE_NAME",
     "org": "IBM",
