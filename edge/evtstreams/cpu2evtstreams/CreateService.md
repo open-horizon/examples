@@ -116,44 +116,50 @@ hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
 
-## Publishing Policy Files For Your Cpu2evtstreams Example Edge Service
+## Publishing A Policy For Your Cpu2evtstreams Example Edge Service
 
-1. Publish and view your service policy in the Horizon Exchange:
+1. Set the required environment variables:
   ```bash
-  hzn exchange service addpolicy -f policy/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
-  hzn exchange service listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+  eval $(hzn util configconv -f horizon/hzn.json)
+  export ARCH=$(hzn architecture)
   ```
 
-2. Publish and view your deployment policy in the Horizon Exchange:
+2. Publish and view your service policy in the Horizon Exchange:
   ```bash
-  hzn exchange deployment addpolicy -f policy/deployment.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
-  hzn exchange deployment listpolicy $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)
+  hzn exchange service addpolicy -f policy/service.policy.json ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}_${ARCH}
+  hzn exchange service listpolicy ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}_${ARCH}
   ```
 
-3. Register your edge device with the node policy:
+3. Publish and view your deployment policy in the Horizon Exchange:
+  ```bash
+  hzn exchange deployment addpolicy -f policy/deployment.policy.json ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
+  hzn exchange deployment listpolicy ${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
+  ```
+
+4. Register your edge device with the node policy:
   ```bash
   hzn register --policy policy/node.policy.json
   ```
   
-4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+5. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
   ```bash
   hzn agreement list
   ```
   
-5. After the agreement is made, list the docker container edge service that has been started as a result:
+6. After the agreement is made, list the docker container edge service that has been started as a result:
 
   ```bash
   sudo docker ps
   ```
 
-6. See the cpu2evtstreams service output:
+7. See the cpu2evtstreams service output:
 
   ``` bash
   hzn service log -f ibm.cpu2evtstreams
   ```
 
-7. Unregister your edge device (which will also stop the myhelloworld service):
+8. Unregister your edge device (which will also stop the myhelloworld service):
 
   ```bash
   hzn unregister -f
