@@ -87,12 +87,7 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - Deployment Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Deployment Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-1. Get the required `helloworld` deployment policy file and the `hzn.json` file:
-```bash
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/deployment.policy.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/hzn.json
-```
-- Below is the `deployment,policy.json` file you just grabbed in step one:
+- Below is the `deployment,policy.json` for the `helloworld` service that has been published into the Exchange when it was created:
 
 ```json
 {
@@ -134,22 +129,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-2. Run the following commands to set the environment variables needed by the `deployment.policy.json` file in your shell:
-```bash
-export ARCH=$(hzn architecture)
-eval $(hzn util configconv -f hzn.json)
-eval export $(cat agent-install.cfg)
-```
-
-3. Publish this Deployment Policy to the Exchange to deploy the `ibm.helloworld` service to the Edge Node (give it a memorable name):
-
-```bash
-hzn exchange deployment addpolicy -f deployment.policy.json <choose-any-policy-name>
-```
-
-- The results should look very similar to your original `deployment.policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
-
-4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+1. By now your edge device should have formed an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
 ```bash
 hzn agreement list
