@@ -20,9 +20,10 @@ Follow the steps on this page to deploy CPU To IBM Event Streams Edge Service us
 
 - As an alternative to specifying a Deployment Pattern when you register your Edge Node, you may register with a Node Policy.
 
-1. Get the required `cpu2evtstreams` node policy file:
+1. Get the required `cpu2evtstreams` node policy file and the use input file:
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/node.policy.json
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
 
 - Below is the `node_policy.json` file you just grabbed in step one:
@@ -43,7 +44,7 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 2. Register your Node Policy using this command:
 
 ```bash
-hzn register --policy node.policy.json
+hzn register --policy node.policy.json -f userinput.json
 ```
 
 3. When the registration completes, use the following command to review the Node Policy:
@@ -85,13 +86,7 @@ hzn exchange service listpolicy IBM/ibm.cpu2evtstreams_1.4.3_amd64
 
 - Deployment Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Deployment Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-1. Get the required `cpu2evtstreams` deployment policy file and the `hzn.json` file:
-```bash
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/deployment.policy.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/hzn.json
-```
-
-- Below is the `deployment.policy.json` file you just grabbed in step one:
+- Below is the `deployment.policy.json` for `cpu2evtstreams` that was published to the Exchange when it was created:
 
 ```bash
 {
@@ -119,8 +114,6 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstre
 }
 ```
 - This simple example of a Deployment Policy doesn't provide any `properties`, but it does have one `constraints` value that are satisfied by the `properties` set in the `horizon/node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
-
-- At the bottom, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the cpu2evtstreams service defines the configuration variables needed to send the data to IBM Event Streams. 
 
 2. Run the following commands to set the environment variables needed by the `deployment.policy.json` file in your shell:
 ```bash
