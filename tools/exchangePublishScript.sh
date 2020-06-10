@@ -10,7 +10,7 @@ Usage: ./exchangePublishScript.sh [-c <cluster-name>]
 
 Parameters:
   optional:
-    -c              <cluster-name> set this flag to publish example deployment policy for the helloworld 
+    -c              <cluster-name> set this flag to publish example deployment policy for the helloworld
                       and cpu2evtstreams samples
 
 Required Environment Variables:
@@ -42,8 +42,8 @@ done
 # path to the cloned exmaples repo
 PATH_TO_EXAMPLES=/tmp/open-horizon
 
-# check the previous cmds exit code. 
-checkexitcode () {   
+# check the previous cmds exit code.
+checkexitcode () {
     if [[ $1 == 0 ]]; then return; fi
     echo ""
     echo "Error: exit code $1 when $2"
@@ -53,14 +53,14 @@ checkexitcode () {
 
 # publish deployment policy for helloworld and cpu2evtstreams if -c flag is used
 function deployPolPublish () {
-    if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]] || [[ $line == *"operator"* ]]); then 
+    if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]] || [[ $line == *"operator"* ]]); then
         HZN_ORG_ID=$ORG make publish-deployment-policy
         checkexitcode $? "publishing deployment policy to the "$ORG" in the exchange"
     fi
 }
 
 # git branch/repository to clone
-branch="-b master"
+branch="-b v4.1"
 repository="https://github.com/open-horizon/examples.git"
 
 # text file containing servies and patterns to publish
@@ -77,12 +77,12 @@ do
     # each $line contains the path to any service or pattern that needs to be published
     cd $PATH_TO_EXAMPLES/$line
     checkexitcode $? "finding service directory "$line""
-    
+
     echo `pwd`
     make publish-only
     checkexitcode $? "publishing "$line" to the exchange"
 
-    # check if an org was specified to publish sample deployment policy 
+    # check if an org was specified to publish sample deployment policy
     if ! [ -z $ORG ]; then
         deployPolPublish
     fi
