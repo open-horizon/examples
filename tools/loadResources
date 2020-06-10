@@ -80,31 +80,35 @@ checkexitcode $? 'getting keys from the specified json'
 for k in $keys; do
     name=${k#*/}    # strip the org from the beginning of the key
     resourceJson=$(jq -c ".[\"$k\"] | del(.owner) | del(.lastUpdated) | .public = false" <<< $json)
+    checkexitcode $? "getting resource $k from the specified json"
 
-    OLD_HZN_ORG_ID=${k%%/*}
+    oldOrgId=${k%%/*}
 
-    ## Don't alter service references if it points to an IBM service
-    if [ "${OLD_HZN_ORG_ID}" != "IBM" ] && [ "${OLD_HZN_ORG_ID}" != "${HZN_ORG_ID}"  ]; then
+    ## Some fields of the resource might have a reference to the source org id. If the org id has changed and if the org name is not IBM, change the reference
+    if [ "${oldOrgId}" != "IBM" ] && [ "${oldOrgId}" != "${HZN_ORG_ID}"  ]; then
 
-	    if jq -e '.services' <<< "$resourceJson" > /dev/null; then
+	    if [ "$resType" == "pattern" ] || [ "$resType" == "deployment-policy" ]; then
 
-	       fixServicesServiceOrgid=$(echo "${resourceJson}" | jq "(.services[] | select(.serviceOrgid == \"${OLD_HZN_ORG_ID}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
-	       resourceJson=${fixServicesServiceOrgid}
-	    fi
+               # userInput field is not always present; check to see if it exists first
+	       if jq -e '.userInput' <<< "$resourceJson" > /dev/null; then
+	          resourceJson=$(echo "${resourceJson}" | jq "(.userInput[] | select (.serviceOrgid == \"${oldOrgId}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating userInput[].serviceOrgid field"
+	       fi
 
-	    if jq -e '.userInput' <<< "$resourceJson" > /dev/null; then
-	       fixUserInputServiceOrgid=$(echo "${resourceJson}" | jq "(.userInput[] | select (.serviceOrgid == \"${OLD_HZN_ORG_ID}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
-	       resourceJson=${fixUserInputServiceOrgid}
-	    fi
+	       if [ "$resType" == "deployment-policy" ]; then
+	          resourceJson=$(echo "${resourceJson}" | jq "(select(.service.org == \"${oldOrgId}\") | .service.org ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating service.org field"
+	       else
+	          resourceJson=$(echo "${resourceJson}" | jq "(.services[] | select(.serviceOrgid == \"${oldOrgId}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating services[].serviceOrgid field"
+	       fi
 
-	    if jq -e '.service' <<< "$resourceJson" > /dev/null; then
-	       fixServiceOrg=$(echo "${resourceJson}" | jq "(select(.service.org == \"${OLD_HZN_ORG_ID}\") | .service.org ) = \"\${HZN_ORG_ID}\"")
-	       resourceJson="${fixServiceOrg}"
+	    else   # resType==service
+	          resourceJson=$(echo "${resourceJson}" | jq "(.requiredServices[] | select(.org == \"${oldOrgId}\") | .org ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating requiredServices[].org field"
 	    fi
 
     fi
-   
-    checkexitcode $? "getting resource $k from the specified json"
 
     # Pipe our massaged json in the appropriate hzn publish command
     case $resType in
@@ -120,4 +124,3 @@ for k in $keys; do
     esac
     checkexitcode $? "publishing $name to the exchange"
 done
-
