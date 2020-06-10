@@ -97,13 +97,13 @@ hzn agreement list
 }
 ```
 
-- Below is the `business.policy.json` that has been published into the Exchange when it was created:
+- Below is the `deployment.policy.json` that has been published into the Exchange when it was created:
 ```json
 {
   "mycluster/ibm.operator_1.0.0": {
     "owner": "mycluster/operator1",
-    "label": "ibm.operator Business Policy for amd64",
-    "description": "A super-simple sample Horizon Business Policy",
+    "label": "ibm.operator Deployment Policy",
+    "description": "A super-simple sample Horizon Deployment Policy",
     "service": {
       "name": "ibm.operator",
       "org": "mycluster",

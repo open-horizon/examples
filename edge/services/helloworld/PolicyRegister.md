@@ -30,16 +30,14 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 ```json
 {
   "properties": [
-    { "name": "model", "value": "Thingamajig ULTRA" },
-    { "name": "serial", "value": 9123456 },
-    { "name": "configuration", "value": "Mark-II-PRO" }
+    { "name": "openhorizon.example", "value": "helloworld" }
   ],
   "constraints": [
   ]
 }
 ```
 
-- It provides values for three `properties` (`model`, `serial`, and `configuration`), that will effect which services get deployed to this edge node, and states no `constraints`.
+- It provides values for one just `properties` (`openhorizon.example`), that should restrict the services that get deployed to this edge node to the `helloworld` service.
 
 2. Register your Node Policy with this policy
 
@@ -66,12 +64,12 @@ hzn policy list
   "properties": [
   ],
   "constraints": [
-    "model == \"Whatsit ULTRA\" OR model == \"Thingamajig ULTRA\""
+    "openhorizon.memory >= 100"
   ]
 }
 ```
 
-- Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on the models named `Whatsit ULTRA` or `Thingamajig ULTRA`. If you recall the Node Policy we used above, the model `property` was set to `Thingamajig ULTRA`, so this Service should be compatible with our Edge Node.
+- Note this simple Service Policy doesn't provide any `properties`, but it does have a `constraint`. This example `constraint` is one that a Service developer might add, stating that their Service must only run on edge nodes with 100 MB or more memory.
 
 1. View the pubished service policy attached to `ibm.helloworld`:
 
@@ -89,21 +87,16 @@ hzn exchange service listpolicy IBM/ibm.helloworld_1.0.0_amd64
 
 - Deployment Policy, like the other two Policy types, contains a set of `properties` and a set of `constraints`, but it contains other things as well. For example, it explicitly identifies the Service it will cause to be deployed onto Edge Nodes if negotiation is successful, in addition to configuration variable values, performing the equivalent function to the `-f horizon/userinput.json` clause of a Deployment Pattern `hzn register ...` command. The Deployment Policy approach for configuration values is more powerful because this operation can be performed centrally (no need to connect directly to the Edge Node).
 
-1. Get the required `helloworld` deployment policy file and the `hzn.json` file:
-```bash
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/deployment.policy.json
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/horizon/hzn.json
-```
-- Below is the `deployment,policy.json` file you just grabbed in step one:
+- Below is the `deployment,policy.json` for the `helloworld` service that has been published into the Exchange when it was created:
 
 ```json
 {
-  "label": "$SERVICE_NAME Deployment Policy for $ARCH",
+  "label": "$SERVICE_NAME Deployment Policy",
   "description": "A super-simple sample Horizon Deployment Policy",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "$HZN_ORG_ID",
-    "arch": "$ARCH",
+    "org": "IBM",
+    "arch": "*",
     "serviceVersions": [
       {
         "version": "$SERVICE_VERSION",
@@ -114,12 +107,11 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
   "properties": [
   ],
   "constraints": [
-    "serial >= 9000000",
-    "model == \"Thingamajig ULTRA\""
+    "openhorizon.example == helloworld"
   ],
   "userInput": [
     {
-      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceOrgid": "IBM",
       "serviceUrl": "$SERVICE_NAME",
       "serviceVersionRange": "[0.0.0,INFINITY)",
       "inputs": [
@@ -133,26 +125,11 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 }
 ```
 
-- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have two `constraints` that are satisfied by the `properties` set in the `node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
+- This simple example of a Deployment Policy doesn't provide any `properties`, but it does have one `constraints` value that is satisfied by the `properties` set in the `node.policy.json` file, so this Deployment Policy should successfully deploy our Service onto the Edge Node.
 
 - At the end, the userInput section has the same purpose as the `horizon/userinput.json` files provided for other examples if the given services requires them. In this case the helloworld service defines only one configuration variable, HW_WHO, and the userInput section here provides a value for HW_WHO (i.e., Valued Customer).
 
-2. Run the following commands to set the environment variables needed by the `deployment.policy.json` file in your shell:
-```bash
-export ARCH=$(hzn architecture)
-eval $(hzn util configconv -f hzn.json)
-eval export $(cat agent-install.cfg)
-```
-
-3. Publish this Deployment Policy to the Exchange to deploy the `ibm.helloworld` service to the Edge Node (give it a memorable name):
-
-```bash
-hzn exchange deployment addpolicy -f deployment.policy.json <choose-any-policy-name>
-```
-
-- The results should look very similar to your original `deployment.policy.json` file, except that `owner`, `created`, and `lastUpdated` and a few other fields have been added.
-
-4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+1. By now your edge device should have formed an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 
 ```bash
 hzn agreement list

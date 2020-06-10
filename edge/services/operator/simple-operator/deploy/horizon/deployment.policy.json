@@ -1,9 +1,9 @@
 {
-  "label": "$SERVICE_NAME Business Policy for $ARCH",
-  "description": "A super-simple sample Horizon Business Policy",
+  "label": "$SERVICE_NAME Deployment Policy",
+  "description": "A super-simple sample Horizon Deployment Policy",
   "service": {
     "name": "$SERVICE_NAME",
-    "org": "mycluster",
+    "org": "IBM",
     "arch": "*",
     "serviceVersions": [
       {
@@ -15,11 +15,11 @@
   "properties": [
   ],
   "constraints": [
-    "openhorizon.service == ibm.operator"
+    "openhorizon.example == operator"
   ],
   "userInput": [
       {
-        "serviceOrgid": "mycluster",
+        "serviceOrgid": "IBM",
         "serviceUrl": "$SERVICE_NAME",
         "serviceVersionRange": "[0.0.0,INFINITY)",
         "inputs": [
