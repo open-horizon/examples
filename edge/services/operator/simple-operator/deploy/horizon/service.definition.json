@@ -24,6 +24,6 @@
         }
     ],
     "clusterDeployment": {
-        "operatorYamlArchive": "/Users/troyfine/src/projects/simple-operator/deploy/ibm.operator.tar.gz"
+        "operatorYamlArchive": "../ibm.operator.tar.gz"
     }
 }
