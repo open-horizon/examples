@@ -13,26 +13,18 @@ MQTT_USER_FILE=/tmp/hzn/vmq.users
 
 docker-build:
 	cd .. && \
-	$(DOCKER_CLI) build --no-cache -t $(IMG_NAME):$(ARCH)-$(SERVICE_VERSION) --build-arg BUILD_IMAGE=$(BUILD_IMAGE) --build-arg RUN_IMAGE=$(RUN_IMAGE) --build-arg GOARCH=$(GOARCH) -f $(DOCKER_FILE) .
-	$(DOCKER_CLI) push $(IMG_NAME):$(ARCH)-$(SERVICE_VERSION)
-
-create-manifest:
-	$(DOCKER_CLI) pull $(IMG_NAME):arm32v6-$(SERVICE_VERSION)
-	$(DOCKER_CLI) pull $(IMG_NAME):amd64-$(SERVICE_VERSION)
-	$(DOCKER_CLI) manifest create $(IMG_NAME):$(SERVICE_VERSION) $(IMG_NAME):arm32v6-$(SERVICE_VERSION) $(IMG_NAME):amd64-$(SERVICE_VERSION) --amend
-	$(DOCKER_CLI) manifest annotate $(IMG_NAME):$(SERVICE_VERSION) $(IMG_NAME):arm32v6-$(SERVICE_VERSION) --arch arm
-	$(DOCKER_CLI) manifest push $(IMG_NAME):$(SERVICE_VERSION)
-	$(DOCKER_CLI) pull $(IMG_NAME):$(SERVICE_VERSION)
+	$(DOCKER_CLI) build --no-cache -t $(IMG_NAME):$(HZN_ARCH)-$(SERVICE_VERSION) --build-arg BUILD_IMAGE=$(BUILD_IMAGE) --build-arg RUN_IMAGE=$(RUN_IMAGE) --build-arg GOARCH=$(GOARCH) -f $(DOCKER_FILE) .
+	$(DOCKER_CLI) push $(IMG_NAME):$(HZN_ARCH)-$(SERVICE_VERSION)
 
 build-amd:
 	$(MAKE) BUILD_IMAGE=amd64/golang:1.14.2-alpine3.11 \
-		RUN_IMAGE=amd64/alpine:3.11 GOARCH=amd64 ARCH=amd64 docker-build
+		RUN_IMAGE=amd64/alpine:3.11 GOARCH=amd64 HZN_ARCH=amd64 docker-build
 
 build-arm:
 	$(MAKE) BUILD_IMAGE=arm32v6/golang:1.14.2-alpine3.11 \
-		RUN_IMAGE=arm32v6/alpine:3.11 GOARCH=arm ARCH=arm32v6 docker-build
+		RUN_IMAGE=arm32v6/alpine:3.11 GOARCH=arm HZN_ARCH=arm docker-build
 
-build: build-amd build-arm create-manifest
+build: build-amd build-arm
 
 publish-service:
 	hzn exchange service publish -O -I -v -f horizon/service.definition.json 
@@ -46,19 +38,11 @@ docker-rmi:
 
 clean:
 	$(MAKE) TAG=amd64-$(SERVICE_VERSION) docker-rmi
-	$(MAKE) TAG=arm32v6-$(SERVICE_VERSION) docker-rmi
+	$(MAKE) TAG=arm-$(SERVICE_VERSION) docker-rmi
 	$(MAKE) TAG=$(SERVICE_VERSION) docker-rmi
 
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
-
-define gen_mqtt_users =
-	set +e
-	mkdir -p $$(dirname $(MQTT_USER_FILE))
-	set -e
-	echo fft-server: $$(echo "server-pass\c" | openssl dgst -sha256 | sed 's/^.* //') > $(MQTT_USER_FILE)
-	echo fft-client: $$(echo "client-pass\c" | openssl dgst -sha256 | sed 's/^.* //') >> $(MQTT_USER_FILE)
-endef
 
 build-test-client:
 	cd .. && \
@@ -67,7 +51,6 @@ build-test-client:
 .ONESHELL:
 SHELL = /bin/sh
 test-only:
-	$(gen_mqtt_users)
 	hzn dev service start -S -v && \
 	docker run -it --rm fft-test-client && \
 		{ hzn dev service stop && $(DOCKER_CLI) rmi fft-test-client; \

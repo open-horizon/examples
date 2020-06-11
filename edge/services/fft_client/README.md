@@ -19,7 +19,6 @@ gmake build
 * `username` -- login to use.
 * `password` -- password to use.
 * `topic` -- topic name for the audio samples. 
-* `result_topic` -- topic name for trigger alerts. If left empty, server will output to console only.
 * `qos` -- quality of service to use with messages.
 * `log_level` -- [logrus](https://github.com/sirupsen/logrus) log level.
 * `sample_rate` -- audio capturing frame rate. If you're not sure which rate to use, start with `debug` log level and check console output.

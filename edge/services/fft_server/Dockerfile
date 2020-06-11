@@ -25,7 +25,14 @@ ENV MQTT_BROKER=volantmq:1883 \
 	MQTT_SERVER_PASS=server-pass \
 	MQTT_SERVER_CLIENT=fft-server \
 	MQTT_RESULTS_TOPIC=results \
-	SAMPLE_RATE=48000
+	MQTT_QOS=2 \
+	SAMPLE_RATE=48000 \
+	LOG_LEVEL=info \
+	NFFT=8192 \
+	PEAKS_LIMIT=2 \
+	PEAKS_THRESHOLD=0.25 \
+	FREQS_THRESHOLD=0.5
+
 
 COPY --from=build /server /server
 ADD ./fft_server/start.sh .

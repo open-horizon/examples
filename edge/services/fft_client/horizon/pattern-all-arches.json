@@ -23,6 +23,26 @@
           "version": "${SERVICE_VERSION}"
         }
       ]
+    },
+    {
+      "serviceUrl": "ibm.fft-server",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "amd64",
+      "serviceVersions": [
+        {
+          "version": "1.0.7"
+        }
+      ]
+    },
+    {
+      "serviceUrl": "ibm.fft-server",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "arm",
+      "serviceVersions": [
+        {
+          "version": "1.0.7"
+        }
+      ]
     }
   ]
 }

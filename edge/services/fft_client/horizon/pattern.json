@@ -12,6 +12,16 @@
           "version": "${SERVICE_VERSION}"
         }
       ]
+    },
+    {
+      "serviceUrl": "ibm.fft-server",
+      "serviceOrgid": "${HZN_ORG_ID}",
+      "serviceArch": "${ARCH}",
+      "serviceVersions": [
+        {
+          "version": "1.0.7"
+        }
+      ]
     }
   ],
   "userInput":[]

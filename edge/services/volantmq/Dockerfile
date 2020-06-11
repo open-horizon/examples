@@ -22,12 +22,15 @@ RUN cd /go/src/github.com/VolantMQ/volantmq/cmd/volantmq && \
 FROM $RUN_IMAGE
 
 ENV VOLANTMQ_PLUGINS_DIR=/usr/local/bin/plugins/ \
-	VOLANTMQ_CONFIG=/config/volantmq.yaml
+	VOLANTMQ_CONFIG=/config/volantmq.yaml \
+	VOLANTMQ_USERS=
 
 COPY --from=build /volantmq/ /usr/local/bin/
 COPY config.yaml /config/volantmq.yaml
+COPY start.sh .
 
-RUN ln -s /usr/local/bin/volantmq /
+RUN ln -s /usr/local/bin/volantmq / && \
+	chmod +x start.sh
 
 EXPOSE 1883
-CMD ["volantmq"]
+CMD ["./start.sh"]

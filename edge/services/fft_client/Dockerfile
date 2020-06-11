@@ -23,6 +23,8 @@ ENV MQTT_BROKER=volantmq:1883 \
 	MQTT_CLIENT_USER=fft-client \
 	MQTT_CLIENT_PASS=client-pass \
 	MQTT_CLIENT_CLIENT=fft-client \ 
+	MQTT_QOS=2 \
+	LOG_LEVEL=info \
 	SAMPLE_RATE=48000 \ 
 	RECORD_FRAME=3
 

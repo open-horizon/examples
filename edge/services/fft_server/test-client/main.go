@@ -181,7 +181,7 @@ func sendSample(client shared.MQTTClient, sample []byte, expectedResult bool, ch
 		}
 		break
 
-	case <-time.After(5 * time.Second):
+	case <-time.After(10 * time.Second):
 		return errors.New("got timeout while waiting on response")
 	}
 

@@ -8,7 +8,9 @@
                 "MQTT_CLIENT_USER": "fft-client",
                 "MQTT_CLIENT_PASS": "client-pass",
                 "MQTT_CLIENT_CLIENT": "fft-client",
+                "MQTT_QOS": "2",
                 "SAMPLE_RATE": "48000",
+                "LOG_LEVEL": "info",
                 "RECORD_FRAME": "3"
             }
         },
@@ -20,13 +22,22 @@
         		"MQTT_SERVER_USER": "fft-server",
         		"MQTT_SERVER_PASS": "server-pass", 
         		"MQTT_SERVER_CLIENT": "fft-server",
-        		"SAMPLE_RATE": "48000"
+                "MQTT_RESULTS_TOPIC": "results",
+                "MQTT_QOS": "2",
+        		"SAMPLE_RATE": "48000",
+                "LOG_LEVEL": "info",
+                "NFFT": "8192",
+                "PEAKS_LIMIT": "2",
+                "PEAKS_THRESHOLD": "0.25",
+                "FREQS_THRESHOLD": "0.5"
         	}
         },
         {
         	"org": "${HZN_ORG_ID}",
         	"url": "ibm.volantmq",
-        	"variables": {}	
+        	"variables": {
+                "VOLANTMQ_USERS": "fft-server: 7b1bf1e4f9535de960093f1c303fe35f49167bdc103ba99ad7dc9d62e2807a1d\nfft-client: fbfc2da74af1af1945ba7bf403cde789091e39b13c420170080872323dd2d148"
+            }	
         }
     ]
 }

@@ -19,12 +19,19 @@
 		 { "name": "MQTT_SERVER_USER", "label": "", "type": "string", "defaultValue": "fft-server" },
 		 { "name": "MQTT_SERVER_PASS", "label": "", "type": "string", "defaultValue": "server-pass" },
 		 { "name": "MQTT_SERVER_CLIENT", "label": "", "type": "string", "defaultValue": "fft-server" },
-		 { "name": "SAMPLE_RATE", "label": "", "type": "string", "defaultValue": "48000" }
+		 { "name": "MQTT_RESULTS_TOPIC", "label": "", "type": "string", "defaultValue": "results" },
+		 { "name": "MQTT_QOS", "label": "", "type": "int", "defaultValue": "2" },
+		 { "name": "SAMPLE_RATE", "label": "", "type": "int", "defaultValue": "48000" },
+		 { "name": "LOG_LEVEL", "label": "", "type": "string", "defaultValue": "debug" },
+		 { "name": "NFFT", "label": "Number of data points for FFT", "type": "int", "defaultValue": "8192" },
+		 { "name": "PEAKS_LIMIT", "label": "", "type": "int", "defaultValue": "2" },
+		 { "name": "PEAKS_THRESHOLD", "label": "", "type": "float", "defaultValue": "0.25" },
+		 { "name": "FREQS_THRESHOLD", "label": "", "type": "float", "defaultValue": "0.5" }
 	],
 	"deployment": {
 		"services": {
 			"fft-server": {
-				"image": "${DOCKER_IMAGE_BASE}:${SERVICE_VERSION}",
+				"image": "${DOCKER_IMAGE_BASE}:${ARCH}-${SERVICE_VERSION}",
 				"privileged": false
 			}
 		}

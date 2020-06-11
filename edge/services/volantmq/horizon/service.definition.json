@@ -9,12 +9,19 @@
 	"public": false,
 	"sharable": "singleton",
 	"requiredServices": [],
-	"userInput": [],
+	"userInput": 
+	[
+	{ 
+		"name": "VOLANTMQ_USERS", 
+		"label": "", 
+		"type": "string", 
+		"defaultValue": "fft-server: 7b1bf1e4f9535de960093f1c303fe35f49167bdc103ba99ad7dc9d62e2807a1d\nfft-client: fbfc2da74af1af1945ba7bf403cde789091e39b13c420170080872323dd2d148" 
+	}
+	],
 	"deployment": {
 		"services": {
 			"volantmq": {
-				"binds": ["/tmp/hzn/vmq.users:/vmq.users:rw"],
-				"image": "${DOCKER_IMAGE_BASE}:${SERVICE_VERSION}",
+				"image": "${DOCKER_IMAGE_BASE}:${ARCH}-${SERVICE_VERSION}",
 				"privileged": false,
 				"specific_ports": [{
 					"HostPort": "1883:1883/tcp",
