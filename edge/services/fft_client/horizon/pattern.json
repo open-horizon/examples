@@ -1,7 +1,7 @@
 {
   "name": "pattern-${SERVICE_NAME}",
   "label": "FFT audio processing services",
-  "description": "Pattern for FFT audo processing services.",
+  "description": "Pattern for FFT audio processing services.",
   "services": [
     {
       "serviceUrl": "${SERVICE_NAME}",
