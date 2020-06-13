@@ -2,7 +2,7 @@
 	"org": "${HZN_ORG_ID}",
 	"label": "fft-client",
 	"description": "FFT sound analyzer",
-	"documentation": "https://github.com/vkorn/fft-example",
+	"documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/fft_client/README.md",
 	"url": "ibm.fft-client",
 	"version": "${SERVICE_VERSION}",
 	"arch": "${ARCH}", 

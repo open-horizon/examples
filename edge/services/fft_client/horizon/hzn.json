@@ -1,7 +1,7 @@
 {
     "HZN_ORG_ID": "testorg",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "vkorn/fft-client",
+        "DOCKER_IMAGE_BASE": "openhorizon/fft-client",
         "SERVICE_NAME": "ibm.fft-client",
         "SERVICE_VERSION": "1.0.6"
     }
