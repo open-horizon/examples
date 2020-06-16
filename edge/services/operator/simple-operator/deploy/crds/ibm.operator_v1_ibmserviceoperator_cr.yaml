@@ -4,4 +4,4 @@ metadata:
   name: example-ibmserviceoperator
 spec:
   # Add fields here
-  size: 3
+  size: 1

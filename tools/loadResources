@@ -80,6 +80,34 @@ for k in $keys; do
     resourceJson=$(jq -c ".[\"$k\"] | del(.owner) | del(.lastUpdated) | .public = false" <<< $json)
     checkexitcode $? "getting resource $k from the specified json"
 
+    oldOrgId=${k%%/*}
+
+    ## Some fields of the resource might have a reference to the source org id. If the org id has changed and if the org name is not IBM, change the reference
+    if [ "${oldOrgId}" != "IBM" ] && [ "${oldOrgId}" != "${HZN_ORG_ID}"  ]; then
+
+            if [ "$resType" == "pattern" ] || [ "$resType" == "deployment-policy" ]; then
+
+               # userInput field is not always present; check to see if it exists first
+               if jq -e '.userInput' <<< "$resourceJson" > /dev/null; then
+                  resourceJson=$(echo "${resourceJson}" | jq "(.userInput[] | select (.serviceOrgid == \"${oldOrgId}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating userInput[].serviceOrgid field"
+               fi
+
+               if [ "$resType" == "deployment-policy" ]; then
+                  resourceJson=$(echo "${resourceJson}" | jq "(select(.service.org == \"${oldOrgId}\") | .service.org ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating service.org field"
+               else
+                  resourceJson=$(echo "${resourceJson}" | jq "(.services[] | select(.serviceOrgid == \"${oldOrgId}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating services[].serviceOrgid field"
+               fi
+
+            else   # resType==service
+                  resourceJson=$(echo "${resourceJson}" | jq "(.requiredServices[] | select(.org == \"${oldOrgId}\") | .org ) = \"\${HZN_ORG_ID}\"")
+                  checkexitcode $? "updating requiredServices[].org field"
+            fi
+
+    fi
+
     # Pipe our massaged json in the appropriate hzn publish command
     case $resType in
         service) # Have to 1st inflate the deployment field from a string to real json
