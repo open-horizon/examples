@@ -1,0 +1,34 @@
+{
+    "org": "mycluster",
+    "label": "monitor for amd64",
+    "description": "",
+    "public": true,
+    "documentation": "",
+    "url": "monitor",
+    "version": "1.0.0",
+    "arch": "amd64",
+    "sharable": "singleton",
+    "requiredServices": [
+        {
+            "url": "mqtt",
+            "org": "mycluster",
+            "version": "1.0.0",
+            "versionRange": "1.0.0",
+            "arch": "amd64"
+        }
+    ],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "monitor": {
+                "image": "troyfine/monitor_amd64@sha256:0bc09052e32f961eb1a36c23c21c625a9aa7934a754f4a913b958dd0262c2f0a",
+                "ports": [
+                    {
+                        "HostIP": "0.0.0.0",
+                        "HostPort": "5200:5200:tcp"
+                    }
+                ]
+            }
+        }
+    }
+}

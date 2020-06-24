@@ -1,0 +1,24 @@
+FROM arm32v6/alpine:latest
+
+RUN apk update && apk add --no-cache \
+  bash \
+  mosquitto-clients \
+  python3 \
+  curl \
+  jq \
+  && rm -fr /tmp/*
+
+# Install kafkacat to publish msgs to IBM Public Cloud EventStreams (Kafka)
+COPY keys/* /etc/apk/keys/
+COPY kafkacat-*.apk /
+RUN apk --no-cache add /kafkacat-*.apk && rm kafkacat-*.apk
+
+# Install requests (REST API client)
+RUN pip3 install requests
+
+# Copy over the source
+COPY app.py /
+WORKDIR /
+
+# Run the daemon
+CMD python3 app.py

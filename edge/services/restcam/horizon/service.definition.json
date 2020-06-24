@@ -1,0 +1,26 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "$SERVICE_NAME for $ARCH",
+  "url": "$SERVICE_NAME",
+  "version": "$SERVICE_VERSION",
+  "arch": "$ARCH",
+  "public": true,
+  "sharable": "singleton",
+  "requiredServices": [],
+  "userInput": [
+    { "name": "CAM_DEVICE", "label": "camera hardware type and path", "type": "string", "defaultValue": "V4L2:/dev/video0" },
+    { "name": "CAM_DELAY_SEC", "label": "sec for camera warmup", "type": "int", "defaultValue": "0" },
+    { "name": "CAM_OUT_WIDTH", "label": "output image width", "type": "int", "defaultValue": "640" },
+    { "name": "CAM_OUT_HEIGHT", "label": "output image height", "type": "int", "defaultValue": "480" }
+  ],
+  "deployment": {
+    "services": {
+      "$SERVICE_NAME": {
+        "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+        "ports": [ { "HostPort":"8888:80/tcp", "HostIP": "0.0.0.0" } ],
+        "privileged": true
+      }
+    }
+  }
+}
+

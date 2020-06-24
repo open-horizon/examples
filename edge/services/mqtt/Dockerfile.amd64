@@ -1,0 +1,9 @@
+FROM alpine:latest
+
+RUN apk update \
+    && apk add --no-cache bash mosquitto \
+    && rm -fr /tmp/*
+
+COPY mqtt.sh /
+WORKDIR /
+CMD ["./mqtt.sh"]

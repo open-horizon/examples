@@ -1,0 +1,29 @@
+{
+  "label": "$SERVICE_NAME Deployment Policy",
+  "description": "A super-simple sample Horizon Deployment Policy",
+  "service": {
+    "name": "$SERVICE_NAME",
+    "org": "mycluster",
+    "arch": "*",
+    "serviceVersions": [
+      {
+        "version": "$SERVICE_VERSION",
+        "priority":{}
+      }
+    ]
+  },
+  "properties": [
+  ],
+  "constraints": [
+    "example == achatina"
+  ],
+  "userInput": [
+      {
+        "serviceOrgid": "mycluster",
+        "serviceUrl": "$SERVICE_NAME",
+        "serviceVersionRange": "[0.0.0,INFINITY)",
+        "inputs": [
+        ]
+      }
+  ]
+}

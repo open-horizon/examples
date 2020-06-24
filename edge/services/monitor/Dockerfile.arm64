@@ -1,0 +1,16 @@
+FROM python:3.7-alpine
+
+RUN apk --no-cache --update add mosquitto-clients
+
+# Install flask (for the REST API server)
+RUN pip install Flask
+
+# Copy the dummy images
+COPY *.jpg /
+
+# Copy over the source
+COPY monitor.py /
+WORKDIR /
+
+# Run the daemon
+CMD python monitor.py

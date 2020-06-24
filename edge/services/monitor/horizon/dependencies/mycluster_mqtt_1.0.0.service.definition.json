@@ -1,0 +1,20 @@
+{
+    "org": "mycluster",
+    "label": "mqtt for amd64",
+    "description": "",
+    "public": true,
+    "documentation": "",
+    "url": "mqtt",
+    "version": "1.0.0",
+    "arch": "amd64",
+    "sharable": "singleton",
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "mqtt": {
+                "image": "troyfine/mqtt_amd64@sha256:8b2876b87a55e876f6ebdb558e8b6327ddbbaf26d668844ee965d9cd32790927"
+            }
+        }
+    }
+}
