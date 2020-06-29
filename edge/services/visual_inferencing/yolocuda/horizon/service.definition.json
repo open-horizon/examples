@@ -1,0 +1,47 @@
+{
+  "org": "$HZN_ORG_ID",
+  "label": "$SERVICE_NAME for $ARCH",
+  "url": "$SERVICE_NAME",
+  "version": "$SERVICE_VERSION",
+  "arch": "$ARCH",
+  "public": true,
+  "sharable": "singleton",
+  "requiredServices": [
+    { "org": "$HZN_ORG_ID", "url": "restyolocuda", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "$HZN_ORG_ID", "url": "mqtt", "version": "1.0.0", "arch": "$ARCH" }
+  ],
+  "userInput": [
+    {
+      "label": "",
+      "name": "CAM_URL",
+      "type": "string",
+      "defaultValue": "https://github.com/MegaMosquito/achatina/raw/master/shared/restcam/mock.jpg"
+    },
+    {
+      "label": "",
+      "name": "EVTSTREAMS_BROKER_URL",
+      "type": "string",
+      "defaultValue": "$EVTSTREAMS_BROKER_URL"
+    },
+    {
+      "label": "",
+      "name": "EVTSTREAMS_API_KEY",
+      "type": "string",
+      "defaultValue": "$EVTSTREAMS_API_KEY"
+    },
+    {
+      "label": "",
+      "name": "EVTSTREAMS_TOPIC",
+      "type": "string",
+      "defaultValue": "$EVTSTREAMS_TOPIC"
+    }
+  ],
+  "deployment": {
+    "services": {
+      "$SERVICE_NAME": {
+        "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION"
+      }
+    }
+  }
+}
+

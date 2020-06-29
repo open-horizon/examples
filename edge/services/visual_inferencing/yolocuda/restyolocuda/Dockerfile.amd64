@@ -1,0 +1,31 @@
+# Start with the NVIDIA base image
+FROM nvidia/cuda:10.2-cudnn7-devel
+
+# Install build tools
+RUN apt-get update && apt-get install -y --no-install-recommends git make g++ python-pip python-setuptools python-dev zlib1g-dev libjpeg-dev wget
+
+# Download and build darknet
+RUN git clone https://github.com/pjreddie/darknet
+WORKDIR /
+RUN sed -i 's/^GPU=0$/GPU=1/' /darknet/Makefile
+RUN make -C /darknet
+
+# Download a set of vertex weight
+RUN cd /darknet; wget https://pjreddie.com/media/files/yolov3.weights
+#RUN cd /darknet; wget https://pjreddie.com/media/files/yolov3-tiny.weights
+
+# Required libraries
+RUN pip install wheel
+RUN pip install flask requests pillow
+
+# Copy over the logo(s)
+COPY o-h.png /
+COPY logo.png /
+
+# Copy over the code
+COPY darknet.py /
+
+# Startup the daemon
+CMD cd /darknet; python /darknet.py cfg/yolov3.cfg yolov3.weights cfg/coco.data
+#CMD cd /darknet; python /darknet.py cfg/yolov3-tiny.cfg yolov3-tiny.weights cfg/coco.data
+
