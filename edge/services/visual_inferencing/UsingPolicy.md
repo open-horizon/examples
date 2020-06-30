@@ -2,10 +2,10 @@
 
 This is a simple example of using and creating an operator as edge service.
 
-- [Preconditions for Using the Operator Example Edge Service](#preconditions)
-- [Using the Operator Example Edge Service with Deployment Policy](#using-operator-policy)
-- [Using the Operator Example Edge Service with Deployment Pattern](PatternRegister.md)
-- [Creating Your Own Operator Edge Service](CreateService.md)
+- [Preconditions for Using the Object Detection and Classification Example Edge Service](#preconditions)
+- [Using the Object Detection and Classification Example Edge Service with Deployment Policy](#using-detect-policy)
+- [Using the Object Detection and Classification Example Edge Service with Deployment Pattern](PatternRegister.md)
+- [Creating Your Own Object Detection and Classification Edge Service](CreateService.md)
 - Further Learning - to see more Horizon features demonstrated, continue on to the [cpu2evtstreams example](../../evtstreams/cpu2evtstreams).
 
 ## <a id=preconditions></a> Preconditions for Using the Object Detection and Classification Example Edge Service
@@ -45,7 +45,7 @@ hzn exchange node confirm
 hzn unregister -f
 ```
 
-## <a id=using-operator-policy></a> Using the Object Detection and Classification Example Edge Service with Deployment Policy
+## <a id=using-detect-policy></a> Using the Object Detection and Classification Example Edge Service with Deployment Policy
 
 1. Get the required node policy file on your edge device:
 
@@ -63,7 +63,8 @@ hzn unregister -f
 ```json
 {
   "properties": [
-    { "name": "openhorizon.example", "value": "yolocpu" }
+    { "name": "openhorizon.example", "value": "visual_inferencing" },
+    { "name": "GPUenabled", "value": "false" }
   ],
   "constraints": [
   ]
@@ -75,7 +76,8 @@ hzn unregister -f
 ```json
 {
   "properties": [
-    { "name": "openhorizon.example", "value": "yolocuda" }
+    { "name": "openhorizon.example", "value": "visual_inferencing" },
+    { "name": "GPUenabled", "value": "true" }
   ],
   "constraints": [
   ]
@@ -108,7 +110,7 @@ hzn agreement list
 {
     "properties": [],
     "constraints": [
-        "openhorizon.memory >= 200"
+        "GPUenabled == false"
     ]
 }
 ```
@@ -123,9 +125,9 @@ hzn agreement list
     ]
 }
 ```
-- Notice that the developer who wrote and published the `yolocuda` service included a service policy constraint that requires any edge nodes to be GPU enabled in order to run it.
+- Notice that the developer who wrote and published these object detection and classification services included a service policy constraint that will enable edge devices to run `yolocuda` only if they have the node policy states `GPUenabled` is `true`, otherwise it will run `yolocpu`.
 
-- Below is the example `deployment.policy.json` that has been published into the Exchange as part of the example operator:
+- Below is the example `deployment.policy.json` that has been published into the Exchange along with the `yolocpu` service:
 
 ```json
 {
@@ -147,7 +149,7 @@ hzn agreement list
       "nodeHealth": {}
     },
     "constraints": [
-      "openhorizon.example == yolocpu"
+      "openhorizon.example == visual_inferencing"
     ],
     "userInput": [
       {
@@ -163,13 +165,17 @@ hzn agreement list
 }
 ```
 
+- Note: the `deployment.policy.json` for `yolocuda` is identical to the deployment policy for `yolocpu` so it is not listed here.
+
 6. Verify that the service is up and running:
 
 ```bash
 sudo docker ps 
 ```
 
-7. Unregister your edge node (which will also stop the object detection service):
+7. You can now navigate to `http://0.0.0.0:5200` to confirm the object detection and classification is working as intended.
+
+8. Unregister your edge node (which will also stop the object detection service):
 
 ```bash
 hzn unregister -f
