@@ -146,51 +146,6 @@ These examples have been designed with [Open-Horizon](https://github.com/open-ho
 
 By publishing the achatina examples to your Open-Horizon exchange you can with a flick of your wrist deploy these applications to 10,000 or more devices, securely, and have them automatically monitored, updated with new versions, etc. If you want to manage edge devices at scale, there's really nothing else like it out there. And yeah, I'm biased. I have been using Open-Horizon and previous versions of this software since 2015, and I'm an employee of IBM, whose commercial IBM Edge Application Manager (TM) product is based on Open-Horizon.
 
-### Build and Publish to Open-Horizon
-
-To build all of these examples and publish them to your Open-Horizon Exchange, follow these steps:
-
- * select a development machine, ideally a MacOS machine because cross-compilation (and almost everything else) is significantly easier and more powerful there. Do keep your Windows box for gaming though.
-
- * install docker natively
-
- * ensure that git, make curl, and jq are installed (use brew on MacOS)
-
- * install the Open-Horizon Agent
-
- * configure your Open-Horizon Exchange credentials, and ensure they are valid with `hzn exchange user list`. If you get back a nice JSON structure and a successful return code, you're all set
-
- * clone this repo and cd into the top directory
-
- * login to your dockerhub account (or some private Docker repo)
-
- * create a cryptographic signing key (if your environment does not have keys handy, you can optionally use `hzn key create ...` for this)
-
- * run: `make publish-all-services` to publish all of the services, for all of the examples, for all of the supported architectures
-
- * if you wish to deploy using patterns, run: `make publish-all-patterns` to publish all of the supported deployment patterns for all of the examples
-
- * if you wish to deploy using policies, run: `make publish-all-policies` to publish all of the provided business/deployment policies for all of the examples
-
-### Register your Edge Machines
-
-Once these examples are published in your Open-Horizon Exchange, you can register your edge machines using appropriate patterns or policies. One way to do that is to:
-
- * clone this repo, cd into the top directory, and
-
- * run any of these commands:
-
-```
-     make register-yolocpu-pattern
-     make register-yolocpu-policy
-     make register-yolocuda-pattern
-     make register-yolocuda-policy
-```
-
-## For more info
-
-Each of the examples has its own README.md with additional details.
-
 ## Author
 
 Written by Glen Darling <mosquito@darlingevil.com>, March 2020.
