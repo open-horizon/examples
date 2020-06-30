@@ -1,4 +1,4 @@
-# Horizon Operator Example Edge Service
+# Horizon Object Detection and Classification Example Edge Service
 
 This is a simple example of using and creating an operator as edge service.
 
@@ -8,13 +8,13 @@ This is a simple example of using and creating an operator as edge service.
 - [Creating Your Own Operator Edge Service](CreateService.md)
 - Further Learning - to see more Horizon features demonstrated, continue on to the [cpu2evtstreams example](../../evtstreams/cpu2evtstreams).
 
-## <a id=preconditions></a> Preconditions for Using the Operator Example Edge Service
+## <a id=preconditions></a> Preconditions for Using the Object Detection and Classification Example Edge Service
 
-If you haven't done so already, you must do these steps before proceeding with the operator example:
+If you haven't done so already, you must do these steps before proceeding with the object detection and classification example:
 
 1. Install the Horizon management hub (exchange and agbot).
 
-2. Install the Horizon agent on your edge cluster and configure it to point to your Horizon exchange.
+2. Install the Horizon agent on your edge device and configure it to point to your Horizon exchange.
 
 3. As part of the management hub installation process a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css URL values. Locate this file and set those environment variables in your shell now:
 
@@ -45,37 +45,46 @@ hzn exchange node confirm
 hzn unregister -f
 ```
 
-## <a id=using-operator-policy></a> Using the Operator Example Edge Service with Deployment Policy
+## <a id=using-operator-policy></a> Using the Object Detection and Classification Example Edge Service with Deployment Policy
 
-In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create a pod running the `ibm.helloworld` service.
+1. Get the required node policy file on your edge device:
 
-1. Start a shell inside the agent container to execute `hzn` commands:
+- if your edge device **does not** have a GPU, run the following command:
+  ```bash
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_detection/yolocpu/horizon/node.policy.json
+  ```
+- if your edge device **does** have a GPU, run the following command:
+  ```bash
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_detection/yolocuda/horizon/node.policy.json
+  ```
 
-```bash
-kubectl exec -it -n openhorizon-agent agent-<agent-pod-id> -- /bin/bash
-```
-
-2. Get the required node policy file on your edge cluster:
-
-```bash
-wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/operator/simple-operator/deploy/horizon/node.policy.json
-```
-
-- Below is the `node_policy.json` file you obtained in the step above:
+- Below is the `node.policy.json` file you obtained in the step above if you do not have a GPU on your edge device:
 
 ```json
 {
   "properties": [
-    { "name": "openhorizon.service", "value": "ibm.operator" }
+    { "name": "openhorizon.example", "value": "yolocpu" }
   ],
   "constraints": [
   ]
 }
 ```
 
-- It provides one value for `properties` (`openhorizon.service`), that will effect which services get deployed to this edge node, and states no `constraints`.
+- Below is the `node.policy.json` file you obtained in the step above if you do not have a GPU on your edge device:
 
-3. Register your Node Policy with this policy
+```json
+{
+  "properties": [
+    { "name": "openhorizon.example", "value": "yolocuda" }
+  ],
+  "constraints": [
+  ]
+}
+```
+
+- Both provide one value for `properties` (`openhorizon.example`), that will effect which services get deployed to this edge node, and state no `constraints`.
+
+2. Register your Node Policy with this policy
 
 ```bash
 hzn register --policy node.policy.json
@@ -93,28 +102,40 @@ hzn policy list
 hzn agreement list
 ```
 
-- Below is the `service.policy.json` that was published into the Exchange when the example operator was published:
+- Below is the `service.policy.json` that was published into the Exchange when the `yolocpu` example was published:
 
 ```json
 {
     "properties": [],
     "constraints": [
-        "openhorizon.arch == amd64"
+        "openhorizon.memory >= 200"
     ]
 }
 ```
+
+- Below is the `service.policy.json` that was published into the Exchange when the `yolocuda` example was published:
+
+```json
+{
+    "properties": [],
+    "constraints": [
+        "GPUenabled == true"
+    ]
+}
+```
+- Notice that the developer who wrote and published the `yolocuda` service included a service policy constraint that requires any edge nodes to be GPU enabled in order to run it.
 
 - Below is the example `deployment.policy.json` that has been published into the Exchange as part of the example operator:
 
 ```json
 {
-  "mycluster/ibm.operator_1.0.0": {
+  "IBM/policy-yolocpu_1.0.0": {
     "owner": "mycluster/operator1",
-    "label": "ibm.operator Deployment Policy",
+    "label": "yolocpu Deployment Policy",
     "description": "A super-simple sample Horizon Deployment Policy",
     "service": {
-      "name": "ibm.operator",
-      "org": "mycluster",
+      "name": "yolocpu",
+      "org": "IBM",
       "arch": "*",
       "serviceVersions": [
         {
@@ -126,97 +147,30 @@ hzn agreement list
       "nodeHealth": {}
     },
     "constraints": [
-      "openhorizon.service == ibm.operator"
+      "openhorizon.example == yolocpu"
     ],
     "userInput": [
       {
-        "serviceOrgid": "mycluster",
-        "serviceUrl": "ibm.operator",
+        "serviceOrgid": "IBM",
+        "serviceUrl": "yolocpu",
         "serviceVersionRange": "[0.0.0,INFINITY)",
-        "inputs": [
-          {
-            "name": "HW_WHO",
-            "value": "from the cluster!"
-          }
-        ]
+        "inputs": []
       }
     ],
-    "created": "2020-05-21T17:18:34.956Z[UTC]",
-    "lastUpdated": "2020-05-21T19:50:56.937Z[UTC]"
+    "created": "2020-06-23T06:58:16.964Z[UTC]",
+    "lastUpdated": "2020-06-23T06:58:16.964Z[UTC]"
   }
 }
 ```
 
-6. Exit the agent container shell so you can run other `kubectl` commands:
+6. Verify that the service is up and running:
 
 ```bash
-exit
+sudo docker ps 
 ```
 
-7. Verify that the `simple-operator` deployment is up and running:
+7. Unregister your edge node (which will also stop the object detection service):
 
 ```bash
-kubectl get pod -n openhorizon-agent
-```
-
-- If everything deployed correctly you will see the operator pod in addition to the `example-ibmserviceoperator` pod running similar to following output:
-
-```bash
-NAME                                          READY   STATUS    RESTARTS   AGE
-agent-6d8b8895f-bpwm9                         1/1     Running   0          2d21h
-example-ibmserviceoperator-7d6849c487-5pmcb   1/1     Running   0          88s
-simple-operator-5cd47878fc-gjcl6              1/1     Running   0          96s
-```
-
-8. Verify that the operator is running successfully by checking its logs:
-
-```bash
-kubectl logs simple-operator-<op-id> -n openhorizon-agent
-```
-
-- If the operator is operating correctly, the logs should look similar to the following output:
-
-```bash
-root@gormand1:~# kubectl logs simple-operator-5cd47878fc-gjcl6 -n openhorizon-agent
-{"level":"info","ts":1590090974.906244,"logger":"cmd","msg":"Operator Version: 0.0.1"}
-{"level":"info","ts":1590090974.9062827,"logger":"cmd","msg":"Go Version: go1.14.3"}
-{"level":"info","ts":1590090974.9063098,"logger":"cmd","msg":"Go OS/Arch: linux/amd64"}
-{"level":"info","ts":1590090974.9063208,"logger":"cmd","msg":"Version of operator-sdk: v0.17.1"}
-{"level":"info","ts":1590090974.9066129,"logger":"leader","msg":"Trying to become the leader."}
-{"level":"info","ts":1590090975.1842163,"logger":"leader","msg":"No pre-existing lock was found."}
-{"level":"info","ts":1590090975.1895027,"logger":"leader","msg":"Became the leader."}
-{"level":"info","ts":1590090975.443696,"logger":"controller-runtime.metrics","msg":"metrics server is starting to listen","addr":"0.0.0.0:8383"}
-{"level":"info","ts":1590090975.4556718,"logger":"cmd","msg":"Registering Components."}
-{"level":"info","ts":1590090976.0551462,"logger":"metrics","msg":"Metrics Service object created","Service.Name":"simple-operator-metrics","Service.Namespace":"openhorizon-agent"}
-{"level":"info","ts":1590090976.3069465,"logger":"cmd","msg":"Could not create ServiceMonitor object","error":"no ServiceMonitor registered with the API"}
-{"level":"info","ts":1590090976.3070312,"logger":"cmd","msg":"Install prometheus-operator in your cluster to create ServiceMonitor objects","error":"no ServiceMonitor registered with the API"}
-{"level":"info","ts":1590090976.3070836,"logger":"cmd","msg":"Starting the Cmd."}
-{"level":"info","ts":1590090976.308044,"logger":"controller-runtime.manager","msg":"starting metrics server","path":"/metrics"}
-{"level":"info","ts":1590090976.3089783,"logger":"controller-runtime.controller","msg":"Starting EventSource","controller":"ibmserviceoperator-controller","source":"kind source: /, Kind="}
-{"level":"info","ts":1590090976.40968,"logger":"controller-runtime.controller","msg":"Starting EventSource","controller":"ibmserviceoperator-controller","source":"kind source: /, Kind="}
-{"level":"info","ts":1590090976.5111873,"logger":"controller-runtime.controller","msg":"Starting Controller","controller":"ibmserviceoperator-controller"}
-{"level":"info","ts":1590090976.5112767,"logger":"controller-runtime.controller","msg":"Starting workers","controller":"ibmserviceoperator-controller","worker count":1}
-{"level":"info","ts":1590090976.511785,"logger":"controller_ibmserviceoperator","msg":"Reconciling IBMserviceOperator","Request.Namespace":"openhorizon-agent","Request.Name":"example-ibmserviceoperator"}
-{"level":"info","ts":1590090976.612423,"logger":"controller_ibmserviceoperator","msg":"Creating a new Deployment","Request.Namespace":"openhorizon-agent","Request.Name":"example-ibmserviceoperator","Deployment.Namespace":"openhorizon-agent","Deployment.Name":"example-ibmserviceoperator"}
-```
-
-9. Verify that the operator successfully deployed the `ibm.helloworld` service and the environment variables were passed into the pod:
-
-```bash
-kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
-```
-
-- if the environment variables were received by the worker pods the output should look similar to the following:
-
-```bash
-kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
-tfine-cluster-apollo1 says: Hello from the cluster!!!
-tfine-cluster-apollo1 says: Hello from the cluster!!!
-tfine-cluster-apollo1 says: Hello from the cluster!!!
-```
-
-10. Unregister your edge node (which will also stop the operator and helloworld service):
-
-```bash
-kubectl exec -it -n openhorizon-agent agent-<agent-pod-id> -- hzn unregister -f
+hzn unregister -f
 ```
