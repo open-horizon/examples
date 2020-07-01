@@ -1,118 +1,92 @@
-# An app that calls the yolo detector, and pushes data to mqtt and kafka
+# Make targets for building the IBM example yolo edge service
 
-SERVICE_NAME:="yolocuda"
-SERVICE_VERSION:="1.0.0"
+# This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them
+-include horizon/.hzn.json.tmp.mk
 
-# Get the Open-Horizon architecture type, and IP address for this host
-ARCH:=$(shell ../../helper -a)
-HOST_IP:=$(shell ../../helper -i)
-DEFAULT_CAM_URL:="http://${HOST_IP}:8888/"
+# Default ARCH to the architecture of this machines (as horizon/golang describes it)
+export ARCH ?= $(shell hzn architecture)
 
-# If HZN_DEVICE_ID is not set, use the hostname
-HZN_DEVICE_ID := $(or $(HZN_DEVICE_ID),$(shell sh -c 'hostname'))
+# Configurable parameters passed to serviceTest.sh in "test" target
+#export MATCH:='says: Hello'
+#export TIME_OUT:=60
 
-#
-# Targets for building, developing, testing and cleaning this service
-#
+# Build the docker image for the current architecture
+build:
+	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
-build: validate-dockerhubid
-	@if [ "${ARCH}" != "arm" ]; then \
-          docker build -t $(DOCKERHUB_ID)/$(SERVICE_NAME)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .; \
-        fi
+# Build the docker image for 3 architectures
+build-all-arches:
+	ARCH=amd64 $(MAKE) build
+	ARCH=arm $(MAKE) build
+	ARCH=arm64 $(MAKE) build
 
-push: validate-dockerhubid
-	@if [ "${ARCH}" != "arm" ]; then \
-	  docker push $(DOCKERHUB_ID)/$(SERVICE_NAME)_$(ARCH):$(SERVICE_VERSION); \
-        fi
+# Target for travis to test new PRs
+test-all-arches:
+	ARCH=amd64 $(MAKE) test
+	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
 
-dev: validate-dockerhubid check-cam-url
-	-docker rm -f ${SERVICE_NAME} 2>/dev/null || :
-	docker run -it -v `pwd`:/outside \
-	   -e HZN_DEVICE_ID="${HZN_DEVICE_ID}" \
-	   -e DEFAULT_CAM_URL="${DEFAULT_CAM_URL}" \
-	   -e CAM_URL="${CAM_URL}" \
-	   -e EVENTSTREAMS_BROKER_URLS="${EVENTSTREAMS_BROKER_URLS}" \
-	   -e EVENTSTREAMS_API_KEY="${EVENTSTREAMS_API_KEY}" \
-	   -e EVENTSTREAMS_PUB_TOPIC="${EVENTSTREAMS_PUB_TOPIC}" \
-	   --name ${SERVICE_NAME} \
-	   --network mqtt-net --network-alias ${SERVICE_NAME} \
-	   $(DOCKERHUB_ID)/$(SERVICE_NAME)_$(ARCH):$(SERVICE_VERSION) /bin/sh
+# # Run and verify the service
+# test: build
+# 	hzn dev service start -S
+# 	@echo 'Testing service...'
+# 	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+# 		{ hzn dev service stop; \
+# 		echo "*** Service test succeeded! ***"; } || \
+# 		{ hzn dev service stop; \
+# 		echo "*** Service test failed! ***"; \
+# 		false ;}
 
-test: validate-dockerhubid check-cam-url
-	-docker rm -f ${SERVICE_NAME} 2>/dev/null || :
-	docker run --rm -d \
-	   -e HZN_DEVICE_ID="${HZN_DEVICE_ID}" \
-	   -e DEFAULT_CAM_URL="${DEFAULT_CAM_URL}" \
-	   -e CAM_URL="${CAM_URL}" \
-	   -e EVENTSTREAMS_BROKER_URLS="${EVENTSTREAMS_BROKER_URLS}" \
-	   -e EVENTSTREAMS_API_KEY="${EVENTSTREAMS_API_KEY}" \
-	   -e EVENTSTREAMS_PUB_TOPIC="${EVENTSTREAMS_PUB_TOPIC}" \
-	   --name ${SERVICE_NAME} \
-	   --network mqtt-net --network-alias ${SERVICE_NAME} \
-	   $(DOCKERHUB_ID)/$(SERVICE_NAME)_$(ARCH):$(SERVICE_VERSION)
+# Target for travis to publish service and pattern after PR is merged  
+publish: 
+	ARCH=amd64 $(MAKE) publish-service
+	ARCH=amd64 $(MAKE) publish-service-policy
+	ARCH=arm $(MAKE) publish-service
+	ARCH=arm $(MAKE) publish-service-policy
+	ARCH=arm64 $(MAKE) publish-service
+	ARCH=arm64 $(MAKE) publish-service-policy
+	$(MAKE) publish-deployment-policy
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-clean: validate-dockerhubid
-	@docker rm -f ${SERVICE_NAME} 2>/dev/null || :
-	@docker rmi $(DOCKERHUB_ID)/$(SERVICE_NAME):$(SERVICE_VERSION) 2>/dev/null || :
-	@docker rmi $(DOCKERHUB_ID)/$(SERVICE_NAME)_$(ARCH):$(SERVICE_VERSION) 2>/dev/null || :
+# Publish the service to the Horizon Exchange for the current architecture
+publish-service:
+	hzn exchange service publish -O -f horizon/service.definition.json
 
-#
-# Targets for publishing this service to an Open-Horizon Exhange
-#
-# NOTE: You must install the Open-Horizon CLI in order to use these targets!
-#
+# Build, run and verify, if test succeeds then publish (for the current architecture)
+#build-test-publish: build test publish-service
 
-publish-service: validate-dockerhubid
-	@if [ "${ARCH}" != "arm" ]; then \
-          ARCH=$(ARCH) \
-          SERVICE_NAME="$(SERVICE_NAME)" \
-          SERVICE_VERSION="$(SERVICE_VERSION)"\
-          DOCKER_IMAGE_BASE="$(DOCKERHUB_ID)/$(SERVICE_NAME)"\
-          hzn exchange service publish -O -f service.json --pull-image; \
-       fi
+# target for script - overwrite and pull insitead of push docker image
+publish-service-overwrite:
+	hzn exchange service publish -O -P -f horizon/service.definition.json
 
-# This service only builds for arm64 and amd64
-publish-all-services: validate-dockerhubid
-	docker build -t $(DOCKERHUB_ID)/$(SERVICE_NAME)_arm64:$(SERVICE_VERSION) -f ./Dockerfile.arm64 .
-	docker push $(DOCKERHUB_ID)/$(SERVICE_NAME)_arm64:$(SERVICE_VERSION) 
-	ARCH=arm64 \
-          SERVICE_NAME="$(SERVICE_NAME)" \
-          SERVICE_VERSION="$(SERVICE_VERSION)"\
-          DOCKER_IMAGE_BASE="$(DOCKERHUB_ID)/$(SERVICE_NAME)"\
-          hzn exchange service publish -O -f service.json --pull-image
-	docker build -t $(DOCKERHUB_ID)/$(SERVICE_NAME)_amd64:$(SERVICE_VERSION) -f ./Dockerfile.amd64 .
-	docker push $(DOCKERHUB_ID)/$(SERVICE_NAME)_amd64:$(SERVICE_VERSION) 
-	ARCH=amd64 \
-          SERVICE_NAME="$(SERVICE_NAME)" \
-          SERVICE_VERSION="$(SERVICE_VERSION)"\
-          DOCKER_IMAGE_BASE="$(DOCKERHUB_ID)/$(SERVICE_NAME)"\
-          hzn exchange service publish -O -f service.json --pull-image
+# Publish Service Policy target for exchange publish script
+publish-service-policy:
+	hzn exchange service addpolicy -f horizon/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
 
-#
-# Sanity check targets
-#
+# Publish Deployment Policy target for exchange publish script
+publish-deployment-policy:
+	hzn exchange deployment addpolicy -f horizon/deployment.policy.json $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
 
-validate-dockerhubid:
-	@if [ -z "${DOCKERHUB_ID}" ]; \
-          then { echo "***** ERROR: \"DOCKERHUB_ID\" is not set!"; exit 1; }; \
-          else echo "  NOTE: Using DockerHubID: \"${DOCKERHUB_ID}\""; \
-        fi
-	@sleep 1
+# new target for icp exchange to run on startup to publish only
+publish-only:
+	ARCH=amd64 $(MAKE) publish-service-overwrite
+	ARCH=amd64 $(MAKE) publish-service-policy
+	ARCH=arm $(MAKE) publish-service-overwrite
+	ARCH=arm $(MAKE) publish-service-policy
+	ARCH=arm64 $(MAKE) publish-service-overwrite
+	ARCH=arm64 $(MAKE) publish-service-policy
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-check-cam-url:
-	@if [ -z "${CAM_URL}" ]; \
-          then echo "  Warning: \"CAM_URL\" is not set! Using default."; \
-          else echo "  NOTE: Using camera URL: ${CAM_URL}"; \
-        fi
-	@sleep 1
+clean:
+	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
 
-check-kafka-creds:
-	@if [ -z "${EVENTSTREAMS_BROKER_URLS}" ] || \
-          [ -z "${EVENTSTREAMS_API_KEY}" ] || \
-          [ -z "${EVENTSTREAMS_PUB_TOPIC}" ]; \
-          then echo "  Warning: No EventStreams credentials found! Kafka publication is disabled."; \
-          else echo "  NOTE: Publishing to topic: ${EVENTSTREAMS_PUB_TOPIC}"; \
-        fi
+clean-all-archs:
+	ARCH=amd64 $(MAKE) clean
+	ARCH=arm $(MAKE) clean
+	ARCH=arm64 $(MAKE) clean
 
-.PHONY: build dev test clean publish-service publish-all-services validate-dockerhubid check-cam-url check-kafka-creds
+# This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
+horizon/.hzn.json.tmp.mk: horizon/hzn.json
+	@ hzn util configconv -f $< | sed 's/=/?=/' > $@
 
+.PHONY: build build-all-arches test publish-service build-test-publish publish-all-arches clean clean-all-archs
