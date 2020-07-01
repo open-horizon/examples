@@ -1,8 +1,15 @@
-![achatina](https://raw.githubusercontent.com/MegaMosquito/achatina/master/art/achatina.png)
+# Horizon Object Detection and Classification Example Edge Service
 
 Achatina is a set of examples that do visual inferencing using Docker containers on small computers, usually relatively slowly.
 
-One of my goals for achatina is to make everything here *easily understandable*. To that end, almost all of the code files in the examples provided here have fewer than 100 lines. As a former university Computer Science teacher for many years, I have found that keeping examples to this size enables most people to understand them quickly.
+One of my goals for achatina is to make everything here *easily understandable*. To that end, almost all of the code files in the examples provided here have fewer than 100 lines.
+
+- [Preconditions for Using the Object Detection and Classification Example Edge Service](UsingPolicy.md#-preconditions-for-using-the-object-detection-and-classification-example-edge-service)
+- [Using the Object Detection and Classification Example Edge Service with Deployment Policy](UsingPolicy.md#-using-the-object-detection-and-classification-example-edge-service-with-deployment-policy)
+- [Using the Object Detection and Classification Example Edge Service with Deployment Pattern](PatternRegister.md)
+- [Creating Your Own Object Detection and Classification Edge Service](CreateService.md)
+
+![achatina](https://raw.githubusercontent.com/MegaMosquito/achatina/master/art/achatina.png)
 
 ## Object Detection and Classification
 
