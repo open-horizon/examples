@@ -1,6 +1,8 @@
 # Horizon Object Detection and Classification Example Edge Service
 
-This is a simple example of using and creating an operator as edge service.
+Achatina is a set of examples that do visual inferencing using Docker containers on small computers, usually relatively slowly.
+
+One of my goals for achatina is to make everything here *easily understandable*. To that end, almost all of the code files in the examples provided here have fewer than 100 lines.
 
 - [Preconditions for Using the Object Detection and Classification Example Edge Service](#preconditions)
 - [Using the Object Detection and Classification Example Edge Service with Deployment Policy](UsingPolicy.md)
@@ -8,10 +10,6 @@ This is a simple example of using and creating an operator as edge service.
 - [Creating Your Own Object Detection and Classification Edge Service](CreateService.md)
 
 ![achatina](https://raw.githubusercontent.com/MegaMosquito/achatina/master/art/achatina.png)
-
-Achatina is a set of examples that do visual inferencing using Docker containers on small computers, usually relatively slowly.
-
-One of my goals for achatina is to make everything here *easily understandable*. To that end, almost all of the code files in the examples provided here have fewer than 100 lines. As a former university Computer Science teacher for many years, I have found that keeping examples to this size enables most people to understand them quickly.
 
 ## Object Detection and Classification
 
