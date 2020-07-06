@@ -15,7 +15,7 @@
   "properties": [
   ],
   "constraints": [
-    "openhorizon.example == visual_detection"
+    "openhorizon.example == visual_inferencing"
   ],
   "userInput": [
       {

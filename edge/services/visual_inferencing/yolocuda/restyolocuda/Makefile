@@ -1,4 +1,4 @@
-# Make targets for building the restyolocuda service for the visual_inferencing GPU edge service
+# Make targets for building the mqtt service for the visual_inferencing edge service
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them
 -include horizon/.hzn.json.tmp.mk
@@ -17,13 +17,11 @@ build:
 # Build the docker image for 3 architectures
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
-	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
 
 # Target for travis to test new PRs
 test-all-arches:
 	ARCH=amd64 $(MAKE) test
-	ARCH=arm $(MAKE) test
 	ARCH=arm64 $(MAKE) test
 
 # # Run and verify the service
@@ -40,13 +38,7 @@ test-all-arches:
 # Target for travis to publish service and pattern after PR is merged  
 publish: 
 	ARCH=amd64 $(MAKE) publish-service
-	ARCH=amd64 $(MAKE) publish-service-policy
-	ARCH=arm $(MAKE) publish-service
-	ARCH=arm $(MAKE) publish-service-policy
 	ARCH=arm64 $(MAKE) publish-service
-	ARCH=arm64 $(MAKE) publish-service-policy
-	$(MAKE) publish-deployment-policy
-	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # Publish the service to the Horizon Exchange for the current architecture
 publish-service:
@@ -59,30 +51,16 @@ publish-service:
 publish-service-overwrite:
 	hzn exchange service publish -O -P -f horizon/service.definition.json
 
-# Publish Service Policy target for exchange publish script
-publish-service-policy:
-	hzn exchange service addpolicy -f horizon/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
-
-# Publish Deployment Policy target for exchange publish script
-publish-deployment-policy:
-	hzn exchange deployment addpolicy -f horizon/deployment.policy.json $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
-
 # new target for icp exchange to run on startup to publish only
 publish-only:
 	ARCH=amd64 $(MAKE) publish-service-overwrite
-	ARCH=amd64 $(MAKE) publish-service-policy
-	ARCH=arm $(MAKE) publish-service-overwrite
-	ARCH=arm $(MAKE) publish-service-policy
 	ARCH=arm64 $(MAKE) publish-service-overwrite
-	ARCH=arm64 $(MAKE) publish-service-policy
-	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
 	-docker rmi $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) 2> /dev/null || :
 
 clean-all-archs:
 	ARCH=amd64 $(MAKE) clean
-	ARCH=arm $(MAKE) clean
 	ARCH=arm64 $(MAKE) clean
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
