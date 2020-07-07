@@ -57,11 +57,7 @@ function deployPolPublish () {
         HZN_ORG_ID=$ORG make publish-deployment-policy
         checkexitcode $? "publishing deployment policy to the "$ORG" in the exchange"
         if [[ $line == *"helloworld" ]]; then
-            jq '.public = false' horizon/pattern.json > horizon/pattern.tmp && mv horizon/pattern.tmp horizon/pattern.json
-            checkexitcode $? "changing true to false in pattern.json"
-            jq '.services[].serviceOrgid = "IBM"' horizon/pattern.json > horizon/pattern.tmp && mv horizon/pattern.tmp horizon/pattern.json
-            checkexitcode $? "changing HZN_ORG_ID to IBM in pattern.json"
-            HZN_ORG_ID=$ORG make publish-pattern
+            HZN_ORG_ID=$ORG PATTERN_PUBLIC=false make publish-pattern
             checkexitcode $? "publishing pattern to the "$ORG" in the exchange"
         fi
     fi
