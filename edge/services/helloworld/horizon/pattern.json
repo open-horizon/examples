@@ -2,7 +2,7 @@
   "name": "pattern-${SERVICE_NAME}-$ARCH",
   "label": "Edge $SERVICE_NAME Service Pattern for $ARCH",
   "description": "Pattern for $SERVICE_NAME for $ARCH",
-  "public": "$PATTERN_PUBLIC",
+  "public": $PATTERN_PUBLIC,
   "services": [
     {
       "serviceUrl": "$SERVICE_NAME",
