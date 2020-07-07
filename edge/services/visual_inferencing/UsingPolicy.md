@@ -47,15 +47,17 @@ hzn unregister -f
 
 ## <a id=using-detect-policy></a> Using the Object Detection and Classification Example Edge Service with Deployment Policy
 
-1. Get the required node policy file on your edge device:
+1. Get the required node policy and user input files on your edge device:
 
-- if your edge device **does not** have a GPU, run the following command:
+- if your edge device **does not** have a GPU, run the following commands:
   ```bash
-  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_detection/yolocpu/horizon/node.policy.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocpu/horizon/node.policy.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocpu/horizon/userinput.json
   ```
-- if your edge device **does** have a GPU, run the following command:
+- if your edge device **does** have a GPU, run the following commands:
   ```bash
-  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_detection/yolocuda/horizon/node.policy.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocuda/horizon/node.policy.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocuda/horizon/userinput.json
   ```
 
 - Below is the `node.policy.json` file you obtained in the step above if you do not have a GPU on your edge device:
