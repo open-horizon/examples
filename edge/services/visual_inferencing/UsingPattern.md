@@ -11,11 +11,11 @@
 1. Get the user input file for the yolo object detection and classification sample:
 - if your edge device **does not** have a GPU, run the following command:
   ```bash
-  wget wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocpu/horizon/userinput.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocpu/horizon/userinput.json
   ```
 - if your edge device **does** have a GPU, run the following command:
   ```bash
-  wget wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocuda/horizon/userinput.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/visual_inferencing/yolocuda/horizon/userinput.json
   ```
 Below is the `userinput.json` file you got in the previous step:
   ```json
