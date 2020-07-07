@@ -52,7 +52,7 @@ If you register with the pattern using the `userinput.json` file as is you can v
   ```bash 
   sudo docker ps
   ```
-4. You can now navigate to http://0.0.0.0:5200 to confirm the object detection and classification is working as intended.
+4. You can now navigate to http://0.0.0.0:5200 to confirm the object detection and classification is working as intended. (This can take a couple minutes)
 
 5. Unregister your edge node (which will also stop the myhelloworld service):
 ```bash
