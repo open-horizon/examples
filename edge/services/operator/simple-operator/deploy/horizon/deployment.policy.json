@@ -26,6 +26,10 @@
             {
                 "name": "HW_WHO",
                 "value": "from the cluster!"
+            },
+            {
+                "name": "HZN_DEVICE_ID",
+                "value": "$HZN_DEVICE_ID"
             }
         ]
       }

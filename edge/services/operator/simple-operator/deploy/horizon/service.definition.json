@@ -24,6 +24,6 @@
         }
     ],
     "clusterDeployment": {
-        "operatorYamlArchive": "../ibm.operator.tar.gz"
+        "operatorYamlArchive": "../operator.tar.gz"
     }
 }
