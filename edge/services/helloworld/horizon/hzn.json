@@ -3,7 +3,9 @@
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.helloworld",
         "SERVICE_NAME": "ibm.helloworld",
-        "SERVICE_VERSION": "1.0.0"
+        "SERVICE_VERSION": "1.0.0",
+        "SERVICE_ORG_ID": "IBM",
+        "PATTERN_PUBLIC": "true"
     }
 }
 

@@ -12,11 +12,11 @@ This is a simple example of using and creating an operator as edge service.
 
 If you haven't done so already, you must do these steps before proceeding with the operator example:
 
-1. Install the Horizon management infrastructure (exchange and agbot).
+1. Install the Horizon management hub (exchange and agbot).
 
 2. Install the Horizon agent on your edge cluster and configure it to point to your Horizon exchange.
 
-3. As part of the infrasctucture installation process for IBM Edge Computing Manager a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css url values. Locate this file and set those environment variables in your shell now:
+3. As part of the management hub installation process a file called `agent-install.cfg` was created that contains the values for `HZN_ORG_ID` and the exchange and css URL values. Locate this file and set those environment variables in your shell now:
 
 ```bash
 eval export $(cat agent-install.cfg)
@@ -40,25 +40,28 @@ hzn exchange node confirm
 ```
 
 6. If you have not done so already, unregister your node before moving on:
+
  ```bash
 hzn unregister -f
 ```
 
 ## <a id=using-operator-policy></a> Using the Operator Example Edge Service with Deployment Policy
 
-In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create three pods running the `ibm.helloworld` service. 
+In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create a pod running the `ibm.helloworld` service.
 
-1. To execute the `hzn` commands below, `exec` inside the agent container
+1. Start a shell inside the agent container to execute `hzn` commands:
+
 ```bash
-kubectl exec -it agent-<agent-pod-id> -n openhorizon-agent /bin/bash
+kubectl exec -it -n openhorizon-agent agent-<agent-pod-id> -- /bin/bash
 ```
 
 2. Get the required node policy file on your edge cluster:
+
 ```bash
 wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/operator/simple-operator/deploy/horizon/node.policy.json
 ```
 
-- Below is the `node_policy.json` file you obtained in step one, above:
+- Below is the `node_policy.json` file you obtained in the step above:
 
 ```json
 {
@@ -70,24 +73,28 @@ wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/service
 }
 ```
 
-- It provides values for one `properties` (`openhorizon.service`), that will effect which services get deployed to this edge node, and states no `constraints`.
+- It provides one value for `properties` (`openhorizon.service`), that will effect which services get deployed to this edge node, and states no `constraints`.
 
 3. Register your Node Policy with this policy
+
 ```bash
 hzn register --policy node.policy.json
 ```
 
 4. When the registration completes, use the following command to review the Node Policy:
+
 ```bash
 hzn policy list
 ```
 
 5. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+
 ```bash
 hzn agreement list
 ```
 
-- Below is the `service.policy.json` that has been published into the Exchange when it was created:
+- Below is the `service.policy.json` that was published into the Exchange when the example operator was published:
+
 ```json
 {
     "properties": [],
@@ -97,7 +104,8 @@ hzn agreement list
 }
 ```
 
-- Below is the `deployment.policy.json` that has been published into the Exchange when it was created:
+- Below is the example `deployment.policy.json` that has been published into the Exchange as part of the example operator:
+
 ```json
 {
   "mycluster/ibm.operator_1.0.0": {
@@ -139,27 +147,35 @@ hzn agreement list
 }
 ```
 
-6. Veryfy that the `simple-operator` deployment is up and runing:
-```bash 
+6. Exit the agent container shell so you can run other `kubectl` commands:
+
+```bash
+exit
+```
+
+7. Verify that the `simple-operator` deployment is up and running:
+
+```bash
 kubectl get pod -n openhorizon-agent
 ```
 
-- If everything deployed correctly you will see the operator pod in addition to three `example-ibmserviceoperator` pods running similar to following output
-```bash 
+- If everything deployed correctly you will see the operator pod in addition to the `example-ibmserviceoperator` pod running similar to following output:
+
+```bash
 NAME                                          READY   STATUS    RESTARTS   AGE
 agent-6d8b8895f-bpwm9                         1/1     Running   0          2d21h
 example-ibmserviceoperator-7d6849c487-5pmcb   1/1     Running   0          88s
-example-ibmserviceoperator-7d6849c487-926xt   1/1     Running   0          88s
-example-ibmserviceoperator-7d6849c487-j9z58   1/1     Running   0          88s
 simple-operator-5cd47878fc-gjcl6              1/1     Running   0          96s
 ```
 
-7. Verify that the operator is running successfully by checking its logs:
+8. Verify that the operator is running successfully by checking its logs:
+
 ```bash
 kubectl logs simple-operator-<op-id> -n openhorizon-agent
 ```
 
-- If the operator is opperating correctly the logs should look similar to the following output:
+- If the operator is operating correctly, the logs should look similar to the following output:
+
 ```bash
 root@gormand1:~# kubectl logs simple-operator-5cd47878fc-gjcl6 -n openhorizon-agent
 {"level":"info","ts":1590090974.906244,"logger":"cmd","msg":"Operator Version: 0.0.1"}
@@ -184,12 +200,14 @@ root@gormand1:~# kubectl logs simple-operator-5cd47878fc-gjcl6 -n openhorizon-ag
 {"level":"info","ts":1590090976.612423,"logger":"controller_ibmserviceoperator","msg":"Creating a new Deployment","Request.Namespace":"openhorizon-agent","Request.Name":"example-ibmserviceoperator","Deployment.Namespace":"openhorizon-agent","Deployment.Name":"example-ibmserviceoperator"}
 ```
 
-8. Verify that the operator sucessfully deployed the `ibm.helloworld` service and the environment variables were passed into the pod:
+9. Verify that the operator successfully deployed the `ibm.helloworld` service and the environment variables were passed into the pod:
+
 ```bash
 kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
 ```
 
-- if the environment variables were received by the worker pods the ouput should look similar to the following:
+- if the environment variables were received by the worker pods the output should look similar to the following:
+
 ```bash
 kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
 tfine-cluster-apollo1 says: Hello from the cluster!!!
@@ -197,7 +215,8 @@ tfine-cluster-apollo1 says: Hello from the cluster!!!
 tfine-cluster-apollo1 says: Hello from the cluster!!!
 ```
 
-9. Unregister your edge node (which will also stop the myhelloworld service):
+10. Unregister your edge node (which will also stop the operator and helloworld service):
+
 ```bash
-hzn unregister -f
+kubectl exec -it -n openhorizon-agent agent-<agent-pod-id> -- hzn unregister -f
 ```
