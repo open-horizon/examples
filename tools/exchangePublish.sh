@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 # if the org id is set locally we don't want to override the IBM org of these samples
 unset HZN_ORG_ID
 
-function scriptUsage () {
+scriptUsage() {
     cat << EOF
 Usage: ${0##*/} [-h] [-v] [-c <cluster-name>]
 
@@ -57,7 +57,7 @@ checkexitcode() {
 }
 
 # publish deployment policy for helloworld and cpu2evtstreams if -c flag is used
-function deployPolPublish () {
+deployPolPublish() {
     if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]] || [[ $line == *"operator"* ]]); then 
         if [[ -n $VERBOSE ]]; then
             HZN_ORG_ID=$ORG make publish-deployment-policy
@@ -85,8 +85,16 @@ if [[ -d "$PATH_TO_EXAMPLES/examples" ]]; then
     echo "Directory $PATH_TO_EXAMPLES/examples already exists, can not git clone into it. Will try to proceed assuming it was git cloned previously..."
 else
     echo "Cloning $branch $repository to $PATH_TO_EXAMPLES/examples..."
-    git clone $branch $repository $PATH_TO_EXAMPLES/examples
-    checkexitcode $? "git clone $branch $repository $PATH_TO_EXAMPLES/examples"
+    if [[ -n $VERBOSE ]]; then
+        git clone $branch $repository $PATH_TO_EXAMPLES/examples
+        checkexitcode $? "git clone $branch $repository $PATH_TO_EXAMPLES/examples"
+    else
+        output=$(git clone $branch $repository $PATH_TO_EXAMPLES/examples 2>&1)
+        if [[ $? -ne 0 ]]; then
+            echo "Error running git clone $branch $repository $PATH_TO_EXAMPLES/examples: $output"
+            exit 2
+        fi
+    fi
 fi
 
 # read in blessedSamples.txt which contains the services, patterns, and policies to publish
