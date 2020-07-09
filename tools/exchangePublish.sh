@@ -5,7 +5,7 @@ unset HZN_ORG_ID
 
 function scriptUsage () {
     cat << EOF
-Usage: ./exchangePublishScript.sh [-h] [-v] [-c <cluster-name>]
+Usage: ${0##*/} [-h] [-v] [-c <cluster-name>]
 
 Flag:
   -c <cluster-name>  Set this flag to publish example deployment policies to this org.
