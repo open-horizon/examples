@@ -5,16 +5,14 @@ unset HZN_ORG_ID
 
 function scriptUsage () {
     cat << EOF
+Usage: ./exchangePublishScript.sh [-h] [-v] [-c <cluster-name>]
 
-Usage: ./exchangePublishScript.sh [-c <cluster-name>]
-
-Parameters:
-  optional:
-    -c              <cluster-name> set this flag to publish example deployment policy for the helloworld 
-                      and cpu2evtstreams samples
+Flag:
+  -c <cluster-name>  Set this flag to publish example deployment policies to this org.
+  -v                 Verbose output
+  -h                 This usage
 
 Required Environment Variables:
-  EXCHANGE_ROOT_PASS
   HZN_EXCHANGE_URL
   HZN_EXCHANGE_USER_AUTH
 
@@ -29,7 +27,11 @@ while (( "$#" )); do
             scriptUsage
             shift
             ;;
-        -c) # cluster name to publish deployment policy
+        -v) # verbose output
+            VERBOSE=1
+            shift
+            ;;
+        -c) # cluster name to publish deployment policy to
             ORG=$2
             shift 2
             ;;
@@ -43,19 +45,30 @@ done
 PATH_TO_EXAMPLES=/tmp/open-horizon
 
 # check the previous cmds exit code. 
-checkexitcode () {   
-    if [[ $1 == 0 ]]; then return; fi
-    echo ""
-    echo "Error: exit code $1 when $2"
-    echo ""
-    error=1
+checkexitcode() {
+    local exitCode=$1
+    local task=$2
+    local dontExit=$3   # set to 'continue' to not exit for this error
+    if [[ $exitCode == 0 ]]; then return; fi
+    echo "Error: exit code $exitCode from: $task"
+    if [[ $dontExit != 'continue' ]]; then
+        exit $exitCode
+    fi
 }
 
 # publish deployment policy for helloworld and cpu2evtstreams if -c flag is used
 function deployPolPublish () {
     if ([[ $line == *"cpu2evtstreams" ]] || [[ $line == *"helloworld" ]] || [[ $line == *"operator"* ]]); then 
-        HZN_ORG_ID=$ORG make publish-deployment-policy
-        checkexitcode $? "publishing deployment policy to the "$ORG" in the exchange"
+        if [[ -n $VERBOSE ]]; then
+            HZN_ORG_ID=$ORG make publish-deployment-policy
+            checkexitcode $? "publishing deployment policy to the $ORG in the exchange"
+        else
+            output=$(HZN_ORG_ID=$ORG make publish-deployment-policy 2>&1)
+            if [[ $? -ne 0 ]]; then
+                echo "Error publishing deployment policy to the $ORG in the exchange: $output"
+                exit 2
+            fi
+        fi
     fi
 }
 
@@ -67,23 +80,36 @@ repository="https://github.com/open-horizon/examples.git"
 input="$PATH_TO_EXAMPLES/examples/tools/blessedSamples.txt"
 
 topDir=$(pwd)
-error=0
 
-git clone $branch $repository $PATH_TO_EXAMPLES/examples
+if [[ -d "$PATH_TO_EXAMPLES/examples" ]]; then
+    echo "Directory $PATH_TO_EXAMPLES/examples already exists, can not git clone into it. Will try to proceed assuming it was git cloned previously..."
+else
+    echo "Cloning $branch $repository to $PATH_TO_EXAMPLES/examples..."
+    git clone $branch $repository $PATH_TO_EXAMPLES/examples
+    checkexitcode $? "git clone $branch $repository $PATH_TO_EXAMPLES/examples"
+fi
 
-# read in blessedSamples.txt which contains the services and patterns to publish
+# read in blessedSamples.txt which contains the services, patterns, and policies to publish
 while IFS= read -r line
 do
-    # each $line contains the path to any service or pattern that needs to be published
+    # each $line contains the path to any service/pattern/policy that needs to be published
     cd $PATH_TO_EXAMPLES/$line
-    checkexitcode $? "finding service directory "$line""
+    checkexitcode $? "finding service directory $line"
     
-    echo `pwd`
-    make publish-only
-    checkexitcode $? "publishing "$line" to the exchange"
+    echo "Publishing ${PWD}..."
+    if [[ -n $VERBOSE ]]; then
+        make publish-only
+        checkexitcode $? "publishing services and patterns from $line to the exchange"
+    else
+        output=$(make publish-only 2>&1)
+        if [[ $? -ne 0 ]]; then
+            echo "Error publishing services and patterns from $line to the exchange: $output"
+            exit 2
+        fi
+    fi
 
     # check if an org was specified to publish sample deployment policy 
-    if ! [ -z $ORG ]; then
+    if [[ -n $ORG ]]; then
         deployPolPublish
     fi
 
@@ -92,11 +118,6 @@ do
 done < "$input"
 
 
-# clean up if no errors
-if [ $error != 0 ]; then
-    echo -e "\n*** Errors were encountered when publishing, the cloned $PATH_TO_EXAMPLES/examples directory was not deleted *** \n"
-else
-    echo -e "\nSuccessfully published all content to the exchange. Removing $PATH_TO_EXAMPLES/examples directory...\n"
-    rm -f -r $PATH_TO_EXAMPLES
-fi
-
+# clean up
+echo -e "Successfully published all examples to the exchange. Removing $PATH_TO_EXAMPLES/examples directory."
+rm -f -r $PATH_TO_EXAMPLES
