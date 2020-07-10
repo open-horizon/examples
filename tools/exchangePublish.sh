@@ -1,9 +1,5 @@
 #!/bin/bash
 
-echo '!!!!!!!!!!!!!!!!!!!'
-echo '!!!!!!!!!!!!!!!!!!! This script has been renamed to exchangePublish.sh . Switch to using that immediately, because this name will be deleted soon!!!!!!!'
-echo '!!!!!!!!!!!!!!!!!!!'
-
 # if the org id is set locally we don't want to override the IBM org of these samples
 unset HZN_ORG_ID
 
