@@ -111,9 +111,13 @@ If you have gone through the `ibm.helloworld` example before this then you know 
    hzn exchange deployment addpolicy -f horizon/deployment.policy.json policy-<choose-any-policy-name>
    ```
 
+**Note when working with your edge cluster:** The `hzn` command is inside the agent container, but you can set some aliases to make it possible to run `hzn` from this host. The following register command 
+
 9. Modify the `node.policy.json` file located in the `horizon/` directory by changing the `"properties":`  value to that of the constraint you spedified in the `deployment.policy.json` so they match and will form an agreement.
 
-10. Copy your modified `node.policy.json` file onto your edge cluster then register your cluster with your new node policy:
+10. Copy your modified `node.policy.json` file onto your edge cluster host machine.
+
+11. Register your cluster with your new node policy:
 
    ```bash
    hzn register --policy horizon/node.policy.json
