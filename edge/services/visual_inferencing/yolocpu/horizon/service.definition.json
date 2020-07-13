@@ -7,9 +7,10 @@
   "public": true,
   "sharable": "singleton",
   "requiredServices": [
-    { "org": "$HZN_ORG_ID", "url": "restyolocpu", "version": "1.0.0", "arch": "$ARCH" },
-    { "org": "$HZN_ORG_ID", "url": "mqtt", "version": "1.0.0", "arch": "$ARCH" },
-    { "org": "$HZN_ORG_ID", "url": "monitor", "version": "1.0.0", "arch": "$ARCH" }
+    { "org": "IBM", "url": "restyolocpu", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "IBM", "url": "mqtt", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "IBM", "url": "monitor", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "IBM", "url": "restcam", "version": "1.0.0", "arch": "$ARCH" }
   ],
   "userInput": [
     {
@@ -22,19 +23,19 @@
       "label": "",
       "name": "EVTSTREAMS_BROKER_URL",
       "type": "string",
-      "defaultValue": "$EVTSTREAMS_BROKER_URL"
+      "defaultValue": ""
     },
     {
       "label": "",
       "name": "EVTSTREAMS_API_KEY",
       "type": "string",
-      "defaultValue": "$EVTSTREAMS_API_KEY"
+      "defaultValue": ""
     },
     {
       "label": "",
       "name": "EVTSTREAMS_TOPIC",
       "type": "string",
-      "defaultValue": "$EVTSTREAMS_TOPIC"
+      "defaultValue": ""
     }
   ],
   "deployment": {

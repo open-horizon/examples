@@ -6,9 +6,8 @@
             "variables": {
                 "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
                 "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL",
-                "EVTSTREAMS_CERT_ENCODED": "$EVTSTREAMS_CERT_ENCODED",
                 "EVTSTREAMS_TOPIC": "$EVTSTREAMS_TOPIC",
-                "CAM_URL": "https://github.com/MegaMosquito/achatina/raw/master/shared/restcam/mock.jpg"
+                "CAM_URL": "$CAM_URL"
             }
         }
     ]
