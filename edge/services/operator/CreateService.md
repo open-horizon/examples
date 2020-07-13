@@ -111,16 +111,24 @@ If you have gone through the `ibm.helloworld` example before this then you know 
    hzn exchange deployment addpolicy -f horizon/deployment.policy.json policy-<choose-any-policy-name>
    ```
 
-**Note when working with your edge cluster:** The `hzn` command is inside the agent container, but you can set some aliases to make it possible to run `hzn` from this host. The following register command 
+**Note when working with your edge cluster:** The `hzn` command is inside the agent container, but you can set some aliases to make it possible to run `hzn` from this host which you can accomplish with the following command if you have not already:
+   ```bash
+   cat << 'END_ALIASES' >> ~/.bash_aliases
+   alias getagentpod='kubectl -n openhorizon-agent get pods --selector=app=agent -o jsonpath={.items[*].metadata.name}'
+   alias hzn='kubectl -n openhorizon-agent exec -i $(getagentpod) -- hzn'
+   END_ALIASES
+   source ~/.bash_aliases
+   ```
 
 9. Modify the `node.policy.json` file located in the `horizon/` directory by changing the `"properties":`  value to that of the constraint you spedified in the `deployment.policy.json` so they match and will form an agreement.
 
 10. Copy your modified `node.policy.json` file onto your edge cluster host machine.
 
-11. Register your cluster with your new node policy:
+11. Register your cluster with your new node policy (this is done in two steps here; register your edge cluster with a the policy in the exchange, then update the policy to refelect your new properties:
 
    ```bash
-   hzn register --policy horizon/node.policy.json
+   hzn register -u $HZN_EXCHANGE_USER_AUTH
+   cat node.policy.json | hzn exchange node updatepolicy -f- <your-node-id>
    ```
   
 11. After a minute verify that the `simple-operator` deployment is up and runing:
