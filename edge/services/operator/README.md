@@ -168,6 +168,11 @@ example-ibmserviceoperator-7d6849c487-5pmcb   1/1     Running   0          88s
 simple-operator-5cd47878fc-gjcl6              1/1     Running   0          96s
 ```
 
+**Note:** If you are attempting to run this service on an **OCP edge cluster** and the operator does not start you may have to grant the operator the privileges it requires to execute with the following command:
+ ```bash
+ oc adm policy add-scc-to-user privileged -z simple-operator -n openhorizon-agent
+ ```
+
 8. Verify that the operator is running successfully by checking its logs:
 
 ```bash
