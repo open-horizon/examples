@@ -23,19 +23,19 @@
       "label": "",
       "name": "EVTSTREAMS_BROKER_URL",
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "$EVTSTREAMS_BROKER_URL"
     },
     {
       "label": "",
       "name": "EVTSTREAMS_API_KEY",
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "$EVTSTREAMS_API_KEY"
     },
     {
       "label": "",
       "name": "EVTSTREAMS_TOPIC",
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "$EVTSTREAMS_TOPIC"
     }
   ],
   "deployment": {

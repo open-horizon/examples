@@ -7,8 +7,10 @@
   "public": true,
   "sharable": "singleton",
   "requiredServices": [
-    { "org": "$HZN_ORG_ID", "url": "restyolocuda", "version": "1.0.0", "arch": "$ARCH" },
-    { "org": "$HZN_ORG_ID", "url": "mqtt", "version": "1.0.0", "arch": "$ARCH" }
+    { "org": "IBM", "url": "restyolocuda", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "IBM", "url": "mqtt", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "IBM", "url": "monitor", "version": "1.0.0", "arch": "$ARCH" },
+    { "org": "IBM", "url": "restcam", "version": "1.0.0", "arch": "$ARCH" }
   ],
   "userInput": [
     {

@@ -1,7 +1,8 @@
 {
   "properties": [
     { "name": "openhorizon.example", "value": "visual_inferencing" },
-    { "name": "GPUenabled", "value": "false" }
+    { "name": "GPUenabled", "value": "false" },
+    { "name": "openhorizon.allowPrivileged", "value": "true" }
   ],
   "constraints": [
   ]
