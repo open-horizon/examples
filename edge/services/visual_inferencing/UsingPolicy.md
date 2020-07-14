@@ -88,10 +88,17 @@ hzn unregister -f
 
 - Both provide one value for `properties` (`openhorizon.example`), that will effect which services get deployed to this edge node, and state no `constraints`.
 
+If you have a camera attached to your edge node you can set the `CAM_URL` environment variable and have the yolo service do the inferencing on the feed of your cam, or you can leave it set as the default image:
+ ```bash
+ export CAM_URL=http://<node-ip-address>:8888
+ - OR -
+ export CAM_URL="https://github.com/MegaMosquito/achatina/raw/master/shared/restcam/mock.jpg"
+ ```
+
 2. Register your Node Policy with this policy
 
 ```bash
-hzn register --policy node.policy.json
+hzn register --policy node.policy.json -f userinput.json
 ```
 
 4. When the registration completes, use the following command to review the Node Policy:
