@@ -128,7 +128,7 @@ If you have gone through the `ibm.helloworld` example before this then you know 
 
    ```bash
    hzn register -u $HZN_EXCHANGE_USER_AUTH
-   cat node.policy.json | hzn exchange node updatepolicy -f- <your-node-id>
+   cat node.policy.json | hzn policy update -f- 
    ```
   
 11. After a minute verify that the `simple-operator` deployment is up and runing:
