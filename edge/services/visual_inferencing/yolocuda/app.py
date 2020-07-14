@@ -25,9 +25,9 @@ def get_from_env(v, d):
     return os.environ[v]
   else:
     return d
-EVENTSTREAMS_BROKER_URLS = get_from_env('EVENTSTREAMS_BROKER_URLS', '')
-EVENTSTREAMS_API_KEY = get_from_env('EVENTSTREAMS_API_KEY', '')
-EVENTSTREAMS_PUB_TOPIC = get_from_env('EVENTSTREAMS_PUB_TOPIC', '')
+EVTSTREAMS_BROKER_URL = get_from_env('EVTSTREAMS_BROKER_URL', '')
+EVTSTREAMS_API_KEY = get_from_env('EVTSTREAMS_API_KEY', '')
+EVTSTREAMS_TOPIC = get_from_env('EVTSTREAMS_TOPIC', '')
 DEFAULT_CAM_URL = get_from_env('DEFAULT_CAM_URL', '')
 CAM_URL = get_from_env('CAM_URL', '')
 MQTT_PUB_TOPIC = get_from_env('MQTT_PUB_TOPIC', '/detect')
@@ -54,8 +54,8 @@ TEMP_FILE = '/tmp/yolo.json'
 YOLO_URL = 'http://restyolocuda:80/detect?kind=jpg&url=' + urllib.parse.quote(CAM_URL)
 MQTT_PUB_COMMAND = 'mosquitto_pub -h mqtt -p 1883'
 DEBUG_PUB_COMMAND = MQTT_PUB_COMMAND + ' -t ' + MQTT_PUB_TOPIC + ' -f '
-if '' != EVENTSTREAMS_BROKER_URLS and '' != EVENTSTREAMS_API_KEY and '' != EVENTSTREAMS_PUB_TOPIC:
-  KAFKA_PUB_COMMAND = 'kafkacat -P -b ' + EVENTSTREAMS_BROKER_URLS + ' -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password="' + EVENTSTREAMS_API_KEY + '" -t ' + EVENTSTREAMS_PUB_TOPIC + ' '
+if '' != EVTSTREAMS_BROKER_URL and '' != EVTSTREAMS_API_KEY and '' != EVTSTREAMS_TOPIC:
+  KAFKA_PUB_COMMAND = 'kafkacat -P -b ' + EVTSTREAMS_BROKER_URL + ' -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password="' + EVTSTREAMS_API_KEY + '" -t ' + EVTSTREAMS_TOPIC + ' '
 else:
   KAFKA_PUB_COMMAND = ''
 SLEEP_BETWEEN_CALLS = 0.1
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         # Did we publish this stuff to kafka?
         if '' != KAFKA_PUB_COMMAND:
           # Provide info to the caller about how to subscribe to this kafka stream
-          j['kafka-sub'] = 'kafkacat -C -b ' + EVENTSTREAMS_BROKER_URLS + ' -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password="' + EVENTSTREAMS_API_KEY + '" -t ' + EVENTSTREAMS_PUB_TOPIC
+          j['kafka-sub'] = 'kafkacat -C -b ' + EVTSTREAMS_BROKER_URL + ' -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password="' + EVTSTREAMS_API_KEY + '" -t ' + EVTSTREAMS_TOPIC
           # Rewrite the file with the updated JSON
           with open(TEMP_FILE, 'w') as temp_file:
             json.dump(j, temp_file)
