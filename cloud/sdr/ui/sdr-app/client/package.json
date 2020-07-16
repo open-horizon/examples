@@ -44,7 +44,7 @@
     "html-webpack-plugin": "2.29.0",
     "jest": "^25.5.4",
     "js-yaml": "^3.14.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lodash.template": ">=4.5.0",
     "mem": "^6.1.0",
     "merge": ">=1.2.1",
