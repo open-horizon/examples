@@ -100,7 +100,7 @@ If you haven't done so already, you must do these steps before proceeding with t
   hzn mms object delete -t $HZN_DEVICE_ID.hello-mms --id config.json
   ```
 
-  Note in the service output in the other terminal that this will cause the service to revert to the original config file, and therefore the original "hello" message.
+  **Note**: in the service output in the other terminal that this will cause the service to revert to the original config file, and therefore the original "hello" message.
 
 8. Unregister your edge node (which will also stop the hello-mms service):
 
