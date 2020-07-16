@@ -20,6 +20,7 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 ```bash
 eval export $(cat agent-install.cfg)
+export EVTSTREAMS_TOPIC=<event-streams-topic-name>
 ```
 
  - **Note**: if for some reason you disconnected from ssh or your command line closes, run the above command again to set the required environment variables.
