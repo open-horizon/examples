@@ -20,7 +20,6 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 ```bash
 eval export $(cat agent-install.cfg)
-export EVTSTREAMS_TOPIC=<event-streams-topic-name>
 ```
 
  - **Note**: if for some reason you disconnected from ssh or your command line closes, run the above command again to set the required environment variables.
@@ -43,6 +42,7 @@ hzn exchange node confirm
 6. While this service can be used with any kafka based message brokers, if you are using IBM Event Streams and an instance has already been deployed for you, obtain the `event-streams.cfg` file that was created during this process. This file contains all the necessary environment variables for this service to publish data to IBM Event Streams. Set these environment variables in your shell now:
 ```bash
 eval export $(cat event-streams.cfg)
+export EVTSTREAMS_TOPIC=<event-streams-topic-name>
 ```
 
 7. If you have not done so already, unregister your node before moving on:
