@@ -29,14 +29,10 @@ Using docker makes these examples extremely portable, requiring little or no set
 
 ## Usage
 
-To quickly try this on your Linux machine:
+To quickly try this on your edge node:
 
-- attach a camera (usually on `/dev/video0`, and compatible with `fswebcam`)
-- make sure docker, git and make are installed
-- clone this git repo, then cd into the top directory
-- put your dockerhub.com ID into the DOCKERHUB_ID enviropnment variable, e.g.: `export DOCKERHUB_ID=ibmosquito`
-- run `make test` (or some other target) -- the `test` target runs the CPU example
-- when everything finishes building and comes up, point your browser to port `5200` on this machine, i.e., go to: `http://ipaddress:5200/`
+see [Using Policy](UsingPolicy.md) or [Using Pattern](UsingPattern.md)
+
 
 For more info, read the `README.md` files (here at the top, and in each of the example directories). Also read the Makefiles in each of these directories to see how the Docker containers are started, and the environment variables you can use to configure them differently (e.g., for a local camera on a different path than `/dev/video0`, or for your own webcam service).
 
@@ -73,10 +69,6 @@ Of course, using a GPU (or specialized visual inferencing hardware) to accelerat
 1. NVIDIA CUDA Example
 
 Currently the CUDA example is the only GPU-accelerated example provided. The [yolocuda](https://github.com/MegaMosquito/achatina/tree/master/yolocuda) example relies on the NVIDIA CUDA software which requires an NVIDIA GPU. Currently the CUDA example only works with these NVIDIA Jetson boards: TX1, TX2, and Nano.
-
-2. Intel Movidius Example
-
-(coming soon)
 
 ## How Does It Work?
 
