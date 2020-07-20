@@ -23,8 +23,13 @@ gmake build
 * `log_level` -- [logrus](https://github.com/sirupsen/logrus) log level.
 * `sample_rate` -- audio capturing frame rate. If you're not sure which rate to use, start with `debug` log level and check console output.
 * `record_frame` -- number of seconds to record.
+* `device_id` -- device number to use.
 
 Please note: `sample_rate` must be the same on server and client for correct processing. 
+
+
+To list all available devices pass `--list_devices` to the tool, it will print out devices list and terminate.
+
 
 ## Installing portaudio on Mac
 

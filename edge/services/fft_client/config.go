@@ -12,7 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-
 package main
 
 import (
@@ -26,6 +25,8 @@ type Config struct {
 	LogLevel    string `short:"l" long:"log_level" description:"Log level" default:"info"`
 	SampleRate  int    `short:"r" long:"sample_rate" description:"Recording sample rate" default:"48000"`
 	RecordFrame int    `short:"f" long:"record_frame" description:"How many seconds to record" default:"2"`
+	ListDevices bool   `long:"list_devices" description:"Lists available devices and terminate process"`
+	DeviceId    int    `long:"device_id" default:"-1" description:"Device ID to use"`
 	MQTT        *shared.MQTTConfig
 }
 

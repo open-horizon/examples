@@ -42,6 +42,11 @@ func main() {
 		FullTimestamp:             true,
 	})
 
+	if config.ListDevices {
+		listDevices()
+		return
+	}
+
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	c := shared.NewMQTTClient(config.MQTT)
@@ -52,26 +57,17 @@ func main() {
 	}
 	defer portaudio.Terminate()
 
-	defaultDevice, err := portaudio.DefaultInputDevice()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	logrus.Debugf("Suggested rate is %f", defaultDevice.DefaultSampleRate)
-
 	bufferLen := config.RecordFrame * config.SampleRate
 	buffer := make([]byte, 4*bufferLen)
+	stream, err := openDevice(config.DeviceId, float64(config.SampleRate), bufferLen, func(in []float32) {
+		for i, x := range in {
+			binary.BigEndian.PutUint32(buffer[i*4:], math.Float32bits(x))
+		}
 
-	stream, err := portaudio.OpenDefaultStream(
-		1, 0, float64(config.SampleRate), bufferLen, func(in []float32) {
-			for i, x := range in {
-				binary.BigEndian.PutUint32(buffer[i*4:], math.Float32bits(x))
-			}
+		logrus.Debug("Sample is ready")
 
-			logrus.Debug("Sample is ready")
-
-			c.SendSample(buffer)
-		})
+		c.SendSample(buffer)
+	})
 
 	if err != nil {
 		logrus.Fatal(err)
@@ -89,4 +85,63 @@ func main() {
 		stream.Close()
 		os.Exit(0)
 	}
+}
+
+// Lists available devices
+func listDevices() {
+	err := portaudio.Initialize()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer portaudio.Terminate()
+
+	devices, err := portaudio.Devices()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	for k, v := range devices {
+		logrus.Infof("----- device #%d", k)
+		logrus.Infof("Name = %s", v.Name)
+		logrus.Infof("Max inputs = %d, Max outputs = %d", v.MaxInputChannels, v.MaxOutputChannels)
+		logrus.Infof("Default sample rate = %f", v.DefaultSampleRate)
+	}
+}
+
+type callback func(in []float32)
+
+// Opens device and returns stream
+func openDevice(deviceId int, sampleRate float64, bufferLen int, c callback) (*portaudio.Stream, error) {
+	if -1 == deviceId {
+		defaultDevice, err := portaudio.DefaultInputDevice()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		logrus.Infof("Using device %s", defaultDevice.Name)
+		logrus.Infof("Suggested rate is %f", defaultDevice.DefaultSampleRate)
+
+		return portaudio.OpenDefaultStream(
+			1, 0, sampleRate, bufferLen, c)
+	}
+
+	devices, err := portaudio.Devices()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	if len(devices) <= deviceId {
+		logrus.Fatal("Wrong device id")
+	}
+
+	logrus.Infof("Using device %d: %s", deviceId, devices[deviceId].Name)
+	logrus.Infof("Suggested rate is %f", devices[deviceId].DefaultSampleRate)
+
+	p := portaudio.HighLatencyParameters(devices[deviceId], nil)
+	p.Input.Channels = 1
+	p.Output.Channels = 1
+	p.SampleRate = sampleRate
+	p.FramesPerBuffer = bufferLen
+
+	return portaudio.OpenStream(p, c)
 }
