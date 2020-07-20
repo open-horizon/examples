@@ -7,7 +7,7 @@
   "public": true,
   "sharable": "singleton",
   "requiredServices": [
-    { "org": "$HZN_ORG_ID", "url": "mqtt", "version": "1.0.0", "arch": "$ARCH" }
+    { "org": "IBM", "url": "ibm.mqtt", "version": "1.0.0", "arch": "$ARCH" }
   ],
   "userInput": [],
   "deployment": {

@@ -1,8 +1,0 @@
-{
-    "HZN_ORG_ID": "IBM",
-    "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "openhorizon/ibm.mqtt",
-        "SERVICE_NAME": "ibm.mqtt",
-        "SERVICE_VERSION": "1.0.0"
-    }
-}

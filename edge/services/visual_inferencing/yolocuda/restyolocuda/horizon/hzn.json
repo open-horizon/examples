@@ -1,8 +1,8 @@
 {
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "openhorizon/restyolocuda",
-        "SERVICE_NAME": "restyolocuda",
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.restyolocuda",
+        "SERVICE_NAME": "ibm.restyolocuda",
         "SERVICE_VERSION": "1.0.0"
     }
 }

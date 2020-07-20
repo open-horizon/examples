@@ -1,8 +1,8 @@
 {
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "openhorizon/restcam",
-        "SERVICE_NAME": "restcam",
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.restcam",
+        "SERVICE_NAME": "ibm.restcam",
         "SERVICE_VERSION": "1.0.0"
     }
 }

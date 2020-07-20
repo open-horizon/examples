@@ -1,8 +1,8 @@
 {
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "openhorizon/yolocpu",
-        "SERVICE_NAME": "yolocpu",
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.yolocpu",
+        "SERVICE_NAME": "ibm.yolocpu",
         "SERVICE_VERSION": "1.0.0"
     }
 }

@@ -1,8 +1,8 @@
 {
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "openhorizon/restyolocpu",
-        "SERVICE_NAME": "restyolocpu",
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.restyolocpu",
+        "SERVICE_NAME": "ibm.restyolocpu",
         "SERVICE_VERSION": "1.0.0"
     }
 }

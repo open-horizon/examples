@@ -1,8 +1,8 @@
 {
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "openhorizon/yolocuda",
-        "SERVICE_NAME": "yolocuda",
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.yolocuda",
+        "SERVICE_NAME": "ibm.yolocuda",
         "SERVICE_VERSION": "1.0.0"
     }
 }
