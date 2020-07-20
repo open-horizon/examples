@@ -17,13 +17,5 @@
   "constraints": [
     "openhorizon.example == visual_inferencing"
   ],
-  "userInput": [
-      {
-        "serviceOrgid": "IBM",
-        "serviceUrl": "$SERVICE_NAME",
-        "serviceVersionRange": "[0.0.0,INFINITY)",
-        "inputs": [
-        ]
-      }
-  ]
+  "userInput": []
 }

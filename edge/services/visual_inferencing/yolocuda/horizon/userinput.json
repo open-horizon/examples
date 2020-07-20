@@ -2,7 +2,7 @@
     "services": [
         {
             "org": "IBM",
-            "url": "yolocpu",
+            "url": "ibm.yolocpu",
             "variables": {
                 "EVTSTREAMS_API_KEY": "$EVTSTREAMS_API_KEY",
                 "EVTSTREAMS_BROKER_URL": "$EVTSTREAMS_BROKER_URL",
