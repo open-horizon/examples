@@ -111,7 +111,7 @@ Follow the steps in this page to create your own CPU To IBM Event Streams Edge S
   hzn exchange service list
   ```
 
-## Publishing A Policy For Your Cpu2evtstreams Example Edge Service
+## Publishing A Policy For Your Object Detection and Classification Example Edge Service
 
 1. Set the required environment variables:
   ```bash
@@ -127,8 +127,8 @@ Follow the steps in this page to create your own CPU To IBM Event Streams Edge S
 
 3. Publish and view your deployment policy in the Horizon Exchange:
   ```bash
-  hzn exchange deployment addpolicy -f horizon/deployment.policy.json policy-${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
-  hzn exchange deployment listpolicy policy-${HZN_ORG_ID}/${SERVICE_NAME}_${SERVICE_VERSION}
+  hzn exchange deployment addpolicy -f horizon/deployment.policy.json ${HZN_ORG_ID}/policy-${SERVICE_NAME}_${SERVICE_VERSION}
+  hzn exchange deployment listpolicy ${HZN_ORG_ID}/policy-${SERVICE_NAME}_${SERVICE_VERSION}
   ```
 
 4. Register your edge device with the node policy:
@@ -156,7 +156,7 @@ Follow the steps in this page to create your own CPU To IBM Event Streams Edge S
   hzn unregister -f
   ```
   
-## Publishing A Pattern For Your Cpu2evtstreams Example Edge Service
+## Publishing A Pattern For Your Object Detection and Classification Example Edge Service
 
 1. Publish and view your edge node deployment pattern in the Horizon Exchange:
 
