@@ -15,15 +15,9 @@
             "label": "Who to say hello to",
             "type": "string",
             "defaultValue": "from the cluster!"
-        },
-        {
-            "name": "HZN_DEVICE_ID",
-            "label": "Who to say hello to",
-            "type": "string",
-            "defaultValue": "$HZN_DEVICE_ID"
         }
     ],
     "clusterDeployment": {
-        "operatorYamlArchive": "../ibm.operator.tar.gz"
+        "operatorYamlArchive": "../operator.tar.gz"
     }
 }

@@ -57,7 +57,9 @@ Follow the steps on this page to create your first operator that deploys an edge
 
 In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. To start, the Kubernetes open source documentation has an [operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) overview article which is a good resource to learn about operators. Visit the [operator-sdk getting started](https://github.com/operator-framework/getting-started#overview) page to find the steps followed to create the operator used in this example. 
 
-When following the steps in the operator-sdk documentation, the [controller file](https://github.com/operator-framework/getting-started#add-a-new-controller) is where you can specify the containerized edge service you want to deploy to the edge cluster. If you look at [line 196](https://github.com/open-horizon/examples/blob/081e2dd6243e82d52122fccbd974256ec536b1ad/edge/services/operator/simple-operator/pkg/controller/ibmserviceoperator/ibmserviceoperator_controller.go#L196) of the operator example controller file you can see the `open-horizon/ibm.helloworld_amd64:1.0.0` docker image is specified.
+**Note:** The above steps to create the operator, and the following steps to publish your operator service, and deployment policy or deployment pattern are done on a development machine (in my case a Mac) not on the cluster itself.
+
+When following the steps in the operator-sdk documentation, the [controller file](https://github.com/operator-framework/getting-started#add-a-new-controller) is where you can specify the containerized edge service you want to deploy to the edge cluster. If you look at [line 196](https://github.com/open-horizon/examples/blob/081e2dd6243e82d52122fccbd974256ec536b1ad/edge/services/operator/simple-operator/pkg/controller/ibmserviceoperator/ibmserviceoperator_controller.go#L196) of the operator example controller file you can see the `open-horizon/ibm.helloworld_amd64:1.0.0` docker image is specified. If you have no already, you can [create your own helloworld amd64 service](../helloworld/CreateService.md) and specify it in your modified operator to have it deployed to your cluster. 
 
 If you have gone through the `ibm.helloworld` example before this then you know it uses the `HZN_DEVICE_ID` in the service log output. If you want to propagate the horizon environment variables (or any other environment variables necessary for your edge service to function properly) to the edge service pods it will require a few minor additions to your controller file. The code needed to pass environment variables to your service is mostly confined to the reconcile loop and can be seen on [line 178](https://github.com/open-horizon/examples/blob/081e2dd6243e82d52122fccbd974256ec536b1ad/edge/services/operator/simple-operator/pkg/controller/ibmserviceoperator/ibmserviceoperator_controller.go#L178), and [line 198](https://github.com/open-horizon/examples/blob/081e2dd6243e82d52122fccbd974256ec536b1ad/edge/services/operator/simple-operator/pkg/controller/ibmserviceoperator/ibmserviceoperator_controller.go#L198) with the addition of importing `os` on [line 6](https://github.com/open-horizon/examples/blob/081e2dd6243e82d52122fccbd974256ec536b1ad/edge/services/operator/simple-operator/pkg/controller/ibmserviceoperator/ibmserviceoperator_controller.go#L6).
 
@@ -75,13 +77,20 @@ If you have gone through the `ibm.helloworld` example before this then you know 
    cd ~/myoperator/simple-operator/deploy
    ```
 
-3. Set the values in `horizon/hzn.json` to your own values and update the path in `horizon/service.definition.json` to point to the `ibm.operator.tar.gz` file
-
-   - Note: the `ibm.operator.tar.gz` file contains everything in the `deploy/` directory.
+3. Set the values in `horizon/hzn.json` to your own values, and open the `operator.yaml` file and edit the fourth line to change the name of the operator to one of your choosing:
+   ```json
+   metadata:
+      name: <choose-any-name>-operator
+   ```
 
 4. Testing operators is different from testing Horizon services for edge devices. If you have created your own operator file for this example, you can test it by following the steps on the `operator-sdk` getting started page under the [Run as a Deployment inside the cluster](https://github.com/operator-framework/getting-started#1-run-as-a-deployment-inside-the-cluster) section.
 
-5. With the operator tested, instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
+5. With the operator tested, update the `operator.tar.gz` file with the updated `deploy/` directory contents:
+   ```bash
+   tar -zcvf operator.tar.gz crds/ operator.yaml role_binding.yaml role.yaml service_account.yaml
+   ```
+
+6. instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
 
    ```bash
    hzn exchange service publish -f horizon/service.definition.json
@@ -102,12 +111,17 @@ If you have gone through the `ibm.helloworld` example before this then you know 
    hzn exchange deployment addpolicy -f horizon/deployment.policy.json policy-<choose-any-policy-name>
    ```
 
+**Note when working with your edge cluster:** The following steps assume you have already aliased the `hzn` command on your cluster host.
+
 9. Modify the `node.policy.json` file located in the `horizon/` directory by changing the `"properties":`  value to that of the constraint you spedified in the `deployment.policy.json` so they match and will form an agreement.
 
-10. Copy your modified `node.policy.json` file onto your edge cluster then register your cluster with your new node policy:
+10. Copy your modified `node.policy.json` file onto your edge cluster host machine.
+
+11. Register your cluster with your new node policy (this is done in two steps here; register your edge cluster with a the policy in the exchange, then update the policy to refelect your new properties:
 
    ```bash
-   hzn register --policy horizon/node.policy.json
+   hzn register -u $HZN_EXCHANGE_USER_AUTH
+   cat node.policy.json | hzn policy update -f- 
    ```
   
 11. After a minute verify that the `simple-operator` deployment is up and runing:

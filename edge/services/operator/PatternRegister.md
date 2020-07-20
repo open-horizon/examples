@@ -8,37 +8,35 @@
   
 ## <a id=using-operator-pattern></a> Using the Operator Example Edge Service with Deployment Pattern
 
-1. To execute the `hzn` commands below, `exec` inside the agent container
-```bash
-kubectl exec -it agent-<agent-pod-id> -n openhorizon-agent /bin/bash
-```
+1. Register your edge node with Horizon to use the `ibm.operator` pattern:
 
-2. Register your edge node with Horizon to use the `ibm.operator` pattern:
-
-```bash
-hzn register -p IBM/pattern-ibm.operator -s ibm.operator --serviceorg IBM
-```
+  ```bash
+  hzn register -p IBM/pattern-ibm.operator-amd64 -s ibm.operator --serviceorg IBM -u $HZN_EXCHANGE_USER_AUTH
+  ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
-3. Veryfy that the `simple-operator` deployment is up and runing:
-```bash 
-kubectl get pod -n openhorizon-agent
-```
+  2. Veryfy that the `simple-operator` deployment is up and runing:
+  ```bash 
+  kubectl get pod -n openhorizon-agent
+  ```
 
 - If everything deployed correctly you will see the operator pod in addition to three `example-ibmserviceoperator` pods running similar to following output
-```bash 
-NAME                                          READY   STATUS    RESTARTS   AGE
-agent-6d8b8895f-bpwm9                         1/1     Running   0          2d21h
-example-ibmserviceoperator-7d6849c487-5pmcb   1/1     Running   0          88s
-example-ibmserviceoperator-7d6849c487-926xt   1/1     Running   0          88s
-example-ibmserviceoperator-7d6849c487-j9z58   1/1     Running   0          88s
-simple-operator-5cd47878fc-gjcl6              1/1     Running   0          96s
-```
+  ```bash 
+  NAME                                          READY   STATUS    RESTARTS   AGE
+  agent-6d8b8895f-bpwm9                         1/1     Running   0          2d21h
+  example-ibmserviceoperator-7d6849c487-5pmcb   1/1     Running   0          88s
+  simple-operator-5cd47878fc-gjcl6              1/1     Running   0          96s
+  ```
 
-4. Verify that the operator is running successfully by checking its logs:
-```bash
-kubectl logs simple-operator-<op-id> -n openhorizon-agent
-```
+**Note:** If you are attempting to run this service on an **OCP edge cluster** and the operator does not start you may have to grant the operator the privileges it requires to execute with the following command:
+ ```bash
+ oc adm policy add-scc-to-user privileged -z simple-operator -n openhorizon-agent
+ ```
+
+3. Verify that the operator is running successfully by checking its logs:
+  ```bash
+  kubectl logs simple-operator-<op-id> -n openhorizon-agent
+  ```
 
 - If the operator is opperating correctly the logs should look similar to the following output:
 ```bash
@@ -65,20 +63,20 @@ root@gormand1:~# kubectl logs simple-operator-5cd47878fc-gjcl6 -n openhorizon-ag
 {"level":"info","ts":1590090976.612423,"logger":"controller_ibmserviceoperator","msg":"Creating a new Deployment","Request.Namespace":"openhorizon-agent","Request.Name":"example-ibmserviceoperator","Deployment.Namespace":"openhorizon-agent","Deployment.Name":"example-ibmserviceoperator"}
 ```
 
-5. Verify that the operator sucessfully deployed the `ibm.helloworld` service and the environment variables were passed into the pod:
-```bash
-kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
-```
+4. Verify that the operator sucessfully deployed the `ibm.helloworld` service and the environment variables were passed into the pod:
+  ```bash
+  kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
+  ```
 
 - if the environment variables were received by the worker pods the ouput should look similar to the following:
-```bash
-kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
-tfine-cluster-apollo1 says: Hello from the cluster!!!
-tfine-cluster-apollo1 says: Hello from the cluster!!!
-tfine-cluster-apollo1 says: Hello from the cluster!!!
-```
+  ```bash
+  kubectl logs example-ibmserviceoperator-<ex-op-id> -n openhorizon-agent
+  tfine-cluster-apollo1 says: Hello from the cluster!!!
+  tfine-cluster-apollo1 says: Hello from the cluster!!!
+  tfine-cluster-apollo1 says: Hello from the cluster!!!
+  ```
 
-6. Unregister your edge node (which will also stop the myhelloworld service):
-```bash
-hzn unregister -f
-```
+5. Unregister your edge node (which will also stop the myhelloworld service):
+  ```bash
+  hzn unregister -f
+  ```
