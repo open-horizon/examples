@@ -8,10 +8,11 @@
                 "MQTT_CLIENT_USER": "fft-client",
                 "MQTT_CLIENT_PASS": "client-pass",
                 "MQTT_CLIENT_CLIENT": "fft-client",
-                "MQTT_QOS": "2",
-                "SAMPLE_RATE": "48000",
+                "MQTT_QOS": 2,
+                "SAMPLE_RATE": 48000,
                 "LOG_LEVEL": "info",
-                "RECORD_FRAME": "3"
+                "RECORD_FRAME": 3, 
+                "DEVICE_ID": -1
             }
         },
         {
@@ -23,13 +24,13 @@
         		"MQTT_SERVER_PASS": "server-pass", 
         		"MQTT_SERVER_CLIENT": "fft-server",
                 "MQTT_RESULTS_TOPIC": "results",
-                "MQTT_QOS": "2",
-        		"SAMPLE_RATE": "48000",
+                "MQTT_QOS": 2,
+        		"SAMPLE_RATE": 48000,
                 "LOG_LEVEL": "info",
-                "NFFT": "8192",
-                "PEAKS_LIMIT": "2",
-                "PEAKS_THRESHOLD": "0.25",
-                "FREQS_THRESHOLD": "0.5"
+                "NFFT": 8192,
+                "PEAKS_LIMIT": 2,
+                "PEAKS_THRESHOLD": 0.25,
+                "FREQS_THRESHOLD": 0.5
         	}
         },
         {

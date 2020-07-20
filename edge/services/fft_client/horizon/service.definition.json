@@ -22,7 +22,8 @@
 		 { "name": "MQTT_QOS", "label": "", "type": "int", "defaultValue": "2" },
 		 { "name": "LOG_LEVEL", "label": "", "type": "string", "defaultValue": "debug" },
 		 { "name": "SAMPLE_RATE", "label": "", "type": "int", "defaultValue": "48000" },
-		 { "name": "RECORD_FRAME", "label": "", "type": "int", "defaultValue": "3" }
+		 { "name": "RECORD_FRAME", "label": "", "type": "int", "defaultValue": "3" },
+		 { "name": "DEVICE_ID", "label": "", "type": "int", "defaultValue": "-1" }
 	],
 	"deployment": {
 		"services": {

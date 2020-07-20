@@ -26,7 +26,8 @@ ENV MQTT_BROKER=volantmq:1883 \
 	MQTT_QOS=2 \
 	LOG_LEVEL=info \
 	SAMPLE_RATE=48000 \ 
-	RECORD_FRAME=3
+	RECORD_FRAME=3 \
+	DEVICE_ID=-1
 
 COPY --from=build /client /client
 ADD start.sh .
