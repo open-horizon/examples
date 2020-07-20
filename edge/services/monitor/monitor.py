@@ -13,7 +13,7 @@ from datetime import datetime
 import base64
 
 # Configuration constants
-MQTT_SUB_COMMAND = 'mosquitto_sub -h mqtt -p 1883 -C 1 '
+MQTT_SUB_COMMAND = 'mosquitto_sub -h ibm.mqtt -p 1883 -C 1 '
 MQTT_DETECT_TOPIC = '/detect'
 FLASK_BIND_ADDRESS = '0.0.0.0'
 FLASK_PORT = 5200

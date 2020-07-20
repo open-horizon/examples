@@ -42,7 +42,7 @@ if '' == CAM_URL:
   else:
     # If `restcam` is in Horizon requiredServices, then its name can be used
     try:
-      addr = socket.gethostbyname('restcam')
+      addr = socket.gethostbyname('ibm.restcam')
       CAM_URL = 'http://' + addr + ':8888/'
     except:
       # If all else fails, just give 'em Queen
@@ -51,8 +51,8 @@ if '' == CAM_URL:
 
 # Additional configuration constants
 TEMP_FILE = '/tmp/yolo.json'
-YOLO_URL = 'http://restyolocpu:80/detect?kind=jpg&url=' + urllib.parse.quote(CAM_URL)
-MQTT_PUB_COMMAND = 'mosquitto_pub -h mqtt -p 1883'
+YOLO_URL = 'http://ibm.restyolocpu:80/detect?kind=jpg&url=' + urllib.parse.quote(CAM_URL)
+MQTT_PUB_COMMAND = 'mosquitto_pub -h ibm.mqtt -p 1883'
 DEBUG_PUB_COMMAND = MQTT_PUB_COMMAND + ' -t ' + MQTT_PUB_TOPIC + ' -f '
 if '' != EVTSTREAMS_BROKER_URL and '' != EVTSTREAMS_API_KEY and '' != EVTSTREAMS_TOPIC:
   KAFKA_PUB_COMMAND = 'kafkacat -P -b ' + EVTSTREAMS_BROKER_URL + ' -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password="' + EVTSTREAMS_API_KEY + '" -t ' + EVTSTREAMS_TOPIC + ' '
