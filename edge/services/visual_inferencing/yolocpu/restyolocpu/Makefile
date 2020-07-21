@@ -7,8 +7,8 @@
 export ARCH ?= $(shell hzn architecture)
 
 # Configurable parameters passed to serviceTest.sh in "test" target
-#export MATCH:='says: Hello'
-#export TIME_OUT:=60
+export MATCH:='Running on'
+export TIME_OUT:=60
 
 # Build the docker image for the current architecture
 build:
@@ -26,16 +26,16 @@ test-all-arches:
 	ARCH=arm $(MAKE) test
 	ARCH=arm64 $(MAKE) test
 
-# # Run and verify the service
-# test: build
-# 	hzn dev service start -S
-# 	@echo 'Testing service...'
-# 	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
-# 		{ hzn dev service stop; \
-# 		echo "*** Service test succeeded! ***"; } || \
-# 		{ hzn dev service stop; \
-# 		echo "*** Service test failed! ***"; \
-# 		false ;}
+# Run and verify the service
+test: build
+	hzn dev service start -S
+	@echo 'Testing service...'
+	../../../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
+		{ hzn dev service stop; \
+		echo "*** Service test succeeded! ***"; } || \
+		{ hzn dev service stop; \
+		echo "*** Service test failed! ***"; \
+		false ;}
 
 # Target for travis to publish service and pattern after PR is merged  
 publish: 

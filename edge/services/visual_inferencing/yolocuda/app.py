@@ -62,7 +62,7 @@ SLEEP_BETWEEN_CALLS = 0.1
 
 # To log or not to log, that is the question
 LOG_STATS = False
-LOG_ALL = False
+LOG_ALL = True
 
 if __name__ == '__main__':
   while True:
