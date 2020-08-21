@@ -35,17 +35,14 @@ It has not been tested with deployment to a cluster.
 
 ## Installation
 
-### Clone the Repository
-
-TODO: Change this once it is published to examples.
+### Step 1: Clone the Repository
 
 ``` shell
-git clone https://github.com/vkorn/examples.git
+git clone https://github.com/open-horizon/examples.git
 cd examples
-git pull https://github.com/vkorn/examples.git fft-example
 ```
 
-### Editing the Services and Pattern Definition Files
+### Step 2: Editing the Services and Pattern Definition Files
 
 TODO: Templatize the files and use env vars and Makefile to automatically generate
 
@@ -80,7 +77,7 @@ Now we're ready to edit the two configuration files for the `volantmq` service.
 
 Using `vi` or your favorite editor, edit `./horizon/hzn.json`.
 
-On the line `"HZN_ORG_ID": "testorg",`, replace "testorg" with your ORG ID.
+On the line `"HZN_ORG_ID": "testorg",`, replace "testorg" with your ORG ID. If you have it specified as an environment variable, you can skip this step.
 On the line `"DOCKER_IMAGE_BASE": "openhorizon/volantmq",`, replace "openhorizon" with your dockerhub login.
 On the line `"SERVICE_NAME": "ibm.volantmq",`, remove "ibm.".
 On the line `"SERVICE_VERSION": "1.0.1"`, replace "1.0.1" with the current version you wish to set it to.
@@ -159,7 +156,7 @@ Likewise for the "fft-client" encoded password on the same line.
 
 Now you're finally done editing!
 
-### Creating the Docker Images
+### Step 3: Creating the Docker Images
 
 This is an optional step that will need to be completed if you are not planning to use existing Docker images.  
 Please feel free to skip this step otherwise.  
@@ -264,7 +261,7 @@ And push the built Docker image layers to dockerhub:
 docker push <your docker login>/fft-client
 ```
 
-### Configuring and Publishing the Service and Pattern Definition Files
+### Step 4: Configuring and Publishing the Service and Pattern Definition Files
 
 Ensure your `hzn` agent is connecting to your exchange and is authorized:
 
@@ -346,7 +343,7 @@ And likewise, the pattern in the Exchange:
 hzn exchange pattern list
 ```
 
-### Registering for the Pattern
+### Step 5: Registering for the Pattern
 
 You should already be in the `fft_client` folder and able to connect to the Exchange.
 
@@ -359,7 +356,7 @@ hzn register -p "<ex. myorg>/pattern-fft-client" -f ./horizon/userinput.json
 Once an agreement has been formed (see `hzn agreement list`) and the containers are running (see `docker ps`), you should be ready to use the FFT example service.  
 Congratulations!
 
-### Testing the Deployed Example
+### Step 6: Testing the Deployed Example
 
 Using Mosquitto or any other compatible message broker client on the same edge node, 
 connect to the message queue "results" topic to watch for detected sound patterns.  
@@ -371,12 +368,12 @@ mosquitto_sub -h localhost -p 1883 -t results -u "fft-client" -P "client-pass" -
 
 If the microphone does not detect the target sound, you should see it reporting "false".
 
-### Unregistering
+### Step 7: Unregistering
 
 To unregister your edge compute node from the example pattern, type:
 
 ``` shell
-hzn unregister
+hzn unregister -f
 ```
 
 ## Ephemera
@@ -493,7 +490,7 @@ Now you can run `fad` like this:
 ./fad
 ```
 
-On my VM it found one microphone, device 1:
+On my VM it found one microphone, device 1:t†
 
 ``` text
 PortAudio version: 0x00130600

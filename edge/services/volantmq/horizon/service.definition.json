@@ -23,7 +23,7 @@
 			"volantmq": {
 				"image": "${DOCKER_IMAGE_BASE}:${ARCH}-${SERVICE_VERSION}",
 				"privileged": false,
-				"specific_ports": [{
+				"ports": [{
 					"HostPort": "1883:1883/tcp",
 					"HostIP": "0.0.0.0"
 				}]
