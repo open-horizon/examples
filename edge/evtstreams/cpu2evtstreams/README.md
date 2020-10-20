@@ -59,6 +59,7 @@ hzn unregister -f
 
 1. Get the user input file for the cpu2evtstreams sample:
 ```bash
+wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/evtstreams/cpu2evtstreams/horizon/use/userinput.json
 ```
 2. Register your edge node with Horizon to use the cpu2evtstreams pattern:
 ```bash
