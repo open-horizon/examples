@@ -1,0 +1,7 @@
+apiVersion: hello.operator.com/v1alpha1
+kind: HelloOperatorService
+metadata:
+  name: example-hellooperatorservice
+spec:
+  # Add fields here
+  size: 3

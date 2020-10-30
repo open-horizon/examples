@@ -1,0 +1,12 @@
+---
+# tasks file for hellooperatorservice
+
+- name: Create Hello World Operator Deployment
+  k8s:
+    state: present
+    definition: "{{lookup('template', 'deployment.j2') | from_yaml}}"
+
+- name: Create Hello World Operator Service
+  k8s:
+    state: present
+    definition: "{{lookup('template', 'service.j2') | from_yaml}}"

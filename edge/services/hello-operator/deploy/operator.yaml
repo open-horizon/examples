@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: hello-operator
+  template:
+    metadata:
+      labels:
+        name: hello-operator
+    spec:
+      serviceAccountName: hello-operator
+      containers:
+        - name: hello-operator
+          # Replace this with the built image name
+          image: "openhorizon/hello.operator_amd64:1.0.0"
+          imagePullPolicy: "Always"
+          volumeMounts:
+          - mountPath: /tmp/ansible-operator/runner
+            name: runner
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "hello-operator"
+            - name: ANSIBLE_GATHERING
+              value: explicit
+      volumes:
+        - name: runner
+          emptyDir: {}

@@ -1,0 +1,17 @@
+---
+# defaults file for hellooperatorservice
+
+name: "mosquito-helloworld"
+image: "openhorizon/mosquito.helloworld_amd64:1.0.0"
+image_pull_policy: IfNotPresent
+
+service_port: 8000
+service_topology_key: kubernetes.io/9.30.91.170
+
+resources: 
+  limits:
+   cpu: 100m
+   memory: 2Gi
+  requests:
+   cpu: 100m
+   memory: 2Gi
