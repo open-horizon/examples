@@ -1,8 +1,0 @@
-{
-    "HZN_ORG_ID": "mycluster",
-    "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "troyfine/hello-operator-beta",
-        "SERVICE_NAME": "hello-operator-beta",
-        "SERVICE_VERSION": "0.0.1"
-    }
-}

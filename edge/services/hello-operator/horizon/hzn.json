@@ -1,8 +1,8 @@
 {
-    "HZN_ORG_ID": "mycluster",
+    "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "troyfine/hello.operator",
-        "SERVICE_NAME": "hello.operator",
+        "DOCKER_IMAGE_BASE": "",
+        "SERVICE_NAME": "hello-operator",
         "SERVICE_VERSION": "1.0.0"
     }
 }

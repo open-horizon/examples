@@ -1,6 +1,6 @@
 {
   "properties": [
-    { "name": "openhorizon.example", "value": "operator" }
+    { "name": "openhorizon.example", "value": "hello-operator" }
   ],
   "constraints": [
   ]

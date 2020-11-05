@@ -15,7 +15,7 @@
   "properties": [
   ],
   "constraints": [
-    "example == beta-operator"
+    "openhorizon.example == hello-operator"
   ],
   "userInput": [
   ]
