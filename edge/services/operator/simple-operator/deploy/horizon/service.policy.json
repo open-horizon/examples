@@ -1,6 +1,0 @@
-{
-    "properties": [],
-    "constraints": [
-        "openhorizon.arch == amd64"
-    ]
-}

@@ -69,9 +69,9 @@ In order to deploy a containerized edge service to an edge cluster, a software d
 
 2. The above command will give you a blank ansible operator. At the very least you will need to define a `deployment`, `service`, and a set of tasks to deploy a service. For this example I have created these files to deploy the `openhorizon/mosquito.helloworld_amd64:1.0.0` image. Obtain them and move them into the `hellooperatorservice` roles directory with the following commands:
    ```bash
-   wget deployment.j2 && mv deployment.j2 roles/hellooperatorservice/templates/ 
-   wget service.j2 && mv service.j2 roles/hellooperatorservice/templates/
-   wget main.yml && mv main.yml froles/hellooperatorservice/tasks/
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/hello-operator/ansible-role-files/deployment.j2 && mv deployment.j2 roles/hellooperatorservice/templates/ 
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/hello-operator/ansible-role-files/service.j2 && mv service.j2 roles/hellooperatorservice/templates/
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/hello-operator/ansible-role-files/main.yml && mv main.yml roles/hellooperatorservice/tasks/
    ```
 
 3. Build the operator image:

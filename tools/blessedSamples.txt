@@ -1,1 +1,6 @@
+edge/services/cpu_percent
+edge/services/gps
+edge/services/helloworld
+edge/services/helloMMS
 edge/services/hello-operator
+edge/evtstreams/cpu2evtstreams
