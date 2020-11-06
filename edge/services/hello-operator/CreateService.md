@@ -16,7 +16,7 @@ Follow the steps on this page to create your first ansible operator that deploys
 
 3. Install [operator-sdk](https://github.com/operator-framework/operator-sdk/tree/v0.17.x#prerequisites) and all its prerequisites. This example was created using version `0.17`, and at has not been tested on any other versions.
 
-4. Install the Kubenetes CLI [kubectl]{https://kubernetes.io/docs/tasks/tools/install-kubectl/}
+4. Install the Kubenetes CLI [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
 3. If you do not already have a docker ID, obtain one at https://hub.docker.com/ . Log in to Docker Hub using your Docker Hub ID:
 
