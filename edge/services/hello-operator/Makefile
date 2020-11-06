@@ -36,7 +36,7 @@ publish-service-overwrite:
 publish-service-policy:
 	hzn exchange service addpolicy -f horizon/service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
 
-# Publish Business Policy target for exchange publish script
+# Publish Deployment Policy target for exchange publish script
 publish-deployment-policy:
 	hzn exchange deployment addpolicy -f horizon/deployment.policy.json $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
 

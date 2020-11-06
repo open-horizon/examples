@@ -52,7 +52,7 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 ## <a id=using-operator-policy></a> Using the Operator Example Edge Service with Deployment Policy
 
-In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create a pod running the `ibm.helloworld` service.
+In the following steps you will deploy the `hello-operator` to your edge cluster. This operator will then create a pod running a hello world service you can `curl` externally or interally.
 
 1. Get the required node policy file on your edge cluster host:
   ```bash
@@ -149,7 +149,7 @@ In the following steps you will deploy the `ibm.operator` to your edge cluster. 
   oc adm policy add-scc-to-user privileged -z hello-operator -n openhorizon-agent
   ```
 
-6. Verify that the operator is running successfully by curl-ing the service using one of the following methods:
+6. Verify that the operator is running successfully by `curl`-ing the service using one of the following methods:
   ```bash
    curl -sS <INTERNAL_IP>:8000 | jq .
 

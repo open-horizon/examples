@@ -8,9 +8,9 @@
   
 ## <a id=using-operator-pattern></a> Using the Operator Example Edge Service with Deployment Pattern
 
-1. Register your edge node with Horizon to use the `ibm.operator` pattern:
+1. Register your edge node with Horizon to use the `hello-operator` pattern:
   ```bash
-  hzn register -p IBM/pattern-hello-operator-amd64 -s hello-operator --serviceorg IBM -u $HZN_EXCHANGE_USER_AUTH
+  hzn register -p IBM/pattern-hello.operator-amd64 -u $HZN_EXCHANGE_USER_AUTH
   ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 
@@ -33,7 +33,7 @@
   oc adm policy add-scc-to-user privileged -z hello-operator -n openhorizon-agent
   ```
 
-3. Verify that the operator is running successfully by curl-ing the service using one of the following methods:
+3. Verify that the operator is running successfully by `curl`-ing the service using one of the following methods:
   ```bash
    curl -sS <INTERNAL_IP>:8000 | jq .
 

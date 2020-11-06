@@ -107,7 +107,7 @@ If everything deployed correctly you should see an output similar to the followi
    mosquito-helloworld-7f7cb95db5-tq6m6   1/1     Running   0          76s
    ```
 
-7. To test the service is functioning correctly you can curl the service using one of two methods:
+7. To test the service is functioning correctly you can `curl` the service using one of two methods:
    ```bash
    curl -sS <INTERNAL_IP>:8000 | jq .
 
@@ -241,7 +241,7 @@ If everything deployed correctly you should see an output similar to the followi
    mosquito-helloworld-7bccc7668c-x9qf7   1/1     Running   0          7s
    ```
 
-7. You can now test the service is funcitoning correctly again by curl-ing the service using of of two methods:
+7. You can now test the service is funcitoning correctly again by `curl`-ing the service using of of two methods:
    ```
    curl -sS <INTERNAL_IP>:8000 | jq .
 
