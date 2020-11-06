@@ -19,7 +19,7 @@
   kubectl get pods -n openhorizon-agent
   ```
 
-- If everything deployed correctly you will see the operator pod in addition to the `example-ibmserviceoperator` pod running similar to following output:
+- If everything deployed correctly you you should see output similar to the following:
 
   ```
    NAME                                   READY   STATUS    RESTARTS   AGE
@@ -33,7 +33,7 @@
   oc adm policy add-scc-to-user privileged -z hello-operator -n openhorizon-agent
   ```
 
-6. Verify that the operator is running successfully by curl-ing the service using one of the following methods:
+3. Verify that the operator is running successfully by curl-ing the service using one of the following methods:
   ```bash
    curl -sS <INTERNAL_IP>:8000 | jq .
 
@@ -49,7 +49,7 @@ If the service is running you should see output similar to the following:
    }
    ```
 
-7. Unregister your edge node (which will also stop the operator and helloworld service):
+4. Unregister your edge node (which will also stop the operator and helloworld service):
   ```bash
   hzn unregister -f
   ```

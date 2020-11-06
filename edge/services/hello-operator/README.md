@@ -33,14 +33,12 @@ If you haven't done so already, you must do these steps before proceeding with t
   ```
 
 5. In addition to the file above, an API key associated with your Horizon instance would have been created, set the exchange user credentials, and verify them:
-
   ```bash
   export HZN_EXCHANGE_USER_AUTH=iamapikey:<horizon-API-key>
   hzn exchange user list -u $HZN_EXCHANGE_USER_AUTH
   ```
 
 6. Choose an ID and token for your edge node, create it, and verify it:
-
   ```bash
   export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
   hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH -u $HZN_EXCHANGE_USER_AUTH
@@ -48,7 +46,6 @@ If you haven't done so already, you must do these steps before proceeding with t
   ```
 
 7. If you have not done so already, unregister your node before moving on:
-
   ```bash
   hzn unregister -f
   ```
@@ -58,7 +55,6 @@ If you haven't done so already, you must do these steps before proceeding with t
 In the following steps you will deploy the `ibm.operator` to your edge cluster. This operator will then create a pod running the `ibm.helloworld` service.
 
 1. Get the required node policy file on your edge cluster host:
-
   ```bash
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/hello-operator/horizon/node.policy.json
   ```
@@ -78,20 +74,17 @@ In the following steps you will deploy the `ibm.operator` to your edge cluster. 
 - It provides one value for `properties` (`openhorizon.example`), that will effect which services get deployed to this edge node, and states no `constraints`.
 
 2. Register your Node Policy with this policy
-
   ```bash
   hzn register -u $HZN_EXCHANGE_USER_AUTH
   cat node.policy.json | hzn policy update -f-
   ```
 
 3. When the registration completes, use the following command to review the Node Policy:
-
   ```bash
   hzn policy list
   ```
 
 4. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
-
   ```bash
   hzn agreement list
   ```
@@ -135,14 +128,14 @@ In the following steps you will deploy the `ibm.operator` to your edge cluster. 
       "lastUpdated": "2020-11-05T19:18:17.722Z[UTC]"
     }
   }
-```
+  ```
 
 5. Verify that the `hello-operator` deployment is up and running:
   ```bash
   kubectl get pods -n openhorizon-agent
   ```
 
-- If everything deployed correctly you will see the operator pod in addition to the `example-ibmserviceoperator` pod running similar to following output:
+- If everything deployed correctly you should see output similar to the following:
 
   ```
    NAME                                   READY   STATUS    RESTARTS   AGE
