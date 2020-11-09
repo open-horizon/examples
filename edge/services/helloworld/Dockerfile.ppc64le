@@ -1,0 +1,11 @@
+FROM ppc64le/alpine:latest
+
+# Create hzngroup and hznuser
+RUN addgroup -S hzngroup && adduser -S hznuser -G hzngroup
+
+# Run container as hznuser user
+USER hznuser
+
+COPY *.sh /
+WORKDIR /
+CMD /service.sh

@@ -19,12 +19,14 @@ build-all-arches:
 	ARCH=amd64 $(MAKE) build
 	ARCH=arm $(MAKE) build
 	ARCH=arm64 $(MAKE) build
+	ARCH=ppc64le $(MAKE) build
 
 # Target for travis to test new PRs
 test-all-arches:
 	ARCH=amd64 $(MAKE) test
 	ARCH=arm $(MAKE) test
 	ARCH=arm64 $(MAKE) test
+	ARCH=ppc64le $(MAKE) test
 
 # Run and verify the service
 test: build
@@ -49,6 +51,8 @@ publish:
 	ARCH=arm $(MAKE) publish-service-policy
 	ARCH=arm64 $(MAKE) publish-service
 	ARCH=arm64 $(MAKE) publish-service-policy
+	ARCH=ppc64le $(MAKE) publish-service
+	ARCH=ppc64le $(MAKE) publish-service-policy
 	$(MAKE) publish-deployment-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
@@ -60,6 +64,7 @@ publish-all-arches:
 	ARCH=amd64 $(MAKE) build-test-publish
 	ARCH=arm $(MAKE) build-test-publish
 	ARCH=arm64 $(MAKE) build-test-publish
+	ARCH=ppc64le $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # target for script - overwrite and pull insitead of push docker image
@@ -82,6 +87,8 @@ publish-only:
 	ARCH=arm $(MAKE) publish-service-policy
 	ARCH=arm64 $(MAKE) publish-service-overwrite
 	ARCH=arm64 $(MAKE) publish-service-policy
+	ARCH=ppc64le $(MAKE) publish-service-overwrite
+	ARCH=ppc64le $(MAKE) publish-service-policy
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 clean:
@@ -91,6 +98,7 @@ clean-all-archs:
 	ARCH=amd64 $(MAKE) clean
 	ARCH=arm $(MAKE) clean
 	ARCH=arm64 $(MAKE) clean
+	ARCH=ppc64le $(MAKE) clean
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.json.tmp.mk: horizon/hzn.json
