@@ -88,7 +88,7 @@ func ListLinks() (links map[string]bool, err error) {
 		fmt.Println(err)
 		return
 	}
-	r, err := regexp.Compile("http://www.bbc.co.uk/programmes/([a-z]|[0-9]){8}")
+	r, err := regexp.Compile("https://www.bbc.co.uk/programmes/([a-z]|[0-9]){8}")
 	if err != nil {
 		fmt.Println(err)
 		return

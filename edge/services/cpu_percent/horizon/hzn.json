@@ -3,6 +3,6 @@
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.cpu",
         "SERVICE_NAME": "ibm.cpu",
-        "SERVICE_VERSION": "1.2.5"
+        "SERVICE_VERSION": "1.2.6"
     }
 }

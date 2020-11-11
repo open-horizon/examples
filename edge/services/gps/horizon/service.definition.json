@@ -14,7 +14,7 @@
       "name": "HZN_GPS_PORT",
       "label": "REST API port",
       "type": "int",
-      "defaultValue": "80"
+      "defaultValue": "8080"
     },
     {
       "name": "HZN_USE_GPS",
