@@ -31,8 +31,8 @@ SAMPLE_SIZE="${SAMPLE_SIZE:-10}"    # the number of cpu samples to read before c
 PUBLISH="${PUBLISH:-true}"    # whether or not to actually send data to IBM Event Streams
 MOCK="${MOCK:-false}"     # if "true", just pretend to call the cpu service REST API
 VERBOSE="${VERBOSE:-0}"    # set to 1 for verbose output
-CPU_URL="${CPU_URL:-http://ibm.cpu:80/v1/ibm.cpu}"
-GPS_URL="${GPS_URL:-http://ibm.gps:80/v1/gps/location}"
+CPU_URL="${CPU_URL:-http://ibm.cpu:8080/v1/ibm.cpu}"
+GPS_URL="${GPS_URL:-http://ibm.gps:8080/v1/gps/location}"
 
 echo "Optional environment variables (or default values): SAMPLE_INTERVAL=$SAMPLE_INTERVAL, SAMPLE_SIZE=$SAMPLE_SIZE, PUBLISH=$PUBLISH, MOCK=$MOCK"
 

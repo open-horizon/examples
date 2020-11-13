@@ -176,7 +176,7 @@ const (
 
 // Configuration variable default values
 const (
-	DEFAULT_GPS_PORT             = 80
+	DEFAULT_GPS_PORT             = 8080
 	DEFAULT_USE_GPS              = false
 	DEFAULT_LATITUDE             = 0.0
 	DEFAULT_LONGITUDE            = 0.0
