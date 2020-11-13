@@ -2,7 +2,7 @@
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "",
-        "SERVICE_NAME": "ibm.operator",
+        "SERVICE_NAME": "hello.operator",
         "SERVICE_VERSION": "1.0.0"
     }
 }

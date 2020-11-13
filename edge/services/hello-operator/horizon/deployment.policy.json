@@ -15,19 +15,8 @@
   "properties": [
   ],
   "constraints": [
-    "openhorizon.example == operator"
+    "openhorizon.example == hello-operator"
   ],
   "userInput": [
-      {
-        "serviceOrgid": "IBM",
-        "serviceUrl": "$SERVICE_NAME",
-        "serviceVersionRange": "[0.0.0,INFINITY)",
-        "inputs": [
-            {
-                "name": "HW_WHO",
-                "value": "from the cluster!"
-            }
-        ]
-      }
   ]
 }
