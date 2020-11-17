@@ -2,7 +2,7 @@
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME",
     "description": "Vocie to Audio service",
-    "public": true,
+    "public": false,
     "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/voice2audio/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",

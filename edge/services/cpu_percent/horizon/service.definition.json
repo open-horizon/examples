@@ -2,7 +2,7 @@
   "org": "$HZN_ORG_ID",
   "label": "$SERVICE_NAME for $ARCH",
   "description": "Provides a REST API to query the CPU percent",
-  "public": true,
+  "public": false,
   "documentation": "https://github.com/open-horizon/examples/tree/master/edge/services/cpu_percent/README.md",
   "url": "$SERVICE_NAME",
   "version": "$SERVICE_VERSION",

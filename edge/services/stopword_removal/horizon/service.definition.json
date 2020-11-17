@@ -2,7 +2,7 @@
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME for $ARCH",
     "description": "Sample Horizon service that removes stopwords listed in stopwordremoval.py",
-    "public": true,
+    "public": false,
     "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/stopword_removal/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",

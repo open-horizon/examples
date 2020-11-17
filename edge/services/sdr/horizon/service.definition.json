@@ -2,7 +2,7 @@
   "org": "$HZN_ORG_ID",
   "label": "$SERVICE_NAME for $ARCH",
   "description": "Provides a REST API to capture 30 second clips of FM radio",
-  "public": true,
+  "public": false,
   "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/sdr/README.md",
   "url": "$SERVICE_NAME",
   "version": "$SERVICE_VERSION",

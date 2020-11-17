@@ -161,6 +161,14 @@ do
     if [[ $EXCLUDE_IBM_PUBLISH != 'true' ]]; then
         echo "Publishing services and patterns of $sample to IBM org..."
         if [[ $EXAMPLES_PREVIEW_MODE != 'true' ]]; then
+            serviceDefinitionFiles=(horizon/service.definition.json horizon/pattern-all-arches.json horizon/pattern.json)
+            for sd in ${serviceDefinitionFiles[@]};
+            do
+                if [[ -f $sd ]]; then
+                    tmpfile=$(mktemp) && jq '.public = true' $sd > tmpfile && mv tmpfile $sd && rm "$tmpfile"
+                    chk $? "modifying horizon metadata file $sd"
+                fi
+            done
             runCmdQuietly make publish-only
         fi
     fi

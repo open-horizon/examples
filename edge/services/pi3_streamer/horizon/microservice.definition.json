@@ -2,7 +2,7 @@
   "org": "$HZN_ORG_ID",
   "label": "$PI3STREAMER_NAME for $ARCH",
   "description": "Provides a stream endpoint on LAN from a RPi3 camera feed (RPi Cam)",
-  "public": true,
+  "public": false,
   "specRef": "https://$MYDOMAIN/microservices/$PI3STREAMER_NAME",
   "version": "$PI3STREAMER_VERSION",
   "arch": "$ARCH",

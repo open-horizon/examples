@@ -2,7 +2,7 @@
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME for $ARCH",
     "description": "Sample Horizon service that sends 30 second clips of FM radio rich in speech to IBM Event Streams",
-    "public": true,
+    "public": false,
     "documentation": "https://github.com/open-horizon/examples/blob/master/edge/evtstreams/sdr2evtstreams/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",

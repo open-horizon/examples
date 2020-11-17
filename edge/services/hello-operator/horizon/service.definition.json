@@ -2,7 +2,7 @@
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME for $ARCH",
     "description": "",
-    "public": true,
+    "public": false,
     "documentation": "",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",

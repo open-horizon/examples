@@ -2,7 +2,7 @@
   "org": "$HZN_ORG_ID",
   "label": "$PWSMS_NAME for $ARCH",
   "description": "",
-  "public": true,
+  "public": false,
   "specRef": "https://$MYDOMAIN/microservices/$PWSMS_NAME",
   "version": "$PWSMS_VERSION",
   "arch": "$ARCH",

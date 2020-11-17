@@ -2,7 +2,7 @@
     "org": "$HZN_ORG_ID",
     "label": "$SERVICE_NAME for $ARCH",
     "description": "Speech to text service using offline Espeak Tool",
-    "public": true,
+    "public": false,
     "documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/text2speech/README.md",
     "url": "$SERVICE_NAME",
     "version": "$SERVICE_VERSION",
