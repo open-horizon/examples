@@ -36,9 +36,9 @@ fi
 
 # Display and execute 1 cmd at a time
 for cmd in "${cmds[@]}"; do
-    printf '$ '   # display prompt so we wait before displaying the next cmd
+    printf '\e[0;32m$ \e[0m'   # display prompt so we wait before displaying the next cmd
     read junk   # wait for them to hit enter
-    printf "\$ $cmd"   # display the cmd with no newline
+    printf '\e[0;32m$ \e[0m'"$cmd"   # display the cmd with no newline
     read junk   # wait for them to hit enter
     eval "$cmd"   # eval the cmd so it runs in this process, in case it is setting a variable
 done
