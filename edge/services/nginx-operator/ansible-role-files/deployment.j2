@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: {{ meta.namespace }}
+  labels: 
+    app.kubernetes.io/name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: nginx
+  template:
+    metadata:
+      labels: 
+        app.kubernetes.io/name: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged
+          imagePullPolicy: Always
+          ports:
+            - protocol: TCP
+              containerPort: 8080

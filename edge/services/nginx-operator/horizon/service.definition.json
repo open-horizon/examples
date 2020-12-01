@@ -10,6 +10,12 @@
     "sharable": "multiple",
     "requiredServices": [],
     "userInput": [
+        {
+            "name": "",
+            "label": "",
+            "type": "",
+            "defaultValue": ""
+        }
     ],
     "clusterDeployment": {
         "operatorYamlArchive": "../operator.tar.gz"

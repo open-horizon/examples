@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: nginx-route
+  namespace: {{ meta.namespace }}
+spec:
+  to:
+    kind: Service
+    name: nginx
+    weight: 100
+  port:
+    targetPort: 8080
+  wildcardPolicy: None
