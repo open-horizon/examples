@@ -62,33 +62,41 @@ cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
 ```
 
-2. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
+2. Checkout the branch that corresponds to your horizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
+```bash
+$ hzn version
+Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
+Horizon Agent version: 2.27.0-173
+$ git checkout v2.27
+```
+
+3. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
 ```bash
 cp -a examples/edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
 
-3. Set the values in `horizon/hzn.json` to your own values.
+4. Set the values in `horizon/hzn.json` to your own values.
 
-4. Edit `service.sh` however you want.
+5. Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
-5. Build the cpu2evtstreams docker image:
+6. Build the cpu2evtstreams docker image:
 ```bash
 make
 ```
 
-6. Test the service by having Horizon start it locally:
+7. Test the service by having Horizon start it locally:
 ```bash
 hzn dev service start -S
 ```
 
-7. Check that the container is running:
+8. Check that the container is running:
 ```bash
 sudo docker ps 
 ```
 
-8. See the cpu2evtstreams service output:
+9. See the cpu2evtstreams service output:
 
  	on **Linux**:
  	```
@@ -100,17 +108,17 @@ sudo docker ps
  	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
  	``` 
 
-9. See the environment variables Horizon passes into your service container:
+10. See the environment variables Horizon passes into your service container:
 ```bash
 docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
 ```
 
-10. Stop the service:
+11. Stop the service:
 ```bash
 hzn dev service stop
 ```
 
-11. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+12. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```bash
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
