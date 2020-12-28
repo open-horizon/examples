@@ -137,6 +137,8 @@ if [[ -d "$LOCAL_PATH_TO_EXAMPLES" ]]; then
     echo "Directory $LOCAL_PATH_TO_EXAMPLES already exists, can not git clone into it. Will try to proceed assuming it was git cloned previously..."
 else
     echo "Cloning $EXAMPLES_REPO to $LOCAL_PATH_TO_EXAMPLES ..."
+    #Adjust the default vaule of postBuffer for curl
+    runCmdQuietly git config --global http.postBuffer 524288000
     #runCmdQuietly git clone $EXAMPLES_REPO_BRANCH $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
     runCmdQuietly git clone $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
 fi
