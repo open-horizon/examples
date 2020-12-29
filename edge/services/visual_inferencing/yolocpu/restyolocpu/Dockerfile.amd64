@@ -1,0 +1,31 @@
+FROM ubuntu:bionic
+
+# Install build tools
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates git make g++ python-pip python-setuptools python-dev zlib1g-dev libjpeg-dev wget curl jq
+
+# Required libraries
+RUN pip install wheel
+RUN pip install flask requests pillow
+
+# Download and build the latest darknet
+WORKDIR /
+RUN git clone https://github.com/pjreddie/darknet
+WORKDIR /darknet
+RUN make
+
+# Get YOLO cfg and weights files
+WORKDIR /darknet
+RUN wget -O yolo-tiny.cfg https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov2-tiny.cfg 
+RUN wget -O yolo-tiny.weights https://pjreddie.com/media/files/yolov2-tiny.weights
+
+# Copy over the logo(s)
+COPY o-h.png /
+COPY logo.png /
+
+# Copy over the darknet and webserver code
+COPY darknet.py /
+
+# Startup the daemon
+WORKDIR /darknet
+CMD python /darknet.py yolo-tiny.cfg yolo-tiny.weights cfg/coco.data
+
