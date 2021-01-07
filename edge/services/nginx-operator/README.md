@@ -52,11 +52,11 @@ If you haven't done so already, you must do these steps before proceeding with t
 
 ## <a id=using-operator-policy></a> Using the Operator Example Edge Service with Deployment Policy
 
-In the following steps you will deploy the `hello-operator` to your edge cluster. This operator will then create a pod running a hello world service you can `curl` externally or interally.
+In the following steps you will deploy the `nginx-operator` to your edge cluster. This operator will then create a pod running a hello world service you can `curl` externally or interally.
 
 1. Get the required node policy file on your edge cluster host:
   ```bash
-  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/hello-operator/horizon/node.policy.json
+  wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/horizon/node.policy.json
   ```
 
 - Below is the `node_policy.json` file you obtained in the step above:
@@ -64,7 +64,7 @@ In the following steps you will deploy the `hello-operator` to your edge cluster
   ```json
   {
     "properties": [
-      { "name": "openhorizon.example", "value": "hello-operator" }
+      { "name": "openhorizon.example", "value": "nginx-operator" }
     ],
     "constraints": [
     ]
@@ -106,10 +106,10 @@ In the following steps you will deploy the `hello-operator` to your edge cluster
   {
     "mycluster/policy-hello-operator": {
       "owner": "root/root",
-      "label": "hello-operator Deployment Policy",
+      "label": "nginx-operator Deployment Policy",
       "description": "A super-simple sample Horizon Deployment Policy",
       "service": {
-        "name": "hello-operator",
+        "name": "nginx-operator",
         "org": "IBM",
         "arch": "*",
         "serviceVersions": [
@@ -122,7 +122,7 @@ In the following steps you will deploy the `hello-operator` to your edge cluster
         "nodeHealth": {}
       },
       "constraints": [
-        "openhorizon.example == hello-operator"
+        "openhorizon.example == nginx-operator"
       ],
       "created": "2020-11-05T19:18:17.722Z[UTC]",
       "lastUpdated": "2020-11-05T19:18:17.722Z[UTC]"
@@ -130,43 +130,83 @@ In the following steps you will deploy the `hello-operator` to your edge cluster
   }
   ```
 
-5. Verify that the `hello-operator` deployment is up and running:
+5. Verify that the `nginx-operator` deployment is up and running:
   ```bash
   kubectl get pods -n openhorizon-agent
   ```
 
-- If everything deployed correctly you should see output similar to the following:
-
+If everything deployed correctly you should see an output similar to the following:
   ```
-   NAME                                   READY   STATUS    RESTARTS   AGE
-   agent-dd984ff96-jmmdl                  1/1     Running   0          1d
-   hello-operator-6c5f8c4458-6ggwx        1/1     Running   0          24s
-   mosquito-helloworld-7bccc7668c-x9qf7   1/1     Running   0          7s
-   ```
-
-**Note:** If you are attempting to run this service on an **OCP edge cluster** and the operator does not start you may have to grant the operator the privileges it requires to execute with the following command:
-  ```bash
-  oc adm policy add-scc-to-user privileged -z hello-operator -n openhorizon-agent
+  NAME                                   READY   STATUS    RESTARTS   AGE
+  agent-dd984ff96-jmmdl                  1/1     Running   0          1d
+  nginx-8699f45b-pw7dj                   1/1     Running   0          23s
+  nginx-operator-898999564-nnzb5         1/1     Running   0          50s
   ```
 
-6. Verify that the operator is running successfully by `curl`-ing the service using one of the following methods:
+6. Check that the service is up:
   ```bash
-   curl -sS <INTERNAL_IP>:8000 | jq .
-
-   - or externally - 
-
-   curl -sS <NODE_IP>:30007 | jq .
-   ```
-
-If the service is running you should see output similar to the following:
-   ```json
-   {
-     "Hello": "10.22.29.174"
-   }
-   ```
-
-7. Unregister your edge node (which will also stop the operator and helloworld service):
-
-  ```bash
-  hzn unregister -f
+  kubectl get service -n openhorizon-agent
   ```
+
+If everything deployed correctly you should see an output similar to the following after around 60 seconds:
+  ```
+  NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+  nginx                 NodePort    172.30.37.113    <none>        80:30080/TCP        45s
+  ```
+
+If you are using an **OCP edge cluster** you will need to `curl` the service using the exposed `route`.
+7. Get the exposed route name:
+  ```bash
+  kubectl get route -n openhorizon-agent
+  ```
+  
+If the route was exposed correctly you should see an output similar to the following:
+  ```bash
+  NAME          HOST/PORT                                                    PATH   SERVICES   PORT   TERMINATION   WILDCARD
+  nginx-route   nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com          nginx      8080                 None
+  ```
+
+8. `curl` the service to test if it is functioning correctly:
+   **OCP edge cluster** substitute the above `HOST/PORT` value:
+      ```bash
+      curl nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com
+      ```
+   
+   **k3s or microk8s edge cluster**:
+      ```bash
+      curl <external-ip-address>:30080
+      ```
+
+If the service is running you should see following `Welcome to nginx!` output:
+   ```
+   <!DOCTYPE html>
+   <html>
+   <head>
+   <title>Welcome to nginx!</title>
+   <style>
+       body {
+           width: 35em;
+         margin: 0 auto;
+         font-family: Tahoma, Verdana, Arial, sans-serif;
+      }
+   </style>
+   </head>
+   <body>
+   <h1>Welcome to nginx!</h1>
+   <p>If you see this page, the nginx web server is successfully installed and
+   working. Further configuration is required.</p>
+
+   <p>For online documentation and support please refer to
+   <a href="http://nginx.org/">nginx.org</a>.<br/>
+   Commercial support is available at
+   <a href="http://nginx.com/">nginx.com</a>.</p>
+
+   <p><em>Thank you for using nginx.</em></p>
+   </body>
+   </html>
+   ```
+
+9. Unregister your edge cluster:
+   ```
+   hzn unregister -f
+   ```

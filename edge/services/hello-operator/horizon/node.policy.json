@@ -1,7 +1,0 @@
-{
-  "properties": [
-    { "name": "openhorizon.example", "value": "hello-operator" }
-  ],
-  "constraints": [
-  ]
-}
