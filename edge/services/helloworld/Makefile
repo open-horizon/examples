@@ -69,7 +69,7 @@ publish-all-arches:
 
 # target for script - overwrite and pull insitead of push docker image
 publish-service-overwrite:
-	hzn exchange service publish -O -P -f horizon/service.definition.json
+	hzn exchange service publish -O -P --public=true -f horizon/service.definition.json
 
 # Publish Service Policy target for exchange publish script
 publish-service-policy:

@@ -61,49 +61,57 @@ Follow the steps in this page to create your first Horizon edge service that use
   cd ~   # or wherever you want
   git clone git@github.com:open-horizon/examples.git
   ```
+2. Checkout the branch that corresponds to your horizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
 
-2. Copy the `hello-mms` dir to where you will start development of your new service:
+  ```bash
+  $ hzn version
+  Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
+  Horizon Agent version: 2.27.0-173
+  $ git checkout v2.27
+  ```
+
+3. Copy the `hello-mms` dir to where you will start development of your new service:
 
   ```bash
   cp -a examples/edge/services/helloMMS ~/myservice     # or wherever
   cd ~/myservice
   ```
 
-3. Set the values in `horizon/hzn.json` to your liking. These variables are used in the service and pattern files in `horizon` and in the MMS metadata file `object.json`. They are also used in some of the commands in this procedure. After editing `horizon/hzn.json`, set the variables in your environment:
+4. Set the values in `horizon/hzn.json` to your liking. These variables are used in the service and pattern files in `horizon` and in the MMS metadata file `object.json`. They are also used in some of the commands in this procedure. After editing `horizon/hzn.json`, set the variables in your environment:
 
   ```bash
   eval $(hzn util configconv -f horizon/hzn.json)
   ```
 
-4. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello". While you are editing `service.sh`, read the comments and code to learn the basic pattern for using a MMS file in an edge service. This coding pattern will be the same, regardless of what language you implement your own edge services in.
+5. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello". While you are editing `service.sh`, read the comments and code to learn the basic pattern for using a MMS file in an edge service. This coding pattern will be the same, regardless of what language you implement your own edge services in.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
-5. Build the service docker image. Note that the Dockerfiles copy `config.json` into the service image for it to initially use.
+6. Build the service docker image. Note that the Dockerfiles copy `config.json` into the service image for it to initially use.
 
   ```bash
   make
   ```
 
-6. Test the service by running it the simulated agent environment. (`HZN_PATTERN` is set so the simulated environment can find MMS object in subsequent steps.)
+7. Test the service by running it the simulated agent environment. (`HZN_PATTERN` is set so the simulated environment can find MMS object in subsequent steps.)
 
   ```bash
   export HZN_PATTERN=pattern-${SERVICE_NAME}-$(hzn architecture)
   hzn dev service start
   ```
 
-7. Check that the container is running:
+8. Check that the container is running:
 
   ```bash
   sudo docker ps
   ```
 
-8. Display the environment variables Horizon passes into your service container. Note the variables that start with `HZN_ESS_`. These are used by the service to contact the local MMS proxy.
+9. Display the environment variables Horizon passes into your service container. Note the variables that start with `HZN_ESS_`. These are used by the service to contact the local MMS proxy.
 
   ```bash
   sudo docker inspect $(sudo docker ps -q --filter name=$SERVICE_NAME) | jq '.[0].Config.Env'
   ```
 
-9. **Open another terminal to the same working directory** then set the `horizon/hzn.json` variable values in this environment and view the service output (you should see messages like **\<your-node-id\> says: Hello from the dockerfile!**:
+10. **Open another terminal to the same working directory** then set the `horizon/hzn.json` variable values in this environment and view the service output (you should see messages like **\<your-node-id\> says: Hello from the dockerfile!**:
 
   on **Linux**:
 
@@ -119,7 +127,7 @@ Follow the steps in this page to create your first Horizon edge service that use
   sudo docker logs -f $(sudo docker ps -q --filter name=$SERVICE_NAME)
   ```
 
-10. While observing the output in the other terminal, modify `config.json` and publish it as a new mms object, using the provided `object.json` metadata. Since you are running in the local simulated agent environment right now, the `hzn mms ...` commands must be directed to the local MMS.
+11. While observing the output in the other terminal, modify `config.json` and publish it as a new mms object, using the provided `object.json` metadata. Since you are running in the local simulated agent environment right now, the `hzn mms ...` commands must be directed to the local MMS.
 
   ```bash
   jq '.HW_WHO = "from the MMS"' config.json > config.tmp && mv config.tmp config.json
@@ -127,7 +135,7 @@ Follow the steps in this page to create your first Horizon edge service that use
   HZN_FSS_CSSURL=http://localhost:8580  hzn mms object publish -m object.json -f config.json
   ```
 
-11. View the published mms object:
+12. View the published mms object:
 
   ```bash
   HZN_FSS_CSSURL=http://localhost:8580  hzn mms object list -d
@@ -135,26 +143,26 @@ Follow the steps in this page to create your first Horizon edge service that use
 
   Once the `Object status` changes to `delivered` you will see the output of the hello-mms service (in the other terminal) change from **\<your-node-id\> says: Hello from the dockerfile!** to **\<your-node-id\> says: Hello from the MMS!**
 
-12. Delete your MMS object and watch the service messages change back to the original value:
+13. Delete your MMS object and watch the service messages change back to the original value:
 
   ```bash
   HZN_FSS_CSSURL=http://localhost:8580  hzn mms object delete -t $HZN_DEVICE_ID.hello-mms -i config.json
   ```
 
-13. Stop the service:
+14. Stop the service:
 
   ```bash
   hzn dev service stop
   ```
 
-14. You are now ready to publish your edge service and pattern, so that they can be deployed to real edge nodes. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
+15. You are now ready to publish your edge service and pattern, so that they can be deployed to real edge nodes. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
 
   ```bash
   hzn exchange service publish -f horizon/service.definition.json
   hzn exchange service list
   ```
 
-15. Edit your pattern definition file to make the pattern not public, then publish your edge node deployment pattern in the Horizon Exchange:
+16. Edit your pattern definition file to make the pattern not public, then publish your edge node deployment pattern in the Horizon Exchange:
 
   ```bash
   jq '.public = false' horizon/pattern.json > horizon/pattern.tmp && mv horizon/pattern.tmp horizon/pattern.json
@@ -162,33 +170,33 @@ Follow the steps in this page to create your first Horizon edge service that use
   hzn exchange pattern list
   ```
 
-16. Register your edge node with Horizon to use your deployment pattern:
+17. Register your edge node with Horizon to use your deployment pattern:
 
   ```bash
   hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture) -s $SERVICE_NAME --serviceorg $HZN_ORG_ID
   ```
 
-17. Switch back to your **other terminal** and again view the service output with the "follow" flag:
+18. Switch back to your **other terminal** and again view the service output with the "follow" flag:
 
   ```bash
   hzn service log -f $SERVICE_NAME
   ```
   
-18. While observing the output in the other terminal, publish `config.json` as a new object in the cloud MMS:
+19. While observing the output in the other terminal, publish `config.json` as a new object in the cloud MMS:
 
   ```bash
   hzn mms object publish -m object.json -f config.json
   ```
 
-19. View the published mms object:
+20. View the published mms object:
 
   ```bash
   hzn mms object list -t $HZN_DEVICE_ID.hello-mms -i config.json -d
   ```
 
-20. After approximately 15 seconds you should see the output of the service change to the value of `HW_WHO` set in the `config.json` file.
+21. After approximately 15 seconds you should see the output of the service change to the value of `HW_WHO` set in the `config.json` file.
 
-21. Clean up by deleting the published mms object and unregistering your edge node:
+22. Clean up by deleting the published mms object and unregistering your edge node:
 
   ```bash
   hzn mms object delete -t $HZN_DEVICE_ID.hello-mms -i config.json
