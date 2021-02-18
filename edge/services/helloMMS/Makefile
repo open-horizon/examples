@@ -60,7 +60,7 @@ publish-all-arches:
 
 # target for script - overwrite and pull insitead of push docker image
 publish-service-overwrite:
-	hzn exchange service publish -O -P -f horizon/service.definition.json
+	hzn exchange service publish -O -P --public=true -f horizon/service.definition.json
 
 # target to publish new input.json file to mms
 publish-mms-object:
