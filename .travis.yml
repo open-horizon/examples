@@ -37,14 +37,10 @@ env:
   - HZN_EXCHANGE_URL=https://stg.edge-fabric.com/v1 EVTSTREAMS_TOPIC=cpu2evtstreams HZN_DEVICE_ID=travis-test
 
 # Install the hzn command
-addons:
-  apt:
-    update: true
-    sources:
-    - sourceline: deb [arch=amd64,armhf,arm64] http://pkg.bluehorizon.network/linux/ubuntu bionic-updates main
-      key_url: 'http://pkg.bluehorizon.network/bluehorizon.network-public.key'
-    packages:
-    - horizon-cli
+install:
+  - wget https://github.com/open-horizon/anax/releases/latest/download/horizon-agent-linux-deb-amd64.tar.gz -O /tmp/horizon-agent-linux-deb-amd64.tar.gz
+  - tar -zxf /tmp/horizon-agent-linux-deb-amd64.tar.gz -C /tmp/
+  - sudo apt-get install -y /tmp/horizon-cli*.deb
 
 # Build and test the example services that were changed in the PR for all arches 
 # Note: tools/travis-find determines if the specified "service" was modified, so we know if we should test it.
