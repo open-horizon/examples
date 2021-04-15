@@ -70,6 +70,11 @@ Follow the steps in this page to create your first Horizon edge service that use
   $ git checkout v2.27
   ```
 
+  - Note: The FSS image tag defaults to `latest`. Efforts are made to maintain backwards compatibility but since this image is updated frequently it's recommended to define the following if the version shows `2.27.0-173` or `2.28.0-338`:
+    ```bash
+    $ export HZN_DEV_FSS_IMAGE_TAG=1.5.3-338
+    ```
+
 3. Copy the `hello-mms` dir to where you will start development of your new service:
 
   ```bash
