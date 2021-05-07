@@ -79,13 +79,13 @@ The above command will give you an empty ansible operator. At the very least you
    wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main.yml && mv main.yml roles/myoperator/tasks/
    ```
 
-3. Build the operator image:
+3. Build the operator image (use ppc64le for power arch):
    ```bash
    operator-sdk build docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
    docker push docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
    ```
 
-4. In the `deploy/operator.yaml` file replace `"REPLACE_IMAGE"` with the operator image name you build and pushed in the previous step:
+4. In the `deploy/operator.yaml` file replace `"REPLACE_IMAGE"` with the operator image name you build and pushed in the previous step (use ppc64le for power arch):
    ```bash
    image: "<docker-hub-id>/my.operator_amd64:1.0.0"
    ```
