@@ -8,7 +8,7 @@
   
 ## <a id=using-operator-pattern></a> Using the Operator Example Edge Service with Deployment Pattern
 
-1. Register your edge node with Horizon to use the `hello-operator` pattern:
+1. Register your edge node with Horizon to use the `nginx-operator` pattern:
   ```bash
   hzn register -p IBM/pattern-nginx.operator-amd64 -u $HZN_EXCHANGE_USER_AUTH
   ```

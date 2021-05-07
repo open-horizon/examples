@@ -41,7 +41,7 @@ If you haven't done so already, you must do these steps before proceeding with t
 6. Choose an ID and token for your edge node, create it, and verify it:
   ```bash
   export HZN_EXCHANGE_NODE_AUTH="<choose-any-node-id>:<choose-any-node-token>"
-  hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH -u $HZN_EXCHANGE_USER_AUTH
+  hzn exchange node create -n $HZN_EXCHANGE_NODE_AUTH -u $HZN_EXCHANGE_USER_AUTH -T "<device/cluster>"
   hzn exchange node confirm -n $HZN_EXCHANGE_NODE_AUTH -u $HZN_EXCHANGE_USER_AUTH
   ```
 
@@ -95,7 +95,7 @@ In the following steps you will deploy the `nginx-operator` to your edge cluster
   {
       "properties": [],
       "constraints": [
-          "openhorizon.arch == amd64"
+          "openhorizon.arch in \"'ppc64le','amd64'\""
       ]
   }
   ```
