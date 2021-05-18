@@ -21,7 +21,7 @@
 
 # Build stage 0: Go compilation
 
-FROM golang:1.10.0-alpine as go_build
+FROM golang:1.15-alpine as go_build
 
 RUN apk --no-cache update && apk add git
 

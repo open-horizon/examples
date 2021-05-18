@@ -17,7 +17,7 @@
 # Build stage 0: Go compilation
 
 
-FROM arm32v6/golang:1.9-alpine
+FROM arm32v6/golang:1.15-alpine
 
 RUN apk --no-cache update && apk add git
 
