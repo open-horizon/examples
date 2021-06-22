@@ -55,7 +55,7 @@ curl -sL https://ibm.biz/idt-installer | bash
 
 To login to your account and target specific organization and space, please run:
 
-> You can create your API by following [the instructions](https://console.bluemix.net/docs/iam/userid_keys.html#userapikey).
+> You can create your API by following [the instructions](https://cloud.ibm.com/docs/account?topic=account-userapikey#create_user_key).
 
 ```
 export IC_PLATFORM_KEY='<your_api_key>'
