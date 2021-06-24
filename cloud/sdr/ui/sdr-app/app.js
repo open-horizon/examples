@@ -17,7 +17,7 @@ const express = require('express')
 // Graphql server-side modules
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
 const { apolloUploadExpress } = require('apollo-upload-server')
-const {schema} = require('./server/schema')
+const { schema } = require('./server/schema')
 
 const helmet = require('helmet')
 const express_enforces_ssl = require('express-enforces-ssl')
