@@ -15,9 +15,11 @@ const appID = require('ibmcloud-appid')
 const express = require('express')
 
 // Graphql server-side modules
-const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
+const { graphiqlExpress } = require('apollo-server-express')
+const { ApolloServer, gql } = require('apollo-server-express');
 const { apolloUploadExpress } = require('apollo-upload-server')
-const {schema} = require('./server/schema')
+const { typeDefs } = require('./server/schema')
+const { resolvers } = require('./server/resolvers-node-postgres').resolvers
 
 const helmet = require('helmet')
 const express_enforces_ssl = require('express-enforces-ssl')
@@ -37,6 +39,8 @@ const RETURNING_USER_HINT = "An identified user returned to the app with the sam
 const NEW_USER_HINT = "An identified user logged in for the first time. Now when he logs in with the same credentials from any device or web client, the app will show his same profile and selections."
 
 const port = process.env.PORT || 6006
+
+// console.log('my resolver object:'); console.log(resolvers);
 
 // create a new express server
 var appSvr = express()
@@ -59,7 +63,15 @@ appSvr.use('*', cors())
 /**
  * Routes for graphql debug and api
  */
-appSvr.use('/graphql', bodyParser.json(), apolloUploadExpress(), graphqlExpress({ schema }))
+const server = new ApolloServer({
+  typeDefs,
+  resolvers
+})
+
+server.applyMiddleware({ appSvr })
+
+appSvr.use(apolloUploadExpress())
+
 appSvr.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql', }))    // only needed for developers to interactively browse the db
 
 // IBM App ID configurations
