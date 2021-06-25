@@ -15,7 +15,6 @@ const appID = require('ibmcloud-appid')
 const express = require('express')
 
 // Graphql server-side modules
-const { graphiqlExpress } = require('apollo-server-express')
 const { ApolloServer, gql } = require('apollo-server-express');
 const { apolloUploadExpress } = require('apollo-upload-server')
 const { typeDefs } = require('./server/schema')
@@ -65,14 +64,15 @@ app.use('*', cors())
  */
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
+  playground: {
+    endpoint: '/graphiql' // only needed for developers to interactively browse the db
+  }
 })
 
 server.applyMiddleware({ app })
 
 app.use(apolloUploadExpress())
-
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql', }))    // only needed for developers to interactively browse the db
 
 // IBM App ID configurations
 app.use(session({
