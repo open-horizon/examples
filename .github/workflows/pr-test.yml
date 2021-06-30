@@ -1,0 +1,75 @@
+# This pipeline is to build anax binaries
+
+name: pr-test
+
+on: 
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      HZN_EXCHANGE_URL: https://stg.edge-fabric.com/v1 
+      EVTSTREAMS_TOPIC: cpu2evtstreams 
+      HZN_DEVICE_ID: travis-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      # prepare the environment
+      - name: Prep Env
+        run: |
+          sudo apt-get update
+          sudo apt-get install librdkafka-dev libyajl-dev kafkacat qemu qemu-user-static binfmt-support dpkg-cross
+      
+      # Install the hzn cli
+      - name: Install hzn
+        run: |
+          wget https://github.com/open-horizon/anax/releases/latest/download/horizon-agent-linux-deb-amd64.tar.gz -O /tmp/horizon-agent-linux-deb-amd64.tar.gz
+          tar -zxf /tmp/horizon-agent-linux-deb-amd64.tar.gz -C /tmp/
+          sudo apt-get install -y /tmp/horizon-cli*.deb
+
+      # Build and test the example services that were changed in the PR for all arches 
+      # Note: tools/travis-find determines if the specified "service" was modified, so we know if we should test it.
+      # The three docker commands are to simulate the arm and arm64 arches for cross-compiling 
+      # cpu2evtstreams is the only service that is checked end to end, making sure data is delivered to IBM Event Streams
+      - name: Build and Test
+        shell: bash {0}
+        run: |
+          # test services
+          # set -x
+          services=( edge/services/helloworld edge/services/cpu_percent edge/services/gps edge/services/sdr edge/services/helloMMS edge/services/mqtt_broker edge/services/mqtt2kafka edge/services/hotword_detection edge/services/stopword_removal edge/services/audio2text edge/services/text2speech edge/services/voice2audio edge/services/processtext edge/evtstreams/cpu2evtstreams edge/evtstreams/sdr2evtstreams edge/evtstreams/watson_speech2text )
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker run --rm -t arm32v6/alpine uname -m
+          docker run --rm -t arm64v8/ubuntu uname -m
+
+          for service in "${services[@]}"; do
+            echo "*********************************** Testing example service: $service *********************************** "
+            if [[ $service == *"cpu2evtstreams"* ]]; then 
+              echo "Monitoring IBM Event Streams"
+              kafkacat -C -c 1 -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -t $EVTSTREAMS_TOPIC > $GITHUB_WORKSPACE/output.txt 2>&1 &
+            fi
+            cd $GITHUB_WORKSPACE/$service
+            make test-all-arches
+            if [ $? -eq 0 ]; then
+              echo "Make exited 0"
+              if [[ $service == *"cpu2evtstreams"* ]]; then
+                if grep -Fq "$HZN_DEVICE_ID" $GITHUB_WORKSPACE/output.txt; then
+                  cat $GITHUB_WORKSPACE/output.txt
+                  passed=( "${passed[@]}" "$service" )
+                fi
+              else
+                passed=( "${passed[@]}" "$service" )
+              fi
+            else
+              echo "***********************************"
+              echo "*********************************** Make exited with non-zero result *********************************** "
+              echo "***********************************"
+            fi
+          done
+          cd $GITHUB_WORKSPACE
+ 

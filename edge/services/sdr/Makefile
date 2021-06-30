@@ -24,7 +24,7 @@ test-all-arches:
 
 # new testing method
 test: build
-	hzn dev service start -S
+	hzn dev service start -S -v
 	@echo 'Testing service...'
 	../../../tools/serviceTest.sh $(SERVICE_NAME) $(MATCH) $(TIME_OUT) && \
 		{ hzn dev service stop; \
