@@ -15,6 +15,7 @@ jobs:
       HZN_EXCHANGE_URL: https://stg.edge-fabric.com/v1 
       EVTSTREAMS_TOPIC: cpu2evtstreams 
       HZN_DEVICE_ID: travis-test
+      HZN_EXCHANGE_USER_AUTH: iamapikey:blah2
 
     steps:
       - name: Checkout

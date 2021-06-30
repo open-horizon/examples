@@ -3,6 +3,7 @@
         {
             "org": "$HZN_ORG_ID",
             "url": "$SERVICE_NAME",
+            "user-pw": "$HZN_EXCHANGE_USER_AUTH",
             "variables": {
                 "MQTT_HOST": "$MQTT_HOST",
                 "MQTT_PORT": "$MQTT_PORT",

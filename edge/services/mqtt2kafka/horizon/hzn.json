@@ -1,5 +1,6 @@
 {
     "HZN_ORG_ID": "IBM",
+    "HZN_EXCHANGE_USER_AUTH": "iamapikey:blah",
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "openhorizon/ibm.mqtt2kafka",
         "SERVICE_NAME": "ibm.mqtt2kafka",
