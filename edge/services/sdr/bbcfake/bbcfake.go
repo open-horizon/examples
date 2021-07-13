@@ -20,8 +20,8 @@ func downsample(input []byte) (out []byte) {
 	return
 }
 
-// DownloadAndSplit fetches audio from a URL and returns a slice of chunks.
-func DownloadAndSplit(url string) (chunks [][]byte, err error) {
+// downloadAndSplit fetches audio from a URL and returns a slice of chunks.
+func downloadAndSplit(url string) (chunks [][]byte, err error) {
 	resp, err := http.Get("https:" + url)
 	if err != nil {
 		return
@@ -59,8 +59,8 @@ func uniqueStrings(inputs []string) (set map[string]bool) {
 	return
 }
 
-// ListMp3Urls links the urls in the page
-func ListMp3Urls(url string) (urls map[string]bool, err error) {
+// listMp3Urls links the urls in the page
+func listMp3Urls(url string) (urls map[string]bool, err error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println(err)
@@ -77,8 +77,8 @@ func ListMp3Urls(url string) (urls map[string]bool, err error) {
 	return
 }
 
-// ListLinks found in the page
-func ListLinks() (links map[string]bool, err error) {
+// listLinks found in the page
+func listLinks() (links map[string]bool, err error) {
 	resp, err := http.Get("https://www.bbc.co.uk/worldserviceradio")
 	if err != nil {
 		fmt.Println(err)
@@ -124,7 +124,7 @@ type FakeRadio struct {
 func (fr *FakeRadio) refreshLinks() {
 	fmt.Println("fetching a new set of links")
 
-	links, err := ListLinks()
+	links, err := listLinks()
 	if err != nil {
 		panic(err)
 	}
@@ -151,7 +151,7 @@ func (fr *FakeRadio) refreshUrls() {
 	fmt.Println("fetching a new set of URLs")
 
 	link := fr.getNextlink()
-	mp3s, err := ListMp3Urls(link)
+	mp3s, err := listMp3Urls(link)
 	if err != nil {
 		panic(err)
 	}
@@ -173,7 +173,7 @@ func (fr *FakeRadio) getNextURL() string {
 
 func (fr *FakeRadio) refreshChunks() {
 	var err error
-	fr.chunks, err = DownloadAndSplit(fr.getNextURL())
+	fr.chunks, err = downloadAndSplit(fr.getNextURL())
 	if err != nil {
 		panic(err)
 	}
