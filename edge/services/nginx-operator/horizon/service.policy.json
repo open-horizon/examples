@@ -1,6 +1,6 @@
 {
     "properties": [],
     "constraints": [
-        "openhorizon.arch == amd64"
+        "openhorizon.arch in \"ppc64le, amd64\""
     ]
 }
