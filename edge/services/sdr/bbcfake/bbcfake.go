@@ -111,7 +111,7 @@ func NewFakeRadio() FakeRadio {
 	}
 }
 
-// FakeRadio is holds the state for the radio.
+// FakeRadio holds the state for the radio.
 type FakeRadio struct {
 	linksPointer  int
 	links         []string

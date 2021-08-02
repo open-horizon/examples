@@ -28,7 +28,7 @@ func GetAudio(hostname string, freq int) (audio []byte, err error) {
 	return
 }
 
-// FreqToIndex converts a frequnecy to a list index.
+// FreqToIndex converts a frequency to a list index.
 func FreqToIndex(freq float32, data PowerDist) int {
 	percentPos := (freq - data.Low) / (data.High - data.Low)
 	index := int(float32(len(data.Dbm)) * percentPos)
