@@ -42,7 +42,7 @@
           "serviceArch": "$ARCH",
           "serviceVersionRange": "[0.0.0,INFINITY)", 
           "secrets": [
-            {"hw_who": "secret-name"}
+            {"hw_who": "hw-secret-name"}
           ]
         }
     ]

@@ -104,6 +104,8 @@ function check_secret_updates {
 while true; do
   # query for any changes in the secret(s)
   check_secret_updates
+  # update_secret_file can be used instead when testing with `hzn dev service start` 
+  # since the API will always return 404 in the simulated agent environment
 
   # print the greeting
   echo "$HZN_DEVICE_ID says: Hello ${HW_WHO}!"
