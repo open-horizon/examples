@@ -1,0 +1,24 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "Very simple sample Horizon service that uses a secret",
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "multiple",
+    "requiredServices": [],
+    "userInput": [],
+    "deployment": {
+        "services": {
+            "ibm.hello-secret": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "secrets": {
+                    "hw_who": {
+                        "description": "The secret name of who we are greeting"
+                    }
+                }
+            }
+        }
+    }
+}
