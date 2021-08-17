@@ -1,4 +1,4 @@
-FROM arm32v7/golang:1.9-stretch as go_build
+FROM arm32v7/golang:1.15-stretch as go_build
 
 RUN apt-get update && apt-get install -y \
   curl \

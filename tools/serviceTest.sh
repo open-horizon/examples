@@ -23,20 +23,25 @@ if [ $(uname -s) == "Darwin" ]; then
     command="docker logs -f `docker ps -q --filter name=$name`"
 else
     # This is a LINUX machine
-    command="sudo tail -f /var/log/syslog"
+    command="sudo grep -q -m 1 "$match" /var/log/syslog"
 fi
+docker ps -a
 
-####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
-$command | while read line; do
-    # MATCH was found
-    if grep -q -m 1 "$match" <<< "$line"; then
-        exit 0
+declare -i counter
+counter=0
+while :
+do
+  #sudo tail -n50 /var/log/syslog
+  $command
+  if [ $? -eq 0 ]; then
+    echo "found it"
+    exit 0
+  elif [ $counter -ge $timeOut ]; then
+    echo "timeout"
+    exit 1
+  fi
 
-    # TIMEOUT was exceeded
-    elif [ "$(($SECONDS - $START))" -ge "$timeOut" ]; then
-        exit 1
-    fi
-
-    sleep 1;
-
+  counter=$counter+1
+  #sudo tail -n1 /var/log/syslog
+  sleep 1
 done
