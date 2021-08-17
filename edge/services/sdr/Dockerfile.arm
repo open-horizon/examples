@@ -8,7 +8,7 @@ RUN git checkout rpc
 RUN mkdir build && cd build && cmake ../ -DINSTALL_UDEV_RULES=ON -DDETACH_KERNEL_DRIVER=ON && make && make install
 RUN ls /usr/local/bin/rtl_*
 
-FROM arm32v6/golang:1.9-alpine as go_build
+FROM arm32v6/golang:1.15-alpine as go_build
 RUN apk --no-cache add git
 RUN go get github.com/hajimehoshi/go-mp3
 COPY main.go /
