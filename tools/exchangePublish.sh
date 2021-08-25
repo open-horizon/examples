@@ -7,7 +7,7 @@ Usage: ${0##*/} [-h] [-v] [-c <org-name>] [-X] [-e <examples-version>]
 Flag:
   -c <org-name>    The exchange organization to publish example deployment policies to (the user's own org, not the IBM org).
   -X               Skip publishing patterns and services to the IBM org. Only valid in conjunction with -c <org-name> when publishing deployment policies to an additional org.
-  -e <examples-version>   The branch of the examples repo to get the examples from, for example: v2.27 . Default: the first 2 numbers of the hzn version, preceded by 'v' .
+  -e <examples-tag>   The tag of the examples repo to get the examples from, for example: v2.29.0-123. If you want the latest version of the examples, specify 'master'. Default: the CLI version returned by the 'hzn version' command, preceded by 'v'.
   -v               Verbose output
   -h               This usage
 
@@ -27,6 +27,7 @@ EXAMPLES_REPO=${EXAMPLES_REPO:-https://github.com/open-horizon/examples.git}
 # other env vars that can be set (but default to blank)
 # POLICY_ORG - org to publish deployment policy to
 # EXAMPLES_PREVIEW_MODE - set to 'true' for testing/debugging this script
+# EXAMPLES_KEEP_LOCAL_REPO - set to 'true' to not remove the cloned/local repo at the end
 
 # if the org id is set locally we don't want to override the IBM org of these samples
 unset HZN_ORG_ID
@@ -50,8 +51,8 @@ while (( "$#" )); do
             EXCLUDE_IBM_PUBLISH='true'
             shift
             ;;
-        -e) # branch of the examples repo
-            EXAMPLES_REPO_BRANCH=$2
+        -e) # tag of the examples repo
+            EXAMPLES_REPO_TAG=$2
             shift 2
             ;;
         -*) # invalid flag
@@ -69,7 +70,7 @@ done
 : ${HZN_EXCHANGE_URL:?} ${HZN_EXCHANGE_USER_AUTH:?}
 
 if [[ $EXCLUDE_IBM_PUBLISH == 'true' && -z $POLICY_ORG ]]; then
-    echo "Error: if -X or EXCLUDE_IBM_PUBLISH is specified then -c or POLICY_ORG must also be specified"
+    echo "Error: if -X or EXCLUDE_IBM_PUBLISH is specified then -c or POLICY_ORG must also be specified, otherwise this script would not publish anything."
     exit 1
 fi
 
@@ -119,32 +120,28 @@ deployPolPublish() {
 
 origDir=$PWD
 
-# Determine git branch to clone from
-if [[ -z $EXAMPLES_REPO_BRANCH ]]; then
-    hznVersion=$(hzn version | grep "^Horizon CLI")
-    hznVersion=${hznVersion##* }   # remove all of the space-separated words, except the last one, so we are left with like: 2.27.0-123
-    hznVersion=${hznVersion%.*}   # remove last dot and everything after, so left with like: 2.27
-    EXAMPLES_REPO_BRANCH="v$hznVersion"
-    echo "Using examples repo branch $EXAMPLES_REPO_BRANCH derived from the hzn version"
+# Determine git tag to clone from
+if [[ -z $EXAMPLES_REPO_TAG ]]; then
+    EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
+    if [[ $EXAMPLES_REPO_TAG == 'v' ]]; then
+        echo "Error: could not get CLI version from 'hzn version' "
+        exit 3
+    fi
+    echo "Using examples repo tag $EXAMPLES_REPO_TAG derived from the hzn version"
 fi
 
 
 # text file containing servies and patterns to publish
 blessedSamples="$LOCAL_PATH_TO_EXAMPLES/tools/blessedSamples.txt"
 
-# Clone the repo and switch to the branch
+# Clone the repo at the specified tag point
 if [[ -d "$LOCAL_PATH_TO_EXAMPLES" ]]; then
     echo "Directory $LOCAL_PATH_TO_EXAMPLES already exists, can not git clone into it. Will try to proceed assuming it was git cloned previously..."
 else
     echo "Cloning $EXAMPLES_REPO to $LOCAL_PATH_TO_EXAMPLES ..."
-    #runCmdQuietly git clone $EXAMPLES_REPO_BRANCH $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
-    runCmdQuietly git clone $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
+    runCmdQuietly git clone -b $EXAMPLES_REPO_TAG $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
 fi
 cd $LOCAL_PATH_TO_EXAMPLES
-echo "Switching to branch $EXAMPLES_REPO_BRANCH ..."
-if ! git checkout $EXAMPLES_REPO_BRANCH 2>/dev/null; then
-    echo "Warning: examples branch '$EXAMPLES_REPO_BRANCH' does not exist, falling back to the master branch"
-fi
 
 if [[ $EXAMPLES_PREVIEW_MODE == 'true' ]]; then
     echo "Note: Running in preview mode, the samples will NOT actually be published..."
@@ -177,4 +174,6 @@ done < "$blessedSamples"
 
 # clean up
 echo -e "Successfully published all examples to the exchange. Removing $LOCAL_PATH_TO_EXAMPLES directory."
-rm -f -r $LOCAL_PATH_TO_EXAMPLES
+if [[ $EXAMPLES_KEEP_LOCAL_REPO != 'true' ]]; then
+    rm -f -r $LOCAL_PATH_TO_EXAMPLES
+fi
