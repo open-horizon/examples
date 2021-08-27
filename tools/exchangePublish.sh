@@ -139,9 +139,18 @@ if [[ -d "$LOCAL_PATH_TO_EXAMPLES" ]]; then
     echo "Directory $LOCAL_PATH_TO_EXAMPLES already exists, can not git clone into it. Will try to proceed assuming it was git cloned previously..."
 else
     echo "Cloning $EXAMPLES_REPO to $LOCAL_PATH_TO_EXAMPLES ..."
-    runCmdQuietly git clone -b $EXAMPLES_REPO_TAG $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
+    runCmdQuietly git clone $EXAMPLES_REPO $LOCAL_PATH_TO_EXAMPLES
 fi
 cd $LOCAL_PATH_TO_EXAMPLES
+if [[ $EXAMPLES_REPO_TAG != 'master' ]]; then
+    echo "Switching to tag $EXAMPLES_REPO_TAG ..."
+    if git fetch origin +refs/tags/$EXAMPLES_REPO_TAG:refs/tags/$EXAMPLES_REPO_TAG 2>/dev/null; then
+        git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
+        chk $? "switching to tag $EXAMPLES_REPO_TAG"
+    else
+        echo "Warning: examples tag '$EXAMPLES_REPO_TAG' does not exist, falling back to the master branch"
+    fi
+fi
 
 if [[ $EXAMPLES_PREVIEW_MODE == 'true' ]]; then
     echo "Note: Running in preview mode, the samples will NOT actually be published..."
