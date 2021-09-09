@@ -72,10 +72,26 @@ else
 fi
 echo "Determined the json contains resources of type $resType"
 
-# Loop thru each resource and publish it
-keys=$(jq -r 'to_entries[] | .key' <<< $json)
+
+key_names=$(jq 'keys' <<< "$json")
 checkexitcode $? 'getting keys from the specified json'
-for k in $keys; do
+len=$(jq '.  | length' <<< "$json")
+
+count=0
+# Add the keys to an array since the key names may contain spaces
+keys=()
+while [ $count -lt $len ]; do
+	t_key=$(jq --argjson index $count '.[$index]' <<< "$key_names")
+	keys+=( "${t_key}" )
+
+	let "count=$count+1"
+done
+
+for k_tmp in "${keys[@]}"; do
+
+    # Have to strip off the " characters
+    k=$(echo "${k_tmp}" |  sed 's/"//g')
+
     name=${k#*/}    # strip the org from the beginning of the key
     resourceJson=$(jq -c ".[\"$k\"] | del(.owner) | del(.lastUpdated) | .public = false" <<< $json)
     checkexitcode $? "getting resource $k from the specified json"
@@ -101,6 +117,11 @@ for k in $keys; do
                   checkexitcode $? "updating services[].serviceOrgid field"
                fi
 
+               if jq -e '.secretBinding' <<< "$resourceJson" > /dev/null; then 
+		       resourceJson=$(echo "${resourceJson}" | jq "(.secretBinding[] | select(.serviceOrgid == \"${oldOrgId}\") | .serviceOrgid ) = \"\${HZN_ORG_ID}\"") 
+		       checkexitcode $? "updating secretBinding[].org field"
+	       fi
+
             else   # resType==service
                   resourceJson=$(echo "${resourceJson}" | jq "(.requiredServices[] | select(.org == \"${oldOrgId}\") | .org ) = \"\${HZN_ORG_ID}\"")
                   checkexitcode $? "updating requiredServices[].org field"
@@ -112,13 +133,21 @@ for k in $keys; do
     case $resType in
         service) # Have to 1st inflate the deployment field from a string to real json
             deployment=$(jq -r '.deployment' <<< $resourceJson)
-            resourceJson=$(jq ".deployment = $deployment" <<< $resourceJson)
+            if [ ! -z "${deployment}" ]; then 
+		    resourceJson=$(jq ".deployment = $deployment" <<< $resourceJson)
+	    fi
+            clusterDeployment=$(jq -r '.clusterDeployment' <<< $resourceJson)
+            if [ ! -z "${clusterDeployment}" ]; then 
+		    resourceJson=$(jq ".clusterDeployment = $clusterDeployment" <<< $resourceJson)
+	    fi
+	    echo "${resourceJson}"
             echo "$resourceJson" | hzn exchange service publish -I -O -f-
         ;;
-        pattern) echo "$resourceJson" | hzn exchange pattern publish -p $name -f-
+        pattern) echo "$resourceJson" | hzn exchange pattern publish -p "$name" -f-
         ;;
-        deployment-policy) echo "$resourceJson" | hzn exchange deployment addpolicy -f-  $name
+        deployment-policy) echo "$resourceJson" | hzn exchange deployment addpolicy -f-  "$name"
         ;;
     esac
-    checkexitcode $? "publishing $name to the exchange"
+    checkexitcode $? "publishing \"$name\" to the exchange"
 done
+
