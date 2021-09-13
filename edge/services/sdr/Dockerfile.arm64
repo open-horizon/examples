@@ -1,18 +1,14 @@
 FROM arm64v8/alpine:latest as rtl_build
 RUN apk --no-cache add git cmake libusb-dev make gcc g++ alpine-sdk
-COPY never_close.patch /tmp/
-COPY signal_hack.patch /tmp/
 WORKDIR /tmp
-RUN git clone https://github.com/texane/librtlsdr
+RUN git clone https://github.com/clementkng/librtlsdr
 WORKDIR /tmp/librtlsdr
 RUN git checkout rpc
-RUN patch -p1 </tmp/never_close.patch
-RUN patch -p1 </tmp/signal_hack.patch
 
 RUN mkdir build && cd build && cmake ../ && make && make install
 RUN ls /usr/local/bin/rtl_*
 
-FROM arm64v8/golang:1.9-alpine as go_build
+FROM arm64v8/golang:1.15-alpine as go_build
 RUN apk --no-cache add git
 RUN go get github.com/hajimehoshi/go-mp3
 COPY main.go /
