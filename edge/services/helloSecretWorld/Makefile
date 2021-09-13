@@ -1,4 +1,4 @@
-# Make targets for building the IBM example helloMMS edge service.
+# Make targets for building the IBM example helloSecretWorld edge service
 
 # This imports the variables from horizon/hzn.json. You can ignore these lines, but do not remove them.
 -include horizon/.hzn.json.tmp.mk
@@ -58,21 +58,9 @@ publish-all-arches:
 	ARCH=arm64 $(MAKE) build-test-publish
 	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
-# target for script - overwrite and pull insitead of push docker image
+# target for script - overwrite and pull instead of push docker image
 publish-service-overwrite:
 	hzn exchange service publish -O -P --public=true -f horizon/service.definition.json
-
-# target to publish new input.json file to mms
-publish-mms-object:
-	hzn mms object publish -m object.json -f input.json
-
-# target to list mms object
-list-mms-object:
-	hzn mms object list -t json -i input.json -d
-
-# target to delete input.json file in mms
-delete-mms-object:
-	hzn mms object delete -t json --id input.json
 
 # new target for exchange publish script to run on startup to publish only
 publish-only:
