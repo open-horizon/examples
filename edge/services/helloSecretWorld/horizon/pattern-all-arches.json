@@ -39,7 +39,25 @@
         {
           "serviceUrl": "$SERVICE_NAME",
           "serviceOrgid": "$HZN_ORG_ID",
-          "serviceArch": "$ARCH",
+          "serviceArch": "amd64",
+          "serviceVersionRange": "[0.0.0,INFINITY)", 
+          "secrets": [
+            {"hw_who": "hw-secret-name"}
+          ]
+        },
+         {
+          "serviceUrl": "$SERVICE_NAME",
+          "serviceOrgid": "$HZN_ORG_ID",
+          "serviceArch": "arm",
+          "serviceVersionRange": "[0.0.0,INFINITY)", 
+          "secrets": [
+            {"hw_who": "hw-secret-name"}
+          ]
+        },
+        {
+          "serviceUrl": "$SERVICE_NAME",
+          "serviceOrgid": "$HZN_ORG_ID",
+          "serviceArch": "arm64",
           "serviceVersionRange": "[0.0.0,INFINITY)", 
           "secrets": [
             {"hw_who": "hw-secret-name"}
