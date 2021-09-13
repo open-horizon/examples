@@ -15,9 +15,10 @@ const appID = require('ibmcloud-appid')
 const express = require('express')
 
 // Graphql server-side modules
-const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
+const { ApolloServer, gql } = require('apollo-server-express');
 const { apolloUploadExpress } = require('apollo-upload-server')
-const {schema} = require('./server/schema')
+const { typeDefs } = require('./server/schema')
+const { resolvers } = require('./server/resolvers-node-postgres').resolvers
 
 const helmet = require('helmet')
 const express_enforces_ssl = require('express-enforces-ssl')
@@ -38,15 +39,17 @@ const NEW_USER_HINT = "An identified user logged in for the first time. Now when
 
 const port = process.env.PORT || 6006
 
+// console.log('my resolver object:'); console.log(resolvers);
+
 // create a new express server
-var appSvr = express()
+var app = express()
 
 const isLocal = cfEnv.getAppEnv().isLocal
 const config = getLocalConfig()
 console.log('config configured', config)
 configureSecurity()
 
-appSvr.use(flash())
+app.use(flash())
 
 // get the app environment from Cloud Foundry
 var appEnv = cfEnv.getAppEnv()
@@ -54,16 +57,25 @@ var appEnv = cfEnv.getAppEnv()
 /**
  * Allow CORS
  */
-appSvr.use('*', cors())
+app.use('*', cors())
 
 /**
  * Routes for graphql debug and api
  */
-appSvr.use('/graphql', bodyParser.json(), apolloUploadExpress(), graphqlExpress({ schema }))
-appSvr.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql', }))    // only needed for developers to interactively browse the db
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  playground: {
+    endpoint: '/graphiql' // only needed for developers to interactively browse the db
+  }
+})
+
+server.applyMiddleware({ app })
+
+app.use(apolloUploadExpress())
 
 // IBM App ID configurations
-appSvr.use(session({
+app.use(session({
   secret: require('./server/config/settings').appIDSecret,
   resave: true,
   saveUninitialized: true,
@@ -72,8 +84,8 @@ appSvr.use(session({
     secure: !isLocal,
   },
 }))
-appSvr.use(passport.initialize())
-appSvr.use(passport.session())
+app.use(passport.initialize())
+app.use(passport.session())
 
 /**
  * Load up the config into the IBM App ID
@@ -100,7 +112,7 @@ passport.deserializeUser((obj, cb) => {
 /**
  * Accept the callback URL and send user to appropriate route
  */
-appSvr.get(
+app.get(
   APPID_CALLBACK_URL, 
   passport.authenticate(WebAppStrategy.STRATEGY_NAME,
   { failureRedirect: '/error', failureFlash: true, allowAnonymousLogin: false }))
@@ -108,7 +120,7 @@ appSvr.get(
 /**
  * Send user to authentication
  */
-appSvr.get(
+app.get(
   APPID_LOGIN_URL, 
   passport.authenticate(WebAppStrategy.STRATEGY_NAME, 
     { forceLogin: true, }))
@@ -138,7 +150,7 @@ function isLoggedIn(req) {
  * Host location for React App. This checks to
  * make sure the user is logged into IBM App ID.
  */
-appSvr.get('/app*', (req, res, next) => {
+app.get('/app*', (req, res, next) => {
 	if (isLoggedIn(req)) {
     console.log('/app: user is logged in')
 		return next()
@@ -157,12 +169,12 @@ appSvr.get('/app*', (req, res, next) => {
 /**
  * Log into IBM App ID and redirect to React app
  */
-appSvr.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {successRedirect: '/app', forceLogin: true}))
+app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {successRedirect: '/app', forceLogin: true}))
 
 /**
  * Log out of IBM App ID and redirect to login
  */
-appSvr.get('/logout', (req, res, next) => {
+app.get('/logout', (req, res, next) => {
   WebAppStrategy.logout(req)
 
   res.clearCookie('refreshToken')
@@ -172,7 +184,7 @@ appSvr.get('/logout', (req, res, next) => {
 /**
  * Get the user's refresh token. Returns basic user info
  */
-appSvr.get('/token', (req, res) => {
+app.get('/token', (req, res) => {
   res.json({
     tokens: req.session[WebAppStrategy.AUTH_CONTEXT],
   })
@@ -182,7 +194,7 @@ appSvr.get('/token', (req, res) => {
 /**
  * Error route, send user to error page
  */
-appSvr.get('/error', (req, res) => {
+app.get('/error', (req, res) => {
   let errArr = req.flash('error')
   res.redirect('/error')
 })
@@ -190,7 +202,7 @@ appSvr.get('/error', (req, res) => {
 /**
  * Allow the user to change their password
  */
-appSvr.get('/change_password', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+app.get('/change_password', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
   successRedirect: '/app',
   show: WebAppStrategy.CHANGE_PASSWORD,
 }))
@@ -198,7 +210,7 @@ appSvr.get('/change_password', passport.authenticate(WebAppStrategy.STRATEGY_NAM
 /**
  * Allow the user to change their App ID information
  */
-appSvr.get('/change_details', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+app.get('/change_details', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
   successRedirect: '/app',
   show: WebAppStrategy.CHANGE_DETAILS,
 }))
@@ -208,13 +220,13 @@ appSvr.get('/change_details', passport.authenticate(WebAppStrategy.STRATEGY_NAME
  * if the user is logged in. Else, send to
  * IBM App ID authentication
  */
-appSvr.get('/', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+app.get('/', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
   successRedirect: '/app',
 }))
 
 // Configure what express should use/serve:
 // serve the client files out of ./client/build (which is built by running 'npm run build' in that dir)
-appSvr.use(express.static(path.join(__dirname, 'client', 'build')))
+app.use(express.static(path.join(__dirname, 'client', 'build')))
 
 // Set up Winston configuration
 var logFile = process.env.HOME + '/logs/sdr-app.log'
@@ -239,7 +251,7 @@ logger.info(`Important Environment Variables: cenv: url=${appEnv.url},bind=${app
  * If there's an unauthorized error, send the user
  * back to the root page (login)
  */
-appSvr.use((err, req, res, next) => {
+app.use((err, req, res, next) => {
   if (err instanceof UnauthorizedException) {
     WebAppStrategy.logout(req)
     res.redirect('/')
@@ -249,7 +261,7 @@ appSvr.use((err, req, res, next) => {
 })
 
 // start server on the specified port and binding host
-appSvr.listen(appEnv.port || port, '0.0.0.0', function() {
+app.listen(appEnv.port || port, '0.0.0.0', function() {
   // print a message when the server starts listening
   const listeningStr = `SDR express server listening on ${appEnv.url} (port ${appEnv.port})`
   console.log(listeningStr)
@@ -302,11 +314,11 @@ function getLocalConfig() {
  * Set up the Express server to use security plugins
  */
 function configureSecurity() {
-	appSvr.use(helmet())
-	appSvr.use(cookieParser())
-	appSvr.use(helmet.noCache())
-	appSvr.enable("trust proxy")
+	app.use(helmet())
+	app.use(cookieParser())
+	app.use(helmet.noCache())
+	app.enable("trust proxy")
 	if (!isLocal) {
-		appSvr.use(express_enforces_ssl())
+		app.use(express_enforces_ssl())
 	}
 }

@@ -19,3 +19,7 @@ Get a 30 second chunk of raw audio.
 `curl ibm.sdr:8080/audio/99100000`
 
 `curl ibm.sdr:8080/audio/99100000 | aplay -r 16000 -f S16_LE -t raw -c 1`
+
+If the SDR hardware is not present or can not be used for some reason you can curl the fake station at frequency 0, which will call out to BBC radio online.
+
+`curl ibm.sdr:8080/audio/0 | aplay -r 16000 -f S16_LE -t raw -c 1`

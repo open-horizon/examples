@@ -9,7 +9,7 @@ const psql = new Pool({ connectionString: connStr });
 // verify the connection to the db
 psql.query('SELECT NOW()')
     .then((res) => console.log('Connected to db: ' + res.rows[0].now))
-    .catch((e) => setImmediate(() => { throw e; }));
+    .catch((e) => setImmediate(() => { console.error(e.stack); }));
 
 psql.query('select noun, sentiment, numberofmentions from globalnouns order by timeupdated desc limit 5').then((res) => {
 }).catch((e) => console.error(e.stack));
