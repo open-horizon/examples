@@ -65,6 +65,7 @@
     "react-router-dom": "^4.3.1",
     "react-sizeme": "^2.6.12",
     "resolve": "1.6.0",
+    "set-value": ">=4.0.1",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.6.2",
