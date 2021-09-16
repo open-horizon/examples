@@ -55,7 +55,8 @@ If you haven't done so already, you must do these steps before proceeding with t
 
   ```bash
   export SERVICE_NAME=ibm.hello-mms
-  hzn register -p IBM/pattern-$SERVICE_NAME-$(hzn architecture) -s $SERVICE_NAME --serviceorg IBM
+  export HZN_PATTERN=pattern-$SERVICE_NAME
+  hzn register -p IBM/$HZN_PATTERN -s $SERVICE_NAME --serviceorg IBM
   ```
 
 2. After the service has started, list the docker containers to see it:
