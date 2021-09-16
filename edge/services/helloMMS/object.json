@@ -5,7 +5,7 @@
   "destinationID": "$HZN_DEVICE_ID",       /* The node id (without org prefix) where the object should be placed. */
                              /* If omitted the object is sent to all nodes with the same destinationType. */
                              /* Delete this field when you are using destinationPolicy. */
-  "destinationType": "pattern-${SERVICE_NAME}-$ARCH",     /* The pattern in use by nodes that should receive this object. */
+  "destinationType": "$HZN_PATTERN",     /* The pattern in use by nodes that should receive this object. */
                              /* If omitted (and if destinationsList is omitted too) the object is broadcast to all known nodes. */
                              /* Delete this field when you are using policy. */
   "destinationsList": null,  /* The list of destinations as an array of pattern:nodeId pairs that should receive this object. */
