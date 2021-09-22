@@ -60,8 +60,7 @@ The following steps will show you how to use the OpenHorizon CLI to create a sec
 2. Register your edge node with OpenHorizon to use the hello-secret pattern:
 
   ```bash
-  export SERVICE_NAME=ibm.hello-secret
-  hzn register -p IBM/pattern-$SERVICE_NAME-$(hzn architecture) -s $SERVICE_NAME --serviceorg IBM
+  hzn register -p IBM/pattern-ibm.hello-secret -s ibm.hello-secret --serviceorg IBM
   ```
 
 3. After the service has started, list the docker containers to see it:
@@ -73,8 +72,7 @@ The following steps will show you how to use the OpenHorizon CLI to create a sec
 4. **Open another terminal** and view the hello-secret service output with the "follow" flag. This sample service repeatedly checks for updates to the secret `hw-secret-name` in the secrets manager and uses its value as a parameter of who it should say "hello" to. Initially you should see the message like: **\<your-node-id> says: Hello \<secret-value>!**, where \<secret-value> is the value of the secret as passed to the creation command in Step 1.
 
   ```bash
-  export SERVICE_NAME=ibm.hello-secret
-  hzn service log -f $SERVICE_NAME
+  hzn service log -f ibm.hello-secret
   ```
 
 5. (This step must be done by an organization admin) Update the secret `hw-secret-name` in the secrets manager using the OpenHorizon CLI. To see any change reflected in the output, the argument passed to `--secretDetail` should be different from the initial secret creation command, so that the value of the secret can change.
