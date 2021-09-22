@@ -93,17 +93,9 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
 7. See your helloworld service output:
 
-   on **Linux**:
-
-   ```bash
-   sudo tail -f /var/log/syslog | grep myhelloworld[[]
-   ```
-
-   on **Mac**:
-
-   ```bash
-   sudo docker logs -f $(sudo docker ps -q --filter name=myhelloworld)
-   ```
+  ```bash
+  hzn dev service log -f myhelloworld
+  ```
 
 8. Stop the service:
 

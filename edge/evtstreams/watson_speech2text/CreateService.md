@@ -53,47 +53,55 @@ Follow the steps in this page to create your Watson Speech to Text to IBM Event 
 ```bash
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
+cd examples/
 ```
 
-2. Copy the `watson_speech2text` dir to where you will start development of your new service:
+2. Check your Horizon CLI version:
+
+```bash
+hzn version
+```
+
+3. Starting with Horizon version `v2.29.0-595` you can `checkout` to a version of the example services that directly corresponds to your Horizon CLI version with these commands: 
+
+```bash
+export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
+git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
+```
+
+4. Copy the `watson_speech2text` dir to where you will start development of your new service:
 
 ```
-cp -a examples/edge/evtstreams/watson_speech2text ~/myservice     # or wherever
+cp -a edge/evtstreams/watson_speech2text ~/myservice     # or wherever
 cd ~/myservice
 ```
 
-3. Checkout the branch that corresponds to your horizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
-```bash
-$ hzn version
-Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
-Horizon Agent version: 2.27.0-173
-$ git checkout v2.27
-```
+5. Set the values in `horizon/hzn.json` to your own values.
 
-4. Set the values in `horizon/hzn.json` to your own values.
-
-5. Edit `watsonspeech2text.py` however you want.
+6. Edit `watsonspeech2text.py` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
-6. Build the watsons2text docker image:
+
+7. Build the watsons2text docker image:
 
 ```bash
 make
 ```
 
-7. Test the service by having Horizon start it locally:
+8. Test the service by having Horizon start it locally:
 ```bash
 hzn dev service start -S
 ```
-8. Check that the container is running:
+
+9. Check that the container is running:
 ```bash
 sudo docker ps 
 ```
 
 9. See the watsons2text service output:
 
-	```bash
-	tail -f /var/log/syslog | grep watsons2text[[]
-	```
+```bash
+tail -f /var/log/syslog | grep watsons2text[[]
+```
 
 10. See the environment variables Horizon passes into your service container:
 ```bash

@@ -124,18 +124,9 @@ Follow the steps in this page to create your first Horizon edge service that use
 
 11. **Open another terminal to the same working directory** then set the `horizon/hzn.json` variable values in this environment and view the service output (you should see messages like **\<your-node-id\> says: Hello from the dockerfile!**:
 
-  on **Linux**:
-
   ```bash
   eval $(hzn util configconv -f horizon/hzn.json)
-  sudo tail -f /var/log/syslog | grep ${SERVICE_NAME}[[]
-  ```
-
-  on **Mac**:
-
-  ```bash
-  eval $(hzn util configconv -f horizon/hzn.json)
-  sudo docker logs -f $(sudo docker ps -q --filter name=$SERVICE_NAME)
+  hzn dev service log -f $SERVICE_NAME
   ```
 
 12. While observing the output in the other terminal, modify `config.json` and publish it as a new mms object, using the provided `object.json` metadata. Since you are running in the local simulated agent environment right now, the `hzn mms ...` commands must be directed to the local MMS.

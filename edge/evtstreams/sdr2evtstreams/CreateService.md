@@ -60,95 +60,101 @@ Follow the steps in this page to create your SDR To IBM Event Streams Edge Servi
 ```bash
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
+cd examples/
 ```
 
-2. Checkout the branch that corresponds to your horizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
+2. Check your Horizon CLI version:
+
 ```bash
-$ hzn version
-Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
-Horizon Agent version: 2.27.0-173
-$ git checkout v2.27
+hzn version
 ```
 
-3. Copy the `sdr2evtstreams` dir to where you will start development of your new service:
+3. Starting with Horizon version `v2.29.0-595` you can `checkout` to a version of the example services that directly corresponds to your Horizon CLI version with these commands: 
+
 ```bash
-cp -a examples/edge/evtstreams/sdr2evtstreams ~/myservice     # or wherever
+export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
+git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
+```
+
+4. Copy the `sdr2evtstreams` dir to where you will start development of your new service:
+```bash
+cp -a edge/evtstreams/sdr2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
 
-4. Set the values in `horizon/hzn.json` to your own values.
+5. Set the values in `horizon/hzn.json` to your own values.
 
-5. Edit `main.go` however you want.
+6. Edit `main.go` however you want.
     - Note: this service is written in go, but you can write your service in any language.
 
-6. Build the sdr2evtstreams docker image:
+7. Build the sdr2evtstreams docker image:
 ```bash
 make
 ```
 
-7. Test the service by having Horizon start it locally:
+8. Test the service by having Horizon start it locally:
 ```bash
 hzn dev service start -S
 ```
 
-8. Check that the containers are running:
+9. Check that the containers are running:
 ```bash
 sudo docker ps
 ```
 
-9. See the sdr2evtstreams service output:
+10. See the sdr2evtstreams service output:
 ```bash
-hzn service log -f ibm.sdr2evtstreams
+hzn dev service log -f ibm.sdr2evtstreams
 ```
 
-10. See the environment variables Horizon passes into your service container:
+11. See the environment variables Horizon passes into your service container:
 ```bash
 docker inspect $(docker ps -q --filter name=sdr2evtstreams) | jq '.[0].Config.Env'
 ```
 
-11. Stop the service:
+12. Stop the service:
 ```bash
 hzn dev service stop
 ```
 
-12. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+13. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```bash
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list
 ```
 
-13. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
+14. Publish your edge node deployment pattern in the Horizon Exchange and see it there:
 ```bash
 hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 
-14. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
+15. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
 ```bash
 hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
 ```
 
-15. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
+16. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
 ```bash
 hzn agreement list
 ```
 
-16. Once the agreement is made, list the docker container edge service that has been started as a result:
+17. Once the agreement is made, list the docker container edge service that has been started as a result:
 ```bash
 sudo docker ps
 ```
 
-17. On any machine, subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
+18. On any machine, subscribe to the Event Streams topic to see the json data that sdr2evtstreams is sending:
 ```bash
 kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.version.request=true -X security.protocol=sasl_ssl -X sasl.mechanisms=PLAIN -X sasl.username=token -X sasl.password=$EVTSTREAMS_API_KEY -t $EVTSTREAMS_TOPIC
 ```
 
-18. See the sdr2evtstreams service output:
+19. See the sdr2evtstreams service output:
 ```bash
 hzn service log -f ibm.sdr2evtstreams
 ```
 
-19. Unregister your edge node, stopping the sdr2evtstreams service:
+20. Unregister your edge node, stopping the sdr2evtstreams service:
 ```bash
 hzn unregister -f
 ```
