@@ -82,7 +82,10 @@ cp -a edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
 
-5. Set the values in `horizon/hzn.json` to your own values.
+5. Set the values in `horizon/hzn.json` to your own values. After editing `horizon/hzn.json`, set the variables in your environment:
+```bash
+eval $(hzn util configconv -f horizon/hzn.json)
+```
 
 6. Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
@@ -104,12 +107,12 @@ sudo docker ps
 
 10. See the cpu2evtstreams service output:
 ```
-hzn dev service log -f cpu2evtstreams
+hzn dev service log -f $SERVICE_NAME
 ``` 
 
 11. See the environment variables Horizon passes into your service container:
 ```bash
-docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=$SERVICE_NAME) | jq '.[0].Config.Env'
 ```
 
 12. Stop the service:
