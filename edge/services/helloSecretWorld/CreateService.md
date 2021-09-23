@@ -60,6 +60,7 @@ Follow the steps in this page to create your first OpenHorizon edge service that
   ```bash
   cd ~   # or wherever you want
   git clone git@github.com:open-horizon/examples.git
+  cd examples/
   ```
 
 2. Check your Horizon CLI version:
@@ -78,7 +79,7 @@ Follow the steps in this page to create your first OpenHorizon edge service that
 4. Copy the `helloSecretWorld` dir to where you will start development of your new service:
 
   ```bash
-  cp -a examples/edge/services/helloSecretWorld ~/myservice     # or wherever
+  cp -a edge/services/helloSecretWorld ~/myservice     # or wherever
   cd ~/myservice
   ```
 
@@ -123,7 +124,7 @@ Upon starting the service, this command will mount the local `hw_who` file conta
 \<secret-value\> is the value of the secret as stated in the `hw_who` file.
 
   ```bash
-  hzn dev service log $SERVICE_NAME
+  hzn dev service log -f $SERVICE_NAME
   ```
 
 13. Stop the service:
