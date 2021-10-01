@@ -128,11 +128,6 @@ for k_tmp in "${keys[@]}"; do
             if [ ! -z "${deployment}" ]; then 
 		    resourceJson=$(jq ".deployment = $deployment" <<< $resourceJson)
 	    fi
-            clusterDeployment=$(jq -r '.clusterDeployment' <<< $resourceJson)
-            if [ ! -z "${clusterDeployment}" ]; then 
-		    resourceJson=$(jq ".clusterDeployment = $clusterDeployment" <<< $resourceJson)
-	    fi
-	    echo "${resourceJson}"
             echo "$resourceJson" | hzn exchange service publish -I -O -f-
         ;;
         pattern) echo "$resourceJson" | hzn exchange pattern publish -p "$name" -f-
