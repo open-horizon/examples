@@ -67,43 +67,49 @@ Follow the steps in this page to create your first simple Horizon edge service.
 
   Note: This service is a shell script for brevity, but you can write your service in any language.
 
-3. Build the service docker image:
+3. Set the required environment variables:
+  ```bash
+  eval $(hzn util configconv -f horizon/hzn.json)
+  export ARCH=$(hzn architecture)
+  ```
+
+4. Build the service docker image:
 
   ```bash
   make
   ```
 
-4. Test the service by running it the simulated agent environment:
+5. Test the service by running it the simulated agent environment:
 
   ```bash
   hzn dev service start -S
   ```
 
-5. Check that the container is running:
+6. Check that the container is running:
 
   ```bash
   sudo docker ps
   ```
 
-6. Display the environment variables Horizon passes into your service container:
+7. Display the environment variables Horizon passes into your service container:
 
   ```bash
   sudo docker inspect $(sudo docker ps -q --filter name=myhelloworld) | jq '.[0].Config.Env'
   ```
 
-7. See your helloworld service output:
+8. See your helloworld service output:
 
   ```bash
-  hzn dev service log -f myhelloworld
+  hzn dev service log -f $SERVICE_NAME
   ```
 
-8. Stop the service:
+9. Stop the service:
 
   ```bash
   hzn dev service stop
   ```
 
-9. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
+10. Instruct Horizon to push your docker image to your registry and publish your service in the Horizon Exchange:
 
   ```bash
   hzn exchange service publish -f horizon/service.definition.json
@@ -117,11 +123,6 @@ Follow the steps in this page to create your first simple Horizon edge service.
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/node.policy.json
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/service.policy.json
   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/helloworld/policy/deployment.policy.json
-  ```
-2. Set the required environment variables:
-  ```bash
-  eval $(hzn util configconv -f horizon/hzn.json)
-  export ARCH=$(hzn architecture)
   ```
 
 2. Publish and view your service policy in the Horizon Exchange:
