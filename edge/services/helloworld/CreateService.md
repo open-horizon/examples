@@ -156,7 +156,7 @@ Follow the steps in this page to create your first simple Horizon edge service.
 7. See the myhelloworld service output:
 
   ``` bash
-  hzn service log -f myhelloworld
+  hzn service log -f $SERVICE_NAME
   ```
 
 8. Unregister your edge device (which will also stop the myhelloworld service):
@@ -177,7 +177,7 @@ Follow the steps in this page to create your first simple Horizon edge service.
 2. Register your edge node with Horizon to use your deployment pattern:
 
   ```bash
-  hzn register -p pattern-myhelloworld-$(hzn architecture)
+  hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture)
   ```
 
 3. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
@@ -195,7 +195,7 @@ Follow the steps in this page to create your first simple Horizon edge service.
 5. See the myhelloworld service output:
 
 ``` bash
-hzn service log -f myhelloworld
+hzn service log -f $SERVICE_NAME
 ```
 
 6. Unregister your edge node (which will also stop the myhelloworld service):

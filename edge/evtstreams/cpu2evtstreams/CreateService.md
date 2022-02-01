@@ -75,6 +75,7 @@ cd examples/
   export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
   git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
   ```
+  **Note:** if you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
 
 4. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
 ```bash

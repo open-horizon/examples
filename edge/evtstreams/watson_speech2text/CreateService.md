@@ -68,6 +68,7 @@ hzn version
 export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
 git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
 ```
+**Note:** if you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
 
 4. Copy the `watson_speech2text` dir to where you will start development of your new service:
 
@@ -100,12 +101,12 @@ sudo docker ps
 9. See the watsons2text service output:
 
 ```bash
-tail -f /var/log/syslog | grep watsons2text[[]
+hzn dev service log -f $SERVICE_NAME
 ```
 
 10. See the environment variables Horizon passes into your service container:
 ```bash
-docker inspect $(docker ps -q --filter name=watsons2text) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=${SERVICE_NAME}) | jq '.[0].Config.Env'
 ```
 
 11. Stop the service:
@@ -125,9 +126,9 @@ hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 
-14. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
+14. Register your edge node with Horizon to use your deployment pattern:
 ```bash
-hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
+hzn register -p pattern-${SERVICE_NAME}-${ARCH} -f horizon/userinput.json
 ```
 
 15. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
@@ -150,7 +151,7 @@ kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.ve
 
 18. See the watsons2text service output:
 ```bash
-tail -f /var/log/syslog | grep watsons2text[[]
+hzn dev service log -f $SERVICE_NAME
 ``` 
 
 19. Unregister your edge node, stopping the watsons2text service:

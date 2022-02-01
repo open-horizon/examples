@@ -75,8 +75,10 @@ Follow the steps in this page to create your first Horizon edge service that use
   export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
   git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
   ```
+  **Note:** 
+  - If you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
 
-  - Note: The FSS image tag defaults to `latest`. Efforts are made to maintain backwards compatibility but since this image is updated frequently it's recommended to define the following if the version shows `2.27.0-173` or `2.28.0-338`:
+  - Additionally, the FSS image tag defaults to `latest`. Efforts are made to maintain backwards compatibility but since this image is updated frequently it's recommended to define the following if the version shows `2.27.0-173` or `2.28.0-338`:
     ```bash
     export HZN_DEV_FSS_IMAGE_TAG=1.5.3-338
     ```
