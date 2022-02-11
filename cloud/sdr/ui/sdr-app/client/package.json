@@ -6,7 +6,7 @@
   "dependencies": {
     "@ibm/plex": "^1.1.6",
     "acorn": "^7.2.0",
-    "ajv": "^6.12.2",
+    "ajv": "^6.12.3",
     "apollo-boost": "^0.1.10",
     "apollo-upload-client": "^8.1.0",
     "autoprefixer": "7.1.6",
