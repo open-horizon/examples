@@ -60,65 +60,68 @@ Follow the steps in this page to create your own CPU To IBM Event Streams Edge S
 ```bash
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
+cd examples/
 ```
 
-2. Checkout the branch that corresponds to your horizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
-```bash
-$ hzn version
-Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
-Horizon Agent version: 2.27.0-173
-$ git checkout v2.27
-```
+2. Check your Horizon CLI version:
 
-3. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
+  ```bash
+  hzn version
+  ```
+
+3. Starting with Horizon version `v2.29.0-595` you can `checkout` to a version of the example services that directly corresponds to your Horizon CLI version with these commands: 
+
+  ```bash
+  export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
+  git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
+  ```
+  **Note:** if you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
+
+4. Copy the `cpu2evtstreams` dir to where you will start development of your new service:
 ```bash
-cp -a examples/edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
+cp -a edge/evtstreams/cpu2evtstreams ~/myservice     # or wherever
 cd ~/myservice
 ```
 
-4. Set the values in `horizon/hzn.json` to your own values.
+5. Set the values in `horizon/hzn.json` to your own values. After editing `horizon/hzn.json`, set the variables in your environment:
+```bash
+eval $(hzn util configconv -f horizon/hzn.json)
+```
 
-5. Edit `service.sh` however you want.
+6. Edit `service.sh` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
-6. Build the cpu2evtstreams docker image:
+7. Build the cpu2evtstreams docker image:
 ```bash
 make
 ```
 
-7. Test the service by having Horizon start it locally:
+8. Test the service by having Horizon start it locally:
 ```bash
 hzn dev service start -S
 ```
 
-8. Check that the container is running:
+9. Check that the container is running:
 ```bash
 sudo docker ps 
 ```
 
-9. See the cpu2evtstreams service output:
+10. See the cpu2evtstreams service output:
+```
+hzn dev service log -f $SERVICE_NAME
+``` 
 
- 	on **Linux**:
- 	```
- 	tail -f /var/log/syslog | grep cpu2evtstreams[[]
- 	```
-
- 	on **Mac**:
- 	```
- 	docker logs -f $(docker ps -q --filter name=cpu2evtstreams)
- 	``` 
-
-10. See the environment variables Horizon passes into your service container:
+11. See the environment variables Horizon passes into your service container:
 ```bash
-docker inspect $(docker ps -q --filter name=cpu2evtstreams) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=$SERVICE_NAME) | jq '.[0].Config.Env'
 ```
 
-11. Stop the service:
+12. Stop the service:
 ```bash
 hzn dev service stop
 ```
 
-12. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
+13. Have Horizon push your docker image to your registry and publish your service in the Horizon Exchange and see it there:
 ```bash
 hzn exchange service publish -f horizon/service.definition.json
 hzn exchange service list

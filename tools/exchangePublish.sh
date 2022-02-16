@@ -2,11 +2,12 @@
 
 usage() {
     cat << EOF
-Usage: ${0##*/} [-h] [-v] [-c <org-name>] [-X] [-e <examples-version>]
+Usage: ${0##*/} [-h] [-v] [-c <org-name>] [-X] [-e <examples-version>] [-a]
 
 Flag:
   -c <org-name>    The exchange organization to publish example deployment policies to (the user's own org, not the IBM org).
   -X               Skip publishing patterns and services to the IBM org. Only valid in conjunction with -c <org-name> when publishing deployment policies to an additional org.
+  -a               Use this flag to publish the example deployment policies in ALL available orgs.
   -e <examples-tag>   The tag of the examples repo to get the examples from, for example: v2.29.0-123. If you want the latest version of the examples, specify 'master'. Default: the CLI version returned by the 'hzn version' command, preceded by 'v'.
   -v               Verbose output
   -h               This usage
@@ -49,6 +50,10 @@ while (( "$#" )); do
             ;;
         -X) # exclude publishing to IBM org
             EXCLUDE_IBM_PUBLISH='true'
+            shift
+            ;;
+        -a) # publish example policies to ALL orgs
+            PUBLISH_ALL_ORGS='true'
             shift
             ;;
         -e) # tag of the examples repo
@@ -111,9 +116,20 @@ runCmdQuietly() {
 deployPolPublish() {
     local sample=${1:?}
     if ([[ $sample == *"cpu2evtstreams" ]] || [[ $sample == *"helloworld" ]] || [[ $sample == *"operator"* ]]); then 
-        echo "Publishing deployment policy of $sample to $POLICY_ORG org..."
         if [[ $EXAMPLES_PREVIEW_MODE != 'true' ]]; then
-            HZN_ORG_ID=$POLICY_ORG runCmdQuietly make publish-deployment-policy
+            if [[ $PUBLISH_ALL_ORGS == 'true' ]]; then
+                orgs=()
+                orgs=( $(hzn exchange org list | jq .[]) )
+                for org in ${orgs[@]}; do
+                    if [[ $org != '"IBM"' && $org != '"root"' ]]; then
+                        echo "Publishing deployment policy of $sample to $org org..."
+                        HZN_ORG_ID=$org runCmdQuietly make publish-deployment-policy
+                    fi
+                done
+            else
+                echo "Publishing deployment policy of $sample to $POLICY_ORG org..."
+                HZN_ORG_ID=$POLICY_ORG runCmdQuietly make publish-deployment-policy
+            fi
         fi
     fi
 }
@@ -172,7 +188,7 @@ do
     fi
 
     # check if an org was specified to publish sample deployment policy 
-    if [[ -n $POLICY_ORG ]]; then
+    if [[ -n $POLICY_ORG || $PUBLISH_ALL_ORGS == 'true' ]]; then
         deployPolPublish "$sample"
     fi
 

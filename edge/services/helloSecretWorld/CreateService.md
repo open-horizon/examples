@@ -60,46 +60,48 @@ Follow the steps in this page to create your first OpenHorizon edge service that
   ```bash
   cd ~   # or wherever you want
   git clone git@github.com:open-horizon/examples.git
-  ```
-2. Checkout the branch that corresponds to your OpenHorizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
-
-  ```bash
-  $ hzn version
-  Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
-  Horizon Agent version: 2.27.0-173
-  $ git checkout v2.27
+  cd examples/
   ```
 
-  - Note: The FSS image tag defaults to `latest`. Efforts are made to maintain backwards compatibility but since this image is updated frequently it's recommended to define the following if the version shows `2.27.0-173` or `2.28.0-338`:
-    ```bash
-    $ export HZN_DEV_FSS_IMAGE_TAG=1.5.3-338
-    ```
-
-3. Copy the `helloSecretWorld` dir to where you will start development of your new service:
+2. Check your Horizon CLI version:
 
   ```bash
-  cp -a examples/edge/services/helloSecretWorld ~/myservice     # or wherever
+  hzn version
+  ```
+
+3. Starting with Horizon version `v2.29.0-595` you can `checkout` to a version of the example services that directly corresponds to your Horizon CLI version with these commands: 
+
+  ```bash
+  export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
+  git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
+  ```
+  **Note:** if you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
+
+4. Copy the `helloSecretWorld` dir to where you will start development of your new service:
+
+  ```bash
+  cp -a edge/services/helloSecretWorld ~/myservice     # or wherever
   cd ~/myservice
   ```
 
-4. Set the values in `horizon/hzn.json` to your liking. These variables are used in the service and pattern files in `horizon`. They are also used in some of the commands in this procedure. After editing `horizon/hzn.json`, set the variables in your environment:
+5. Set the values in `horizon/hzn.json` to your liking. These variables are used in the service and pattern files in `horizon`. They are also used in some of the commands in this procedure. After editing `horizon/hzn.json`, set the variables in your environment:
 
   ```bash
   eval $(hzn util configconv -f horizon/hzn.json)
   ```
 
-5. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello". While you are editing `service.sh`, read the comments and code to learn the basic pattern for using a secret in an edge service. This coding pattern will be the same, regardless of what language you implement your own edge services in.
+6. Edit `service.sh` however you want. For example, to make a simple change so you will be able to confirm that your new service is running, you could customize the `echo` statement near the end that says "Hello". While you are editing `service.sh`, read the comments and code to learn the basic pattern for using a secret in an edge service. This coding pattern will be the same, regardless of what language you implement your own edge services in.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
 
-6. Build the service docker image.
+7. Build the service docker image.
 
   ```bash
   make
   ```
 
-7. Edit the secret value in `horizon/hw_who` to whatever you want. The secret key is ignored by the code in `service.sh`, but the code will read the secret value from the file and output it using the `echo` statement. Because we will be testing our service with `hzn dev service start` without a deployment pattern or policy, the agent cannot get the secret details of any secrets in the secrets manager. Instead, it will read this file as the secret details of the secret used by the service. 
+8. Edit the secret value in `horizon/hw_who` to whatever you want. The secret key is ignored by the code in `service.sh`, but the code will read the secret value from the file and output it using the `echo` statement. Because we will be testing our service with `hzn dev service start` without a deployment pattern or policy, the agent cannot get the secret details of any secrets in the secrets manager. Instead, it will read this file as the secret details of the secret used by the service. 
 
-8. Test the service by running it with the simulated agent environment. Pass in the **absolute path** to the `hw_who` file, which is in the `horizon` subdirectory. 
+9. Test the service by running it with the simulated agent environment. Pass in the **absolute path** to the `hw_who` file, which is in the `horizon` subdirectory. 
 
   ```bash
   hzn dev service start --secret=<abs-path-to-hw_who>
@@ -107,47 +109,45 @@ Follow the steps in this page to create your first OpenHorizon edge service that
 
 Upon starting the service, this command will mount the local `hw_who` file containing the contents of the secret to the service container in the `open-horizon-secrets` folder. If this file is changed while the service is running, the change will be reflected in the container as well.
 
-8. Check that the container is running:
+10. Check that the container is running:
 
   ```bash
   sudo docker ps
   ```
 
-9. Display the environment variables OpenHorizon passes into your service container. Note the variables that start with `HZN_ESS_`. These are used by the service to query the secrets API for updating secrets.
+11. Display the environment variables OpenHorizon passes into your service container. Note the variables that start with `HZN_ESS_`. These are used by the service to query the secrets API for updating secrets.
 
   ```bash
   sudo docker inspect $(sudo docker ps -q --filter name=$SERVICE_NAME) | jq '.[0].Config.Env'
   ```
 
-10. View the service output (you should see messages like **\<your-node-id\> says: Hello \<secret-value\>!**, where \
+12. View the service output (you should see messages like **\<your-node-id\> says: Hello \<secret-value\>!**, where \
 \<secret-value\> is the value of the secret as stated in the `hw_who` file.
 
-  on **Linux**:
-
   ```bash
-  hzn dev service log $SERVICE_NAME
+  hzn dev service log -f $SERVICE_NAME
   ```
 
-11. Stop the service:
+13. Stop the service:
 
   ```bash
   hzn dev service stop
   ```
 
-12. You are now ready to publish your edge service and pattern, so that they can be deployed to real edge nodes. Instruct OpenHorizon to push your docker image to your registry and publish your service in the OpenHorizon Exchange:
+14. You are now ready to publish your edge service and pattern, so that they can be deployed to real edge nodes. Instruct OpenHorizon to push your docker image to your registry and publish your service in the OpenHorizon Exchange:
 
   ```bash
   hzn exchange service publish -f horizon/service.definition.json
   hzn exchange service list
   ```
 
-13. (This step must be done by an organization admin) Create an organization-wide secret called `hw-secret-name` in your organization's secrets manager. The flags `--secretKey` and `--secretDetail` provide the key and value for the secret, respectively.
+15. (This step must be done by an organization admin) Create an organization-wide secret called `hw-secret-name` in your organization's secrets manager. The flags `--secretKey` and `--secretDetail` provide the key and value for the secret, respectively.
 
   ```bash
   hzn sm secret add --secretKey <secret-key> --secretDetail <secret-value> hw-secret-name
   ```
 
-14. Edit your pattern definition file to make the pattern not public, then publish your edge node deployment pattern in the OpenHorizon Exchange:
+16. Edit your pattern definition file to make the pattern not public, then publish your edge node deployment pattern in the OpenHorizon Exchange:
 
   ```bash
   jq '.public = false' horizon/pattern.json > horizon/pattern.tmp && mv horizon/pattern.tmp horizon/pattern.json
@@ -156,19 +156,19 @@ Upon starting the service, this command will mount the local `hw_who` file conta
   ```
 OpenHorizon will check for the existence of `hw-secret-name` in your organization's secrets manager. If it is not found in the secrets manager, OpenHorizon will not be able to publish the pattern to the exchange.
 
-15. Register your edge node with OpenHorizon to use your deployment pattern:
+17. Register your edge node with OpenHorizon to use your deployment pattern:
 
   ```bash
   hzn register -p pattern-${SERVICE_NAME}-$(hzn architecture) -s $SERVICE_NAME --serviceorg $HZN_ORG_ID
   ```
 
-16. **Open another terminal** and view the service output with the "follow" flag:
+18. **Open another terminal** and view the service output with the "follow" flag:
 
   ```bash
   hzn service log -f $SERVICE_NAME
   ```
   
-17. (This step must be done by an organization admin) Update the secret `hw-secret-name` in the secrets manager using the OpenHorizon CLI. To see any change reflected in the output, the argument passed to `--secretDetail` should be different from the initial secret creation command, so that the value of the secret can change.
+19. (This step must be done by an organization admin) Update the secret `hw-secret-name` in the secrets manager using the OpenHorizon CLI. To see any change reflected in the output, the argument passed to `--secretDetail` should be different from the initial secret creation command, so that the value of the secret can change.
 
   ```
   hzn sm secret add --secretKey <secret-key> --secretDetail <new-secret-value> hw-secret-name
@@ -176,9 +176,9 @@ OpenHorizon will check for the existence of `hw-secret-name` in your organizatio
 
 A prompt will pop up in the terminal asking you to confirm that you want to overwrite the existing `hw-secret-name` in the secrets manager. Enter `y` to confirm.
 
-18. After some time your service should be able to observe the change in the secret as made in Step 17.
+20. After some time your service should be able to observe the change in the secret as made in Step 17.
 
-19. Clean up by unregistering your edge node:
+21. Clean up by unregistering your edge node:
 
   ```bash
   hzn unregister -f

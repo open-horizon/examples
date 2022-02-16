@@ -75,8 +75,10 @@ Follow the steps in this page to create your first Horizon edge service that use
   export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
   git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
   ```
+  **Note:** 
+  - If you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
 
-  - Note: The FSS image tag defaults to `latest`. Efforts are made to maintain backwards compatibility but since this image is updated frequently it's recommended to define the following if the version shows `2.27.0-173` or `2.28.0-338`:
+  - Additionally, the FSS image tag defaults to `latest`. Efforts are made to maintain backwards compatibility but since this image is updated frequently it's recommended to define the following if the version shows `2.27.0-173` or `2.28.0-338`:
     ```bash
     export HZN_DEV_FSS_IMAGE_TAG=1.5.3-338
     ```
@@ -124,18 +126,9 @@ Follow the steps in this page to create your first Horizon edge service that use
 
 11. **Open another terminal to the same working directory** then set the `horizon/hzn.json` variable values in this environment and view the service output (you should see messages like **\<your-node-id\> says: Hello from the dockerfile!**:
 
-  on **Linux**:
-
   ```bash
   eval $(hzn util configconv -f horizon/hzn.json)
-  sudo tail -f /var/log/syslog | grep ${SERVICE_NAME}[[]
-  ```
-
-  on **Mac**:
-
-  ```bash
-  eval $(hzn util configconv -f horizon/hzn.json)
-  sudo docker logs -f $(sudo docker ps -q --filter name=$SERVICE_NAME)
+  hzn dev service log -f $SERVICE_NAME
   ```
 
 12. While observing the output in the other terminal, modify `config.json` and publish it as a new mms object, using the provided `object.json` metadata. Since you are running in the local simulated agent environment right now, the `hzn mms ...` commands must be directed to the local MMS.

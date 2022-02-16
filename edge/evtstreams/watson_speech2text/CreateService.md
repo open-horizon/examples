@@ -53,51 +53,60 @@ Follow the steps in this page to create your Watson Speech to Text to IBM Event 
 ```bash
 cd ~   # or wherever you want
 git clone git@github.com:open-horizon/examples.git
+cd examples/
 ```
 
-2. Copy the `watson_speech2text` dir to where you will start development of your new service:
+2. Check your Horizon CLI version:
+
+```bash
+hzn version
+```
+
+3. Starting with Horizon version `v2.29.0-595` you can `checkout` to a version of the example services that directly corresponds to your Horizon CLI version with these commands: 
+
+```bash
+export EXAMPLES_REPO_TAG="v$(hzn version 2>/dev/null | grep 'Horizon CLI' | awk '{print $4}')"
+git checkout tags/$EXAMPLES_REPO_TAG -b $EXAMPLES_REPO_TAG
+```
+**Note:** if you are using an older version of the `hzn` CLI you can checkout to the branch that corresponds to the major version you are using. For example Horizon CLI version: `2.27.0-173` can run `git checkout v2.27`
+
+4. Copy the `watson_speech2text` dir to where you will start development of your new service:
 
 ```
-cp -a examples/edge/evtstreams/watson_speech2text ~/myservice     # or wherever
+cp -a edge/evtstreams/watson_speech2text ~/myservice     # or wherever
 cd ~/myservice
 ```
 
-3. Checkout the branch that corresponds to your horizon CLI version. To get the branch name, remove the last bullet and any numbers after it, then prepend a `v` at the beginning:
-```bash
-$ hzn version
-Horizon CLI version: 2.27.0-173 # Branch name in this example is v2.27
-Horizon Agent version: 2.27.0-173
-$ git checkout v2.27
-```
+5. Set the values in `horizon/hzn.json` to your own values.
 
-4. Set the values in `horizon/hzn.json` to your own values.
-
-5. Edit `watsonspeech2text.py` however you want.
+6. Edit `watsonspeech2text.py` however you want.
     - Note: this service is a shell script simply for brevity, but you can write your service in any language.
-6. Build the watsons2text docker image:
+
+7. Build the watsons2text docker image:
 
 ```bash
 make
 ```
 
-7. Test the service by having Horizon start it locally:
+8. Test the service by having Horizon start it locally:
 ```bash
 hzn dev service start -S
 ```
-8. Check that the container is running:
+
+9. Check that the container is running:
 ```bash
 sudo docker ps 
 ```
 
 9. See the watsons2text service output:
 
-	```bash
-	tail -f /var/log/syslog | grep watsons2text[[]
-	```
+```bash
+hzn dev service log -f $SERVICE_NAME
+```
 
 10. See the environment variables Horizon passes into your service container:
 ```bash
-docker inspect $(docker ps -q --filter name=watsons2text) | jq '.[0].Config.Env'
+docker inspect $(docker ps -q --filter name=${SERVICE_NAME}) | jq '.[0].Config.Env'
 ```
 
 11. Stop the service:
@@ -117,9 +126,9 @@ hzn exchange pattern publish -f horizon/pattern.json
 hzn exchange pattern list
 ```
 
-14. Register your edge node with Horizon to use your deployment pattern (substitute `<service-name>` for the `SERVICE_NAME` you specified in `horizon/hzn.json`):
+14. Register your edge node with Horizon to use your deployment pattern:
 ```bash
-hzn register -p pattern-<service-name>-$(hzn architecture) -f horizon/userinput.json
+hzn register -p pattern-${SERVICE_NAME}-${ARCH} -f horizon/userinput.json
 ```
 
 15. The edge device will make an agreement with one of the Horizon agreement bots (this typically takes about 15 seconds). Repeatedly query the agreements of this device until the `agreement_finalized_time` and `agreement_execution_start_time` fields are filled in:
@@ -142,7 +151,7 @@ kafkacat -C -q -o end -f "%t/%p/%o/%k: %s\n" -b $EVTSTREAMS_BROKER_URL -X api.ve
 
 18. See the watsons2text service output:
 ```bash
-tail -f /var/log/syslog | grep watsons2text[[]
+hzn dev service log -f $SERVICE_NAME
 ``` 
 
 19. Unregister your edge node, stopping the watsons2text service:
