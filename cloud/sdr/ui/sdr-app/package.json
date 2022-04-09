@@ -45,7 +45,7 @@
 		"lodash": "^4.17.21",
 		"mem": "^6.1.0",
 		"merge": "^2.1.1",
-		"minimist": ">=1.2.2",
+		"minimist": ">=1.2.6",
 		"nconf": "^0.10.0",
 		"node-fetch": ">=2.6.1",
 		"node-notifier": ">=8.0.1",
