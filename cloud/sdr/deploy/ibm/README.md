@@ -1,3 +1,5 @@
+## ALERT: This service is depricated and no longer meing maintained. It will be removed from the master branch soon. You will still be able to find the most recent version in the depricated_cloud_sdr_example branch.
+
 # sdr-auto
 
 > Deployment automation for SDR PoC cloud part on IBM Cloud
