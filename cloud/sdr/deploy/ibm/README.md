@@ -1,4 +1,4 @@
-## ALERT: This service is depricated and no longer meing maintained. It will be removed from the master branch soon. You will still be able to find the most recent version in the depricated_cloud_sdr_example branch.
+## ALERT: This service is deprecated and no longer being maintained. It will be removed from the master branch soon. You will still be able to find the most recent version in the deprecated_cloud_sdr_example branch or any [open-horizon/examples release](https://github.com/open-horizon/examples/releases) v2.30.0-802 or older.
 
 # sdr-auto
 
