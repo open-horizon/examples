@@ -6,7 +6,7 @@
 	"author": "Bruce Potter",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"async": "^2.6.3",
+		"async": "^3.2.2",
 		"lodash": ">=4.17.19",
 		"pg": "^7.18.2",
 		"promise": "^8.1.0",
