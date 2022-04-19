@@ -141,6 +141,7 @@ If everything deployed correctly you should see an output similar to the followi
    ```
 
 If you are using an **OCP edge cluster** you will need to `curl` the service using the exposed `route`.
+   
 9. Get the exposed route name:
    ```bash
    kubectl get route -n openhorizon-agent
