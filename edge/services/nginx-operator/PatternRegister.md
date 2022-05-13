@@ -10,7 +10,7 @@
 
 1. Register your edge node with Horizon to use the `nginx-operator` pattern:
   ```bash
-  hzn register -p IBM/pattern-nginx.operator-amd64 -u $HZN_EXCHANGE_USER_AUTH
+  hzn register -p IBM/pattern-ibm.nginx-operator-amd64 -u $HZN_EXCHANGE_USER_AUTH
   ```
  - **Note**: using the `-s` flag with the `hzn register` command will cause Horizon to wait until agreements are formed and the service is running on your edge node to exit, or alert you of any errors encountered during the registration process. 
 

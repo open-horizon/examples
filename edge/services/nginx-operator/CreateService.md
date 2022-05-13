@@ -75,22 +75,16 @@ The above command will give you an empty ansible operator. At the very least you
    ```bash
    wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/deployment.j2 && mv deployment.j2 roles/myoperator/templates/ 
    wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/service.j2 && mv service.j2 roles/myoperator/templates/
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/route.j2 && mv route.j2 roles/myoperator/templates/
    wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main.yml && mv main.yml roles/myoperator/tasks/
    ```
 
-3. Build the operator image (use ppc64le for power arch):
+3. **FOR OCP EDGE CLUSTERS ONLY:** Obtain the `route`, and modified task file and move them into the `my-operator` roles directory:
    ```bash
-   operator-sdk build docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
-   docker push docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/route.j2 && mv route.j2 roles/myoperator/templates/
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main-route.yml && mv main.yml roles/myoperator/tasks/main.yml
    ```
 
-4. In the `deploy/operator.yaml` file replace `"REPLACE_IMAGE"` with the operator image name you build and pushed in the previous step (use ppc64le for power arch):
-   ```bash
-   image: "<docker-hub-id>/my.operator_amd64:1.0.0"
-   ```
-
-5. By default the operator does not have the permission to create routes, however, with the following command you can add the lines needed to the `deploy/role.yaml` file so the operator can expose the `nginx` service with a route:
+4. **FOR OCP EDGE CLUSTERS ONLY:** By default the operator does not have the permission to create routes, however, with the following command you can add the lines needed to the `deploy/role.yaml` file so the operator can expose the `nginx` service with a route:
    ```bash
    echo "- apiGroups:
      - route.openshift.io
@@ -107,7 +101,18 @@ The above command will give you an empty ansible operator. At the very least you
      - delete" >> deploy/role.yaml
    ```
 
-6. Apply the required resources to run the operator 
+5. Build the operator image (use ppc64le for power arch):
+   ```bash
+   operator-sdk build docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
+   docker push docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
+   ```
+
+6. In the `deploy/operator.yaml` file replace `"REPLACE_IMAGE"` with the operator image name you build and pushed in the previous step (use ppc64le for power arch):
+   ```bash
+   image: "<docker-hub-id>/my.operator_amd64:1.0.0"
+   ```
+
+7. Apply the required resources to run the operator 
    ```bash
    kubectl apply -f deploy/crds/my.operator.com_myoperators_crd.yaml
    kubectl apply -f deploy/service_account.yaml
@@ -117,7 +122,7 @@ The above command will give you an empty ansible operator. At the very least you
    kubectl apply -f deploy/crds/my.operator.com_v1alpha1_myoperator_cr.yaml
    ```
 
-7. Ensure the operator pod and the deployed service pod are running:
+8. Ensure the operator pod and the deployed service pod are running:
    ```bash
    kubectl get pods
    ```
@@ -129,7 +134,7 @@ If everything deployed correctly you should see an output similar to the followi
    my-operator-55c6f56c47-b6p7c   1/1     Running   0          48s
    ```
 
-8. Check that the service is up:
+9. Check that the service is up:
    ```bash
    kubectl get service
    ```
@@ -142,7 +147,7 @@ If everything deployed correctly you should see an output similar to the followi
 
 If you are using an **OCP edge cluster** you will need to `curl` the service using the exposed `route`.
    
-9. Get the exposed route name:
+10. Get the exposed route name:
    ```bash
    kubectl get route -n openhorizon-agent
    ```
@@ -153,7 +158,7 @@ If the route was exposed correctly you should see an output similar to the follo
    nginx-route   nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com          nginx      8080                 None
    ```
 
-10. `curl` the service to test if it is functioning correctly:
+11. `curl` the service to test if it is functioning correctly:
    **OCP edge cluster** substitute the above `HOST/PORT` value:
       ```bash
       curl nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com
@@ -193,15 +198,13 @@ If the service is running you should see following `Welcome to nginx!` output:
    </html>
    ```
 
-11. Delete the resources to stop your operator pod and service 
+12. Delete the resources to stop your operator pod and service 
    ```bash
    kubectl delete crd myoperators.my.operator.com
    kubectl delete deployment my-operator
-   kubectl delete service my-operator-metrics
    kubectl delete serviceaccount my-operator
    kubectl delete rolebinding my-operator
    kubectl delete role my-operator
-   kubectl delete route nginx-route
    ```
 
 **Note:** if any pods are stuck in the `Terminating` state after running the previous commands you can force delete them with the following command:
@@ -209,7 +212,7 @@ If the service is running you should see following `Welcome to nginx!` output:
    kubectl -n <namespace> delete pods --grace-period=0 --force <pod_name(s)>
    ```
 
-12. Create a tar archive that contains the files inside the operators `deploy/` directory:
+13. Create a tar archive that contains the files inside the operators `deploy/` directory:
    ```
    tar -zcvf operator.tar.gz deploy/*
    ```

@@ -15,7 +15,7 @@
   "properties": [
   ],
   "constraints": [
-    "openhorizon.example == nginx-operator"
+    "openhorizon.example == operator"
   ],
   "userInput": [
   ]
