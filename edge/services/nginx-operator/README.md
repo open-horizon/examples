@@ -64,7 +64,7 @@ In the following steps you will deploy the `nginx-operator` to your edge cluster
   ```json
   {
     "properties": [
-      { "name": "openhorizon.example", "value": "nginx-operator" }
+      { "name": "openhorizon.example", "value": "operator" }
     ],
     "constraints": [
     ]
@@ -104,17 +104,17 @@ In the following steps you will deploy the `nginx-operator` to your edge cluster
 
   ```json
   {
-    "mycluster/policy-hello-operator": {
+    "mycluster/policy-ibm.nginx-operator_1.0.1": {
       "owner": "root/root",
-      "label": "nginx-operator Deployment Policy",
+      "label": "ibm.nginx-operator Deployment Policy",
       "description": "A super-simple sample Horizon Deployment Policy",
       "service": {
-        "name": "nginx-operator",
+        "name": "ibm.nginx-operator",
         "org": "IBM",
         "arch": "*",
         "serviceVersions": [
           {
-            "version": "1.0.0",
+            "version": "1.0.1",
             "priority": {},
             "upgradePolicy": {}
           }
@@ -122,10 +122,10 @@ In the following steps you will deploy the `nginx-operator` to your edge cluster
         "nodeHealth": {}
       },
       "constraints": [
-        "openhorizon.example == nginx-operator"
+        "openhorizon.example == operator"
       ],
-      "created": "2020-11-05T19:18:17.722Z[UTC]",
-      "lastUpdated": "2020-11-05T19:18:17.722Z[UTC]"
+      "created": "2022-05-12T23:17:04.919499Z[UTC]",
+      "lastUpdated": "2022-05-12T23:17:04.919489Z[UTC]"
     }
   }
   ```
