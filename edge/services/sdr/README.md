@@ -1,5 +1,7 @@
 # SDR service API
 
+:warning: **Note: the `cloud/sdr` backend will be deprecated soon!**
+
 Assuming that `ibm.sdr` is the host name:
 
 ## `/freqs`
