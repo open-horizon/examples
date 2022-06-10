@@ -1,5 +1,7 @@
 # IBM Cloud Node.js Starter App for SDR
 
+:warning: **Note: the `cloud/sdr` backend will be deprecated soon!**
+
 This application demonstrates a simple, reusable Node.js web application based on the Express framework.
 
 ---
