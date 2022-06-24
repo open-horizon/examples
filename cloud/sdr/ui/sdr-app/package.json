@@ -47,7 +47,7 @@
 		"merge": "^2.1.1",
 		"minimist": ">=1.2.2",
 		"nconf": "^0.10.0",
-		"node-fetch": ">=2.6.1",
+		"node-fetch": ">=2.6.7",
 		"node-notifier": ">=8.0.1",
 		"nodemon": "^2.0.7",
 		"object-path": ">=0.11.5",
