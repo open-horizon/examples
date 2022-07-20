@@ -64,7 +64,7 @@ In the following steps you will deploy the `nginx-operator` to your edge cluster
   ```json
   {
     "properties": [
-      { "name": "openhorizon.example", "value": "operator" }
+      { "name": "openhorizon.example", "value": "nginx-operator" }
     ],
     "constraints": [
     ]
@@ -122,7 +122,7 @@ In the following steps you will deploy the `nginx-operator` to your edge cluster
         "nodeHealth": {}
       },
       "constraints": [
-        "openhorizon.example == operator"
+        "openhorizon.example == nginx-operator"
       ],
       "created": "2022-05-12T23:17:04.919499Z[UTC]",
       "lastUpdated": "2022-05-12T23:17:04.919489Z[UTC]"
