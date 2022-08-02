@@ -1,5 +1,7 @@
 # Horizon SDR To IBM Event Streams Service
 
+:warning: **Note: the `cloud/sdr` backend will be deprecated soon!**
+
 This example illustrates a more realistic Horizon edge service by including additional aspects of typical edge services.
 
 - [Preconditions for Using the SDR To IBM Event Streams Example Edge Service](#preconditions)
