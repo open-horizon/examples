@@ -52,3 +52,8 @@ Edge examples specific to the Watson IoT Platform are found in [edge/wiotp](edge
 # Using Example Services 
 Each example service in this repo has a [README](edge/services/helloworld/README.md#horizon-hello-world-example-edge-service) that includes steps to run it when it is currently published in your exchange, or a ["Create your own"](edge/services/helloworld/CreateService.md#creating-your-own-hello-world-edge-service) set of instructions that will guide you through the process of publishing your own version to your exchange. 
 
+Contributors
+
+<a href="https://github.com/open-horizon/examples/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=open-horizon/examples" />
+</a>
