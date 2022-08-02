@@ -49,6 +49,8 @@ A good example of a "top-level" service is [cpu2evtstreams](edge/evtstreams/cpu2
 
 Edge examples specific to the Watson IoT Platform are found in [edge/wiotp](edge/wiotp). These examples are not being maintained. 
 
+The backend infrastructure for the `sdr2evtstreams` service has been deprecated and removed from this repo. If you wish to access the most recent version, you can find it in the [deprecated_cloud_sdr_example](https://github.com/open-horizon/examples/tree/deprecated_cloud_sdr_example) branch or any open-horizon/examples release v2.30.0-934 or older.
+
 # Using Example Services 
 Each example service in this repo has a [README](edge/services/helloworld/README.md#horizon-hello-world-example-edge-service) that includes steps to run it when it is currently published in your exchange, or a ["Create your own"](edge/services/helloworld/CreateService.md#creating-your-own-hello-world-edge-service) set of instructions that will guide you through the process of publishing your own version to your exchange. 
 

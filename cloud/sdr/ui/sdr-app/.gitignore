@@ -1,9 +1,0 @@
-node_modules
-node_modules/
-server/config/settings.js
-.eslintrc.json
-
-# Eclipse files
-.classpath
-.project
-.settings/

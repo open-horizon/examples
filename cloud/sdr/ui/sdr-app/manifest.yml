@@ -1,5 +1,0 @@
----
-applications:
-- name: sdr-app
-  random-route: true
-  memory: 256M
