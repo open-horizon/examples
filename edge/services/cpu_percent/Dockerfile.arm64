@@ -1,8 +1,11 @@
-FROM aarch64/alpine:latest
-RUN apk --no-cache --update add gawk bc socat curl 
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.0.0-1608
+RUN microdnf update -y --nodocs --disableplugin=subscription-manager --setopt=install_weak_deps=0 && \
+    microdnf install -y --nodocs --disableplugin=subscription-manager gawk bc socat && \
+    microdnf clean all && \
+    rm -rf /mnt/rootfs/var/cache/* /mnt/rootfs/var/log/dnf* /mnt/rootfs/var/log/yum.*
 COPY *.sh /
 WORKDIR /
-RUN addgroup -S hzngroup && adduser -S hznuser -G hzngroup
-USER hznuser
+# RUN addgroup -S hzngroup && adduser -S hznuser -G hzngroup
+# USER hznuser
 EXPOSE 8080
 CMD /start.sh
