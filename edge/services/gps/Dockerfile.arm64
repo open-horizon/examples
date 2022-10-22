@@ -32,7 +32,7 @@ RUN env GOPATH=/build GOOPTIONS_ARM64='CGO_ENABLED=0 GOOS=linux GOARCH=arm64 ' g
 
 # Build stage 1: The final container (including armv6_gps binary from above)
 
-FROM aarch64/alpine:latest
+FROM arm64v8/alpine:latest
 
 # Install the gpsd daemon, and the certs needed to use https services
 RUN apk update && apk add gpsd curl --no-cache ca-certificates
