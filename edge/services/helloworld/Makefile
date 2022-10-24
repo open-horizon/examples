@@ -12,7 +12,7 @@ export TIME_OUT:=60
 
 # Build the docker image for the current architecture
 build:
-	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build --platform linux/$(ARCH) -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile .
 
 # Build the docker image for 3 architectures
 build-all-arches:
@@ -43,8 +43,8 @@ test: build
 publish-service:
 	hzn exchange service publish -O -f horizon/service.definition.json
 
-# Target for travis to publish service and pattern after PR is merged  
-publish: 
+# Target for travis to publish service and pattern after PR is merged
+publish:
 	ARCH=amd64 $(MAKE) publish-service
 	ARCH=amd64 $(MAKE) publish-service-policy
 	ARCH=arm $(MAKE) publish-service
