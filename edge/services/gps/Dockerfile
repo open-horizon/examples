@@ -12,6 +12,7 @@
 
 # Build stage 0: Go compilation
 FROM golang:1.19-alpine as go_build
+LABEL stage=builder
 
 RUN apk --no-cache update && apk add git
 

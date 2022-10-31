@@ -17,7 +17,7 @@ export TIME_OUT:=20
 # Build the docker image for the current architecture
 build:
 	docker build --build-arg ARCH=$(ARCH) --platform linux/$(ARCH) -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile . 
-
+	@docker image prune --filter label=stage=builder --force
 # Build the docker image for 3 architectures
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
