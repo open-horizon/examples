@@ -23,7 +23,7 @@ ARG ARCH=${ARCH}
 
 WORKDIR /build                                                                    
 RUN env GO111MODULE=off env GOPATH=/build GOOPTIONS_${ARCH}="CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH" go get github.com/kellydunn/golang-geo
-RUN env GO111MODULE=off env GOPATH=/build GOOPTIONS_${ARCH}="CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH" go build -o /build/bin/${ARCH}_gps /build/src/main.go
+RUN env GO111MODULE=off env GOPATH=/build GOOPTIONS_${ARCH}="CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH" go build -o /build/bin/gps /build/src/main.go
 
 FROM alpine:latest
 
@@ -32,7 +32,7 @@ RUN apk update && apk add gpsd curl --no-cache ca-certificates
 
 # Copy in the server binary of the build (above)
 ARG ARCH=${ARCH}
-COPY --from=go_build /build/bin/${ARCH}_gps /gps
+COPY --from=go_build /build/bin/gps /gps
 
 # Create hzngroup and hznuser
 RUN addgroup -S hzngroup && adduser -S hznuser -G hzngroup
