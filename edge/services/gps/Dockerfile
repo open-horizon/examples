@@ -9,36 +9,30 @@
 # To build this server container, run the following command in this directory:
 #   $ make
 #
-# Written by Glen Darling, November 2016.
-# Updated to 2-stage build, and modified to target arm64v8, May 2019.
-
-
 
 # Build stage 0: Go compilation
-
-FROM arm64v8/golang:1.15-alpine
+FROM golang:1.19-alpine as go_build
+LABEL stage=builder
 
 RUN apk --no-cache update && apk add git
-RUN apk add gcc musl musl-dev
 
 RUN mkdir -p /build/bin
 COPY src /build/src
 
-WORKDIR /build
-RUN env GOPATH=/build GOOPTIONS_ARM64='CGO_ENABLED=0 GOOS=linux GOARCH=arm64' go get github.com/kellydunn/golang-geo
-RUN env GOPATH=/build GOOPTIONS_ARM64='CGO_ENABLED=0 GOOS=linux GOARCH=arm64 ' go build -o /build/bin/arm64_gps /build/src/main.go
+ARG ARCH=${ARCH}
 
+WORKDIR /build                                                                    
+RUN env GO111MODULE=off env GOPATH=/build GOOPTIONS_${ARCH}="CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH" go get github.com/kellydunn/golang-geo
+RUN env GO111MODULE=off env GOPATH=/build GOOPTIONS_${ARCH}="CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH" go build -o /build/bin/gps /build/src/main.go
 
-
-# Build stage 1: The final container (including armv6_gps binary from above)
-
-FROM aarch64/alpine:latest
+FROM alpine:latest
 
 # Install the gpsd daemon, and the certs needed to use https services
 RUN apk update && apk add gpsd curl --no-cache ca-certificates
 
-# Copy in the server binary from stage 0 of the build (above)
-COPY --from=0 /build/bin/arm64_gps /gps
+# Copy in the server binary of the build (above)
+ARG ARCH=${ARCH}
+COPY --from=go_build /build/bin/gps /gps
 
 # Create hzngroup and hznuser
 RUN addgroup -S hzngroup && adduser -S hznuser -G hzngroup
