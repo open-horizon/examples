@@ -1,8 +1,8 @@
 {
     "HZN_ORG_ID": "IBM",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "",
+        "DOCKER_IMAGE_BASE": "openhorizon/ibm.nginx-operator",
         "SERVICE_NAME": "nginx-operator",
-        "SERVICE_VERSION": "1.0.0"
+        "SERVICE_VERSION": "1.0.1"
     }
 }
