@@ -4,7 +4,7 @@ This example uses software-defined radio (SDR) as an example of edge processing.
 
 This diagram shows the architecture for this SDR example:
 
-<img src="./08_sdrarch.svg" style="margin: 3%" alt="Example architecture">
+![Example architecture](../../evtstreams/sdr2evtstreams/08_sdrarch.svg)
 
 SDR edge processing is a fully featured example that consumes radio station audio, extracts speech, and converts the extracted speech into text. The example completes sentiment analysis on the text and makes the data and results available through a user interface where you can view the details of the data for each edge node. Use this example to learn more about edge processing.
 
