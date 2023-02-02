@@ -8,11 +8,11 @@
 
 ## Management Hub Installation
 
-Before you can publish and use any of the services in this repository, you must first deploy your own Horizon Management Hub. This can be done with one simple command using the `deploy-mgmt-hub.sh` script located in the [devops repository](https://github.com/open-horizon/devops/tree/master/mgmt-hub#horizon-management-hub). This will give you with a management hub with several services, policies and patterns published in the exchange.
+Before you can publish and use any of the services in this repository, you must first deploy your own Horizon Management Hub. This can be done with one simple command using the `deploy-mgmt-hub.sh` script located in the [devops repository](https://github.com/open-horizon/devops/tree/master/mgmt-hub#horizon-management-hub). This will give you a management hub with several services, policies and patterns published in the exchange.
 
 ## Register an Edge Node with your Mangement Hub
 
-In order to deploy a service to an edge node it must first be registered with a management hub. The `agent-install.sh` script is a fast and easy way to register an edge node with a management hub, more information can be found in the [open-horizon/anax](https://github.com/open-horizon/anax/tree/master/agent-install#edge-node-agent-install) repository. Edge nodes can be either a device or a cluster. Open Horizon edge cluster capability helps you manage and deploy workloads from a management hub cluster to remote instances of OpenShift® Container Platform or other Kubernetes-based clusters.
+In order to deploy a service to an edge node it must first be registered with a management hub. The `agent-install.sh` script is a fast and easy way to register an edge node with a management hub. More information can be found in the [open-horizon/anax](https://github.com/open-horizon/anax/tree/master/agent-install#edge-node-agent-install) repository. Edge nodes can be either a device or a cluster. Open Horizon edge cluster capability helps you manage and deploy workloads from a management hub cluster to remote instances of OpenShift® Container Platform or other Kubernetes-based clusters.
 
 Typically, **edge devices** have a prescriptive purpose, provide (often limited) compute capabilities, and are located near or at the data source. Currently supported edge device OS and architectures:
 
