@@ -49,6 +49,9 @@
         ],
         "devices": [
           "/dev/:/dev/"
+        ],
+        "ports": [ 
+          { "HostIP": "0.0.0.0", "HostPort": "8080:8080/tcp" }
         ]
       }
     }
