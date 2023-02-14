@@ -14,7 +14,7 @@ Follow the steps on this page to create your first ansible operator that deploys
    - Open the Docker **Preferences** dialog
    - Uncheck **Securely store Docker logins in macOS keychain**
 
-3. Install [operator-sdk](https://github.com/operator-framework/operator-sdk/tree/v0.17.x#prerequisites) and all its prerequisites. This example was created using version `0.19`, and has not been tested on any other versions.
+3. Install [operator-sdk](https://github.com/operator-framework/operator-sdk/tree/v0.19.x#prerequisites) and all its prerequisites. This example was created using version `0.19`, and has not been tested on any other versions.
 
 4. Install the Kubenetes CLI [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
@@ -84,7 +84,7 @@ In order to deploy a containerized edge service to an edge cluster, a software d
 
    ```bash
    wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/route.j2 && mv route.j2 roles/myoperator/templates/
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main-route.yml && mv main.yml roles/myoperator/tasks/main.yml
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main-route.yml && mv main-route.yml roles/myoperator/tasks/main.yml
    ```
 
 4. **FOR OCP EDGE CLUSTERS ONLY:** By default the operator does not have the permission to create routes, however, with the following command you can add the lines needed to the `deploy/role.yaml` file so the operator can expose the `nginx` service with a route:
