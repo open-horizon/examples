@@ -1,6 +1,6 @@
-FROM alpine:latest
+FROM alpine:3.16
 
-RUN apk --no-cache --update add jq curl bash
+RUN apk --no-cache --update add jq 'curl<7.88.0' bash
 
 COPY config.json /
 COPY *.sh /
