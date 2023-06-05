@@ -1,0 +1,8 @@
+FROM riscv64/debian:sid-slim
+RUN apt-get update && apt-get install -y gawk bc socat curl
+COPY *.sh /
+WORKDIR /
+RUN addgroup --system hzngroup && useradd -g hzngroup hznuser
+USER hznuser
+EXPOSE 8080
+CMD /start.sh
