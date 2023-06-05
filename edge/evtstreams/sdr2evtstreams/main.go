@@ -207,7 +207,7 @@ type locationData struct {
 }
 
 func getGPS() (location locationData, err error) {
-	resp, err := http.Get("http://" + gpshostname + ":80/v1/gps/location")
+	resp, err := http.Get("http://" + gpshostname + ":8080/v1/gps/location")
 	if err != nil {
 		panic(err)
 	}

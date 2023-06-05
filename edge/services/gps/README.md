@@ -10,7 +10,7 @@ This service takes no input values. By default, this service will try to use gps
 
 Other Horizon services can use the GPS service by requiring it in its own service definition, and then in its code accessing the GPS REST APIs with the URL:
 ```
-http://ibm.gps:80/v1/<api-from-the-list-below>
+http://ibm.gps:8080/v1/<api-from-the-list-below>
 ```
 
 ### **API:** GET /gps/location
@@ -40,7 +40,7 @@ body:
 
 #### Example:
 ```
-curl -sS -w "%{http_code}" http://ibm.gps:80/v1/gps/location | jq .
+curl -sS -w "%{http_code}" http://ibm.gps:8080/v1/gps/location
 {
   "latitude": 42.052577333,
   "longitude": -73.960314,
@@ -79,7 +79,7 @@ body:
 
 #### Example:
 ```
-curl -sS -w "%{http_code}" http://ibm.gps:80/v1/gps/satellites | jq .
+curl -sS -w "%{http_code}" http://ibm.gps:8080/v1/gps/satellites
 {
   "satellites": [
     {

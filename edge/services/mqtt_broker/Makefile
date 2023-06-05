@@ -10,11 +10,19 @@ export TIME_OUT:=60
 
 # Build the docker image for the current architecture
 build:
-	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build --platform linux/$(ARCH) -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile .
+
+# Build the docker image for 3 architectures
+build-all-arches:
+	ARCH=amd64 $(MAKE) build
+	ARCH=arm $(MAKE) build
+	ARCH=arm64 $(MAKE) build
 
 # Target for travis to test new PRs
 test-all-arches:
+	ARCH=amd64 $(MAKE) test
 	ARCH=arm $(MAKE) test
+	ARCH=arm64 $(MAKE) test
 
 # Run and verify the service
 test: build

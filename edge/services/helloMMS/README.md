@@ -55,7 +55,8 @@ If you haven't done so already, you must do these steps before proceeding with t
 
   ```bash
   export SERVICE_NAME=ibm.hello-mms
-  hzn register -p IBM/pattern-$SERVICE_NAME-$(hzn architecture) -s $SERVICE_NAME --serviceorg IBM
+  export HZN_PATTERN=pattern-$SERVICE_NAME
+  hzn register -p IBM/$HZN_PATTERN -s $SERVICE_NAME --serviceorg IBM
   ```
 
 2. After the service has started, list the docker containers to see it:
@@ -64,13 +65,14 @@ If you haven't done so already, you must do these steps before proceeding with t
   sudo docker ps
   ```
 
-3. View the hello-mms service output with the "follow" flag. This sample service repeatedly checks for an updated config file (`config.json`) that contains a parameter of who it should say "hello" to. The initial config file is built into the docker image. Updated config files can come via MMS. Initially you should see the message like: **<your-node-id> says: Hello from the dockerfile!** .
+3. **Open another terminal** and view the hello-mms service output with the "follow" flag. This sample service repeatedly checks for an updated config file (`config.json`) that contains a parameter of who it should say "hello" to. The initial config file is built into the docker image. Updated config files can come via MMS. Initially you should see the message like: **<your-node-id> says: Hello from the dockerfile!** .
 
   ```bash
+  export SERVICE_NAME=ibm.hello-mms
   hzn service log -f $SERVICE_NAME
   ```
 
-4. While observing the service output in one terminal, **open another terminal** and get the sample files that will be needed to create and publish a new config file in MMS:
+4. While observing the service output in the other terminal, get the sample files that will be needed to create and publish a new config file in MMS:
 
   ```bash
   wget -q --show-progress https://github.com/open-horizon/examples/raw/master/edge/services/helloMMS/object.json
@@ -99,7 +101,7 @@ If you haven't done so already, you must do these steps before proceeding with t
   hzn mms object delete -t $HZN_DEVICE_ID.hello-mms --id config.json
   ```
 
-  Note in the service output in the other terminal that this will cause the service to revert to the original config file, and therefore the original "hello" message.
+  **Note**: in the service output in the other terminal that this will cause the service to revert to the original config file, and therefore the original "hello" message.
 
 8. Unregister your edge node (which will also stop the hello-mms service):
 

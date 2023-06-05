@@ -1,5 +1,7 @@
-examples/edge/services/cpu_percent
-examples/edge/services/gps
-examples/edge/services/helloworld
-examples/edge/services/helloMMS
-examples/edge/evtstreams/cpu2evtstreams
+edge/services/cpu_percent
+edge/services/gps
+edge/services/helloworld
+edge/services/helloMMS
+edge/services/helloSecretWorld
+edge/services/nginx-operator
+edge/evtstreams/cpu2evtstreams

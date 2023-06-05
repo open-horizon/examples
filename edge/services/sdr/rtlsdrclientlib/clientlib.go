@@ -12,7 +12,7 @@ import (
 
 // GetAudio fetches a 30 second chunk of raw audio.
 func GetAudio(hostname string, freq int) (audio []byte, err error) {
-	resp, err := http.Get("http://" + hostname + ":80/audio/" + strconv.Itoa(freq))
+	resp, err := http.Get("http://" + hostname + ":8080/audio/" + strconv.Itoa(freq))
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +28,7 @@ func GetAudio(hostname string, freq int) (audio []byte, err error) {
 	return
 }
 
-// FreqToIndex converts a frequnecy to a list index.
+// FreqToIndex converts a frequency to a list index.
 func FreqToIndex(freq float32, data PowerDist) int {
 	percentPos := (freq - data.Low) / (data.High - data.Low)
 	index := int(float32(len(data.Dbm)) * percentPos)
@@ -70,7 +70,7 @@ func GetFreqs(hostname string) (freqs Freqs, err error) {
 	client := http.Client{
 		Timeout: timeout,
 	}
-	resp, err := client.Get("http://" + hostname + ":80/freqs")
+	resp, err := client.Get("http://" + hostname + ":8080/freqs")
 	if err != nil {
 		panic(err)
 	}
@@ -89,7 +89,7 @@ func GetFreqs(hostname string) (freqs Freqs, err error) {
 }
 
 func getPower(hostname string) (power PowerDist, err error) {
-	resp, err := http.Get("http://" + hostname + ":80/power")
+	resp, err := http.Get("http://" + hostname + ":8080/power")
 	if err != nil {
 		panic(err)
 	}

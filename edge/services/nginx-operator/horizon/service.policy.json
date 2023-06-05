@@ -1,0 +1,6 @@
+{
+    "properties": [],
+    "constraints": [
+        "openhorizon.arch in \"ppc64le, amd64\""
+    ]
+}

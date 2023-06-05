@@ -16,7 +16,10 @@ export TIME_OUT:=20
 
 # Build the docker image for the current architecture
 build:
-	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build --build-arg ARCH=$(ARCH) --platform linux/$(ARCH) -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile . 
+	@docker image prune --filter label=stage=builder --force
+	@docker image rm golang:1.19-alpine --force
+	@docker image rm alpine:latest --force
 
 # Build the docker image for 3 architectures
 build-all-arches:
@@ -60,7 +63,7 @@ publish-all-arches:
 
 # target for script - overwrite and pull insitead of push docker image
 publish-service-overwrite:
-	hzn exchange service publish -O -P -f horizon/service.definition.json
+	hzn exchange service publish -O -P --public=true -f horizon/service.definition.json
 
 # new target for icp exchange to run on startup to publish only
 publish-only:

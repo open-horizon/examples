@@ -15,7 +15,7 @@ api="$(cut -d'.' -f2 <<<"$1")"
 ####################### Loop until until either MATCH is found or TIMEOUT is exceeded #####################
 while true; do
     # exec into container and curl service
-    line=`docker exec -it $contID curl http://$name:80/v1/$api`
+    line=`docker exec -i $contID curl http://$name:8080/v1/$api`
 
     # MATCH was found
     if grep -q -m 1 "$match" <<< "$line"; then

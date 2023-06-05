@@ -1,0 +1,22 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "",
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "multiple",
+    "requiredServices": [],
+    "userInput": [
+        {
+            "name": "",
+            "label": "",
+            "type": "",
+            "defaultValue": ""
+        }
+    ],
+    "clusterDeployment": {
+        "operatorYamlArchive": "../operator.tar.gz"
+    }
+}

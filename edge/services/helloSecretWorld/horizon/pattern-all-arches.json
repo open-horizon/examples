@@ -1,0 +1,67 @@
+{
+    "name": "pattern-$SERVICE_NAME",
+    "label": "Edge $SERVICE_NAME Service Pattern for all architectures",
+    "description": "Pattern for $SERVICE_NAME",
+    "public": true,
+    "services": [
+        {
+            "serviceUrl": "$SERVICE_NAME",
+            "serviceOrgid": "$HZN_ORG_ID",
+            "serviceArch": "amd64",
+            "serviceVersions": [
+                {
+                    "version": "$SERVICE_VERSION"
+                }
+            ]
+        },
+        {
+            "serviceUrl": "$SERVICE_NAME",
+            "serviceOrgid": "$HZN_ORG_ID",
+            "serviceArch": "arm",
+            "serviceVersions": [
+                {
+                    "version": "$SERVICE_VERSION"
+                }
+            ]
+        },
+        {
+            "serviceUrl": "$SERVICE_NAME",
+            "serviceOrgid": "$HZN_ORG_ID",
+            "serviceArch": "arm64",
+            "serviceVersions": [
+                {
+                    "version": "$SERVICE_VERSION"
+                }
+            ]
+        }
+    ],
+    "secretBinding": [
+        {
+          "serviceUrl": "$SERVICE_NAME",
+          "serviceOrgid": "$HZN_ORG_ID",
+          "serviceArch": "amd64",
+          "serviceVersionRange": "[0.0.0,INFINITY)", 
+          "secrets": [
+            {"hw_who": "hw-secret-name"}
+          ]
+        },
+         {
+          "serviceUrl": "$SERVICE_NAME",
+          "serviceOrgid": "$HZN_ORG_ID",
+          "serviceArch": "arm",
+          "serviceVersionRange": "[0.0.0,INFINITY)", 
+          "secrets": [
+            {"hw_who": "hw-secret-name"}
+          ]
+        },
+        {
+          "serviceUrl": "$SERVICE_NAME",
+          "serviceOrgid": "$HZN_ORG_ID",
+          "serviceArch": "arm64",
+          "serviceVersionRange": "[0.0.0,INFINITY)", 
+          "secrets": [
+            {"hw_who": "hw-secret-name"}
+          ]
+        }
+    ]
+}

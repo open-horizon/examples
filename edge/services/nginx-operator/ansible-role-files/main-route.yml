@@ -1,0 +1,17 @@
+---
+# tasks file for nginx operator
+
+- name: Create the Operator Deployment
+  k8s:
+    state: present
+    definition: "{{lookup('template', 'deployment.j2') | from_yaml}}"
+
+- name: Create the Operator Service
+  k8s:
+    state: present
+    definition: "{{lookup('template', 'service.j2') | from_yaml}}"
+
+- name: Create the Operator Route
+  k8s:
+    state: present
+    definition: "{{lookup('template', 'route.j2') | from_yaml}}"
