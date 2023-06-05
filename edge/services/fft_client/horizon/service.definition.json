@@ -1,0 +1,37 @@
+{
+	"org": "${HZN_ORG_ID}",
+	"label": "fft-client",
+	"description": "FFT sound analyzer",
+	"documentation": "https://github.com/open-horizon/examples/blob/master/edge/services/fft_client/README.md",
+	"url": "ibm.fft-client",
+	"version": "${SERVICE_VERSION}",
+	"arch": "${ARCH}", 
+	"public": false,
+	"sharable": "singleton",
+	"requiredServices": [{
+		"url": "ibm.volantmq",
+		"org": "${HZN_ORG_ID}",
+        "versionRange": "[0.0.0,INFINITY)",
+        "arch": "${ARCH}"
+	}],
+	"userInput": [
+		 { "name": "MQTT_BROKER", "label": "", "type": "string", "defaultValue": "volantmq:1883" },
+		 { "name": "MQTT_CLIENT_USER", "label": "", "type": "string", "defaultValue": "fft-client" },
+		 { "name": "MQTT_CLIENT_PASS", "label": "", "type": "string", "defaultValue": "client-pass" },
+		 { "name": "MQTT_CLIENT_CLIENT", "label": "", "type": "string", "defaultValue": "fft-client" },
+		 { "name": "MQTT_QOS", "label": "", "type": "int", "defaultValue": "2" },
+		 { "name": "LOG_LEVEL", "label": "", "type": "string", "defaultValue": "debug" },
+		 { "name": "SAMPLE_RATE", "label": "", "type": "int", "defaultValue": "48000" },
+		 { "name": "RECORD_FRAME", "label": "", "type": "int", "defaultValue": "3" },
+		 { "name": "DEVICE_ID", "label": "", "type": "int", "defaultValue": "-1" }
+	],
+	"deployment": {
+		"services": {
+			"fft-client": {
+				"image": "${DOCKER_IMAGE_BASE}:${ARCH}-${SERVICE_VERSION}",
+				"devices": ["/dev/snd:/dev/snd"],
+				"privileged": false
+			}
+		}
+	}
+}
