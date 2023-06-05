@@ -41,8 +41,12 @@ publish-deployment-policy:
 	hzn exchange deployment addpolicy -f horizon/deployment.policy.json $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
 
 # new target for icp exchange to run on startup to publish only
-publish-only: publish-service-overwrite publish-service-policy
-	hzn exchange pattern publish -f horizon/pattern.json
+publish-only:
+	ARCH=amd64 $(MAKE) publish-service-overwrite
+	ARCH=amd64 $(MAKE) publish-service-policy
+	ARCH=ppc64le $(MAKE) publish-service-overwrite
+	ARCH=ppc64le $(MAKE) publish-service-policy
+	hzn exchange pattern publish -f horizon/pattern-all-arches.json
 
 # This imports the variables from horizon/hzn.cfg. You can ignore these lines, but do not remove them.
 horizon/.hzn.json.tmp.mk: horizon/hzn.json

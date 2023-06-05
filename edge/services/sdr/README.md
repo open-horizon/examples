@@ -1,5 +1,9 @@
 # SDR service API
 
+:warning: **Note: the `cloud/sdr` backend will be deprecated soon!**
+
+Read the [Software Defined Radio documentation](./software_defined_radio_ex.md) to configure this example service.
+
 Assuming that `ibm.sdr` is the host name:
 
 ## `/freqs`

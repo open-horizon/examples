@@ -3,7 +3,6 @@ RUN apk --no-cache add git cmake libusb-dev make gcc g++ alpine-sdk
 WORKDIR /tmp
 RUN git clone https://github.com/clementkng/librtlsdr
 WORKDIR /tmp/librtlsdr
-RUN git checkout rpc
 
 RUN mkdir build && cd build && cmake ../ -DINSTALL_UDEV_RULES=ON -DDETACH_KERNEL_DRIVER=ON && make && make install
 RUN ls /usr/local/bin/rtl_*
