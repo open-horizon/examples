@@ -43,6 +43,16 @@
           "version": "$SERVICE_VERSION"
         }
       ]
+    },
+    {
+      "serviceUrl": "$SERVICE_NAME",
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceArch": "s390x",
+      "serviceVersions": [
+        {
+          "version": "$SERVICE_VERSION"
+        }
+      ]
     }
   ]
 }
