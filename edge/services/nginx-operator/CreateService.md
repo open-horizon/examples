@@ -14,7 +14,7 @@ Follow the steps on this page to create your first ansible operator that deploys
    - Open the Docker **Preferences** dialog
    - Uncheck **Securely store Docker logins in macOS keychain**
 
-3. Install [operator-sdk](https://github.com/operator-framework/operator-sdk/tree/v0.19.x#prerequisites) and all its prerequisites. This example was created using version `0.19`, and has not been tested on any other versions.
+3. Install [operator-sdk](https://v1-27-x.sdk.operatorframework.io/docs/installation/) and all its prerequisites.
 
 4. Install the Kubenetes CLI [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
@@ -57,111 +57,87 @@ Follow the steps on this page to create your first ansible operator that deploys
      brew install git jq
      ```
 
-## <a id=build-publish-your-op></a> Building and Publishing Your Own Operator Example Edge Service
+## <a id=build-publish-your-op></a> Building and Publishing Your Own Nginx Ansible Operator Example Edge Service
 
-In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. This example will guide through creating an ansible operator. The following steps were originally performed on the cluster host machine.
+In order to deploy a containerized edge service to an edge cluster, a software developer first has to build a Kubernetes Operator that deploys the containerized edge service in a Kubernetes cluster. There are several options when writing a Kubernetes operator. This example will guide through creating an ansible operator. These steps are based on the [Ansible Operator Tutorial](https://v1-27-x.sdk.operatorframework.io/docs/building-operators/ansible/tutorial/) on the official `operator-sdk` website. If you have never created an operator before, I highly suggest skimming over the information there as well. The following steps were originally performed on the cluster host machine. 
 
-1. Create a new operator application and generate a default directory layout based on the input name, and move into the created default operator directory:
-
+1. Creating yourself a base working directory, and grab the Makefile int his repo:
    ```bash
-   operator-sdk new my-operator --type=ansible --api-version=my.operator.com/v1alpha1 --kind=MyOperator
-   cd my-operator/
+   mkdir operator-example-service
+   cd operator-example-service/
+   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/Makefile
    ```
 
-   **Note:** If you are following these steps to create an operator that will deploy your own service, you should modify the names used above, **not** modify things manually in the generated files.
-
-   The above command will give you an empty ansible operator. At the very least you will need to define a `deployment`, `service`, and a set of tasks to deploy your service. If you look in the [ansible-role-files](https://github.com/open-horizon/examples/tree/master/edge/services/hello-operator/ansible-role-files) directory you can see these three files and how they are used to deploy the `nginxinc/nginx-unprivileged` image, and how they expose the port `8080`. There are several methods for configuring cluster network traffic, which you can read about in the [OCP traffic overview documentation](https://docs.openshift.com/container-platform/4.6/networking/configuring_ingress_cluster_traffic/overview-traffic.html). For this service we've going to create a service of type `NodePort` and `expose` our service with a route.
-
-2. Obtain the `deployment`, `service`, and task file and move them into the `my-operator` roles directory with the following commands:
-
+2. Export the following environment variables to customize the `operator-sdk` init:
    ```bash
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/deployment.j2 && mv deployment.j2 roles/myoperator/templates/
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/service.j2 && mv service.j2 roles/myoperator/templates/
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main.yml && mv main.yml roles/myoperator/tasks/
+   export OPERATOR_GROUP_NAME=my-nginx-ansible-operator
+   export OPERATOR_TYPE=ansible
+   export OPERATOR_API_VERSION=v1alpha1
+   export OPERATOR_DOMAIN=$DOCKER_HUB_ID
+   export OPERATOR_KIND=MyNginxAnsibleOperator
+   export OPERATOR_NAMESPACE=operator-project
    ```
 
-3. **FOR OCP EDGE CLUSTERS ONLY:** Obtain the `route`, and modified task file and move them into the `my-operator` roles directory:
-
+3. Create `my-nginx-ansible-operator`:
    ```bash
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/route.j2 && mv route.j2 roles/myoperator/templates/
-   wget https://raw.githubusercontent.com/open-horizon/examples/master/edge/services/nginx-operator/ansible-role-files/main-route.yml && mv main-route.yml roles/myoperator/tasks/main.yml
+   make init
    ```
 
-4. **FOR OCP EDGE CLUSTERS ONLY:** By default the operator does not have the permission to create routes, however, with the following command you can add the lines needed to the `deploy/role.yaml` file so the operator can expose the `nginx` service with a route:
+The above Makefile command will:
+- Create a new `my-nginx-ansible-operator` project and generate the entire operator structure and empty `roles/mynginxansibleoperator` 
+- Create a `MyNginxAnsibleOperator` API
+- Added `services` to the operator RBAC
+- Changed the default namespace to the value set with `OPERATOR_NAMESPACE`
+- Added `size: 1` to the operators custom resource
 
+4. Gather the necessary nginx deployment, service, and task files for the operator to deploy the nginx service:
    ```bash
-   echo "- apiGroups:
-     - route.openshift.io
-     resources:
-     - routes
-     - routes/custom-host
-     verbs:
-     - get
-     - list
-     - watch
-     - patch
-     - update
-     - create
-     - delete" >> deploy/role.yaml
+   make nginx-files
    ```
 
-5. Build the operator image (use ppc64le for power arch):
-
+5. Build and push the operator:
    ```bash
-   operator-sdk build docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
-   docker push docker.io/$DOCKER_HUB_ID/my.operator_amd64:1.0.0
+   make build push
    ```
 
-6. In the `deploy/operator.yaml` file, replace `"REPLACE_IMAGE"` with the operator image name you built and pushed in the previous step (use ppc64le for power arch):
-
-   ```text
-   image: "<docker-hub-id>/my.operator_amd64:1.0.0"
+6. Deploy the operator locally:
+   ```
+   make deploy
    ```
 
-7. Apply the required resources to run the operator
-
+7. After a few moments you should see your pods begin to start and your service get created:
    ```bash
-   kubectl apply -f deploy/crds/my.operator.com_myoperators_crd.yaml
-   kubectl apply -f deploy/service_account.yaml
-   kubectl apply -f deploy/role.yaml
-   kubectl apply -f deploy/role_binding.yaml
-   kubectl apply -f deploy/operator.yaml
-   kubectl apply -f deploy/crds/my.operator.com_v1alpha1_myoperator_cr.yaml
-   ```
-
-8. Ensure the operator pod and the deployed service pod are running:
-
-   ```bash
-   kubectl get pods
+   kubectl get pods -n $OPERATOR_NAMESPACE
    ```
 
    If everything deployed correctly, you should see output similar to the following after around 60 seconds:
 
    ```text
-   NAME                           READY   STATUS    RESTARTS   AGE
-   nginx-7d5598fb56-vw6lz         1/1     Running   0          12s
-   my-operator-55c6f56c47-b6p7c   1/1     Running   0          48s
+   NAME                                                            READY   STATUS    RESTARTS   AGE
+   nginx-6ccdb77fd6-6s59q                                          1/1     Running   0          2s
+   my-nginx-ansible-operator-controller-manager-7b65577c94-smsm6   2/2     Running   0          10s
    ```
 
-9. Check that the service is up:
+8. Check that the service is up:
 
    ```bash
-   kubectl get service
+   kubectl get service -n $OPERATOR_NAMESPACE
    ```
 
    If everything deployed correctly, you should see output similar to the following after around 60 seconds:
 
    ```text
-   NAME    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
-   nginx   NodePort    172.30.37.113    <none>        80:30080/TCP    24h
+   NAME                                                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+   my-nginx-ansible-operator-controller-manager-metrics-service   ClusterIP   10.43.46.134    <none>        8443/TCP       23s
+   nginx                                                          NodePort    10.43.193.244   <none>        80:30080/TCP   12s
    ```
 
    If you are using an **OCP edge cluster** you will need to `curl` the service using the exposed `route`.
 
-10. Get the exposed route name:
+9. Get the exposed route name:
 
     ```bash
-    kubectl get route -n openhorizon-agent
+    kubectl get route -n $OPERATOR_NAMESPACE
     ```
 
     If the route was exposed correctly you should see output similar to the following:
@@ -171,7 +147,7 @@ In order to deploy a containerized edge service to an edge cluster, a software d
     nginx-route   nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com          nginx      8080                 None
     ```
 
-11. `curl` the service to test if it is functioning correctly:
+10. `curl` the service to test if it is functioning correctly:
 
      **OCP edge cluster** substitute the above `HOST/PORT` value:
 
@@ -182,7 +158,7 @@ In order to deploy a containerized edge service to an edge cluster, a software d
      **k3s or microk8s edge cluster**:
 
      ```bash
-     curl <external-ip-address>:30080
+     curl <ip-address>:30080
      ```
 
      If the service is running you should see following `Welcome to nginx!` output:
@@ -215,27 +191,15 @@ In order to deploy a containerized edge service to an edge cluster, a software d
      </html>
      ```
 
-12. Delete the resources to stop your operator pod and service:
+11. Delete the operator:
+   ```bash
+   make undeploy
+   ```
 
-    ```bash
-    kubectl delete crd myoperators.my.operator.com
-    kubectl delete deployment my-operator
-    kubectl delete serviceaccount my-operator
-    kubectl delete rolebinding my-operator
-    kubectl delete role my-operator
-    ```
-
-    **Note:** if any pods are stuck in the `Terminating` state after running the previous commands you can force delete them with the following command:
-
-    ```bash
-    kubectl -n <namespace> delete pods --grace-period=0 --force <pod_name(s)>
-    ```
-
-13. Create a tar archive that contains the files inside the operators `deploy/` directory:
-
-    ```bash
-    tar -zcvf operator.tar.gz deploy/*
-    ```
+12. Create an `operator.tar.gz` file before moving onto the next section.
+   ```bash
+   make tar
+   ```
 
 ## <a id=publish-op-service></a> Publish Your Operator Example Edge Service
 
@@ -244,8 +208,7 @@ In order to deploy a containerized edge service to an edge cluster, a software d
 1. Create a new working directory for a new horizon project:
 
    ```bash
-   mkdir my-operator && cd my-operator/
-   hzn dev service new -V 1.0.0 -s my-first-operator -c cluster
+   hzn dev service new -V 1.0.0 -s $OPERATOR_GROUP_NAME -c cluster
    ```
 
 2. Transfer the `operator.tar.gz` archive you created in the previous section to your `my-operator/` directory.
@@ -335,13 +298,12 @@ In order to deploy a containerized edge service to an edge cluster, a software d
    kubectl get pods -n openhorizon-agent
    ```
 
-   If everything deployed correctly, you should see output similar to the following:
+   If everything deployed correctly, you should see output similar to the following after around 60 seconds:
 
    ```text
-   NAME                               READY   STATUS    RESTARTS   AGE
-   agent-dd984ff96-jmmdl              1/1     Running   0          1d
-   nginx-7d5598fb56-vw6lz             1/1     Running   0          12s
-   my-operator-55c6f56c47-b6p7c       1/1     Running   0          48s
+   NAME                                                            READY   STATUS    RESTARTS   AGE
+   nginx-6ccdb77fd6-6s59q                                          1/1     Running   0          2s
+   my-nginx-ansible-operator-controller-manager-7b65577c94-smsm6   2/2     Running   0          10s
    ```
 
 7. Check that the service is up:
@@ -350,70 +312,72 @@ In order to deploy a containerized edge service to an edge cluster, a software d
    kubectl get service -n openhorizon-agent
    ```
 
-   If everything deployed correctly you should see output similar to the following after around 60 seconds:
+   If everything deployed correctly, you should see output similar to the following after around 60 seconds:
 
    ```text
-   NAME     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
-   nginx    NodePort    172.30.37.113    <none>        80:30080/TCP    24h
+   NAME                                                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+   my-nginx-ansible-operator-controller-manager-metrics-service   ClusterIP   10.43.46.134    <none>        8443/TCP       23s
+   nginx                                                          NodePort    10.43.193.244   <none>        80:30080/TCP   12s
    ```
 
    If you are using an **OCP edge cluster** you will need to `curl` the service using the exposed `route`.
 
 8. Get the exposed route name:
 
-   ```bash
-   kubectl get route -n openhorizon-agent
-   ```
+    ```bash
+    kubectl get route -n openhorizon-agent
+    ```
 
-   If the route was exposed correctly you should see output similar to the following:
+    If the route was exposed correctly you should see output similar to the following:
 
-   ```text
-   NAME          HOST/PORT                                                    PATH   SERVICES   PORT   TERMINATION   WILDCARD
-   nginx-route   nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com          nginx      8080                 None
-   ```
+    ```text
+    NAME          HOST/PORT                                                    PATH   SERVICES   PORT   TERMINATION   WILDCARD
+    nginx-route   nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com          nginx      8080                 None
+    ```
 
 9. `curl` the service to test if it is functioning correctly:
-   **OCP edge cluster** substitute the above `HOST/PORT` value:
 
-   ```bash
-   curl nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com
-   ```
+     **OCP edge cluster** substitute the above `HOST/PORT` value:
 
-   **k3s or microk8s edge cluster**:
+     ```bash
+     curl nginx-route-openhorizon-agent.apps.apollo5.cp.fyre.ibm.com
+     ```
 
-   ```bash
-   curl <external-ip-address>:30080
-   ```
+     **k3s or microk8s edge cluster**:
 
-   If the service is running, you should see the following `Welcome to nginx!` output:
+     ```bash
+     curl <ip-address>:30080
+     ```
 
-   ```html
-   <!DOCTYPE html>
-   <html>
-   <head>
-   <title>Welcome to nginx!</title>
-   <style>
-       body {
+     If the service is running you should see following `Welcome to nginx!` output:
+
+     ```html
+     <!DOCTYPE html>
+     <html>
+     <head>
+     <title>Welcome to nginx!</title>
+     <style>
+        body {
            width: 35em;
-         margin: 0 auto;
-         font-family: Tahoma, Verdana, Arial, sans-serif;
-      }
-   </style>
-   </head>
-   <body>
-   <h1>Welcome to nginx!</h1>
-   <p>If you see this page, the nginx web server is successfully installed and
-   working. Further configuration is required.</p>
+           margin: 0 auto;
+           font-family: Tahoma, Verdana, Arial, sans-serif;
+        }
+     </style>
+     </head>
+     <body>
+     <h1>Welcome to nginx!</h1>
+     <p>If you see this page, the nginx web server is successfully installed and
+     working. Further configuration is required.</p>
 
-   <p>For online documentation and support please refer to
-   <a href="http://nginx.org/">nginx.org</a>.<br/>
-   Commercial support is available at
-   <a href="http://nginx.com/">nginx.com</a>.</p>
+     <p>For online documentation and support please refer to
+     <a href="http://nginx.org/">nginx.org</a>.<br/>
+     Commercial support is available at
+     <a href="http://nginx.com/">nginx.com</a>.</p>
 
-   <p><em>Thank you for using nginx.</em></p>
-   </body>
-   </html>
-   ```
+     <p><em>Thank you for using nginx.</em></p>
+     </body>
+     </html>
+     ```
 
 10. Unregister your edge cluster:
 
