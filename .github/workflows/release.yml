@@ -1,0 +1,65 @@
+name: Examples Release Manager
+
+on:
+  # ignore for now, how would open source get  eamHubSpec/tested versions? would we make this a single input where you paste json, multiple with versions?
+  workflow_dispatch:
+    inputs:
+      versionFileJSON:
+          description: 'The file with all the versions' 
+          required: true
+          type: string
+
+env:
+  # Variables to control GH CLI
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_REPO: ${{ github.repository }}
+  GH_HOST: github.com
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+
+    environment: release_environment
+    
+    steps:
+      - name: Check if Release Already Exists for Requested Version
+        run: |
+          RELEASE_STATUS=$(
+            curl -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/${{ github.repository }}/releases/tags/v${{ env.AGBOT_VERSION }} \
+              | jq -r '.html_url')
+          
+          sleep 10
+
+          if [[ $RELEASE_STATUS != 'null' ]]; then
+            echo "::error::Attempted to create a release for a version of Examples that already has a release page, see $RELEASE_STATUS"
+            exit 1
+          fi
+        env:
+          AGBOT_VERSION: ${{ fromJSON(github.event.inputs.versionFileJSON).amd64_agbot }}
+
+      - name: Create Tested Versions File
+        run: |
+          mkdir $RUNNER_TEMP/version_file && cd $RUNNER_TEMP/version_file
+          jq -n '${{ github.event.inputs.versionFileJSON }}' > openhorizon-tested-versions.txt
+        shell: bash
+      
+      - name: Create Release
+        run: |
+          # Check if version branch exists, if it doesn't we target master if it does we target that branch
+          if [[ -z "$(git ls-remote --heads "https://github.com/${{ github.repository }}" refs/heads/v${AGBOT_VERSION%.*})" ]]; then
+            gh release create v${AGBOT_VERSION} \
+              ${RUNNER_TEMP}/version_file/openhorizon-tested-versions.txt \
+              -t "v${AGBOT_VERSION}"
+          else
+            gh release create v${AGBOT_VERSION} \
+              ${RUNNER_TEMP}/version_file/openhorizon-tested-versions.txt \
+              -t "v${AGBOT_VERSION}" \
+              --target "v${AGBOT_VERSION%.*}"
+          fi
+        shell: bash
+        env:
+          AGBOT_VERSION: ${{ fromJSON(github.event.inputs.versionFileJSON).amd64_agbot }}
