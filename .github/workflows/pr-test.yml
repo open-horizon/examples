@@ -25,6 +25,7 @@ jobs:
       - name: Prep Env
         run: |
           sudo apt-get update
+          sud apt-get qemu
           sudo apt-get install librdkafka-dev libyajl-dev kafkacat qemu qemu-user-static binfmt-support dpkg-cross
       
       # Install the hzn cli
