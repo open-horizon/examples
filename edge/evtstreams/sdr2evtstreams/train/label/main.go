@@ -5,6 +5,7 @@ import (
 	"encoding/base32"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/train/watson/stt"
 	rtlsdr "github.com/open-horizon/examples/edge/services/sdr/rtlsdrclientlib"
@@ -54,7 +55,7 @@ func main() {
 			if totalText(transcript) > 20 {
 				err = os.WriteFile("good/"+name+".raw", audio, 0644)
 			} else {
-				err = os.WriteFile("nongood/"+name+".raw", audio, 0644)
+				err = os.WriteFile(filepath.Clean("nongood/"+name+".raw"), audio, 0644)
 			}
 			if err != nil {
 				panic(err)
