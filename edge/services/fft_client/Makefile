@@ -14,12 +14,12 @@ docker-build:
 	$(DOCKER_CLI) push $(IMG_NAME):$(HZN_ARCH)-$(SERVICE_VERSION)
 
 build-amd:
-	$(MAKE) BUILD_IMAGE=amd64/golang:1.14.2-alpine3.11 \
-		RUN_IMAGE=amd64/alpine:3.11 GOARCH=amd64 HZN_ARCH=amd64  docker-build
+	$(MAKE) BUILD_IMAGE=amd64/golang:1.23-alpine3.21 \
+		RUN_IMAGE=amd64/alpine:3.21 GOARCH=amd64 HZN_ARCH=amd64  docker-build
 
 build-arm:
-	$(MAKE) BUILD_IMAGE=arm32v6/golang:1.14.2-alpine3.11 \
-		RUN_IMAGE=arm32v6/alpine:3.11 GOARCH=arm HZN_ARCH=arm docker-build
+	$(MAKE) BUILD_IMAGE=arm32v6/golang:1.23-alpine3.21 \
+		RUN_IMAGE=arm32v6/alpine:3.21 GOARCH=arm HZN_ARCH=arm docker-build
 
 build: build-amd build-arm
 
