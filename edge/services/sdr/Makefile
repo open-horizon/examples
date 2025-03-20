@@ -9,7 +9,7 @@ export MATCH:='starting rtl_rpcd'
 export TIME_OUT:=60
 
 build:
-	docker build -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
+	docker build --platform linux/$(ARCH) -t $(DOCKER_IMAGE_BASE)_$(ARCH):$(SERVICE_VERSION) -f ./Dockerfile.$(ARCH) .
 
 build-all-arches:
 	ARCH=amd64 $(MAKE) build
