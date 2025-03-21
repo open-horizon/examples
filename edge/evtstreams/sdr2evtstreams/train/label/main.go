@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/base32"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/open-horizon/examples/edge/msghub/sdr2msghub/train/watson/stt"
@@ -53,9 +52,9 @@ func main() {
 			hash := sha256.Sum256(audio)
 			name := base32.StdEncoding.EncodeToString(hash[:])
 			if totalText(transcript) > 20 {
-				err = ioutil.WriteFile("good/"+name+".raw", audio, 0644)
+				err = os.WriteFile("good/"+name+".raw", audio, 0644)
 			} else {
-				err = ioutil.WriteFile("nongood/"+name+".raw", audio, 0644)
+				err = os.WriteFile("nongood/"+name+".raw", audio, 0644)
 			}
 			if err != nil {
 				panic(err)
