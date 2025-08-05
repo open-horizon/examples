@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
-	"math/rand"
+	"math/big"
 	"net/http"
 	"os"
 	"strings"
@@ -329,8 +330,16 @@ func main() {
 			lastStationsRefresh = time.Now()
 		}
 		for station, goodness := range stationGoodness {
+			max := int64(1_000_000)
+			nRand, err := rand.Int(rand.Reader, big.NewInt(max))
+			if err != nil {
+				log.Printf("failed to generate secure float: %v", err)
+				continue
+			}
+			randomFloat := float32(nRand.Int64()) / float32(max)
+
 			// if our goodness is less then a random number between 0 and 1.
-			if rand.Float32() < goodness {
+			if randomFloat < goodness {
 				audio, err := rtlsdr.GetAudio(hostname, int(station))
 				if err != nil {
 					panic(err)
