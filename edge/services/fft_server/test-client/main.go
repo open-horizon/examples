@@ -15,19 +15,19 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"go-fft-client/shared"
 	"io"
-	"io/ioutil"
 	"math"
-	"math/rand"
+	"math/big"
+	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/sirupsen/logrus"
-
 	"github.com/zenwerk/go-wave"
 )
 
@@ -54,7 +54,7 @@ func main() {
 		ch <- r
 	})
 
-	folders, err := ioutil.ReadDir("./sets")
+	folders, err := os.ReadDir("./sets")
 
 	if err != nil {
 		logrus.Fatal(err)
@@ -75,7 +75,7 @@ func main() {
 
 		logrus.Infof("Using %s sets", f.Name())
 
-		files, err := ioutil.ReadDir(fmt.Sprintf("./sets/%s/", f.Name()))
+		files, err := os.ReadDir(fmt.Sprintf("./sets/%s/", f.Name()))
 		if err != nil {
 			logrus.Fatal(err)
 		}
@@ -107,10 +107,17 @@ func main() {
 		}
 
 		lastSend := -1
-		rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 		for ii := 0; ii < 10; ii++ {
-			index := rng.Intn(len(samples))
+			max := big.NewInt(int64(len(samples)))
+			nRand, err := rand.Int(rand.Reader, max)
+			if err != nil {
+				logrus.Errorf("failed to generate secure random index: %v", err)
+				errorsCount++
+				continue
+			}
+			index := int(nRand.Int64())
+
 			shouldTrigger := false
 			if index != lastSend {
 				shouldTrigger = true
