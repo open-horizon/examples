@@ -5,12 +5,13 @@ usage() {
 Usage: ${0##*/} [-h] [-v] [-c <org-name>] [-X] [-e <examples-version>] [-a]
 
 Flag:
-  -c <org-name>    The exchange organization to publish example deployment policies to (the user's own org, not the IBM org).
-  -X               Skip publishing patterns and services to the IBM org. Only valid in conjunction with -c <org-name> when publishing deployment policies to an additional org.
-  -a               Use this flag to publish the example deployment policies in ALL available orgs.
-  -e <examples-tag>   The tag of the examples repo to get the examples from, for example: v2.29.0-123. If you want the latest version of the examples, specify 'master'. Default: the CLI version returned by the 'hzn version' command, preceded by 'v'.
-  -v               Verbose output
-  -h               This usage
+  -c <org-name>             The exchange organization to publish example deployment policies to (the user's own org, not the IBM org).
+  -X                        Skip publishing patterns and services to the IBM org. Only valid in conjunction with -c <org-name> when publishing deployment policies to an additional org.
+  -a                        Use this flag to publish the example deployment policies in ALL available orgs.
+  -e <examples-tag>         The tag of the examples repo to get the examples from, for example: v2.29.0-123. If you want the latest version of the examples, specify 'master'. Default: the CLI version returned by the 'hzn version' command, preceded by 'v'.
+  -b <blessedSamples.txt>   Set this flag and provide your own blessedSamples file containing a list of sample service GitHub repositories.
+  -v                        Verbose output
+  -h                        This usage
 
 Required Environment Variables:
   HZN_EXCHANGE_URL
@@ -60,12 +61,16 @@ while (( "$#" )); do
             EXAMPLES_REPO_TAG=$2
             shift 2
             ;;
+        -b) # custom blessedSamples file
+            BYO_SAMPLES=$2
+            shift 2
+            ;;
         -*) # invalid flag
-            echo "ERROR: Unknow flag $1"
+            echo "ERROR: Unknown flag $1"
             usage 1
             ;;
         *) # there are no positional args
-            echo "ERROR: Unknow argument $1"
+            echo "ERROR: Unknown argument $1"
             usage 1
             ;;
     esac
@@ -82,6 +87,20 @@ fi
 if ! command -v hzn >/dev/null 2>&1; then
     echo "Error: the 'hzn' command must be installed before running this script"
     exit 2
+fi
+
+origDir=$PWD
+# text file containing servies and patterns to publish
+blessedSamples="$LOCAL_PATH_TO_EXAMPLES/tools/blessedSamples.txt"
+
+# if using a custom blessedSamples file, it will need to be generated first
+if [[ -n $BYO_SAMPLES ]]; then
+    pathToBYOSamples="$origDir/$BYO_SAMPLES"
+    if [[ ! -f "$pathToBYOSamples" ]]; then
+        echo "Error: Custom samples file not found: $pathToBYOSamples"
+        echo "Continuing with default samples..."
+        unset BYO_SAMPLES
+    fi
 fi
 
 # check the previous cmds exit code. 
@@ -134,7 +153,52 @@ deployPolPublish() {
     fi
 }
 
-origDir=$PWD
+publish_blessedSamples() {
+    # read in blessedSamples.txt which contains the services, patterns, and policies to publish
+    while IFS= read -r line
+    do
+        # each $line contains the path to a service/pattern/policy that needs to be published
+        sample=${line#examples/}   # in case we are using an older version of blessedSamples.txt
+        cd $LOCAL_PATH_TO_EXAMPLES/$sample
+        chk $? "finding service directory $sample"
+
+        if [[ $EXCLUDE_IBM_PUBLISH != 'true' ]]; then
+            echo "Publishing services and patterns of $sample to IBM org..."
+            if [[ $EXAMPLES_PREVIEW_MODE != 'true' ]]; then
+                if [[ -n $BYO_SAMPLES ]]; then
+                    HZN_ORG_ID=$POLICY_ORG runCmdQuietly make publish-only
+                else
+                    runCmdQuietly make publish-only
+                fi
+            fi
+        fi
+
+        # check if an org was specified to publish sample deployment policy 
+        if [[ -n $POLICY_ORG || $PUBLISH_ALL_ORGS == 'true' ]]; then
+            deployPolPublish "$sample"
+        fi
+
+        cd $origDir
+
+    done < "$blessedSamples"
+}
+
+byo_blessedSamples() {
+    echo "Publishing a custom set of example services to the Open Horizon Exchange..."
+    > "$blessedSamples"  # Clear/create the file
+    # generate a similarly formatted blessedSamples file
+    while IFS= read -r line
+    do
+        # each $line contains the URL for a github repository
+        repo=$(basename "$line")
+        repo_name="${repo%.*}"
+        git clone $line $LOCAL_PATH_TO_EXAMPLES/$repo_name
+        chk $? "when cloning $line"
+
+        echo "$repo_name" >> "$blessedSamples"
+
+    done < "$pathToBYOSamples"
+}
 
 # Determine git tag to clone from
 if [[ -z $EXAMPLES_REPO_TAG ]]; then
@@ -145,10 +209,6 @@ if [[ -z $EXAMPLES_REPO_TAG ]]; then
     fi
     echo "Using examples repo tag $EXAMPLES_REPO_TAG derived from the hzn version"
 fi
-
-
-# text file containing servies and patterns to publish
-blessedSamples="$LOCAL_PATH_TO_EXAMPLES/tools/blessedSamples.txt"
 
 # Clone the repo at the specified tag point
 if [[ -d "$LOCAL_PATH_TO_EXAMPLES" ]]; then
@@ -172,30 +232,11 @@ if [[ $EXAMPLES_PREVIEW_MODE == 'true' ]]; then
     echo "Note: Running in preview mode, the samples will NOT actually be published..."
 fi
 
-# read in blessedSamples.txt which contains the services, patterns, and policies to publish
-while IFS= read -r line
-do
-    # each $line contains the path to a service/pattern/policy that needs to be published
-    sample=${line#examples/}   # in case we are using an older version of blessedSamples.txt
-    cd $LOCAL_PATH_TO_EXAMPLES/$sample
-    chk $? "finding service directory $sample"
-    
-    if [[ $EXCLUDE_IBM_PUBLISH != 'true' ]]; then
-        echo "Publishing services and patterns of $sample to IBM org..."
-        if [[ $EXAMPLES_PREVIEW_MODE != 'true' ]]; then
-            runCmdQuietly make publish-only
-        fi
-    fi
-
-    # check if an org was specified to publish sample deployment policy 
-    if [[ -n $POLICY_ORG || $PUBLISH_ALL_ORGS == 'true' ]]; then
-        deployPolPublish "$sample"
-    fi
-
-    cd $origDir
-
-done < "$blessedSamples"
-
+# if using a custom blessedSamples file, it will need to be generated first
+if [[ -n $BYO_SAMPLES ]]; then
+    byo_blessedSamples
+fi
+publish_blessedSamples
 
 # clean up
 echo -e "Successfully published all examples to the exchange. Removing $LOCAL_PATH_TO_EXAMPLES directory."
