@@ -400,9 +400,13 @@ func get_public_address() (err error, ip_address string) {
 	provider_url := "http://ifconfig.co"
 	resp, rest_err := http.Get(provider_url)
 	if rest_err != nil {
-		ip_address = ""
-		err = errors.New(fmt.Sprintf("ERROR: REST call to %s failed: %v", provider_url, rest_err))
-		return
+		provider_url = "http://ip2location.io/ip" // secondary
+		resp, rest_err = http.Get(provider_url)
+		if rest_err != nil {
+			ip_address = ""
+			err = errors.New(fmt.Sprintf("ERROR: REST call to %s failed: %v", provider_url, rest_err))
+			return
+		}
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
@@ -425,8 +429,12 @@ func get_location_from_ip_address(ip_address string) (lat float64, lon float64, 
 	url := "http://api.ipstack.com/" + ip_address + "?access_key=" + apikey + "&format=1"
 	resp, rest_err := http.Get(url)
 	if rest_err != nil {
-		err = errors.New(fmt.Sprintf("ERROR: Request to %s failed: %v", url, rest_err))
-		return
+		url := "http://api.ip2location.io?ip=" + ip_address
+		resp, rest_err = http.Get(url)
+		if rest_err != nil {
+			err = errors.New(fmt.Sprintf("ERROR: Request to %s failed: %v", url, rest_err))
+			return
+		}
 	}
 	defer resp.Body.Close()
 	httpCode := resp.StatusCode
